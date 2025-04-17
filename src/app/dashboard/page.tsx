@@ -34,7 +34,7 @@ export default function DashboardPage() {
       }
 
       const user = session.user;
-      setUserEmail(user.email);
+      setUserEmail(user.email ?? "");
 
       // Buscar perfil
       const { data: perfil } = await supabase
