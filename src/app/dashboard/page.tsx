@@ -6,7 +6,14 @@ import CycleCard from "@/components/CycleCard";
 
 export default function DashboardPage() {
   const [day, setDay] = useState<number | null>(null);
-  const [data, setData] = useState<any>(null);
+  interface MujerChakanaData {
+    arquetipo: string;
+    elemento: string;
+    mensaje: string;
+    audio_url: string;
+  }
+
+  const [data, setData] = useState<MujerChakanaData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

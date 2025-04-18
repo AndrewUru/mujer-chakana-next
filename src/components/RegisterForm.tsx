@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../lib/supabaseClient";
+import Image from "next/image";
 import AvatarUploader from "./AvatarUploader";
 
 export default function RegisterForm() {
@@ -84,11 +85,13 @@ export default function RegisterForm() {
             userId={userId}
             onUpload={(url) => setAvatarUrl(url)}
           />
-          {avatarUrl && (
-            <img
+            <Image
               src={avatarUrl}
               alt="Avatar preview"
-              className="mt-2 rounded-full w-20 h-20 object-cover border-2 border-pink-500"
+              width={80}
+              height={80}
+              className="mt-2 rounded-full object-cover border-2 border-pink-500"
+            />
             />
           )}
         </div>
