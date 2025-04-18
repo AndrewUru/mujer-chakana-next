@@ -32,7 +32,7 @@ export default function DashboardPage() {
       }
 
       // Verificar si el perfil existe
-      const { data: perfil, error: perfilError } = await supabase
+      const { data: perfil } = await supabase
         .from("perfiles")
         .select("*")
         .eq("user_id", user.id)
