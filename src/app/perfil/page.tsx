@@ -49,6 +49,7 @@ export default function PerfilPage() {
       .update({
         display_name: username,
         avatar_url: avatarUrl,
+        fecha_inicio: new Date(), // solo si la estás estableciendo aquí
       })
       .eq("user_id", userId);
 
@@ -56,6 +57,7 @@ export default function PerfilPage() {
       alert("❌ Error al guardar: " + error.message);
     } else {
       alert("✅ Perfil actualizado");
+      router.push("/dashboard"); // 👈 Redirige después de guardar
     }
   };
 
