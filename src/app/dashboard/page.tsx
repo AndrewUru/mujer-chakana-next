@@ -30,6 +30,7 @@ export default function DashboardPage() {
         router.push("/login");
         return;
       }
+      console.log("Usuario actual:", user, error);
 
       // Verificar si el perfil existe
       const { data: perfil } = await supabase
