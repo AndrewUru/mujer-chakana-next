@@ -85,15 +85,13 @@ export default function RegisterForm() {
             userId={userId}
             onUpload={(url) => setAvatarUrl(url)}
           />
-            <Image
-              src={avatarUrl}
-              alt="Avatar preview"
-              width={80}
-              height={80}
-              className="mt-2 rounded-full object-cover border-2 border-pink-500"
-            />
-            />
-          )}
+          <Image
+            src={avatarUrl}
+            alt="Avatar preview"
+            width={80}
+            height={80}
+            className="mt-2 rounded-full object-cover border-2 border-pink-500"
+          />
         </div>
       )}
 
