@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import CycleCard from "@/components/CycleCard";
 
 export default function DashboardPage() {
   const [day, setDay] = useState<number | null>(null);
+
   interface MujerChakanaData {
     arquetipo: string;
     elemento: string;
@@ -15,6 +17,7 @@ export default function DashboardPage() {
 
   const [data, setData] = useState<MujerChakanaData | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,18 +26,39 @@ export default function DashboardPage() {
         error,
       } = await supabase.auth.getUser();
 
-      if (!user || error) return;
+      if (!user || error) {
+        router.push("/login");
+        return;
+      }
 
-      // Obtener la fecha de inicio del ciclo
-      const { data: perfil } = await supabase
+      // Verificar si el perfil existe
+      const { data: perfil, error: perfilError } = await supabase
         .from("perfiles")
-        .select("fecha_inicio")
+        .select("*")
         .eq("user_id", user.id)
         .single();
 
-      if (!perfil?.fecha_inicio) return;
+      // Si no hay perfil, creamos uno nuevo vacío
+      if (!perfil) {
+        await supabase.from("perfiles").insert([
+          {
+            user_id: user.id,
+            display_name: user.user_metadata?.name || "",
+            avatar_url: user.user_metadata?.avatar_url || "",
+            fecha_inicio: null,
+          },
+        ]);
+        router.push("/perfil"); // Redirige para que configure su ciclo
+        return;
+      }
 
-      // Calcular el día del ciclo
+      // Si existe pero no tiene fecha de inicio, también redirigimos
+      if (!perfil.fecha_inicio) {
+        router.push("/perfil");
+        return;
+      }
+
+      // Calcular día del ciclo
       const fechaInicio = new Date(perfil.fecha_inicio);
       const hoy = new Date();
       const diffTime = hoy.getTime() - fechaInicio.getTime();
@@ -43,7 +67,7 @@ export default function DashboardPage() {
 
       setDay(diaDelCiclo);
 
-      // Obtener contenido de la tabla mujer_chakana
+      // Traer contenido del día correspondiente
       const { data: contenido } = await supabase
         .from("mujer_chakana")
         .select("*")
@@ -55,7 +79,7 @@ export default function DashboardPage() {
     };
 
     fetchData();
-  }, []);
+  }, [router]);
 
   if (loading) return <p className="text-center mt-10">Cargando tu ciclo...</p>;
 
