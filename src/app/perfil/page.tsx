@@ -19,6 +19,9 @@ export default function PerfilPage() {
         error,
       } = await supabase.auth.getUser();
 
+      console.log("Redirigiendo al dashboard...");
+      router.push("/dashboard");
+
       if (error || !user) {
         router.push("/login");
         return;
@@ -93,7 +96,7 @@ export default function PerfilPage() {
         onClick={handleSave}
         className="mt-6 w-full bg-pink-700 text-white py-2 rounded hover:bg-pink-800 transition"
       >
-        Guardar cambios
+        Guardar cambios console.log(&quot;Guardando perfil...&quot;);
       </button>
     </div>
   );
