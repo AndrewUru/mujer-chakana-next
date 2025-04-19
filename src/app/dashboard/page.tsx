@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import "@/app/globals.css";
-import { AudioLines, Flower, Sparkles } from "lucide-react";
+import { AudioLines, Flower } from "lucide-react";
 import Image from "next/image";
 
 interface MujerChakanaData {
