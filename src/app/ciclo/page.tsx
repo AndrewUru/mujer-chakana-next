@@ -34,7 +34,8 @@ export default function CicloPage() {
     fetchCiclo();
   }, []);
 
-  if (loading) return <p className="text-center mt-10">Cargando el ciclo completo...</p>;
+  if (loading)
+    return <p className="text-center mt-10">Cargando el ciclo completo...</p>;
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
@@ -54,7 +55,9 @@ export default function CicloPage() {
             <p className="text-sm text-purple-600 mb-1">
               Elemento: {dia.elemento}
             </p>
-            <p className="text-gray-800 italic mb-2">"{dia.mensaje}"</p>
+            <p className="text-gray-800 italic mb-2">
+              &quot;{dia.mensaje}&quot;
+            </p>
             <audio controls className="w-full">
               <source src={dia.audio_url} type="audio/mpeg" />
               Tu navegador no soporta audio.
