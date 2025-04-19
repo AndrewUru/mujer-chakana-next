@@ -47,13 +47,13 @@ export default function HomePage() {
 
         <div className="flex justify-center gap-4 pt-4">
           <button
-            onClick={() => router.push("/register")}
+            onClick={() => router.push("/auth/register")}
             className="flex items-center gap-2 px-5 py-2 bg-pink-700 text-white rounded-lg hover:bg-pink-800 transition"
           >
             ✨ Registrate
           </button>
           <button
-            onClick={() => router.push("/login")}
+            onClick={() => router.push("/auth/login")}
             className="px-5 py-2 border border-pink-400 text-pink-700 rounded-lg hover:bg-pink-100 transition"
           >
             Ya tengo cuenta
