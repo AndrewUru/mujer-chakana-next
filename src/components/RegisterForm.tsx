@@ -67,7 +67,7 @@ export default function RegisterForm() {
         placeholder="Correo electrónico"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="border border-pink-300 p-2 rounded"
+        className="border border-pink-300 p-2 rounded placeholder-pink-500"
         required
       />
 
@@ -76,7 +76,7 @@ export default function RegisterForm() {
         placeholder="Contraseña"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        className="border border-pink-300 p-2 rounded"
+        className="border border-pink-300 p-2 rounded placeholder-pink-500"
         required
       />
 
@@ -85,7 +85,7 @@ export default function RegisterForm() {
         placeholder="Nombre de usuaria"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        className="border border-pink-300 p-2 rounded"
+        className="border border-pink-300 p-2 rounded placeholder-pink-500"
       />
 
       {userId && (
@@ -101,7 +101,7 @@ export default function RegisterForm() {
               alt="Avatar preview"
               width={80}
               height={80}
-              className="mt-2 rounded-full object-cover border-2 border-pink-500"
+              className="mt-2 rounded-full object-cover border-2 border-pink-500 placeholder-pink-500"
             />
           )}
         </div>
