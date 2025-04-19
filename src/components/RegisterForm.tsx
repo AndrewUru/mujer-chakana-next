@@ -2,36 +2,22 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "../lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
 import AvatarUploader from "./AvatarUploader";
 
 export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [userId, setUserId] = useState("");
+  const [mensaje, setMensaje] = useState("");
   const router = useRouter();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!email || !password || !confirmPassword || !username) {
-      alert("⚠️ Por favor completá todos los campos.");
-      return;
-    }
-
-    if (password.length < 6) {
-      alert("⚠️ La contraseña debe tener al menos 6 caracteres.");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      alert("❌ Las contraseñas no coinciden.");
-      return;
-    }
+    setMensaje("");
 
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -39,7 +25,7 @@ export default function RegisterForm() {
     });
 
     if (error) {
-      alert("❌ Error al registrarse: " + error.message);
+      setMensaje("❌ Error: " + error.message);
       return;
     }
 
@@ -47,17 +33,23 @@ export default function RegisterForm() {
     if (user) {
       setUserId(user.id);
 
-      await supabase.from("perfiles").insert([
+      const { error: insertError } = await supabase.from("perfiles").insert([
         {
           user_id: user.id,
           username,
           display_name: username,
           avatar_url: avatarUrl,
+          perfil_completo: false, // 👈 muy importante
         },
       ]);
 
-      alert("✅ Registro exitoso. Revisa tu correo para confirmar tu cuenta.");
-      router.push("/dashboard");
+      if (insertError) {
+        setMensaje("❌ Error al crear el perfil: " + insertError.message);
+        return;
+      }
+
+      // Redirigimos a setup para que termine de completar
+      router.push("/setup");
     }
   };
 
@@ -66,7 +58,7 @@ export default function RegisterForm() {
       onSubmit={handleRegister}
       className="flex flex-col gap-4 max-w-md mx-auto mt-10 bg-white p-6 rounded shadow"
     >
-      <h1 className="text-2xl font-bold text-center text-pink-900">
+      <h1 className="text-2xl font-bold text-center text-pink-800">
         Crear cuenta
       </h1>
 
@@ -89,28 +81,16 @@ export default function RegisterForm() {
       />
 
       <input
-        type="password"
-        placeholder="Repetir contraseña"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        className="border border-pink-300 p-2 rounded"
-        required
-      />
-
-      <input
         type="text"
         placeholder="Nombre de usuaria"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         className="border border-pink-300 p-2 rounded"
-        required
       />
 
       {userId && (
         <div className="mt-2">
-          <label className="text-sm font-medium text-pink-800">
-            Tu imagen de perfil
-          </label>
+          <label className="text-sm font-medium">Tu imagen de perfil</label>
           <AvatarUploader
             userId={userId}
             onUpload={(url) => setAvatarUrl(url)}
@@ -133,6 +113,8 @@ export default function RegisterForm() {
       >
         Registrarse
       </button>
+
+      {mensaje && <p className="text-sm text-red-600">{mensaje}</p>}
     </form>
   );
 }

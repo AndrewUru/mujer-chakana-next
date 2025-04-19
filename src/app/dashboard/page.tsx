@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import "@/app/globals.css";
-
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import CycleCard from "@/components/CycleCard";
+import ContenidoDelDia from "@/components/ContenidoDelDía";
+import "@/app/globals.css";
 
 interface MujerChakanaData {
   arquetipo: string;
@@ -40,14 +40,12 @@ export default function DashboardPage() {
         return;
       }
 
-      // Buscar perfil del usuario
       const { data: perfilData } = await supabase
         .from("perfiles")
         .select("*")
         .eq("user_id", user.id)
         .single();
 
-      // Si no existe, creamos perfil vacío
       if (!perfilData) {
         await supabase.from("perfiles").insert([
           {
@@ -61,7 +59,6 @@ export default function DashboardPage() {
         return;
       }
 
-      // Si no tiene fecha de inicio aún
       if (!perfilData.fecha_inicio) {
         router.push("/perfil");
         return;
@@ -69,7 +66,6 @@ export default function DashboardPage() {
 
       setPerfil(perfilData);
 
-      // Calcular día del ciclo
       const fechaInicio = new Date(perfilData.fecha_inicio);
       const hoy = new Date();
       const diffTime = hoy.getTime() - fechaInicio.getTime();
@@ -77,7 +73,6 @@ export default function DashboardPage() {
       const diaDelCiclo = (diffDays % 28) + 1;
       setDay(diaDelCiclo);
 
-      // Obtener contenido de mujer_chakana
       const { data: contenido } = await supabase
         .from("mujer_chakana")
         .select("*")
@@ -110,6 +105,9 @@ export default function DashboardPage() {
           audioUrl={data.audio_url}
         />
       )}
+
+      {/* Nuevo componente para mostrar imagen/video/pdf */}
+      <ContenidoDelDia />
     </div>
   );
 }
