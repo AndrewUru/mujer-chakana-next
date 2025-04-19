@@ -49,7 +49,7 @@ export default function RegisterForm() {
       }
 
       // Redirigimos a setup para que termine de completar
-      router.push("/setup");
+      router.push("/dashboard");
     }
   };
 
