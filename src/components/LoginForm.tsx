@@ -30,17 +30,17 @@ export default function LoginForm() {
     } = await supabase.auth.getUser();
 
     if (user) {
-      // Buscamos su perfil en la tabla
-      const { data: perfil, error: perfilError } = await supabase
+      const { data: perfiles, error: perfilError } = await supabase
         .from("perfiles")
         .select("perfil_completo")
-        .eq("user_id", user.id)
-        .single();
+        .eq("user_id", user.id);
 
-      if (perfilError) {
-        setMensaje(`⚠️ Error al consultar el perfil: ${perfilError.message}`);
+      if (perfilError || !perfiles || perfiles.length === 0) {
+        setMensaje("⚠️ No se encontró un perfil para este usuario.");
         return;
       }
+
+      const perfil = perfiles[0];
 
       // Redirigir según estado del perfil
       if (perfil?.perfil_completo) {
