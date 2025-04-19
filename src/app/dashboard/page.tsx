@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import CycleCard from "@/components/CycleCard";
-import ContenidoDelDia from "@/components/ContenidoDelDía";
 import "@/app/globals.css";
 
 interface MujerChakanaData {
@@ -105,9 +104,6 @@ export default function DashboardPage() {
           audioUrl={data.audio_url}
         />
       )}
-
-      {/* Nuevo componente para mostrar imagen/video/pdf */}
-      <ContenidoDelDia />
     </div>
   );
 }
