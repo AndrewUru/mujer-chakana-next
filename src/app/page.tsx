@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import Image from "next/image";
 
 export default function HomePage() {
   const router = useRouter();
@@ -17,17 +18,29 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-pink-50 text-pink-900 px-4 py-12">
-      <div className="max-w-xl w-full text-center space-y-6">
-        <h1 className="text-5xl font-extrabold tracking-tight">
-          Mujer Chakana
-        </h1>
+      <div className="max-w-2xl w-full text-center space-y-8 bg-white p-8 rounded-2xl shadow-lg">
+        {/* Logo centrado */}
+        <Image
+          src="/logo_chakana.png"
+          alt="Logo Mujer Chakana"
+          width={140}
+          height={140}
+          className="mx-auto mb-2 opacity-95"
+        />
 
-        <p className="text-lg text-pink-700">
+        <h1 className="text-4xl font-extrabold text-pink-800">Mujer Chakana</h1>
+
+        <p className="text-md text-pink-600">
+          🔵 Una guía cíclica y espiritual para conectar contigo misma,
+          registrar tu energía y florecer desde el alma.
+        </p>
+
+        <p className="text-lg text-pink-700 leading-relaxed">
           Bienvenida a tu espacio de reconexión cíclica. Aquí cada día te ofrece
           una oportunidad para escucharte, escribirte y florecer desde adentro.
         </p>
 
-        <p className="text-base">
+        <p className="text-base text-green-800">
           🌿 Desde el primer día hasta el retorno, cada ciclo es sagrado.
           Explora tus energías, regístralas y permite que esta herramienta te
           acompañe con dulzura.
@@ -37,12 +50,20 @@ export default function HomePage() {
           “Cuando me escucho, recuerdo quién soy.”
         </p>
 
-        <button
-          onClick={() => router.push("/dashboard")}
-          className="mt-4 px-6 py-2 bg-pink-700 text-white rounded-lg hover:bg-pink-800 transition"
-        >
-          Comenzar mi viaje ✨
-        </button>
+        <div className="flex justify-center gap-4 pt-4">
+          <button
+            onClick={() => router.push("/register")}
+            className="flex items-center gap-2 px-5 py-2 bg-pink-700 text-white rounded-lg hover:bg-pink-800 transition"
+          >
+            ✨ Comenzar mi viaje
+          </button>
+          <button
+            onClick={() => router.push("/login")}
+            className="px-5 py-2 border border-pink-400 text-pink-700 rounded-lg hover:bg-pink-100 transition"
+          >
+            Ya tengo cuenta
+          </button>
+        </div>
       </div>
     </main>
   );

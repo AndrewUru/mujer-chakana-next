@@ -94,7 +94,7 @@ export default function PerfilPage() {
         onClick={handleSave}
         className="mt-6 w-full bg-pink-700 text-white py-2 rounded hover:bg-pink-800 transition"
       >
-        Guardar cambios console.log(&quot;Guardando perfil...&quot;);
+        Guardar cambios
       </button>
     </div>
   );

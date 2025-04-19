@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import "@/app/globals.css";
@@ -9,33 +9,57 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mensaje, setMensaje] = useState("");
-  const [modo, setModo] = useState<"password" | "magic">("password"); // 👈
+  const [modo, setModo] = useState<"password" | "magic">("password");
 
   const router = useRouter();
+
+  useEffect(() => {
+    setMensaje("");
+    setPassword(""); // Limpiar password si se cambia de modo
+  }, [modo]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setMensaje("");
 
-    if (modo === "password") {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+    if (!email) {
+      setMensaje("⚠️ Por favor ingresá tu correo electrónico.");
+      return;
+    }
 
-      if (error) {
-        setMensaje(`⚠️ Error al iniciar sesión: ${error.message}`);
-      } else {
-        router.push("/dashboard");
-      }
-    } else {
-      const { error } = await supabase.auth.signInWithOtp({ email });
+    if (modo === "password" && !password) {
+      setMensaje("⚠️ Por favor ingresá tu contraseña.");
+      return;
+    }
 
-      if (error) {
-        setMensaje(`⚠️ Error al enviar el enlace mágico: ${error.message}`);
+    try {
+      if (modo === "password") {
+        console.log("Login con contraseña", email, password);
+
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          setMensaje(`⚠️ Error al iniciar sesión: ${error.message}`);
+        } else {
+          router.push("/dashboard");
+        }
       } else {
-        setMensaje("📩 Revisa tu correo: ¡Te enviamos un enlace mágico!");
+        console.log("Login con enlace mágico", email);
+
+        const { error } = await supabase.auth.signInWithOtp({ email });
+
+        if (error) {
+          setMensaje(`⚠️ Error al enviar el enlace mágico: ${error.message}`);
+        } else {
+          setMensaje("📩 Revisa tu correo: ¡Te enviamos un enlace mágico!");
+        }
       }
+    } catch (err) {
+      setMensaje("❌ Ocurrió un error inesperado. Intentalo de nuevo.");
+      console.error(err);
     }
   };
 

@@ -17,27 +17,36 @@ export default function AvatarUploader({
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     setDragging(false);
-    const file = e.dataTransfer.files[0];
+    setError(""); // limpiar errores anteriores
 
+    if (!userId) {
+      setError("No se ha cargado el usuario aún.");
+      return;
+    }
+
+    const file = e.dataTransfer.files[0];
     if (!file) return;
 
     const fileExt = file.name.split(".").pop();
     const fileName = `${userId}.${fileExt}`;
-    const filePath = `${fileName}`;
+    const filePath = `${userId}/${fileName}`;
 
     setUploading(true);
     const { error: uploadError } = await supabase.storage
       .from("avatars")
-      .upload(filePath, file, { upsert: true });
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: true,
+      });
 
     if (uploadError) {
-      setError("Error al subir imagen");
+      console.error("❌ Error al subir imagen:", uploadError.message);
+      setError(`Error: ${uploadError.message}`);
       setUploading(false);
       return;
     }
 
     const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
-
     if (data?.publicUrl) {
       onUpload(data.publicUrl);
     }
@@ -53,7 +62,7 @@ export default function AvatarUploader({
       }}
       onDragLeave={() => setDragging(false)}
       onDrop={handleDrop}
-      className={`border-2 border-dashed rounded p-6 text-center ${
+      className={`border-2 border-dashed rounded p-6 text-center cursor-pointer ${
         dragging ? "border-pink-700 bg-pink-100" : "border-pink-300"
       }`}
     >

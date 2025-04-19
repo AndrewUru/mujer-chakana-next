@@ -9,6 +9,7 @@ import AvatarUploader from "./AvatarUploader";
 export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [userId, setUserId] = useState("");
@@ -17,19 +18,34 @@ export default function RegisterForm() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!email || !password || !confirmPassword || !username) {
+      alert("⚠️ Por favor completá todos los campos.");
+      return;
+    }
+
+    if (password.length < 6) {
+      alert("⚠️ La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert("❌ Las contraseñas no coinciden.");
+      return;
+    }
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
 
     if (error) {
-      alert("Error: " + error.message);
+      alert("❌ Error al registrarse: " + error.message);
       return;
     }
 
     const user = data.user;
     if (user) {
-      setUserId(user.id); // 👈 para usar en el uploader
+      setUserId(user.id);
 
       await supabase.from("perfiles").insert([
         {
@@ -40,6 +56,7 @@ export default function RegisterForm() {
         },
       ]);
 
+      alert("✅ Registro exitoso. Revisa tu correo para confirmar tu cuenta.");
       router.push("/dashboard");
     }
   };
@@ -47,9 +64,11 @@ export default function RegisterForm() {
   return (
     <form
       onSubmit={handleRegister}
-      className="flex flex-col gap-4 max-w-md mx-auto mt-10"
+      className="flex flex-col gap-4 max-w-md mx-auto mt-10 bg-white p-6 rounded shadow"
     >
-      <h1 className="text-2xl font-bold text-center">Crear cuenta</h1>
+      <h1 className="text-2xl font-bold text-center text-pink-900">
+        Crear cuenta
+      </h1>
 
       <input
         type="email"
@@ -70,39 +89,43 @@ export default function RegisterForm() {
       />
 
       <input
+        type="password"
+        placeholder="Repetir contraseña"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        className="border border-pink-300 p-2 rounded"
+        required
+      />
+
+      <input
         type="text"
         placeholder="Nombre de usuaria"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         className="border border-pink-300 p-2 rounded"
+        required
       />
 
-      {/* AvatarUploader se muestra cuando ya se creó el usuario (para tener el userId) */}
       {userId && (
         <div className="mt-2">
-          <label className="text-sm font-medium">Tu imagen de perfil</label>
+          <label className="text-sm font-medium text-pink-800">
+            Tu imagen de perfil
+          </label>
           <AvatarUploader
             userId={userId}
             onUpload={(url) => setAvatarUrl(url)}
           />
-          <Image
-            src={avatarUrl}
-            alt="Avatar preview"
-            width={80}
-            height={80}
-            className="mt-2 rounded-full object-cover border-2 border-pink-500"
-          />
+          {avatarUrl && (
+            <Image
+              src={avatarUrl}
+              alt="Avatar preview"
+              width={80}
+              height={80}
+              className="mt-2 rounded-full object-cover border-2 border-pink-500"
+            />
+          )}
         </div>
       )}
-
-      {/* Si no vas a usar input URL, puedes quitar esto */}
-      {/* <input
-        type="text"
-        placeholder="URL del avatar"
-        value={avatarUrl}
-        onChange={(e) => setAvatarUrl(e.target.value)}
-        className="border border-pink-300 p-2 rounded"
-      /> */}
 
       <button
         type="submit"
