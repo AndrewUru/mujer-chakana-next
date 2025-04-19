@@ -4,12 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import AvatarUploader from "@/components/AvatarUploader";
-import "@/app/globals.css";
 
 export default function PerfilPage() {
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
-  const [userId, setUserId] = useState("");
+  const [userId, setUserId] = useState(""); // <- Asegurate de tener este estado
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -25,7 +24,7 @@ export default function PerfilPage() {
         return;
       }
 
-      setUserId(user.id);
+      setUserId(user.id); // <- ¡Este es el paso clave!
 
       const { data: perfil } = await supabase
         .from("perfiles")
@@ -50,7 +49,7 @@ export default function PerfilPage() {
       .update({
         display_name: username,
         avatar_url: avatarUrl,
-        fecha_inicio: new Date(), // solo si la estás estableciendo aquí
+        fecha_inicio: new Date(),
       })
       .eq("user_id", userId);
 
@@ -58,7 +57,7 @@ export default function PerfilPage() {
       alert("❌ Error al guardar: " + error.message);
     } else {
       alert("✅ Perfil actualizado");
-      router.push("/dashboard"); // 👈 Redirige después de guardar
+      router.push("/dashboard");
     }
   };
 
