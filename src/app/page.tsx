@@ -1,20 +1,20 @@
 "use client";
 
-import { useEffect } from "react";
+//import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+//import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
 
 export default function HomePage() {
   const router = useRouter();
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        router.push("/dashboard");
-      }
-    });
-  }, [router]);
+  //useEffect(() => {
+  //supabase.auth.getSession().then(({ data: { session } }) => {
+  //if (session?.user) {
+  //router.push("/dashboard");
+  //}
+  //});
+  //}, [router]);
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-pink-50 text-pink-900 px-4 py-12">
