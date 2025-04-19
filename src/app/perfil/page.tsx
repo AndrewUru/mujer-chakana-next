@@ -19,9 +19,6 @@ export default function PerfilPage() {
         error,
       } = await supabase.auth.getUser();
 
-      console.log("Redirigiendo al dashboard...");
-      router.push("/dashboard");
-
       if (error || !user) {
         router.push("/login");
         return;
