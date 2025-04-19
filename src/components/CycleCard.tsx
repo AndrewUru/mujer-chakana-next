@@ -5,14 +5,17 @@ interface Props {
   arquetipo: string;
   elemento: string;
   mensaje: string;
+  descripcion: string;
   audioUrl?: string;
+  tip_extra: string;
 }
 
 export default function CycleCard({
   day,
   arquetipo,
   elemento,
-  mensaje,
+  tip_extra,
+  descripcion,
   audioUrl,
 }: Props) {
   return (
@@ -24,7 +27,8 @@ export default function CycleCard({
         🔮 Día {day} – {arquetipo}
       </h2>
       <p className="text-pink-600 mb-2">Elemento: {elemento}</p>
-      <p className="text-gray-700 italic">{mensaje}</p>
+      <p className="text-gray-700 italic">{tip_extra}</p>
+      <p className="text-gray-700 italic">{descripcion}</p>
 
       {audioUrl && (
         <div className="mt-4">
