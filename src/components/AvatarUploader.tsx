@@ -1,73 +1,120 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import Image from "next/image";
+import AvatarUploader from "./AvatarUploader";
 
-export default function AvatarUploader({
-  userId,
-  onUpload,
-}: {
-  userId: string;
-  onUpload: (url: string) => void;
-}) {
-  const [dragging, setDragging] = useState(false);
-  const [error, setError] = useState("");
-  const [uploading, setUploading] = useState(false);
+export default function RegisterForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [userId, setUserId] = useState("");
+  const [mensaje, setMensaje] = useState("");
+  const router = useRouter();
 
-  const handleDrop = async (e: React.DragEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setDragging(false);
-    setError(""); // limpiar errores anteriores
+    setMensaje("");
 
-    if (!userId) {
-      setError("No se ha cargado el usuario aún.");
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) {
+      setMensaje("❌ Error: " + error.message);
       return;
     }
 
-    const file = e.dataTransfer.files[0];
-    if (!file) return;
+    const user = data.user;
+    if (user) {
+      setUserId(user.id);
 
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${userId}.${fileExt}`;
-    const filePath = `${userId}/${fileName}`;
+      const { error: insertError } = await supabase.from("perfiles").insert([
+        {
+          id: user.id, // 👈 esta línea soluciona el error
+          user_id: user.id,
+          display_name: username,
+          avatar_url: avatarUrl,
+          perfil_completo: false, // 👈 muy importante
+        },
+      ]);
 
-    setUploading(true);
-    const { error: uploadError } = await supabase.storage
-      .from("avatars")
-      .upload(filePath, file, {
-        cacheControl: "3600",
-        upsert: true,
-      });
+      if (insertError) {
+        setMensaje("❌ Error al crear el perfil: " + insertError.message);
+        return;
+      }
 
-    if (uploadError) {
-      console.error("❌ Error al subir imagen:", uploadError.message);
-      setError(`Error: ${uploadError.message}`);
-      setUploading(false);
-      return;
+      // Redirigimos a setup para que termine de completar
+      router.push("/dashboard");
     }
-
-    const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
-    if (data?.publicUrl) {
-      onUpload(data.publicUrl);
-    }
-
-    setUploading(false);
   };
 
   return (
-    <div
-      onDragOver={(e) => {
-        e.preventDefault();
-        setDragging(true);
-      }}
-      onDragLeave={() => setDragging(false)}
-      onDrop={handleDrop}
-      className={`border-2 border-dashed rounded p-6 text-center cursor-pointer ${
-        dragging ? "border-pink-700 bg-pink-100" : "border-pink-300"
-      }`}
+    <form
+      onSubmit={handleRegister}
+      className="flex flex-col gap-4 max-w-md mx-auto mt-10 bg-white p-6 rounded shadow"
     >
-      {uploading ? "Subiendo..." : "Arrastrá y soltá tu imagen de perfil aquí"}
-      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-    </div>
+      <h1 className="text-2xl font-bold text-center text-pink-800">
+        Crear cuenta
+      </h1>
+
+      <input
+        type="email"
+        placeholder="Correo electrónico"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="border border-pink-300 p-2 rounded placeholder-pink-500"
+        required
+      />
+
+      <input
+        type="password"
+        placeholder="Contraseña"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="border border-pink-300 p-2 rounded placeholder-pink-500"
+        required
+      />
+
+      <input
+        type="text"
+        placeholder="Nombre de usuaria"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        className="border border-pink-300 p-2 rounded placeholder-pink-500"
+      />
+
+      {userId && (
+        <div className="mt-2">
+          <label className="text-sm font-medium">Tu imagen de perfil</label>
+          <AvatarUploader
+            userId={userId}
+            onUpload={(url) => setAvatarUrl(url)}
+          />
+          {avatarUrl && (
+            <Image
+              src={avatarUrl}
+              alt="Avatar preview"
+              width={80}
+              height={80}
+              className="mt-2 rounded-full object-cover border-2 border-pink-500 placeholder-pink-500"
+            />
+          )}
+        </div>
+      )}
+
+      <button
+        type="submit"
+        className="bg-pink-700 text-white p-2 rounded hover:bg-pink-800 transition"
+      >
+        Registrarse
+      </button>
+
+      {mensaje && <p className="text-sm text-red-600">{mensaje}</p>}
+    </form>
   );
 }
