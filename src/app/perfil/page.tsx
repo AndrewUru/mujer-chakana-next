@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import AvatarUploader from "@/components/AvatarUploader";
-import "@/globals.css";
+import "@/app/globals.css";
 
 export default function PerfilPage() {
   const [username, setUsername] = useState("");

@@ -2,6 +2,7 @@
 
 //import { useEffect, useState } from "react";
 import { useState } from "react";
+import "@/app/globals.css";
 
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";

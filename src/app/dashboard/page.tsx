@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import "@/globals.css";
+import "@/app/globals.css";
+
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import CycleCard from "@/components/CycleCard";

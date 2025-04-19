@@ -1,5 +1,5 @@
 import RegisterForm from "@/components/RegisterForm";
-import "@/globals.css";
+import "@/app/globals.css";
 
 export default function RegisterPage() {
   return (
