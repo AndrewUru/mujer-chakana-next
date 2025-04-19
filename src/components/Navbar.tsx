@@ -31,7 +31,7 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push("/login");
+    router.push("/auth/login");
   };
 
   return (
@@ -69,7 +69,7 @@ export default function Navbar() {
           </button>
         ) : (
           <NavItem
-            href="/login"
+            href="/auth/login"
             icon={<LogIn className="w-5 h-5" />}
             label="Iniciar"
           />

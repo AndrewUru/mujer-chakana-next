@@ -35,11 +35,6 @@ export default function HomePage() {
           registrar tu energía y florecer desde el alma.
         </p>
 
-        <p className="text-lg text-pink-700 leading-relaxed">
-          Bienvenida a tu espacio de reconexión cíclica. Aquí cada día te ofrece
-          una oportunidad para escucharte, escribirte y florecer desde adentro.
-        </p>
-
         <p className="text-base text-green-800">
           🌿 Desde el primer día hasta el retorno, cada ciclo es sagrado.
           Explora tus energías, regístralas y permite que esta herramienta te
@@ -52,13 +47,13 @@ export default function HomePage() {
 
         <div className="flex justify-center gap-4 pt-4">
           <button
-            onClick={() => router.push("/register")}
+            onClick={() => router.push("/auth/register")}
             className="flex items-center gap-2 px-5 py-2 bg-pink-700 text-white rounded-lg hover:bg-pink-800 transition"
           >
             ✨ Comenzar mi viaje
           </button>
           <button
-            onClick={() => router.push("/login")}
+            onClick={() => router.push("/auth/login")}
             className="px-5 py-2 border border-pink-400 text-pink-700 rounded-lg hover:bg-pink-100 transition"
           >
             Ya tengo cuenta
