@@ -5,17 +5,24 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import CycleCard from "@/components/CycleCard";
 
+interface MujerChakanaData {
+  arquetipo: string;
+  elemento: string;
+  mensaje: string;
+  audio_url: string;
+}
+
+interface Perfil {
+  display_name: string;
+  fecha_inicio: string;
+  avatar_url: string | null;
+  user_id: string;
+}
+
 export default function DashboardPage() {
   const [day, setDay] = useState<number | null>(null);
-
-  interface MujerChakanaData {
-    arquetipo: string;
-    elemento: string;
-    mensaje: string;
-    audio_url: string;
-  }
-
   const [data, setData] = useState<MujerChakanaData | null>(null);
+  const [perfil, setPerfil] = useState<Perfil | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -30,17 +37,16 @@ export default function DashboardPage() {
         router.push("/login");
         return;
       }
-      console.log("Usuario actual:", user, error);
 
-      // Verificar si el perfil existe
-      const { data: perfil } = await supabase
+      // Buscar perfil del usuario
+      const { data: perfilData } = await supabase
         .from("perfiles")
         .select("*")
         .eq("user_id", user.id)
         .single();
 
-      // Si no hay perfil, creamos uno nuevo vacío
-      if (!perfil) {
+      // Si no existe, creamos perfil vacío
+      if (!perfilData) {
         await supabase.from("perfiles").insert([
           {
             user_id: user.id,
@@ -49,26 +55,27 @@ export default function DashboardPage() {
             fecha_inicio: null,
           },
         ]);
-        router.push("/perfil"); // Redirige para que configure su ciclo
-        return;
-      }
-
-      // Si existe pero no tiene fecha de inicio, también redirigimos
-      if (!perfil.fecha_inicio) {
         router.push("/perfil");
         return;
       }
 
+      // Si no tiene fecha de inicio aún
+      if (!perfilData.fecha_inicio) {
+        router.push("/perfil");
+        return;
+      }
+
+      setPerfil(perfilData);
+
       // Calcular día del ciclo
-      const fechaInicio = new Date(perfil.fecha_inicio);
+      const fechaInicio = new Date(perfilData.fecha_inicio);
       const hoy = new Date();
       const diffTime = hoy.getTime() - fechaInicio.getTime();
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
       const diaDelCiclo = (diffDays % 28) + 1;
-
       setDay(diaDelCiclo);
 
-      // Traer contenido del día correspondiente
+      // Obtener contenido de mujer_chakana
       const { data: contenido } = await supabase
         .from("mujer_chakana")
         .select("*")
@@ -85,7 +92,13 @@ export default function DashboardPage() {
   if (loading) return <p className="text-center mt-10">Cargando tu ciclo...</p>;
 
   return (
-    <div className="max-w-xl mx-auto mt-10 px-4">
+    <div className="max-w-xl mx-auto mt-10 px-4 text-center">
+      {perfil && (
+        <h2 className="text-2xl font-bold text-pink-800 mb-6">
+          🌸 ¡Hola, {perfil.display_name}!
+        </h2>
+      )}
+
       {data && (
         <CycleCard
           day={day!}
