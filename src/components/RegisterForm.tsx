@@ -35,6 +35,7 @@ export default function RegisterForm() {
 
       const { error: insertError } = await supabase.from("perfiles").insert([
         {
+          id: user.id, // 👈 esta línea soluciona el error
           user_id: user.id,
           display_name: username,
           avatar_url: avatarUrl,
