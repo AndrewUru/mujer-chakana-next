@@ -4,14 +4,20 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import "@/app/globals.css";
-import { AudioLines, Flower } from "lucide-react";
 import Image from "next/image";
+import CycleCard from "@/components/CycleCard";
 
 interface MujerChakanaData {
+  id: number;
+  dia_ciclo: number;
   arquetipo: string;
+  descripcion: string;
+  imagen_url?: string;
   elemento: string;
-  mensaje: string;
-  audio_url: string;
+  audio_url?: string;
+  ritual_pdf?: string;
+  tip_extra: string;
+  semana?: number;
 }
 
 interface Perfil {
@@ -105,33 +111,20 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Contenido del día */}
-      {data && (
-        <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4 border border-pink-100">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-pink-800 flex items-center gap-2">
-              <Flower className="w-5 h-5" />
-              Arquetipo: {data.arquetipo}
-            </h3>
-            <span className="text-sm bg-pink-100 text-pink-700 px-2 py-1 rounded-full">
-              Elemento: {data.elemento}
-            </span>
-          </div>
-
-          <p className="text-md leading-relaxed text-gray-700 italic">
-            “{data.mensaje}”
-          </p>
-
-          {data.audio_url && (
-            <div className="flex items-center gap-2">
-              <AudioLines className="w-5 h-5 text-pink-500" />
-              <audio controls className="w-full">
-                <source src={data.audio_url} type="audio/mpeg" />
-                Tu navegador no soporta el audio.
-              </audio>
-            </div>
-          )}
-        </div>
+      {data ? (
+        <CycleCard
+          day={data.dia_ciclo}
+          arquetipo={data.arquetipo}
+          elemento={data.elemento}
+          descripcion={data.descripcion}
+          audioUrl={data.audio_url}
+          tip_extra={data.tip_extra}
+          imagenUrl={data.imagen_url}
+          ritualPdf={data.ritual_pdf}
+          semana={data.semana}
+        />
+      ) : (
+        <p className="text-gray-500">Cargando tu arquetipo del día...</p>
       )}
 
       {/* Acciones sugeridas */}
