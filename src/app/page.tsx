@@ -58,6 +58,12 @@ export default function HomePage() {
           >
             Ya tengo cuenta
           </button>
+          <button
+            onClick={() => router.push("/manual")}
+            className="px-5 py-2 text-sm text-pink-600 underline hover:text-pink-800 transition"
+          >
+            📘 Ver Manual de Usuario
+          </button>
         </div>
       </div>
     </main>

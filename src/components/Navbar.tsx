@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-import { Home, Moon, Settings, LogIn, LogOut } from "lucide-react";
+import { Home, Moon, Settings, Book, LogIn, LogOut } from "lucide-react";
 import Image from "next/image";
 
 export default function Navbar() {
@@ -43,6 +43,12 @@ export default function Navbar() {
           icon={<Moon className="w-5 h-5" />}
           label="Ciclo"
         />
+        <NavItem
+          href="/manual"
+          icon={<Book className="w-5 h-5" />}
+          label="Manual"
+        />
+
         <NavItem
           href="/setup"
           icon={<Settings className="w-5 h-5" />}

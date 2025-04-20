@@ -22,15 +22,24 @@ interface MujerChakanaData {
 
 interface Perfil {
   display_name: string;
-  fecha_inicio: string;
   avatar_url: string | null;
   user_id: string;
+}
+
+interface Fase {
+  nombre_fase: string;
+  resumen_emocional: string;
+  energia?: number;
+  espiritualidad?: number;
+  creatividad?: number;
+  ciclo_id: string;
 }
 
 export default function DashboardPage() {
   const [day, setDay] = useState<number | null>(null);
   const [data, setData] = useState<MujerChakanaData | null>(null);
   const [perfil, setPerfil] = useState<Perfil | null>(null);
+  const [fase, setFase] = useState<Fase | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -52,18 +61,32 @@ export default function DashboardPage() {
         .eq("user_id", user.id)
         .single();
 
-      if (!perfilData || !perfilData.fecha_inicio) {
+      if (!perfilData) {
         router.push("/perfil");
         return;
       }
 
       setPerfil(perfilData);
 
-      const fechaInicio = new Date(perfilData.fecha_inicio);
+      const { data: ciclo } = await supabase
+        .from("ciclos")
+        .select("*")
+        .eq("usuario_id", user.id)
+        .order("fecha_inicio", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (!ciclo || !ciclo.fecha_inicio) {
+        router.push("/ciclo");
+        return;
+      }
+
+      const fechaInicio = new Date(ciclo.fecha_inicio);
       const hoy = new Date();
       const diffTime = hoy.getTime() - fechaInicio.getTime();
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      const diaDelCiclo = (diffDays % 28) + 1;
+      const diaDelCiclo = (diffDays % ciclo.duracion) + 1;
+
       setDay(diaDelCiclo);
 
       const { data: contenido } = await supabase
@@ -73,6 +96,17 @@ export default function DashboardPage() {
         .single();
 
       setData(contenido);
+
+      // Obtener fase actual desde la tabla fases
+      const { data: faseData } = await supabase
+        .from("fases")
+        .select("*")
+        .eq("ciclo_id", ciclo.id)
+        .lte("fecha_inicio", new Date()) // ya comenzó
+        .gte("fecha_fin", new Date()) // aún no terminó
+        .single();
+
+      setFase(faseData);
       setLoading(false);
     };
 
@@ -84,9 +118,24 @@ export default function DashboardPage() {
       <p className="text-center text-gray-700 mt-10">🌙 Cargando tu ciclo...</p>
     );
 
+  const getFaseColor = (nombre: string) => {
+    switch (nombre?.toLowerCase()) {
+      case "agua":
+        return "bg-blue-100 text-blue-700";
+      case "tierra":
+        return "bg-green-100 text-green-800";
+      case "fuego":
+        return "bg-red-100 text-red-700";
+      case "aire":
+        return "bg-yellow-100 text-yellow-700";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-8 text-pink-900">
-      {/* Encabezado de bienvenida */}
+      {/* Header */}
       {perfil && (
         <div className="flex items-center gap-4 mb-6 bg-pink-50 border border-pink-100 rounded-xl p-4 shadow">
           {perfil.avatar_url ? (
@@ -111,6 +160,7 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {/* Arquetipo del día */}
       {data ? (
         <CycleCard
           day={data.dia_ciclo}
@@ -127,7 +177,21 @@ export default function DashboardPage() {
         <p className="text-gray-500">Cargando tu arquetipo del día...</p>
       )}
 
-      {/* Acciones sugeridas */}
+      {/* Fase actual */}
+      {fase && (
+        <div
+          className={`mt-6 p-4 rounded-xl shadow-md ${getFaseColor(
+            fase.nombre_fase
+          )}`}
+        >
+          <h3 className="text-lg font-bold">
+            🔮 Fase actual: {fase.nombre_fase}
+          </h3>
+          <p className="mt-2">{fase.resumen_emocional}</p>
+        </div>
+      )}
+
+      {/* Acciones */}
       <div className="mt-6 flex justify-center gap-4">
         <button
           onClick={() => router.push("/perfil")}
