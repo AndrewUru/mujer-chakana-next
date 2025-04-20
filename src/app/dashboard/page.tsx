@@ -137,7 +137,7 @@ export default function DashboardPage() {
         </button>
         <button
           onClick={() => router.push("/ciclo")}
-          className="bg-pink-700 text-white px-4 py-2 rounded-lg mt-4 hover:bg-pink-800 transition"
+          className="bg-pink-700 text-white px-4 py-2 rounded-lg hover:bg-pink-800 transition"
         >
           🌙 Ver todo el ciclo
         </button>
