@@ -5,10 +5,11 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-export default function Bienvenida() {
+export default function BienvenidaPage() {
   const router = useRouter();
 
-  const isLoggedIn = true; // Aquí va tu lógica real de autenticación
+  // 🚨 Aquí pon tu lógica de autenticación real más adelante
+  const isLoggedIn = true;
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -28,13 +29,13 @@ export default function Bienvenida() {
           className="max-w-xl"
         >
           <Image
-            src="/luna-llena.png"
+            src="/logo_chakana.png"
             alt="Luna Chakana"
-            width={120}
-            height={120}
+            width={220}
+            height={220}
             className="mx-auto mb-6 animate-pulse"
           />
-          <h1 className="text-3xl font-bold mb-4">🌕 Bienvenida al círculo</h1>
+          <h1 className="text-3xl font-bold mb-4">Bienvenida al círculo</h1>
           <p className="text-lg leading-relaxed">
             Has comenzado un viaje de 28 días hacia ti misma. Desde el agua que
             purifica, hasta el fuego que transforma, honrarás tu ritmo sagrado

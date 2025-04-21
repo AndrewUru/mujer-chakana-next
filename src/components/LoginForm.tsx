@@ -45,7 +45,7 @@ export default function LoginForm() {
       }
 
       const perfil = perfiles[0];
-      router.push(perfil.perfil_completo ? "/dashboard" : "/setup");
+      router.push(perfil.perfil_completo ? "/bienvenida" : "/setup");
     }
 
     setLoading(false);
