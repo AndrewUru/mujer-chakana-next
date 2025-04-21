@@ -18,3 +18,18 @@
     --foreground: #ededed;
   }
 }
+
+.printable * {
+  background-color: white !important;
+  color: black !important;
+  font-family: sans-serif !important;
+}
+
+/* Esta clase se usa SOLO para exportar contenido como imagen/pdf */
+.export-pdf * {
+  background-color: white !important;
+  color: black !important;
+  font-family: sans-serif !important;
+  box-shadow: none !important;
+  border-color: #ccc !important;
+}

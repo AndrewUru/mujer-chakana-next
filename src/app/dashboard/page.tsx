@@ -7,6 +7,7 @@ import "@/app/globals.css";
 import Image from "next/image";
 import CycleCard from "@/components/CycleCard";
 import Moonboard from "@/components/Moonboard";
+import MoonboardResumen from "@/components/MoonboardResumen";
 
 interface MujerChakanaData {
   id: number;
@@ -193,10 +194,8 @@ export default function DashboardPage() {
       )}
 
       <div className="p-8">
-        <h1 className="text-2xl font-bold mb-4 text-pink-800">
-          🌸 Mi Moonboard
-        </h1>
         <Moonboard />
+        <MoonboardResumen />
       </div>
 
       {/* Acciones */}
