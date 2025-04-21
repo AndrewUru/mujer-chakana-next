@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabaseClient";
 import "@/app/globals.css";
 import Image from "next/image";
 import CycleCard from "@/components/CycleCard";
+import Moonboard from "@/components/Moonboard";
 
 interface MujerChakanaData {
   id: number;
@@ -190,6 +191,13 @@ export default function DashboardPage() {
           <p className="mt-2">{fase.resumen_emocional}</p>
         </div>
       )}
+
+      <div className="p-8">
+        <h1 className="text-2xl font-bold mb-4 text-pink-800">
+          🌸 Mi Moonboard
+        </h1>
+        <Moonboard />
+      </div>
 
       {/* Acciones */}
       <div className="mt-6 flex justify-center gap-4">
