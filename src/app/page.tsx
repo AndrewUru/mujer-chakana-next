@@ -50,19 +50,7 @@ export default function HomePage() {
             onClick={() => router.push("/auth/register")}
             className="flex items-center gap-2 px-5 py-2 bg-pink-700 text-white rounded-lg hover:bg-pink-800 transition"
           >
-            ✨ Registrate
-          </button>
-          <button
-            onClick={() => router.push("/auth/login")}
-            className="px-5 py-2 border border-pink-400 text-pink-700 rounded-lg hover:bg-pink-100 transition"
-          >
-            Ya tengo cuenta
-          </button>
-          <button
-            onClick={() => router.push("/manual")}
-            className="px-5 py-2 text-sm text-pink-600 underline hover:text-pink-800 transition"
-          >
-            📘 Ver Manual de Usuario
+            ✨ Registrate GRATIS
           </button>
         </div>
       </div>
