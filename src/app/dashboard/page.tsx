@@ -53,7 +53,7 @@ export default function DashboardPage() {
       } = await supabase.auth.getUser();
 
       if (!user || error) {
-        router.push("/login");
+        router.push("/auth/login");
         return;
       }
 
