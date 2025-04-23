@@ -1,10 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "class", // 🌙 Habilita modo oscuro basado en clase
   content: ["./src/**/*.{js,ts,jsx,tsx}", "./app/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
-        // 🎨 Colores pink en HEX para evitar oklch
+        // 🎨 Paleta Mujer Chakana
         pink: {
           50: "#ffe4f0",
           100: "#ffb8d2",
