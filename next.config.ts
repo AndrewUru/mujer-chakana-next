@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    domains: ["onlnbinfmtfbawocixf.supabase.co"], // Reemplaza con tu dominio Supabase si es diferente
+    domains: ["https://onlnbinftmtdbawocixf.supabase.co"], // Reemplaza con tu dominio Supabase si es diferente
   },
 };
 
