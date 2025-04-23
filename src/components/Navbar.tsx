@@ -44,7 +44,7 @@ export default function Navbar() {
         {loggedIn ? (
           <button
             onClick={handleLogout}
-            className="flex flex-col items-center gap-1 text-pink-700 dark:text-pink-200 hover:text-pink-900 dark:hover:text-white transition animate-pulse"
+            className="flex flex-col items-center gap-1 hover:text-pink-900 dark:hover:text-white"
           >
             {avatar ? (
               <Image
@@ -52,7 +52,7 @@ export default function Navbar() {
                 alt="avatar"
                 width={28}
                 height={28}
-                className="rounded-full border-2 border-pink-400 shadow"
+                className="rounded-full border-2 border-pink-400 dark:border-pink-200 shadow"
               />
             ) : (
               <LogOut className="w-5 h-5" />
@@ -79,7 +79,7 @@ function NavItem({
   return (
     <Link
       href={href}
-      className="flex flex-col items-center gap-1 text-pink-700 dark:text-pink-200 hover:text-pink-900 dark:hover:text-white transition hover:animate-pulse"
+      className="flex flex-col items-center gap-1 text-pink-700 dark:text-pink-200 hover:text-pink-900 dark:hover:text-white"
     >
       <div className="w-7 h-7 flex items-center justify-center">{icon}</div>
       <span className="text-xs">{label}</span>

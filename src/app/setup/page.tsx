@@ -8,10 +8,6 @@ export default function SetupPage() {
       <div className="max-w-xl w-full text-center space-y-6">
         <h1 className="text-3xl font-bold">🌕 Estás comenzando tu viaje</h1>
 
-        <p className="text-base text-pink-700">
-          Bienvenida a Mujer Chakana. Este es tu espacio de reconexión.
-        </p>
-
         <p className="text-base">
           Configura tu perfil para que esta herramienta te acompañe en tu
           recorrido personal y energético.

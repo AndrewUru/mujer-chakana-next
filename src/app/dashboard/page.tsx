@@ -42,6 +42,8 @@ export default function DashboardPage() {
   const [data, setData] = useState<MujerChakanaData | null>(null);
   const [perfil, setPerfil] = useState<Perfil | null>(null);
   const [fase, setFase] = useState<Fase | null>(null);
+  const [fechaInicioCiclo, setFechaInicioCiclo] = useState<Date | null>(null);
+  const [fechaFinCiclo, setFechaFinCiclo] = useState<Date | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -95,6 +97,11 @@ export default function DashboardPage() {
 
       setDay(diaDelCiclo);
 
+      const fechaFin = new Date(fechaInicio);
+      fechaFin.setDate(fechaInicio.getDate() + ciclo.duracion - 1);
+      setFechaInicioCiclo(fechaInicio);
+      setFechaFinCiclo(fechaFin);
+
       const { data: contenido } = await supabase
         .from("mujer_chakana")
         .select("*")
@@ -140,7 +147,6 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8 text-pink-900">
-      {/* Header */}
       {perfil && (
         <div className="flex items-center gap-4 mb-6 bg-pink-50 border border-pink-100 rounded-xl p-4 shadow">
           {perfil.avatar_url ? (
@@ -165,7 +171,22 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Arquetipo del día */}
+      {fechaInicioCiclo && fechaFinCiclo && (
+        <div className="mb-6 bg-white p-4 rounded-xl shadow-md border border-pink-200">
+          <h3 className="text-lg font-semibold text-pink-800 mb-2">
+            🗓 Ciclo actual
+          </h3>
+          <p className="text-sm text-gray-700">
+            Hoy es <strong>{new Date().toLocaleDateString()}</strong> — estás en
+            el <strong>Día {day}</strong> de tu ciclo 🌕
+          </p>
+          <p className="text-sm text-gray-600 mt-1">
+            Inicio: <strong>{fechaInicioCiclo.toLocaleDateString()}</strong> —
+            Fin: <strong>{fechaFinCiclo.toLocaleDateString()}</strong>
+          </p>
+        </div>
+      )}
+
       {data ? (
         <CycleCard
           day={data.dia_ciclo}
@@ -182,7 +203,6 @@ export default function DashboardPage() {
         <p className="text-gray-500">Cargando tu arquetipo del día...</p>
       )}
 
-      {/* Fase actual */}
       {fase && (
         <div
           className={`mt-6 p-4 rounded-xl shadow-md ${getFaseColor(
@@ -201,7 +221,6 @@ export default function DashboardPage() {
         <MoonboardResumen />
       </div>
 
-      {/* Acciones */}
       <div className="mt-6 flex justify-center gap-4">
         <button
           onClick={() => router.push("/perfil")}

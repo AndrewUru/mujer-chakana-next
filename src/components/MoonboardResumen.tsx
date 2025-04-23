@@ -26,7 +26,8 @@ export default function MoonboardResumen() {
       const { data, error } = await supabase
         .from("registros")
         .select("*")
-        .order("fecha", { ascending: true });
+        .order("fecha", { ascending: false }) // Últimas primero
+        .limit(3); // Solo 3
 
       if (!error && data) {
         setRegistros(data as Registro[]);
@@ -53,7 +54,7 @@ export default function MoonboardResumen() {
   return (
     <div className="p-6 bg-white rounded-xl shadow-lg mt-8">
       <h2 className="text-2xl font-bold text-pink-700 mb-4">
-        📝 Mi Resumen Lunar
+        📝 Últimas 3 anotaciones
       </h2>
 
       <div ref={refToExport} className="space-y-4 printable">
