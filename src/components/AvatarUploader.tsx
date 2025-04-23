@@ -6,13 +6,14 @@ import { supabase } from "@/lib/supabaseClient";
 interface AvatarUploaderProps {
   userId: string;
   onUpload: (url: string) => void;
+  setIsUploading?: (uploading: boolean) => void; // ✅ Ahora es una prop opcional
 }
 
 export default function AvatarUploader({
   userId,
   onUpload,
+  setIsUploading,
 }: AvatarUploaderProps) {
-  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,10 +21,16 @@ export default function AvatarUploader({
     const file = e.target.files?.[0];
     if (!file || !userId) return;
 
+    if (file.size > 2 * 1024 * 1024) {
+      setError("La imagen debe ser menor a 2MB");
+      return;
+    }
+
     const fileExt = file.name.split(".").pop();
     const filePath = `${userId}/avatar.${fileExt}`;
 
-    setUploading(true);
+    setIsUploading?.(true);
+
     const { error: uploadError } = await supabase.storage
       .from("avatars")
       .upload(filePath, file, {
@@ -31,7 +38,7 @@ export default function AvatarUploader({
         upsert: true,
       });
 
-    setUploading(false);
+    setIsUploading?.(false);
 
     if (uploadError) {
       console.error("❌ Error al subir imagen:", uploadError.message);
@@ -53,9 +60,6 @@ export default function AvatarUploader({
         onChange={handleFileChange}
         className="w-full border border-dashed border-pink-300 p-2 rounded bg-pink-50 text-sm"
       />
-      {uploading && (
-        <p className="text-pink-600 text-sm mt-2">Subiendo imagen...</p>
-      )}
       {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
     </div>
   );
