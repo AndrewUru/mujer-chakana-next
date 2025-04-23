@@ -24,7 +24,7 @@ export default function LunarModal({
       const proximasFases = Object.entries(fases)
         .map(([nombre, date]) => ({
           nombre,
-          timestamp: new Date(date).getTime(),
+          timestamp: new Date(date as string | number | Date).getTime(),
         }))
         .sort(
           (a, b) =>

@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import "@/app/globals.css";
-import { MujerChakanaData, Perfil, Fase } from "@/types/index";
+import { MujerChakanaData, Fase } from "@/types/index";
 import { calcularDiaCiclo } from "@/lib/cicloUtils";
-import PerfilCard from "@/components/PerfilCard";
 import CicloResumen from "@/components/CicloResumen";
 import FaseActualCard from "@/components/FaseActualCard";
 import CycleCard from "@/components/CycleCard";
@@ -17,7 +16,7 @@ import LunarModal from "@/components/LunarModal.tsx";
 export default function DashboardPage() {
   const [day, setDay] = useState<number | null>(null);
   const [data, setData] = useState<MujerChakanaData | null>(null);
-  const [perfil, setPerfil] = useState<Perfil | null>(null);
+  // Removed unused perfil state
   const [fase, setFase] = useState<Fase | null>(null);
   const [fechaInicioCiclo, setFechaInicioCiclo] = useState<Date | null>(null);
   const [fechaFinCiclo, setFechaFinCiclo] = useState<Date | null>(null);
@@ -40,17 +39,20 @@ export default function DashboardPage() {
       const { data: perfilData } = await supabase
         .from("perfiles")
         .select("*")
-          .single();
-        setShowLunar(showLunarData?.show_lunar ?? false);
         .single();
-
       if (!perfilData) {
         router.push("/perfil");
         return;
       }
       const { data: showLunarData } = await supabase
+        .from("configuracion")
+        .select("show_lunar")
+        .eq("user_id", user.id)
+        .single();
 
-      const { data: showLunar } = await supabase
+      setShowLunar(showLunarData?.show_lunar ?? false);
+
+      await supabase
         .from("configuracion")
         .select("show_lunar")
         .eq("user_id", user.id)
@@ -109,7 +111,7 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8 text-pink-900">
-      {perfil && <PerfilCard perfil={perfil} day={day} />}
+      {/* Removed unused perfil rendering */}
       {fechaInicioCiclo && fechaFinCiclo && (
         <CicloResumen
           day={day ?? 0}
@@ -146,12 +148,6 @@ export default function DashboardPage() {
         )}
       </div>
       <div className="mt-6 flex justify-center gap-4">
-        <button
-          onClick={() => router.push("/perfil")}
-          className="border border-pink-300 text-pink-700 px-4 py-2 rounded-lg hover:bg-pink-100 transition"
-        >
-          Editar perfil
-        </button>
         <button
           onClick={() => router.push("/ciclo")}
           className="bg-pink-700 text-white px-4 py-2 rounded-lg hover:bg-pink-800 transition"

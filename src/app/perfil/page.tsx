@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
 import AvatarUploader from "@/components/AvatarUploader";
 
@@ -81,13 +82,13 @@ export default function PerfilPage() {
       </label>
       <AvatarUploader userId={userId} onUpload={(url) => setAvatarUrl(url)} />
 
-      {avatarUrl && (
-        <img
-          src={avatarUrl}
-          alt="Avatar"
-          className="mt-4 rounded-full w-24 h-24 object-cover mx-auto border-2 border-pink-500"
-        />
-      )}
+      <Image
+        src={avatarUrl}
+        alt="Avatar"
+        width={96}
+        height={96}
+        className="mt-4 rounded-full object-cover mx-auto border-2 border-pink-500"
+      />
 
       <button
         onClick={handleSave}
