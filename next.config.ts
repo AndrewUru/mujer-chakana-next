@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    domains: ["onlnbinfmtfbawocixf.supabase.co"], // ✅ aquí el dominio correcto
+    domains: ["onlnbinftmtdbawocixf.supabase.co"], // ✅ aquí el dominio correcto
   },
 };
 
