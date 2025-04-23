@@ -13,7 +13,7 @@ export default function SetupPage() {
         </p>
 
         <p className="text-base">
-          Configurá tu perfil para que esta herramienta te acompañe en tu
+          Configura tu perfil para que esta herramienta te acompañe en tu
           recorrido personal y energético.
         </p>
 

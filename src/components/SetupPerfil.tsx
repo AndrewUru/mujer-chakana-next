@@ -94,7 +94,7 @@ export default function SetupPerfil() {
   return (
     <div className="bg-white p-6 rounded shadow text-pink-900 max-w-md mx-auto mt-10">
       <h2 className="text-xl font-semibold text-center mb-4">
-        Completá tu perfil
+        Completa tu perfil
       </h2>
 
       <label className="block text-sm font-medium mb-1">

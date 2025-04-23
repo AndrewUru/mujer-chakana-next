@@ -21,7 +21,7 @@ export default function AvatarUploader({
     if (!file || !userId) return;
 
     const fileExt = file.name.split(".").pop();
-    const filePath = `${userId}/${userId}.${fileExt}`;
+    const filePath = `${userId}/avatar.${fileExt}`;
 
     setUploading(true);
     const { error: uploadError } = await supabase.storage
