@@ -12,6 +12,7 @@ export default function SetupPerfil() {
   const [userId, setUserId] = useState("");
   const [fechaInicio, setFechaInicio] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -37,6 +38,7 @@ export default function SetupPerfil() {
       if (perfil) {
         setUsername(perfil.display_name || "");
         setAvatarUrl(perfil.avatar_url || "");
+        setFechaInicio(perfil.fecha_inicio || "");
       }
 
       setLoading(false);
@@ -51,7 +53,20 @@ export default function SetupPerfil() {
       return;
     }
 
-    // 1. Crear ciclo nuevo
+    if (isUploading) {
+      alert("⏳ La imagen aún se está subiendo. Por favor espera.");
+      return;
+    }
+
+    if (!avatarUrl) {
+      const confirmar = confirm(
+        "⚠️ No subiste una imagen de perfil. ¿Quieres continuar sin ella?"
+      );
+      if (!confirmar) return;
+    }
+
+    console.log("🖼 Guardando con avatar:", avatarUrl);
+
     const { data: cicloNuevo, error: cicloError } = await supabase
       .from("ciclos")
       .insert({
@@ -69,7 +84,6 @@ export default function SetupPerfil() {
       return;
     }
 
-    // 2. Actualizar perfil con datos + ciclo_id
     const { error: perfilError } = await supabase
       .from("perfiles")
       .update({
@@ -107,7 +121,11 @@ export default function SetupPerfil() {
       />
 
       <label className="block text-sm font-medium mb-1">Tu imagen</label>
-      <AvatarUploader userId={userId} onUpload={(url) => setAvatarUrl(url)} />
+      <AvatarUploader
+        userId={userId}
+        onUpload={(url) => setAvatarUrl(url)}
+        setIsUploading={setIsUploading}
+      />
 
       {avatarUrl && (
         <Image
@@ -131,9 +149,14 @@ export default function SetupPerfil() {
 
       <button
         onClick={handleSave}
-        className="w-full bg-pink-700 text-white py-2 rounded hover:bg-pink-800 transition"
+        disabled={isUploading}
+        className={`w-full py-2 rounded transition ${
+          isUploading
+            ? "bg-gray-400 text-white cursor-not-allowed"
+            : "bg-pink-700 text-white hover:bg-pink-800"
+        }`}
       >
-        Guardar y comenzar 🌸
+        {isUploading ? "Subiendo imagen..." : "Guardar y comenzar 🌸"}
       </button>
     </div>
   );
