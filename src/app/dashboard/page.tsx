@@ -12,7 +12,7 @@ import FaseActualCard from "@/components/FaseActualCard";
 import CycleCard from "@/components/CycleCard";
 import Moonboard from "@/components/Moonboard";
 import MoonboardResumen from "@/components/MoonboardResumen";
-import RegistroForm from "@/components/RegistroForm";
+import LunarModal from "@/components/LunarModal.tsx";
 
 export default function DashboardPage() {
   const [day, setDay] = useState<number | null>(null);
@@ -23,6 +23,7 @@ export default function DashboardPage() {
   const [fechaFinCiclo, setFechaFinCiclo] = useState<Date | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [showLunar, setShowLunar] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,14 +40,21 @@ export default function DashboardPage() {
       const { data: perfilData } = await supabase
         .from("perfiles")
         .select("*")
-        .eq("user_id", user.id)
+          .single();
+        setShowLunar(showLunarData?.show_lunar ?? false);
         .single();
 
       if (!perfilData) {
         router.push("/perfil");
         return;
       }
-      setPerfil(perfilData);
+      const { data: showLunarData } = await supabase
+
+      const { data: showLunar } = await supabase
+        .from("configuracion")
+        .select("show_lunar")
+        .eq("user_id", user.id)
+        .single();
 
       const { data: ciclo } = await supabase
         .from("ciclos")
@@ -124,11 +132,18 @@ export default function DashboardPage() {
       ) : (
         <p className="text-gray-500">Cargando tu arquetipo del día...</p>
       )}
+
       {fase && <FaseActualCard fase={fase} />}
       <div className="p-8">
         <Moonboard />
         <MoonboardResumen />
-        <RegistroForm userId={perfil.user_id} />
+        {showLunar && (
+          <LunarModal
+            day={day ?? 0}
+            fecha={new Date().toISOString().slice(0, 10)}
+            onClose={() => setShowLunar(false)}
+          />
+        )}
       </div>
       <div className="mt-6 flex justify-center gap-4">
         <button
