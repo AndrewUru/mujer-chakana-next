@@ -85,9 +85,13 @@ export default function DashboardPage() {
 
       const fechaInicio = new Date(ciclo.fecha_inicio);
       const hoy = new Date();
-      const diffTime = hoy.getTime() - fechaInicio.getTime();
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      const diaDelCiclo = (diffDays % ciclo.duracion) + 1;
+      const diffDays = Math.floor(
+        (hoy.getTime() - fechaInicio.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
+      const diaDelCiclo =
+        ((diffDays % ciclo.duracion) + ciclo.duracion) % ciclo.duracion ||
+        ciclo.duracion;
 
       setDay(diaDelCiclo);
 
@@ -99,13 +103,12 @@ export default function DashboardPage() {
 
       setData(contenido);
 
-      // Obtener fase actual desde la tabla fases
       const { data: faseData } = await supabase
         .from("fases")
         .select("*")
         .eq("ciclo_id", ciclo.id)
-        .lte("fecha_inicio", new Date()) // ya comenzó
-        .gte("fecha_fin", new Date()) // aún no terminó
+        .lte("fecha_inicio", new Date())
+        .gte("fecha_fin", new Date())
         .single();
 
       setFase(faseData);
