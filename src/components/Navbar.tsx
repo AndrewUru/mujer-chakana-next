@@ -35,8 +35,8 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-md bg-white/80 dark:bg-pink-950/90 border-t border-pink-200 dark:border-pink-800 shadow-xl rounded-t-2xl">
-      <div className="max-w-md mx-auto flex justify-around items-center py-3 px-4 text-pink-700 dark:text-pink-200 text-sm">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-md  border-pink-200 dark:border-pink-800 shadow-xl rounded-t-2xl">
+      <div className="max-w-md mx-auto flex justify-around items-center py-3 px-4 text-pink-700 text-sm">
         <NavItem href="/" icon={<Home />} label="Inicio" />
         <NavItem href="/dashboard" icon={<Moon />} label="Ciclo" />
         <NavItem href="/setup" icon={<Settings />} label="Configurar" />
@@ -44,7 +44,7 @@ export default function Navbar() {
         {loggedIn ? (
           <button
             onClick={handleLogout}
-            className="flex flex-col items-center gap-1 hover:text-pink-900 dark:hover:text-white"
+            className="flex flex-col items-center gap-1"
           >
             {avatar ? (
               <Image
@@ -79,7 +79,7 @@ function NavItem({
   return (
     <Link
       href={href}
-      className="flex flex-col items-center gap-1 text-pink-700 dark:text-pink-200 hover:text-pink-900 dark:hover:text-white"
+      className="flex flex-col items-center gap-1 text-pink-700  hover:text-pink-900"
     >
       <div className="w-7 h-7 flex items-center justify-center">{icon}</div>
       <span className="text-xs">{label}</span>
