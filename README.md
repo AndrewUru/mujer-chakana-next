@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ✨ Mujer Chakana Next
 
-## Getting Started
+**Mujer Chakana Next** es una aplicación web espiritual y cíclica, diseñada con amor para acompañar el recorrido de autoconocimiento, conexión lunar y florecimiento interior de mujeres que vibran con su energía ancestral.
 
-First, run the development server:
+🔗 Sitio oficial del proyecto: [samariluz.com](https://samariluz.com)
+
+---
+
+## 🌙 ¿Qué es Mujer Chakana?
+
+**Mujer Chakana** es una guía digital viva que integra:
+
+- 🌀 Autoconocimiento cíclico emocional, biológico, creativo y espiritual.
+- 🧬 Ginergía: la energía natural del ciclo femenino.
+- 🌕 Moonboards: mandalas lunares donde cada día se convierte en espejo del alma.
+- 🔥 Un espacio para registrar emociones, conectar con el cuerpo y recordar quiénes somos.
+
+Este proyecto nace de la visión canalizada por **Samarí Luz** y se entrelaza con el tejido sagrado de [samariluz.com](https://samariluz.com).
+
+---
+
+## 🛠️ Tecnologías
+
+- [Next.js](https://nextjs.org/) – framework React moderno.
+- [Supabase](https://supabase.com/) – base de datos y autenticación.
+- [Tailwind CSS](https://tailwindcss.com/) – estilos suaves y responsivos.
+- [Lucide Icons](https://lucide.dev/) – íconos simbólicos y sutiles.
+
+---
+
+## 🔐 Características
+
+- Registro e inicio de sesión con Supabase Auth.
+- Moonboard digital personalizado según el ciclo.
+- Navegación móvil amigable, pensada para acompañar día a día.
+- Modo claro y oscuro para honrar tu ritmo interior.
+- Panel de configuración con acceso al manual integrativo.
+- Perfil con avatar y datos energéticos.
+
+---
+
+## 📆 Instalación
+
+Sigue estos pasos para instalar y ejecutar el proyecto localmente:
+
+1. Clona este repositorio:
+
+```bash
+git clone https://github.com/AndrewUru/mujer-chakana-next.git
+```
+
+2. Navega al directorio del proyecto:
+
+```bash
+cd mujer-chakana-next
+```
+
+3. Instala las dependencias:
+
+```bash
+npm install
+```
+
+4. Inicia el servidor de desarrollo:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Accede a la aplicación en tu navegador en `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🌱 Contribución
 
-## Learn More
+Si deseas contribuir, por favor sigue estos pasos:
 
-To learn more about Next.js, take a look at the following resources:
+1. Haz un fork del repositorio.
+2. Crea una rama para tu funcionalidad o corrección:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+git checkout -b nombre-de-la-rama
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. Realiza tus cambios y haz un commit:
 
-## Deploy on Vercel
+```bash
+git commit -m "Descripción de los cambios"
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. Envía tus cambios al repositorio remoto:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+git push origin nombre-de-la-rama
+```
+
+5. Abre un Pull Request.
+
+Este proyecto está abierto a quienes deseen co-crear desde la sensibilidad, el respeto y el amor por lo cíclico.
+
+---
+
+## 📜 Licencia
+
+Este proyecto está bajo la licencia [nombre de la licencia].  
+Consulta el archivo `LICENSE` para más detalles.  
+**Canalizado por Samarí Luz · Implementado por [@AndrewUru](https://github.com/AndrewUru)**  
+Todos los derechos reservados © Ginergía, Centro de Estudios de Metafísica Nativa A.C.  
+**Uso personal, educativo y terapéutico.**
+
+---
+
+## 📬 Contacto
+
+¿Tienes preguntas, inspiración o ganas de colaborar?
+
+📧 atobio459@gmail.com
+
+> “Cuando me escucho, recuerdo quién soy.” – Mujer Chakana
