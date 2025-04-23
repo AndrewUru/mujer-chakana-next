@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import Image from "next/image";
+import { motion } from "framer-motion";
 
 interface MujerChakanaData {
   id: number;
   arquetipo: string;
-  elemento: string;
-  mensaje: string;
-  audio_url: string;
+  imagen_url?: string;
 }
 
 export default function CicloPage() {
@@ -19,7 +19,7 @@ export default function CicloPage() {
     const fetchCiclo = async () => {
       const { data, error } = await supabase
         .from("mujer_chakana")
-        .select("*")
+        .select("id, arquetipo, imagen_url")
         .order("id", { ascending: true });
 
       if (error) {
@@ -35,34 +35,44 @@ export default function CicloPage() {
   }, []);
 
   if (loading)
-    return <p className="text-center mt-10">Cargando el ciclo completo...</p>;
+    return (
+      <p className="text-center mt-10">🌙 Cargando galería de arquetipos...</p>
+    );
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center text-pink-800 mb-6">
-        🌕 Ciclo completo de Mujer Chakana
+    <div className="max-w-6xl mx-auto px-4 py-10">
+      <h1 className="text-3xl font-bold text-center text-pink-800 mb-10">
+        🌕 Galería de Arquetipos
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
         {ciclo.map((dia) => (
-          <div
+          <motion.div
             key={dia.id}
-            className="border border-pink-300 rounded-lg p-4 bg-white shadow-md"
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            viewport={{ once: true }}
+            className="relative overflow-hidden rounded-xl shadow-lg border border-pink-200 group aspect-square"
           >
-            <h2 className="text-lg font-semibold text-pink-700">
-              Día {dia.id}: {dia.arquetipo}
-            </h2>
-            <p className="text-sm text-purple-600 mb-1">
-              Elemento: {dia.elemento}
-            </p>
-            <p className="text-gray-800 italic mb-2">
-              &quot;{dia.mensaje}&quot;
-            </p>
-            <audio controls className="w-full">
-              <source src={dia.audio_url} type="audio/mpeg" />
-              Tu navegador no soporta audio.
-            </audio>
-          </div>
+            {dia.imagen_url ? (
+              <Image
+                src={dia.imagen_url}
+                alt={`Día ${dia.id}: ${dia.arquetipo}`}
+                layout="fill"
+                objectFit="cover"
+                className="transition-transform duration-500 group-hover:scale-105"
+              />
+            ) : (
+              <div className="flex items-center justify-center w-full h-full bg-pink-100 text-pink-600 text-sm">
+                Sin imagen
+              </div>
+            )}
+
+            <div className="absolute bottom-0 left-0 right-0 bg-pink-800 bg-opacity-70 text-white text-sm text-center font-medium py-2 px-1">
+              Día {dia.id} — {dia.arquetipo}
+            </div>
+          </motion.div>
         ))}
       </div>
     </div>
