@@ -14,6 +14,7 @@ interface Props {
   tip_extra: string;
   imagenUrl?: string;
   ritualPdf?: string;
+  displayName?: string;
   semana?: number;
 }
 
@@ -27,6 +28,7 @@ export default function CycleCard({
   imagenUrl,
   ritualPdf,
   semana,
+  displayName,
 }: Props) {
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6 border border-pink-200 space-y-5 transition-all">
@@ -57,6 +59,12 @@ export default function CycleCard({
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 700px"
           />
+          {displayName && (
+            <div className="text-md font-medium text-pink-700">
+              ✨ Hola, {displayName}. Hoy estás en el día {day} de tu viaje
+              cíclico 🌕
+            </div>
+          )}
         </div>
       )}
 
