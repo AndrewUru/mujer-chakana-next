@@ -22,9 +22,6 @@ const Moonboard = () => {
 
   return (
     <>
-      <h2 className="text-xl font-bold text-pink-800 mb-4 text-center">
-        🌸 Mi Moonboard
-      </h2>
       <div className="grid grid-cols-7 gap-2 p-4 justify-center items-center">
         {days.map((day) => (
           <div

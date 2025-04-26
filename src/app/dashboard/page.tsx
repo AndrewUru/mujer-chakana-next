@@ -1,148 +1,103 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-import { calcularDiaCiclo } from "@/lib/cicloUtils";
-import { MujerChakanaData, Fase } from "@/types/index";
-import CicloResumen from "@/components/CicloResumen";
-import CycleCard from "@/components/CycleCard";
-import FaseActualCard from "@/components/FaseActualCard";
+import Image from "next/image";
+import EstadoActualCiclo from "@/components/EstadoActualCiclo";
 import Moonboard from "@/components/Moonboard";
-import MoonboardResumen from "@/components/MoonboardResumen";
-import LunarModal from "@/components/LunarModal.tsx";
+import RecursosList from "@/components/RecursosList";
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [day, setDay] = useState(0);
-  const [data, setData] = useState<MujerChakanaData | null>(null);
-  const [fase, setFase] = useState<Fase | null>(null);
-  const [fechas, setFechas] = useState<{ inicio: Date; fin: Date } | null>(
-    null
-  );
-  const [showLunar, setShowLunar] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [fechaActual, setFechaActual] = useState<string>("");
+  const [day, setDay] = useState<number>(1);
+  const [estadoCiclo, setEstadoCiclo] = useState<any>(null);
+  const [recursosData, setRecursosData] = useState<any[]>([]);
 
   useEffect(() => {
-    const loadData = async () => {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser();
-      if (error || !user) return router.push("/auth/login");
+    async function loadData() {
+      const user = await supabase.auth.getUser();
+      if (user.data?.user?.id) {
+        // Obtener perfil
+        const { data: perfil } = await supabase
+          .from("perfiles")
+          .select("display_name")
+          .eq("user_id", user.data.user.id)
+          .single();
+        setUserName(perfil?.display_name || "");
 
-      const { data: perfil } = await supabase
-        .from("perfiles")
-        .select("*")
-        .single();
-      if (!perfil) return router.push("/perfil");
+        // Obtener ciclo actual
+        const { data: cicloActual } = await supabase
+          .from("ciclos")
+          .select("fecha_inicio")
+          .eq("usuario_id", user.data.user.id)
+          .order("fecha_inicio", { ascending: false })
+          .limit(1)
+          .single();
 
-      const { data: config } = await supabase
-        .from("configuracion")
-        .select("show_lunar")
-        .eq("user_id", user.id)
-        .single();
-      setShowLunar(config?.show_lunar ?? false);
+        if (cicloActual?.fecha_inicio) {
+          const inicio = new Date(cicloActual.fecha_inicio);
+          const hoy = new Date();
+          const diferencia = Math.floor(
+            (hoy.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24)
+          );
+          setDay(diferencia + 1);
+          setFechaActual(hoy.toLocaleDateString());
 
-      const { data: ciclo } = await supabase
-        .from("ciclos")
-        .select("*")
-        .eq("usuario_id", user.id)
-        .order("fecha_inicio", { ascending: false })
-        .limit(1)
-        .single();
-      if (!ciclo?.fecha_inicio) return router.push("/ciclo");
+          // ✅ Obtener estado actual del ciclo (mujer_chakana)
+          const { data: mujerChakanaData } = await supabase
+            .from("mujer_chakana")
+            .select("*")
+            .eq("dia_ciclo", diferencia + 1)
+            .single();
 
-      const fechaInicio = new Date(ciclo.fecha_inicio);
-      const diaCiclo = calcularDiaCiclo(fechaInicio.toISOString());
-      setDay(diaCiclo);
+          setEstadoCiclo(mujerChakanaData);
+        }
 
-      const fechaFin = new Date(fechaInicio);
-      fechaFin.setDate(fechaInicio.getDate() + ciclo.duracion - 1);
-      setFechas({ inicio: fechaInicio, fin: fechaFin });
+        // Obtener recursos
+        const { data: recursos } = await supabase.from("recursos").select("*");
 
-      const { data: contenido } = await supabase
-        .from("mujer_chakana")
-        .select("*")
-        .eq("id", diaCiclo)
-        .single();
-      setData(contenido);
+        setRecursosData(recursos || []);
+      }
+    }
 
-      const { data: faseActual } = await supabase
-        .from("fases")
-        .select("*")
-        .eq("ciclo_id", ciclo.id)
-        .lte("fecha_inicio", new Date())
-        .gte("fecha_fin", new Date())
-        .single();
-      setFase(faseActual);
-
-      setLoading(false);
-    };
     loadData();
-  }, [router]);
-
-  if (loading)
-    return (
-      <p className="text-center text-gray-700 mt-10">🌙 Cargando tu ciclo...</p>
-    );
+  }, []);
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-10 space-y-10 text-rose-900">
-      {fechas && (
-        <CicloResumen
-          day={day}
-          fechaInicioCiclo={fechas.inicio}
-          fechaFinCiclo={fechas.fin}
-        />
+    <main className="max-w-6xl mx-auto p-6 space-y-12 text-rose-900">
+      {/* Encabezado */}
+      <section className="space-y-4">
+        <h1 className="text-3xl font-bold">🌸 Bienvenida, {userName}</h1>
+        <p className="text-lg">
+          Hoy es {fechaActual} — Día {day} de tu ciclo 🌙
+        </p>
+      </section>
+
+      {/* Estado Actual del Ciclo */}
+      {estadoCiclo && (
+        <section>
+          <EstadoActualCiclo data={estadoCiclo} />
+        </section>
       )}
 
-      {data && (
-        <div className="bg-white/80 backdrop-blur-md shadow-md rounded-3xl p-6 space-y-4">
-          <h2 className="text-xl font-bold text-fuchsia-700 flex items-center gap-2">
-            🌺 Día {data.dia_ciclo} – {data.arquetipo}
-          </h2>
-
-          <p className="uppercase text-xs tracking-wide text-pink-500">
-            ELEMENTO: {data.elemento}
-          </p>
-
-          <img
-            src={data.imagen_url}
-            alt={data.arquetipo}
-            className="rounded-xl object-cover w-full h-52"
-          />
-
-          <p className="text-sm leading-relaxed">{data.descripcion}</p>
-
-          <div className="bg-rose-100 p-3 rounded-lg text-rose-800 text-sm italic border-l-4 border-fuchsia-400">
-            ✧ {data.tip_extra}
-          </div>
-        </div>
+      {estadoCiclo && (
+        <section>
+          <EstadoActualCiclo data={estadoCiclo} />
+        </section>
       )}
 
-      {fase && <FaseActualCard fase={fase} />}
-
-      <div className="space-y-6">
+      {/* NUEVO: Mi Moonboard Diario */}
+      <section>
+        <h2 className="text-2xl font-semibold mb-4">🌓 Mi Moonboard Diario</h2>
         <Moonboard />
-        <MoonboardResumen />
-        {showLunar && (
-          <LunarModal
-            day={day}
-            fecha={new Date().toISOString().slice(0, 10)}
-            onClose={() => setShowLunar(false)}
-          />
-        )}
-      </div>
+      </section>
 
-      <div className="flex justify-center">
-        <button
-          onClick={() => router.push("/ciclo")}
-          className="mt-6 text-pink-700 border border-pink-300 px-6 py-2 rounded-full hover:bg-pink-100 transition-all"
-        >
-          ✧ Ver el Mandala Lunar completo
-        </button>
-      </div>
-    </div>
+      {/* Recursos */}
+      <section>
+        <h2 className="text-2xl font-semibold mb-4">🔮 Recursos Sagrados</h2>
+        <RecursosList recursos={recursosData} />
+      </section>
+    </main>
   );
 }
