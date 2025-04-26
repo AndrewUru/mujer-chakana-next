@@ -16,6 +16,7 @@ interface Props {
   ritualPdf?: string;
   displayName?: string;
   semana?: number;
+  suscripcionActiva: boolean;
 }
 
 export default function CycleCard({
@@ -29,6 +30,7 @@ export default function CycleCard({
   ritualPdf,
   semana,
   displayName,
+  suscripcionActiva,
 }: Props) {
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6 border border-pink-200 space-y-5 transition-all">

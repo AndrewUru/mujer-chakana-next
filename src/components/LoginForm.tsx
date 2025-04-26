@@ -32,7 +32,7 @@ export default function LoginForm() {
     }
 
     checkSession();
-  }, []);
+  }, [router]); // <- aquí agregamos [router] ✅
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
