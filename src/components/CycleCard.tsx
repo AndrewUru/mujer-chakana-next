@@ -82,28 +82,44 @@ export default function CycleCard({
       )}
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-2">
-        {ritualPdf && (
-          <a
-            href={ritualPdf}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-pink-600 hover:text-pink-800 font-medium"
-          >
-            <FileText className="w-4 h-4" /> Ver ritual en PDF
-          </a>
-        )}
+        {/* Ritual PDF */}
+        {ritualPdf ? (
+          suscripcionActiva ? (
+            <a
+              href={ritualPdf}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-pink-600 hover:text-pink-800 font-medium"
+            >
+              <FileText className="w-4 h-4" /> Ver ritual en PDF
+            </a>
+          ) : (
+            <div className="flex items-center gap-2 text-sm text-rose-400">
+              <FileText className="w-4 h-4" />
+              <span>🔒 Ritual disponible para suscriptoras</span>
+            </div>
+          )
+        ) : null}
 
-        {audioUrl && (
-          <div className="flex flex-col w-full sm:w-auto">
-            <label className="text-sm text-pink-700 font-medium flex items-center gap-1">
-              <FileAudio className="w-4 h-4" /> Audio guía:
-            </label>
-            <audio controls className="w-full mt-1">
-              <source src={audioUrl} type="audio/mpeg" />
-              Tu navegador no soporta audio 😢
-            </audio>
-          </div>
-        )}
+        {/* Audio guía */}
+        {audioUrl ? (
+          suscripcionActiva ? (
+            <div className="flex flex-col w-full sm:w-auto">
+              <label className="text-sm text-pink-700 font-medium flex items-center gap-1">
+                <FileAudio className="w-4 h-4" /> Audio guía:
+              </label>
+              <audio controls className="w-full mt-1">
+                <source src={audioUrl} type="audio/mpeg" />
+                Tu navegador no soporta audio 😢
+              </audio>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-sm text-rose-400">
+              <FileAudio className="w-4 h-4" />
+              <span>🔒 Audio disponible para suscriptoras</span>
+            </div>
+          )
+        ) : null}
       </div>
     </div>
   );
