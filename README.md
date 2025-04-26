@@ -10,7 +10,7 @@
 
 **Mujer Chakana** es una guía digital viva que integra:
 
-- 🌀 Autoconocimiento cíclico emocional, biológico, creativo y espiritual.
+- 🄀 Autoconocimiento cíclico emocional, biológico, creativo y espiritual.
 - 🧬 Ginergía: la energía natural del ciclo femenino.
 - 🌕 Moonboards: mandalas lunares donde cada día se convierte en espejo del alma.
 - 🔥 Un espacio para registrar emociones, conectar con el cuerpo y recordar quiénes somos.
@@ -25,6 +25,7 @@ Este proyecto nace de la visión canalizada por **Samarí Luz** y se entrelaza c
 - [Supabase](https://supabase.com/) – base de datos y autenticación.
 - [Tailwind CSS](https://tailwindcss.com/) – estilos suaves y responsivos.
 - [Lucide Icons](https://lucide.dev/) – íconos simbólicos y sutiles.
+- [NextAuth.js](https://next-auth.js.org/) – autenticación segura (planificada para futuras versiones).
 
 ---
 
@@ -36,10 +37,15 @@ Este proyecto nace de la visión canalizada por **Samarí Luz** y se entrelaza c
 - Modo claro y oscuro para honrar tu ritmo interior.
 - Panel de configuración con acceso al manual integrativo.
 - Perfil con avatar y datos energéticos.
+- ✨ **Panel de Administración:**
+  - Crear, editar y eliminar Arquetipos Mujer Chakana.
+  - Subir recursos complementarios (audios, PDFs, imágenes).
+  - Visualización previa de imágenes, audio y documentos PDF.
+- 🔗 Integración directa con Supabase Storage para gestión de archivos.
 
 ---
 
-## 📆 Instalación
+## 🗓️ Instalación
 
 Sigue estos pasos para instalar y ejecutar el proyecto localmente:
 
@@ -61,7 +67,16 @@ cd mujer-chakana-next
 npm install
 ```
 
-4. Inicia el servidor de desarrollo:
+4. Configura las variables de entorno:
+
+Crea un archivo `.env.local` y agrega tus claves de Supabase:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+
+5. Inicia el servidor de desarrollo:
 
 ```bash
 npm run dev
@@ -102,7 +117,7 @@ Este proyecto está abierto a quienes deseen co-crear desde la sensibilidad, el 
 
 ## 📜 Licencia
 
-Este proyecto está bajo la licencia [nombre de la licencia].  
+Este proyecto está bajo la licencia [Creative Commons BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/).  
 Consulta el archivo `LICENSE` para más detalles.  
 **Canalizado por Samarí Luz · Implementado por [@AndrewUru](https://github.com/AndrewUru)**  
 Todos los derechos reservados © Ginergía, Centro de Estudios de Metafísica Nativa A.C.  
@@ -116,4 +131,4 @@ Todos los derechos reservados © Ginergía, Centro de Estudios de Metafísica Na
 
 📧 atobio459@gmail.com
 
-> “Cuando me escucho, recuerdo quién soy.” – Mujer Chakana
+> "Cuando me escucho, recuerdo quién soy." – Mujer Chakana
