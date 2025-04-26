@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { Loader2 } from "lucide-react";
@@ -11,6 +11,28 @@ export default function LoginForm() {
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  // Verificar sesión activa al cargar
+  useEffect(() => {
+    async function checkSession() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        const { data: perfiles } = await supabase
+          .from("perfiles")
+          .select("perfil_completo")
+          .eq("user_id", user.id);
+
+        if (perfiles && perfiles.length > 0) {
+          const perfil = perfiles[0];
+          router.push(perfil.perfil_completo ? "/bienvenida" : "/setup");
+        }
+      }
+    }
+
+    checkSession();
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -29,3 +29,28 @@ export interface Fase {
   creatividad?: number;
   ciclo_id: string;
 }
+
+export interface EstadoCiclo {
+  id: string;
+  dia_ciclo: number;
+  arquetipo: string;
+  descripcion: string;
+  imagen_url: string;
+  elemento: string;
+}
+
+export interface Moonboard {
+  id: string;
+  usuario_id: string;
+  nombre: string;
+  fecha_creacion: string;
+  datos_visuales: string; // Podrías luego definirlo mejor si quieres
+}
+
+export interface Recurso {
+  id: string;
+  tipo: string;
+  titulo: string;
+  url: string;
+  descripcion: string;
+}

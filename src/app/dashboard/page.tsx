@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import Image from "next/image";
 import EstadoActualCiclo from "@/components/EstadoActualCiclo";
+import { EstadoCiclo, Recurso } from "@/types/index"; // Adjust the path to where EstadoCiclo and Recurso are defined
 import Moonboard from "@/components/Moonboard";
 import RecursosList from "@/components/RecursosList";
 
@@ -11,8 +11,8 @@ export default function DashboardPage() {
   const [userName, setUserName] = useState<string | null>(null);
   const [fechaActual, setFechaActual] = useState<string>("");
   const [day, setDay] = useState<number>(1);
-  const [estadoCiclo, setEstadoCiclo] = useState<any>(null);
-  const [recursosData, setRecursosData] = useState<any[]>([]);
+  const [estadoCiclo, setEstadoCiclo] = useState<EstadoCiclo | null>(null);
+  const [recursosData, setRecursosData] = useState<Recurso[]>([]);
 
   useEffect(() => {
     async function loadData() {
@@ -75,12 +75,6 @@ export default function DashboardPage() {
       </section>
 
       {/* Estado Actual del Ciclo */}
-      {estadoCiclo && (
-        <section>
-          <EstadoActualCiclo data={estadoCiclo} />
-        </section>
-      )}
-
       {estadoCiclo && (
         <section>
           <EstadoActualCiclo data={estadoCiclo} />
