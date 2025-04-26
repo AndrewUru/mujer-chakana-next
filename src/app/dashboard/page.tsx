@@ -70,6 +70,13 @@ export default function DashboardPage() {
     loadData();
   }, []);
 
+  function handleGoToCiclos(
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ): void {
+    event.preventDefault();
+    window.location.href = "/ciclo"; // Redirects to the "Galería de Arquetipos" page
+  }
+
   return (
     <main className="max-w-6xl mx-auto p-6 space-y-12 text-rose-900">
       {/* Encabezado */}
@@ -114,6 +121,14 @@ export default function DashboardPage() {
         <h2 className="text-2xl font-semibold mb-4">🔮 Recursos Sagrados</h2>
         <RecursosList recursos={recursosData} />
       </section>
+      <div className="flex justify-center mt-10">
+        <button
+          onClick={handleGoToCiclos}
+          className="flex items-center gap-2 bg-gradient-to-r from-pink-400 to-pink-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300"
+        >
+          🌕 Ver Galería de Arquetipos
+        </button>
+      </div>
     </main>
   );
 }
