@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation"; // 👈 Faltaba importar esto
 import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
 
@@ -10,9 +11,13 @@ interface MujerChakana {
   elemento: string;
   descripcion: string;
   imagen_url?: string;
+  audio_url?: string; // 👈 Agrego estos para que no dé error de tipos
+  ritual_pdf?: string;
 }
 
 export default function AdminMujerChakanaPage() {
+  const router = useRouter(); // 👈 Aquí inicializamos router
+
   const [arquetipos, setArquetipos] = useState<MujerChakana[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -43,7 +48,10 @@ export default function AdminMujerChakanaPage() {
       </h1>
 
       <div className="flex justify-end">
-        <button className="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700">
+        <button
+          className="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700"
+          onClick={() => router.push("/admin/mujer-chakana/crear")} // 👈 Aquí para crear nuevo
+        >
           ➕ Crear Nuevo Arquetipo
         </button>
       </div>
@@ -106,23 +114,13 @@ export default function AdminMujerChakanaPage() {
                   className="text-pink-600 hover:underline text-sm"
                   onClick={() =>
                     router.push(`/admin/mujer-chakana/editar/${item.id}`)
-                  }
+                  } // 👈 Navegar a editar
                 >
                   ✏️ Editar
                 </button>
                 <button
                   className="text-rose-500 hover:underline text-sm"
-                  onClick={async () => {
-                    if (
-                      confirm("¿Seguro que deseas eliminar este arquetipo?")
-                    ) {
-                      await supabase
-                        .from("mujer_chakana")
-                        .delete()
-                        .eq("id", item.id);
-                      fetchArquetipos(); // refrescar lista
-                    }
-                  }}
+                  onClick={() => deleteArquetipo(item.id)}
                 >
                   🗑️ Eliminar
                 </button>
