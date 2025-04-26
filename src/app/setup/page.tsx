@@ -1,14 +1,8 @@
 "use client";
 
 import SetupPerfil from "@/components/SetupPerfil";
-import SetupCiclo from "@/components/SetupCiclo";
-import SetupOpciones from "@/components/SetupOpciones";
 
 export default function SetupPage() {
-  const handleGuardarYContinuar = () => {
-    console.log("Guardado y continuado");
-  };
-
   return (
     <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-100 flex flex-col items-center text-pink-900 px-4 py-12">
       <div className="max-w-xl w-full text-center space-y-6 mb-10">
@@ -26,15 +20,7 @@ export default function SetupPage() {
 
       <section className="w-full max-w-lg space-y-10">
         <SetupPerfil />
-        <SetupCiclo />
-        <SetupOpciones />
       </section>
-      <button
-        onClick={handleGuardarYContinuar}
-        className="mt-8 w-full bg-pink-700 text-white py-3 rounded-lg font-semibold hover:bg-pink-800 transition"
-      >
-        ✨ Guardar y comenzar
-      </button>
     </main>
   );
 }

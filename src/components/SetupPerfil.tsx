@@ -107,10 +107,6 @@ export default function SetupPerfil() {
 
   return (
     <div className="bg-white p-6 rounded shadow text-pink-900 max-w-md mx-auto mt-10">
-      <h2 className="text-xl font-semibold text-center mb-4">
-        Completa tu perfil
-      </h2>
-
       <label className="block text-sm font-medium mb-1">
         Tu nombre o seudónimo
       </label>
@@ -156,7 +152,7 @@ export default function SetupPerfil() {
             : "bg-pink-700 text-white hover:bg-pink-800"
         }`}
       >
-        {isUploading ? "Subiendo imagen..." : "Guardar y comenzar 🌸"}
+        {isUploading ? "Subiendo imagen..." : "Guardar y continuar 🌸"}
       </button>
     </div>
   );

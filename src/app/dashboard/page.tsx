@@ -6,19 +6,22 @@ import EstadoActualCiclo from "@/components/EstadoActualCiclo";
 import { EstadoCiclo, Recurso } from "@/types/index"; // Adjust the path to where EstadoCiclo and Recurso are defined
 import Moonboard from "@/components/Moonboard";
 import RecursosList from "@/components/RecursosList";
+import CicloResumen from "@/components/CicloResumen"; // Ensure this path is correct
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState<string | null>(null);
   const [fechaActual, setFechaActual] = useState<string>("");
   const [day, setDay] = useState<number>(1);
   const [estadoCiclo, setEstadoCiclo] = useState<EstadoCiclo | null>(null);
+
   const [recursosData, setRecursosData] = useState<Recurso[]>([]);
+  const [fechaInicioCiclo, setFechaInicioCiclo] = useState<Date | null>(null);
+  const [fechaFinCiclo, setFechaFinCiclo] = useState<Date | null>(null);
 
   useEffect(() => {
     async function loadData() {
       const user = await supabase.auth.getUser();
       if (user.data?.user?.id) {
-        // Obtener perfil
         const { data: perfil } = await supabase
           .from("perfiles")
           .select("display_name")
@@ -26,7 +29,6 @@ export default function DashboardPage() {
           .single();
         setUserName(perfil?.display_name || "");
 
-        // Obtener ciclo actual
         const { data: cicloActual } = await supabase
           .from("ciclos")
           .select("fecha_inicio")
@@ -42,21 +44,25 @@ export default function DashboardPage() {
             (hoy.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24)
           );
           setDay(diferencia + 1);
+          setFechaInicioCiclo(inicio);
+
+          const fin = new Date(inicio);
+          fin.setDate(fin.getDate() + 27);
+          setFechaFinCiclo(fin);
+
           setFechaActual(hoy.toLocaleDateString());
 
-          // ✅ Obtener estado actual del ciclo (mujer_chakana)
+          // Aquí cargas mujer_chakana
           const { data: mujerChakanaData } = await supabase
             .from("mujer_chakana")
             .select("*")
             .eq("dia_ciclo", diferencia + 1)
             .single();
 
-          setEstadoCiclo(mujerChakanaData);
+          setEstadoCiclo(mujerChakanaData || null);
         }
 
-        // Obtener recursos
         const { data: recursos } = await supabase.from("recursos").select("*");
-
         setRecursosData(recursos || []);
       }
     }
@@ -67,9 +73,11 @@ export default function DashboardPage() {
   return (
     <main className="max-w-6xl mx-auto p-6 space-y-12 text-rose-900">
       {/* Encabezado */}
-      <section className="space-y-4">
-        <h1 className="text-3xl font-bold">🌸 Bienvenida, {userName}</h1>
-        <p className="text-lg">
+      <section className="w-full bg-pink-100/80 backdrop-blur-sm shadow-md rounded-xl p-3 flex flex-col md:flex-row justify-between items-center gap-2 mb-8">
+        <h1 className="text-lg font-semibold text-pink-800 flex items-center gap-2">
+          🌸 Bienvenida, {userName}
+        </h1>
+        <p className="text-sm text-rose-700">
           Hoy es {fechaActual} — Día {day} de tu ciclo 🌙
         </p>
       </section>
@@ -86,6 +94,20 @@ export default function DashboardPage() {
         <h2 className="text-2xl font-semibold mb-4">🌓 Mi Moonboard Diario</h2>
         <Moonboard />
       </section>
+
+      {/* CICLO RESUMEN*/}
+
+      {day && fechaInicioCiclo && fechaFinCiclo && estadoCiclo && (
+        <section>
+          <CicloResumen
+            day={day}
+            fechaInicioCiclo={fechaInicioCiclo}
+            fechaFinCiclo={fechaFinCiclo}
+            userName={userName ?? undefined}
+            mujerChakanaData={estadoCiclo}
+          />
+        </section>
+      )}
 
       {/* Recursos */}
       <section>

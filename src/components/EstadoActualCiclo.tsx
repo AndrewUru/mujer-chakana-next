@@ -6,35 +6,36 @@ export default function EstadoActualCiclo({
   data: {
     arquetipo: string;
     elemento: string;
-    descripcion: string;
     imagen_url: string;
   };
 }) {
   return (
-    <div className="bg-white/80 backdrop-blur-md shadow-lg rounded-3xl p-6 space-y-6">
-      <h2 className="text-2xl font-bold text-fuchsia-700 flex items-center gap-3">
-        🌺 Arquetipo: {data.arquetipo}
-      </h2>
-
-      <p className="uppercase text-xs font-semibold tracking-wider text-pink-500">
-        Elemento: {data.elemento}
-      </p>
-
+    <section className="relative w-full h-[300px] md:h-[450px] rounded-3xl overflow-hidden shadow-2xl bg-pink-100">
       {data.imagen_url && (
-        <div className="overflow-hidden rounded-2xl">
-          <Image
-            src={data.imagen_url}
-            alt={`Imagen del arquetipo ${data.arquetipo}`}
-            className="object-cover hover:scale-105 transition-transform duration-300"
-            width={500}
-            height={250}
-          />
-        </div>
+        <Image
+          src={data.imagen_url}
+          alt={`Imagen del arquetipo ${data.arquetipo}`}
+          layout="fill"
+          objectFit="cover"
+          className="transition-transform duration-700 ease-in-out hover:scale-105"
+          priority
+        />
       )}
 
-      <p className="text-base leading-relaxed text-gray-700">
-        {data.descripcion}
-      </p>
-    </div>
+      {/* Gradiente encima de la imagen */}
+      <div className="absolute inset-0 bg-gradient-to-b from-rose-100/60 via-rose-100/30 to-transparent"></div>
+
+      {/* Texto arriba */}
+      <div className="absolute inset-0 flex flex-col justify-end p-8 text-pink-900">
+        <div className="bg-white/70 backdrop-blur-md rounded-xl p-4 shadow-lg">
+          <h2 className="text-3xl md:text-4xl font-extrabold mb-1">
+            🌺 {data.arquetipo}
+          </h2>
+          <p className="uppercase text-xs tracking-widest font-semibold text-pink-600 mb-2">
+            Elemento: {data.elemento}
+          </p>
+        </div>
+      </div>
+    </section>
   );
 }
