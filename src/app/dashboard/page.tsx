@@ -17,57 +17,82 @@ export default function DashboardPage() {
   const [fechaInicioCiclo, setFechaInicioCiclo] = useState<Date | null>(null);
   const [fechaFinCiclo, setFechaFinCiclo] = useState<Date | null>(null);
 
-  useEffect(() => {
-    async function loadData() {
-      const user = await supabase.auth.getUser();
-      if (user.data?.user?.id) {
-        const { data: perfil } = await supabase
-          .from("perfiles")
-          .select("display_name, avatar_url, fecha_inicio")
-          .eq("user_id", user.data.user.id)
+  async function loadData() {
+    const user = await supabase.auth.getUser();
+    if (user.data?.user?.id) {
+      const { data: perfil } = await supabase
+        .from("perfiles")
+        .select("display_name, avatar_url, fecha_inicio")
+        .eq("user_id", user.data.user.id)
+        .single();
+      setUserName(perfil?.display_name || "");
+
+      const { data: cicloActual } = await supabase
+        .from("ciclos")
+        .select("fecha_inicio")
+        .eq("usuario_id", user.data.user.id)
+        .order("fecha_inicio", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (cicloActual?.fecha_inicio) {
+        const inicio = new Date(cicloActual.fecha_inicio);
+        const hoy = new Date();
+        const diferencia = Math.floor(
+          (hoy.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24)
+        );
+        setDay(diferencia + 1);
+        setFechaInicioCiclo(inicio);
+
+        const fin = new Date(inicio);
+        fin.setDate(fin.getDate() + 27);
+        setFechaFinCiclo(fin);
+
+        setFechaActual(hoy.toLocaleDateString());
+
+        const { data: mujerChakanaData } = await supabase
+          .from("mujer_chakana")
+          .select("*")
+          .eq("dia_ciclo", diferencia + 1)
           .single();
-        setUserName(perfil?.display_name || "");
 
-        const { data: cicloActual } = await supabase
-          .from("ciclos")
-          .select("fecha_inicio")
-          .eq("usuario_id", user.data.user.id)
-          .order("fecha_inicio", { ascending: false })
-          .limit(1)
-          .single();
-
-        if (cicloActual?.fecha_inicio) {
-          const inicio = new Date(cicloActual.fecha_inicio);
-          const hoy = new Date();
-          const diferencia = Math.floor(
-            (hoy.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24)
-          );
-          setDay(diferencia + 1);
-          setFechaInicioCiclo(inicio);
-
-          const fin = new Date(inicio);
-          fin.setDate(fin.getDate() + 27);
-          setFechaFinCiclo(fin);
-
-          setFechaActual(hoy.toLocaleDateString());
-
-          // Aquí cargas mujer_chakana
-          const { data: mujerChakanaData } = await supabase
-            .from("mujer_chakana")
-            .select("*")
-            .eq("dia_ciclo", diferencia + 1)
-            .single();
-
-          setEstadoCiclo(mujerChakanaData || null);
-        }
-
-        const { data: recursos } = await supabase.from("recursos").select("*");
-        setRecursosData(recursos || []);
+        setEstadoCiclo(mujerChakanaData || null);
       }
-    }
 
+      const { data: recursos } = await supabase.from("recursos").select("*");
+      setRecursosData(recursos || []);
+    }
+  }
+
+  useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    async function recargarEstadoCiclo() {
+      if (!fechaInicioCiclo) return;
+
+      const hoy = new Date();
+      const diferencia = Math.floor(
+        (hoy.getTime() - fechaInicioCiclo.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
+      const { data: mujerChakanaData, error } = await supabase
+        .from("mujer_chakana")
+        .select("*")
+        .eq("dia_ciclo", diferencia + 1)
+        .single();
+
+      if (error) {
+        console.error("Error recargando estado del ciclo", error.message);
+      }
+
+      setEstadoCiclo(mujerChakanaData || null);
+      setDay(diferencia + 1);
+    }
+
+    recargarEstadoCiclo();
+  }, [fechaInicioCiclo]);
 
   function handleGoToCiclos(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -112,6 +137,14 @@ export default function DashboardPage() {
             userName={userName ?? undefined}
             mujerChakanaData={estadoCiclo}
           />
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={loadData}
+              className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-700 text-white font-semibold py-2 px-6 rounded-full shadow hover:scale-105 transition-transform duration-300"
+            >
+              🔄 Refrescar Ciclo
+            </button>
+          </div>
         </section>
       )}
 
