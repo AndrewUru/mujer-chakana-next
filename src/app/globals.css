@@ -3,24 +3,71 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
 
-:root {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-geist-sans, system-ui, sans-serif);
+  --font-mono: var(--font-geist-mono, monospace);
+
+  /* Paleta Mujer Chakana */
+  --chakra-pink: #fbb6ce;
+  --chakra-rose: #f43f5e;
+  --chakra-indigo: #5b21b6;
+  --chakra-earth: #5c4033;
+  --chakra-water: #264653;
+  --chakra-fire: #b02e0c;
+  --chakra-air: #3a506b;
+}
+
+/* Body global */
+body {
+  @apply bg-[var(--background)] text-[var(--foreground)] transition-colors duration-500 ease-in-out;
 }
 
 
+/* Textos */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-bold text-pink-800;
+}
 
+p {
+  @apply leading-relaxed text-pink-700;
+}
+
+/* Links */
+a {
+  @apply text-rose-500 underline hover:text-rose-700 transition;
+}
+
+/* Botones */
+button {
+  @apply rounded-full font-semibold transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-pink-300;
+}
+
+/* Inputs y textareas */
+input,
+textarea,
+select {
+  @apply border border-pink-200 rounded-lg focus:ring-2 focus:ring-pink-300 focus:outline-none transition p-3;
+}
+
+/* Formularios */
+form {
+  @apply space-y-6;
+}
+
+/* Clases especiales para exportar / imprimir */
 .printable * {
   background-color: white !important;
   color: black !important;
   font-family: sans-serif !important;
 }
 
-/* Esta clase se usa SOLO para exportar contenido como imagen/pdf */
 .export-pdf * {
   background-color: white !important;
   color: black !important;

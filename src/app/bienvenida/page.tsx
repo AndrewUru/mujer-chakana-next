@@ -8,7 +8,6 @@ import { motion } from "framer-motion";
 export default function BienvenidaPage() {
   const router = useRouter();
 
-  // 🚨 Aquí pon tu lógica de autenticación real más adelante
   const isLoggedIn = true;
 
   useEffect(() => {
@@ -20,33 +19,35 @@ export default function BienvenidaPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white flex flex-col justify-center items-center text-center text-pink-800 p-6">
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white flex flex-col justify-center items-center text-center text-pink-800 px-4 py-8">
       {isLoggedIn && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
+          initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2 }}
-          className="max-w-xl"
+          transition={{ duration: 1 }}
+          className="w-full max-w-md space-y-6"
         >
           <Image
             src="/logo_chakana.png"
             alt="Luna Chakana"
-            width={220}
-            height={220}
-            className="mx-auto mb-6 animate-pulse"
+            width={180}
+            height={180}
+            className="mx-auto mb-4 animate-pulse"
           />
-          <h1 className="text-3xl font-bold mb-4">Bienvenida al círculo</h1>
-          <p className="text-lg leading-relaxed">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">
+            Bienvenida al círculo
+          </h1>
+          <p className="text-base md:text-lg leading-relaxed text-pink-700">
             Has comenzado un viaje de 28 días hacia ti misma. Desde el agua que
             purifica, hasta el fuego que transforma, honrarás tu ritmo sagrado
             con cada paso.
           </p>
-          <p className="mt-4 text-sm text-pink-600 italic">
+          <p className="mt-2 text-xs md:text-sm text-pink-500 italic">
             Que la Chakana Rubí guíe tu corazón en espiral.
           </p>
           <button
             onClick={() => router.push("/dashboard")}
-            className="mt-8 bg-pink-700 text-white px-6 py-2 rounded-lg hover:bg-pink-800 transition"
+            className="mt-6 bg-pink-700 text-white py-3 px-6 rounded-full hover:bg-pink-800 transition"
           >
             🌸 Iniciar mi camino
           </button>
