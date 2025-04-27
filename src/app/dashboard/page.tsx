@@ -13,7 +13,6 @@ export default function DashboardPage() {
   const [fechaActual, setFechaActual] = useState<string>("");
   const [day, setDay] = useState<number>(1);
   const [estadoCiclo, setEstadoCiclo] = useState<EstadoCiclo | null>(null);
-
   const [recursosData, setRecursosData] = useState<Recurso[]>([]);
   const [fechaInicioCiclo, setFechaInicioCiclo] = useState<Date | null>(null);
   const [fechaFinCiclo, setFechaFinCiclo] = useState<Date | null>(null);
@@ -24,7 +23,7 @@ export default function DashboardPage() {
       if (user.data?.user?.id) {
         const { data: perfil } = await supabase
           .from("perfiles")
-          .select("display_name")
+          .select("display_name, avatar_url, fecha_inicio")
           .eq("user_id", user.data.user.id)
           .single();
         setUserName(perfil?.display_name || "");

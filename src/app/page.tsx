@@ -37,8 +37,6 @@ export default function HomePage() {
 
         <p className="text-base text-green-800">
           🌿 Desde el primer día hasta el retorno, cada ciclo es sagrado.
-          Observa tus energías, regístralas y permite que esta herramienta te
-          acompañe con dulzura y sabiduría.
         </p>
 
         <div className="flex flex-col justify-center items-center gap-4 pt-4">

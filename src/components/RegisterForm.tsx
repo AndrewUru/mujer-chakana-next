@@ -54,11 +54,22 @@ export default function RegisterForm() {
         return;
       }
 
-      // 💫 Redirige al Setup para completar el ciclo
       router.push("/dashboard");
     }
 
     setLoading(false);
+  };
+
+  const handleSocialLogin = async (
+    provider: "google" | "github" | "facebook"
+  ) => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+    });
+
+    if (error) {
+      setMensaje("❌ Error al conectar con " + provider + ": " + error.message);
+    }
   };
 
   return (
@@ -73,6 +84,26 @@ export default function RegisterForm() {
       <p className="text-center text-sm text-pink-600">
         Únete al camino del ciclo y la transformación.
       </p>
+
+      <div className="flex flex-col gap-3">
+        <button
+          type="button"
+          onClick={() => handleSocialLogin("google")}
+          className="bg-white text-pink-800 border border-pink-300 py-2 rounded-lg font-semibold hover:bg-pink-50 transition flex items-center justify-center gap-2"
+        >
+          <Image src="/google-icon.svg" width={20} height={20} alt="Google" />
+          Continuar con Google
+        </button>
+
+        {/* Puedes agregar más proveedores si quieres */}
+        {/* <button onClick={() => handleSocialLogin('github')}>Con GitHub</button> */}
+      </div>
+
+      <div className="flex items-center my-4">
+        <hr className="flex-grow border-pink-200" />
+        <span className="px-3 text-pink-400 text-sm">o</span>
+        <hr className="flex-grow border-pink-200" />
+      </div>
 
       <input
         type="email"
@@ -131,7 +162,7 @@ export default function RegisterForm() {
             <Loader2 className="animate-spin h-5 w-5" /> Creando cuenta...
           </>
         ) : (
-          "Registrarse"
+          "Registrarse con email"
         )}
       </button>
 

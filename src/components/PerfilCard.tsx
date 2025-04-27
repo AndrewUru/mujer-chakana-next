@@ -6,7 +6,7 @@ export default function PerfilCard({
   day,
 }: {
   perfil: { avatar_url: string | null; display_name: string };
-  day: number | null;
+  day: number | string;
 }) {
   return (
     <div className="flex items-center gap-4 mb-6 bg-pink-50 border border-pink-100 rounded-xl p-4 shadow">
