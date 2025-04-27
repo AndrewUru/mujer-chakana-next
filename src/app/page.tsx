@@ -17,8 +17,8 @@ export default function HomePage() {
   }, [router]);
 
   return (
-    <main className="h-screen flex items-center justify-center bg-pink-50 text-pink-900 px-4 py-8 overflow-auto">
-      <div className="max-w-2xl w-full text-center space-y-8 bg-white p-8 rounded-2xl shadow-lg">
+    <main className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-pink-50 text-pink-900 px-4 py-4 overflow-auto">
+      <div className="max-w-2xl w-full text-center space-y-8 bg-white p-4 rounded-2xl shadow-lg">
         {/* Logo centrado */}
         <Image
           src="/logo_chakana.png"
