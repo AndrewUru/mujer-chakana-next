@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
 
 interface Registro {
@@ -15,7 +16,6 @@ interface Registro {
 
 export default function RegistroPage() {
   const [registros, setRegistros] = useState<Registro[]>([]);
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -41,34 +41,66 @@ export default function RegistroPage() {
   }, []);
 
   if (loading)
-    return <p className="text-center mt-10">Cargando registros...</p>;
+    return (
+      <p className="text-center mt-10 text-pink-600">
+        🌙 Cargando registros...
+      </p>
+    );
 
   return (
-    <main className="max-w-3xl mx-auto p-6 space-y-6 text-rose-900">
-      <h1 className="text-2xl font-bold mb-6 text-center">
+    <main className="max-w-3xl mx-auto p-4 space-y-8 text-rose-900">
+      <h1 className="text-3xl font-extrabold text-center mb-8 text-pink-700">
         📖 Mis Registros Diarios
       </h1>
 
       {registros.length === 0 ? (
-        <p className="text-center text-pink-600">
-          Aún no has registrado ningún día. 🌸
+        <p className="text-center text-pink-500 italic">
+          No has registrado ningún día aún. 🌸
         </p>
       ) : (
-        registros.map((registro) => (
-          <div
-            key={registro.id}
-            className="bg-white p-4 rounded-xl shadow border border-pink-200 transition hover:shadow-lg"
-          >
-            <h2 className="text-lg font-semibold mb-2">
-              📅 {new Date(registro.fecha).toLocaleDateString()}
-            </h2>
-            <p>💬 Emociones: {registro.emociones || "Sin registrar"}</p>
-            <p>🔥 Energía: {registro.energia}</p>
-            <p>🎨 Creatividad: {registro.creatividad}</p>
-            <p>🌟 Espiritualidad: {registro.espiritualidad}</p>
-            <p>📝 Notas: {registro.notas || "Sin notas"}</p>
-          </div>
-        ))
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {registros.map((registro) => (
+            <motion.div
+              key={registro.id}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className={`rounded-2xl p-5 shadow-md border-2 ${
+                registro.energia && registro.energia >= 4
+                  ? "border-pink-400 bg-pink-50"
+                  : "border-rose-200 bg-white"
+              } hover:shadow-lg hover:scale-[1.02] transition-all`}
+            >
+              <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
+                📅 {new Date(registro.fecha).toLocaleDateString()}
+              </h2>
+
+              <div className="text-sm space-y-1">
+                <p>
+                  💬 <strong>Emociones:</strong>{" "}
+                  {registro.emociones || "Sin registrar"}
+                </p>
+                <p>
+                  🔥 <strong>Energía:</strong>{" "}
+                  {registro.energia ?? "No registrado"}
+                </p>
+                <p>
+                  🎨 <strong>Creatividad:</strong>{" "}
+                  {registro.creatividad ?? "No registrado"}
+                </p>
+                <p>
+                  🌟 <strong>Espiritualidad:</strong>{" "}
+                  {registro.espiritualidad ?? "No registrado"}
+                </p>
+                {registro.notas && (
+                  <p className="text-rose-700 italic pt-2">
+                    &quot;{registro.notas}&quot;
+                  </p>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
       )}
     </main>
   );

@@ -24,25 +24,7 @@ body {
   @apply bg-[var(--background)] text-[var(--foreground)] transition-colors duration-500 ease-in-out;
 }
 
-
 /* Textos */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  @apply font-bold text-pink-800;
-}
-
-p {
-  @apply leading-relaxed text-pink-700;
-}
-
-/* Links */
-a {
-  @apply text-rose-500 underline hover:text-rose-700 transition;
-}
 
 /* Botones */
 button {
