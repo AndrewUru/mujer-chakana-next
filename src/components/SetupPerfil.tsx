@@ -67,38 +67,65 @@ export default function SetupPerfil() {
 
     console.log("🖼 Guardando con avatar:", avatarUrl);
 
-    const { data: cicloNuevo, error: cicloError } = await supabase
+    const { data: cicloExistente } = await supabase
+
       .from("ciclos")
-      .insert({
-        usuario_id: userId,
-        fecha_inicio: fechaInicio,
-        duracion: 28,
-        fase_actual: "agua",
-        notas_generales: "Inicio del ciclo desde SetupPerfil",
-      })
-      .select()
+      .select("*")
+      .eq("usuario_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(1)
       .single();
 
-    if (cicloError) {
-      alert("❌ Error al crear ciclo: " + cicloError.message);
-      return;
+    let cicloId;
+
+    if (cicloExistente) {
+      const { error: errorUpdateCiclo } = await supabase
+        .from("ciclos")
+        .update({ fecha_inicio: fechaInicio })
+        .eq("id", cicloExistente.id);
+
+      if (errorUpdateCiclo) {
+        alert("❌ Error al actualizar el ciclo: " + errorUpdateCiclo.message);
+        return;
+      }
+
+      cicloId = cicloExistente.id;
+    } else {
+      const { data: cicloNuevo, error: errorCicloNuevo } = await supabase
+        .from("ciclos")
+        .insert({
+          usuario_id: userId,
+          fecha_inicio: fechaInicio,
+          duracion: 28,
+          fase_actual: "agua",
+          notas_generales: "Inicio del ciclo desde SetupPerfil",
+        })
+        .select()
+        .single();
+
+      if (errorCicloNuevo) {
+        alert("❌ Error al crear ciclo: " + errorCicloNuevo.message);
+        return;
+      }
+
+      cicloId = cicloNuevo.id;
     }
 
-    const { error: perfilError } = await supabase
+    const { error: errorPerfil } = await supabase
       .from("perfiles")
       .update({
         display_name: username,
         avatar_url: avatarUrl,
         fecha_inicio: fechaInicio,
-        ciclo_actual: cicloNuevo.id,
+        ciclo_actual: cicloId,
         perfil_completo: true,
       })
       .eq("user_id", userId);
 
-    if (perfilError) {
-      alert("❌ Error al guardar perfil: " + perfilError.message);
+    if (errorPerfil) {
+      alert("❌ Error al guardar perfil: " + errorPerfil.message);
     } else {
-      alert("✅ Perfil y ciclo creados con éxito.");
+      alert("✅ Perfil y ciclo actualizados con éxito.");
       router.push("/dashboard");
     }
   };
@@ -140,8 +167,11 @@ export default function SetupPerfil() {
         type="date"
         value={fechaInicio}
         onChange={(e) => setFechaInicio(e.target.value)}
-        className="w-full border border-pink-300 p-2 rounded mb-6"
+        className="w-full border border-pink-300 p-2 rounded mb-2"
       />
+      <p className="text-xs text-pink-500 mb-6">
+        ✨ Puedes corregir esta fecha más adelante si es necesario.
+      </p>
 
       <button
         onClick={handleSave}
