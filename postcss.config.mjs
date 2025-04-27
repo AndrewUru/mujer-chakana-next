@@ -1,8 +1,9 @@
-const defaultConfig = {
+const config = {
   plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
+    "postcss-nesting": {}, // primero nesting
+    "@tailwindcss/postcss": {}, // ahora el nuevo puente oficial
+    autoprefixer: {}, // luego autoprefixer
   },
 };
 
-export default defaultConfig;
+export default config;
