@@ -7,6 +7,7 @@ import { EstadoCiclo, Recurso } from "@/types/index"; // Adjust the path to wher
 import Moonboard from "@/components/Moonboard";
 import RecursosList from "@/components/RecursosList";
 import CicloResumen from "@/components/CicloResumen"; // Ensure this path is correct
+import NuevoRegistro from "@/components/NuevoRegistro";
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState<string | null>(null);
@@ -16,10 +17,12 @@ export default function DashboardPage() {
   const [recursosData, setRecursosData] = useState<Recurso[]>([]);
   const [fechaInicioCiclo, setFechaInicioCiclo] = useState<Date | null>(null);
   const [fechaFinCiclo, setFechaFinCiclo] = useState<Date | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   async function loadData() {
     const user = await supabase.auth.getUser();
     if (user.data?.user?.id) {
+      setUserId(user.data.user.id);
       const { data: perfil } = await supabase
         .from("perfiles")
         .select("display_name, avatar_url, fecha_inicio")
@@ -119,6 +122,14 @@ export default function DashboardPage() {
         <Moonboard />
       </section>
 
+      {/* NUEVO: Registrar mi día */}
+
+      {userId && (
+        <section>
+          <NuevoRegistro userId={userId} />
+        </section>
+      )}
+
       {/* CICLO RESUMEN*/}
 
       {day && fechaInicioCiclo && fechaFinCiclo && estadoCiclo && (
@@ -130,14 +141,6 @@ export default function DashboardPage() {
             userName={userName ?? undefined}
             mujerChakanaData={estadoCiclo}
           />
-          <div className="flex justify-center mt-6">
-            <button
-              onClick={loadData}
-              className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-700 text-white font-semibold py-2 px-6 rounded-full shadow hover:scale-105 transition-transform duration-300"
-            >
-              🔄 Refrescar Ciclo
-            </button>
-          </div>
         </section>
       )}
 
