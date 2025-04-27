@@ -34,7 +34,6 @@ Este proyecto nace de la visión canalizada por **Samarí Luz** y se entrelaza c
 - Registro e inicio de sesión con Supabase Auth.
 - Moonboard digital personalizado según el ciclo.
 - Navegación móvil amigable, pensada para acompañar día a día.
-- Modo claro y oscuro para honrar tu ritmo interior.
 - Panel de configuración con acceso al manual integrativo.
 - Perfil con avatar y datos energéticos.
 - ✨ **Panel de Administración:**
