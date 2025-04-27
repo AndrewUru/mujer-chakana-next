@@ -25,18 +25,11 @@ export default function DashboardPage() {
         .select("display_name, avatar_url, fecha_inicio")
         .eq("user_id", user.data.user.id)
         .single();
+
       setUserName(perfil?.display_name || "");
 
-      const { data: cicloActual } = await supabase
-        .from("ciclos")
-        .select("fecha_inicio")
-        .eq("usuario_id", user.data.user.id)
-        .order("fecha_inicio", { ascending: false })
-        .limit(1)
-        .single();
-
-      if (cicloActual?.fecha_inicio) {
-        const inicio = new Date(cicloActual.fecha_inicio);
+      if (perfil?.fecha_inicio) {
+        const inicio = new Date(perfil.fecha_inicio);
         const hoy = new Date();
         const diferencia = Math.floor(
           (hoy.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24)
