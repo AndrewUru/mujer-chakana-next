@@ -18,7 +18,8 @@ export default function DashboardPage() {
   const [day, setDay] = useState<number>(1);
   const [estadoCiclo, setEstadoCiclo] = useState<EstadoCiclo | null>(null);
   const [recursosData, setRecursosData] = useState<Recurso[]>([]);
-  const [fechaInicioCiclo, setFechaInicioCiclo] = useState<Date | null>(null);
+  const [fechaInicioCiclo] = useState<Date | null>(null);
+
   const [fechaFinCiclo, setFechaFinCiclo] = useState<Date | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true); // << AGREGADO

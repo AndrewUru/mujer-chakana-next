@@ -27,7 +27,7 @@ export default function CicloResumen({
   const fondoPorElemento: Record<string, string> = {
     Agua: "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80')",
     Fuego:
-      "url('https://images.unsplash.com/photo-1551201601-8d6d2f6d5bbf?auto=format&fit=crop&w=1600&q=80')",
+      "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80')",
     Tierra:
       "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80')",
     Aire: "url('https://images.unsplash.com/photo-1498654209321-103b5fbc89a5?auto=format&fit=crop&w=1600&q=80')",
