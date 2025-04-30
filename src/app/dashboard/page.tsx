@@ -128,9 +128,9 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="max-w-6xl mx-auto p-6 space-y-12 text-white-900">
+    <main className="w-full max-w-5xl mx-auto px-4 mx-auto p-6 space-y-12 text-white-900">
       {/* Encabezado */}
-      <section className="w-full bg-pink-100/80 backdrop-blur-sm shadow-md rounded-xl p-3 flex flex-col md:flex-row justify-between items-center gap-2 mb-8">
+      <section className="bg-pink-100/80 backdrop-blur-sm shadow-md rounded-xl p-3 flex flex-col md:flex-row justify-between items-center gap-2 mb-8">
         <h1 className="text-lg font-semibold text-white-800 flex items-center gap-2">
           🌸 Bienvenida, {userName}
         </h1>
@@ -158,7 +158,7 @@ export default function DashboardPage() {
         </section>
       )}
 
-      <section className="relative z-10 mx-auto mt-8 sm:mt-12 mb-16 px-4 sm:px-6 lg:px-8">
+      <section className="w-full max-w-5xl mx-auto px-4relative z-10 mx-auto mt-8 sm:mt-12 mb-16 px-4 sm:px-6 lg:px-8">
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-10 shadow-2xl">
           <h2 className="text-3xl sm:text-4xl font-bold text-center text-pink-100 mb-6">
             🌕 Mi Moonboard Diario

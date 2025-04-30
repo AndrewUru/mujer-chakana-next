@@ -52,7 +52,7 @@ export default function LunarModal({
         setMensaje(consejos[faseMasCercana]);
       } else {
         setFaseLunar("🌘 Transición lunar");
-        setMensaje("Un momento suave para escuchar tu intuición. 🤍");
+        setMensaje("Un momento suave para escuchar tu intuición 🤍");
       }
     };
 
@@ -60,27 +60,24 @@ export default function LunarModal({
   }, [fecha]);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="relative bg-white rounded-3xl p-8 w-96 shadow-2xl text-center animate-fade-in overflow-hidden border border-rose-100">
-        {/* Fondo decorativo de luna */}
-        <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=800&q=60')] bg-cover bg-center pointer-events-none rounded-3xl" />
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center px-4">
+      <div className="relative w-full max-w-md sm:max-w-lg bg-white/80 border border-pink-100 rounded-3xl p-8 shadow-2xl text-center animate-fade-in overflow-hidden backdrop-blur-md">
+        {/* Imagen decorativa lunar */}
+        <div className="absolute inset-0 z-0 bg-[url('https://elsaltoweb.es/wp-content/uploads/2025/04/luna.png')] bg-cover bg-center opacity-30 blur-sm rounded-3xl" />
 
-        {/* Contenido */}
-        <div className="relative z-10">
-          <h2 className="text-2xl font-bold text-rose-700 mb-2 tracking-wide">
-            Día {day} del ciclo 🌺
+        <div className="relative z-10 space-y-4">
+          <h2 className="text-3xl font-extrabold text-rose-700 tracking-wide">
+            Día {day} del ciclo 🌸
           </h2>
 
-          <p className="text-md text-gray-700 mb-1 italic">Fase lunar</p>
-          <p className="text-xl font-semibold text-indigo-600 mb-4">
-            {faseLunar}
-          </p>
+          <p className="text-sm text-gray-600">Fase lunar actual:</p>
+          <p className="text-xl font-semibold text-indigo-600">{faseLunar}</p>
 
-          <p className="text-md italic text-gray-600">{mensaje}</p>
+          <p className="text-base italic text-gray-700">{mensaje}</p>
 
           <button
             onClick={onClose}
-            className="mt-6 bg-gradient-to-r from-rose-500 to-pink-600 text-white px-6 py-2 rounded-full hover:scale-105 transition shadow-md"
+            className="mt-6 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-semibold px-6 py-2 rounded-full hover:scale-105 transition-all shadow-md"
           >
             ✨ Cerrar
           </button>
