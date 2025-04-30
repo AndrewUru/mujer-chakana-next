@@ -40,15 +40,15 @@ export default function BienvenidaPage() {
             height={180}
             className="mx-auto mb-4 animate-pulse"
           />
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2 text-amber-50">
             Bienvenida al círculo
           </h1>
-          <p className="text-base md:text-lg leading-relaxed text-pink-700">
+          <p className="text-base md:text-lg leading-relaxed text-amber-50">
             Has comenzado un viaje de 28 días hacia ti misma. Desde el agua que
             purifica, hasta el fuego que transforma, honrarás tu ritmo sagrado
             con cada paso.
           </p>
-          <p className="mt-2 text-xs md:text-sm text-pink-500 italic">
+          <p className="mt-2 text-xs md:text-sm text-amber-50 italic">
             Que la Chakana Rubí guíe tu corazón en espiral.
           </p>
           <button
