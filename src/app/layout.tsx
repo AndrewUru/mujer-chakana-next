@@ -19,7 +19,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#e91e63" />
       </head>
       <body
-        className=" bg-pink-50 text-pink-900 font-sans  bg-no-repeat bg-center bg-contain sm:bg-cover"
+        className="min-h-screen bg-fixed bg-center bg-no-repeat bg-cover text-pink-900 font-sans pb-20"
         style={{
           backgroundImage:
             "url('https://elsaltoweb.es/wp-content/uploads/2025/04/mujer-chakana.png')",
