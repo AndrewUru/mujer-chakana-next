@@ -18,8 +18,8 @@ export default function HomePage() {
   }, [router]);
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-pink-50/80 text-pink-900 p-4 sm:p-8">
-      <div className="max-w-2xl w-full text-center space-y-6 bg-white/95 p-6 sm:p-8 rounded-3xl shadow-xl backdrop-blur-sm transition-all hover:shadow-2xl">
+    <main className="min-h-screen flex items-center justify-center bg-pink-50/25 text-pink-900">
+      <div className="max-w-2xl w-full text-center space-y-6 bg-white/5 p-6 sm:p-8 rounded-3xl shadow-xl  transition-all hover:shadow-2xl">
         {/* Logo con tamaño responsive y efecto sutil */}
         <div className="mx-auto w-32 h-32 sm:w-40 sm:h-40 relative">
           <Image
@@ -32,7 +32,7 @@ export default function HomePage() {
           />
         </div>
 
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight bg-gradient-to-r from-pink-600 to-pink-800 bg-clip-text text-transparent">
+        <h1 className="text-4xl sm:text-5xl font-bold text-pink-900 tracking-tight bg-gradient-to-r from-pink-600 to-pink-800 bg-clip-text text-transparent">
           Mujer Chakana
         </h1>
 

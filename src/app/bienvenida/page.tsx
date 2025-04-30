@@ -19,7 +19,13 @@ export default function BienvenidaPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white flex flex-col justify-center items-center text-center text-pink-800 px-4 py-8">
+    <div
+      className="min-h-screen bg-cover bg-center flex flex-col justify-center items-center text-center text-pink-800 px-4 py-8"
+      style={{
+        backgroundImage:
+          "url('https://elsaltoweb.es/wp-content/uploads/2025/04/mujer-chakana.png')",
+      }}
+    >
       {isLoggedIn && (
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
