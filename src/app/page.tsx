@@ -32,11 +32,11 @@ export default function HomePage() {
           />
         </div>
 
-        <h1 className="text-4xl sm:text-5xl font-bold text-pink-900 tracking-tight bg-gradient-to-r from-pink-600 to-pink-800 bg-clip-text text-transparent">
+        <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight bg-gradient-to-r from-pink-600 to-pink-800 bg-clip-text text-transparent">
           Mujer Chakana
         </h1>
 
-        <p className="text-lg sm:text-xl text-pink-700/90 leading-relaxed max-w-prose mx-auto">
+        <p className="text-lg sm:text-xl text-white-800/90 leading-relaxed max-w-prose mx-auto">
           Una guía cíclica y espiritual para conectar contigo misma, registrar
           tu energía y florecer desde el alma.
         </p>
