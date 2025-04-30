@@ -18,7 +18,7 @@ export default function HomePage() {
   }, [router]);
 
   return (
-    <main className="flex items-center justify-center bg-pink-50/25 text-pink-900">
+    <main className="min-h-screen flex items-center justify-center bg-pink-50/25 text-pink-900">
       <div className="max-w-2xl w-full text-center space-y-6 bg-white/5 p-6 sm:p-8 rounded-3xl shadow-xl  transition-all hover:shadow-2xl">
         {/* Logo con tamaño responsive y efecto sutil */}
         <div className="mx-auto w-32 h-32 sm:w-40 sm:h-40 relative">
@@ -32,11 +32,11 @@ export default function HomePage() {
           />
         </div>
 
-        <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight bg-gradient-to-r from-pink-600 to-pink-800 bg-clip-text text-transparent">
+        <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight bg-gradient-to-r from-pink-600 to-pink-800 bg-clip-text">
           Mujer Chakana
         </h1>
 
-        <p className="text-lg sm:text-xl text-white-800/90 leading-relaxed max-w-prose mx-auto">
+        <p className="text-lg sm:text-xl text-white leading-relaxed max-w-prose mx-auto">
           Una guía cíclica y espiritual para conectar contigo misma, registrar
           tu energía y florecer desde el alma.
         </p>
@@ -49,18 +49,18 @@ export default function HomePage() {
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-6">
           <button
             onClick={() => router.push("/auth/register")}
-            className="w-full sm:w-auto px-8 py-3.5 bg-pink-700 hover:bg-pink-800 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-pink-300/40 flex items-center gap-2"
+            className="group w-full sm:w-auto px-8 py-3.5 bg-pink-700 hover:bg-pink-800 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-pink-300/40 flex justify-center items-center gap-2"
           >
-            <SparklesIcon className="w-5 h-5" />
-            <span>Regístrate GRATIS</span>
+            <SparklesIcon className="w-5 h-5 group-hover:animate-bounce transition-all" />
+            <span className="text-center">Regístrate GRATIS</span>
           </button>
 
           <button
             onClick={() => router.push("/auth/login")}
-            className="w-full sm:w-auto px-8 py-3.5 border-2 border-pink-200 hover:border-pink-300 bg-pink-50/50 text-pink-900 font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-2"
+            className="group w-full sm:w-auto px-8 py-3.5 border-2 border-pink-200 hover:border-pink-300 bg-pink-50/50 text-pink-900 font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex justify-center items-center gap-2"
           >
-            <StarIcon className="w-5 h-5 text-pink-600" />
-            <span>Ya tengo cuenta</span>
+            <StarIcon className="w-5 h-5 text-pink-600 group-hover:animate-spin transition-all" />
+            <span className="text-center">Ya tengo cuenta</span>
           </button>
         </div>
       </div>

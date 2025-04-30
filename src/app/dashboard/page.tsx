@@ -128,14 +128,13 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="max-w-6xl mx-auto p-6 space-y-12 text-rose-900">
-      {/* El resto de tu dashboard como ya lo tienes */}
+    <main className="max-w-6xl mx-auto p-6 space-y-12 text-white-900">
       {/* Encabezado */}
       <section className="w-full bg-pink-100/80 backdrop-blur-sm shadow-md rounded-xl p-3 flex flex-col md:flex-row justify-between items-center gap-2 mb-8">
-        <h1 className="text-lg font-semibold text-pink-800 flex items-center gap-2">
+        <h1 className="text-lg font-semibold text-white-800 flex items-center gap-2">
           🌸 Bienvenida, {userName}
         </h1>
-        <p className="text-sm text-rose-700">
+        <p className="text-md">
           Hoy es {fechaActual} — Día {day} de tu ciclo 🌙
         </p>
       </section>
@@ -144,17 +143,6 @@ export default function DashboardPage() {
       {estadoCiclo && (
         <section>
           <EstadoActualCiclo data={estadoCiclo} />
-        </section>
-      )}
-
-      <section>
-        <h2 className="text-2xl font-semibold mb-4">🌓 Mi Moonboard Diario</h2>
-        <Moonboard />
-      </section>
-
-      {userId && (
-        <section>
-          <NuevoRegistro userId={userId} />
         </section>
       )}
 
@@ -167,6 +155,21 @@ export default function DashboardPage() {
             userName={userName ?? undefined}
             mujerChakanaData={estadoCiclo}
           />
+        </section>
+      )}
+
+      <section className="relative z-10 max-w-5xl mx-auto mt-8 sm:mt-12 mb-16 px-4 sm:px-6 lg:px-8">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-10 shadow-2xl">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center text-pink-100 mb-6">
+            🌕 Mi Moonboard Diario
+          </h2>
+          <Moonboard />
+        </div>
+      </section>
+
+      {userId && (
+        <section>
+          <NuevoRegistro userId={userId} />
         </section>
       )}
 

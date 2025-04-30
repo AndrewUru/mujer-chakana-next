@@ -72,58 +72,56 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-      className="bg-white rounded-2xl p-8 shadow-xl mt-8 space-y-6 relative overflow-hidden"
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="bg-white/60 backdrop-blur-md rounded-3xl p-8 shadow-2xl mt-10 max-w-2xl mx-auto space-y-8 relative"
     >
+      {/* Fondo animado sutil */}
       <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        className="absolute inset-0 bg-gradient-to-br from-indigo-100/50 to-pink-100/50 pointer-events-none"
+        className="absolute inset-0 rounded-3xl bg-gradient-to-br from-indigo-100/40 to-pink-100/40 z-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
       />
 
       <motion.h2
-        initial={{ scale: 0.5, rotate: -5 }}
-        animate={{ scale: 1, rotate: 0 }}
-        transition={{ type: "spring", stiffness: 200 }}
-        className="text-3xl font-bold text-center bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent"
+        className="relative z-10 text-4xl text-center font-extrabold bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.1, duration: 0.6 }}
       >
-        🌱 Registrar mi día
+        🌸 Registrar mi día
       </motion.h2>
 
+      {/* Campo emociones */}
       <motion.input
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.3 }}
         type="text"
         placeholder="¿Qué emociones predominan hoy?"
         value={emociones}
         onChange={(e) => setEmociones(e.target.value)}
-        className="w-full border-2 border-indigo-100 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent transition-all shadow-sm"
+        className="relative z-10 w-full p-4 rounded-xl border-2 border-indigo-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition-all placeholder:text-indigo-400"
         whileFocus={{ scale: 1.02 }}
       />
 
-      <div className="flex flex-col gap-6">
+      {/* Sliders animados */}
+      <div className="relative z-10 flex flex-col gap-6">
         {sliderConfigs.map((item, index) => (
           <motion.div
             key={item.id}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 + index * 0.1 }}
+            transition={{ delay: 0.3 + index * 0.1 }}
           >
-            <label className="font-semibold flex items-center gap-2 text-lg cursor-pointer hover:text-opacity-80 transition-all">
+            <label className="text-lg font-semibold flex gap-2 items-center">
               <motion.span
-                whileHover={{ scale: 1.2, rotate: [0, 10, -10, 0] }}
-                className="inline-block"
+                className="text-xl"
+                whileHover={{ rotate: [0, -10, 10, 0], scale: 1.2 }}
               >
                 {item.emoji}
               </motion.span>
-              {item.label}:
-              <span className="text-2xl font-bold ml-2">{item.value}</span>
+              {item.label}: <span className="ml-2 font-bold">{item.value}</span>
             </label>
-
-            <div className="relative">
+            <div className="relative mt-2">
               <motion.div
                 className="absolute h-2 rounded-full bg-gradient-to-r from-indigo-200 to-pink-200"
                 style={{ width: `${(item.value / 5) * 100}%` }}
@@ -137,45 +135,33 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
                 max="5"
                 value={item.value}
                 onChange={(e) => item.setter(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer relative z-10"
+                className="w-full h-2 bg-gray-200 rounded-full appearance-none relative z-10 cursor-pointer"
               />
             </div>
           </motion.div>
         ))}
       </div>
 
+      {/* Notas */}
       <motion.textarea
-        initial={{ opacity: 0, height: 0 }}
-        animate={{ opacity: 1, height: "auto" }}
-        transition={{ type: "spring", delay: 0.7 }}
         placeholder="Notas personales o intuiciones..."
         value={notas}
         onChange={(e) => setNotas(e.target.value)}
-        className="w-full border-2 border-indigo-100 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent transition-all shadow-sm resize-none"
-        whileFocus={{
-          scale: 1.01,
-          boxShadow: "0px 4px 20px rgba(99, 102, 241, 0.2)",
-        }}
+        className="relative z-10 w-full p-4 rounded-xl border-2 border-indigo-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition-all resize-none"
         rows={4}
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: "auto" }}
+        whileFocus={{ scale: 1.01 }}
       />
 
+      {/* Botón */}
       <motion.button
-        whileHover={{
-          scale: 1.05,
-          boxShadow: "0px 8px 25px rgba(99, 102, 241, 0.4)",
-        }}
-        whileTap={{
-          scale: 0.95,
-          boxShadow: "0px 2px 10px rgba(99, 102, 241, 0.2)",
-        }}
         onClick={handleGuardar}
-        className="w-full bg-gradient-to-br from-indigo-600 to-pink-500 text-white py-4 rounded-xl font-bold text-lg relative overflow-hidden"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="relative z-10 w-full py-4 rounded-xl font-bold text-lg text-white bg-gradient-to-br from-indigo-600 to-pink-500 shadow-lg hover:shadow-xl transition-all"
       >
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-center gap-2"
-        >
+        <div className="flex items-center justify-center gap-2">
           <motion.span
             animate={{ rotate: [0, 10, -10, 0] }}
             transition={{ repeat: Infinity, duration: 2 }}
@@ -191,54 +177,20 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
           >
             🌸
           </motion.span>
-        </motion.div>
-
-        {/* Efecto de partículas al hacer hover */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileHover={{ opacity: 1 }}
-          className="absolute inset-0 flex justify-around items-center pointer-events-none"
-        >
-          {[...Array(5)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="w-1 h-1 bg-white rounded-full"
-              animate={{
-                y: [0, -20, 0],
-                opacity: [0, 1, 0],
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                delay: i * 0.2,
-              }}
-            />
-          ))}
-        </motion.div>
+        </div>
       </motion.button>
 
+      {/* Mensaje final */}
       {mensaje && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.5 }}
-          className="text-center mt-4"
+          className="relative z-10 mt-6 text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
         >
-          <motion.p
-            className="text-green-700 font-semibold text-lg"
-            animate={{
-              color: ["#15803d", "#10b981", "#15803d"],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-            }}
-          >
-            ✓ {mensaje}
-          </motion.p>
+          <p className="text-green-700 font-semibold text-lg">✓ {mensaje}</p>
           <motion.svg
             viewBox="0 0 100 100"
-            className="w-12 h-12 mx-auto mt-2 text-green-600"
+            className="w-10 h-10 mx-auto mt-2 text-green-600"
           >
             <motion.path
               d="M20,50 L40,70 L80,30"

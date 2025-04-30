@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -17,28 +18,37 @@ interface Registro {
 export default function RegistroPage() {
   const [registros, setRegistros] = useState<Registro[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter(); // ✅ nuevo hook para redirección
 
   useEffect(() => {
     async function fetchRegistros() {
-      const user = await supabase.auth.getUser();
-      if (user.data?.user?.id) {
-        const { data, error } = await supabase
-          .from("registros")
-          .select("*")
-          .eq("user_id", user.data.user.id)
-          .order("fecha", { ascending: false });
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-        if (error) {
-          console.error("Error cargando registros", error.message);
-        } else {
-          setRegistros(data || []);
-        }
+      if (!user) {
+        // 🔁 Redirección si no hay usuario autenticado
+        router.push("/");
+        return;
       }
+
+      const { data, error } = await supabase
+        .from("registros")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("fecha", { ascending: false });
+
+      if (error) {
+        console.error("Error cargando registros", error.message);
+      } else {
+        setRegistros(data || []);
+      }
+
       setLoading(false);
     }
 
     fetchRegistros();
-  }, []);
+  }, [router]);
 
   if (loading)
     return (
@@ -48,8 +58,8 @@ export default function RegistroPage() {
     );
 
   return (
-    <main className="max-w-3xl mx-auto p-4 space-y-8 text-rose-900">
-      <h1 className="text-3xl font-extrabold text-center mb-8 text-pink-700">
+    <main className="mx-auto px-4 py-8 text-rose-900 max-w-7xl">
+      <h1 className="text-3xl font-extrabold text-center mb-10 text-pink-700">
         📖 Mis Registros Diarios
       </h1>
 
@@ -58,46 +68,48 @@ export default function RegistroPage() {
           No has registrado ningún día aún. 🌸
         </p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {registros.map((registro) => (
             <motion.div
               key={registro.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className={`rounded-2xl p-5 shadow-md border-2 ${
-                registro.energia && registro.energia >= 4
-                  ? "border-pink-400 bg-pink-50"
-                  : "border-rose-200 bg-white"
-              } hover:shadow-lg hover:scale-[1.02] transition-all`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className={`rounded-3xl p-6 shadow-xl border-2 transition-all hover:scale-[1.02] hover:shadow-2xl
+            ${
+              registro.energia && registro.energia >= 4
+                ? "border-pink-400 bg-gradient-to-br from-pink-50 to-white"
+                : "border-rose-200 bg-white"
+            }`}
             >
-              <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-pink-700">
                 📅 {new Date(registro.fecha).toLocaleDateString()}
               </h2>
 
-              <div className="text-sm space-y-1">
-                <p>
+              <ul className="text-sm space-y-2">
+                <li>
                   💬 <strong>Emociones:</strong>{" "}
                   {registro.emociones || "Sin registrar"}
-                </p>
-                <p>
+                </li>
+                <li>
                   🔥 <strong>Energía:</strong>{" "}
                   {registro.energia ?? "No registrado"}
-                </p>
-                <p>
+                </li>
+                <li>
                   🎨 <strong>Creatividad:</strong>{" "}
                   {registro.creatividad ?? "No registrado"}
-                </p>
-                <p>
+                </li>
+                <li>
                   🌟 <strong>Espiritualidad:</strong>{" "}
                   {registro.espiritualidad ?? "No registrado"}
-                </p>
-                {registro.notas && (
-                  <p className="text-rose-700 italic pt-2">
-                    &quot;{registro.notas}&quot;
-                  </p>
-                )}
-              </div>
+                </li>
+              </ul>
+
+              {registro.notas && (
+                <blockquote className="mt-4 text-sm italic text-rose-600 border-l-4 border-rose-300 pl-4">
+                  “{registro.notas}”
+                </blockquote>
+              )}
             </motion.div>
           ))}
         </div>
