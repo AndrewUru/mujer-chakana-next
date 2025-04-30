@@ -173,8 +173,21 @@ export default function DashboardPage() {
         </section>
       )}
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-4">🔮 Recursos Sagrados</h2>
+      <section className="relative mt-12 bg-gradient-to-br from-pink-50 via-rose-100 to-white p-6 rounded-3xl shadow-md border border-pink-100">
+        <div className="absolute -top-6 left-6 bg-white text-pink-700 px-4 py-1 rounded-full shadow text-sm font-medium border border-pink-200">
+          ✨ Espacio de transformación
+        </div>
+
+        <div className="mb-6 text-center">
+          <h2 className="text-3xl font-bold text-pink-800 mb-2">
+            🔮 Recursos Sagrados
+          </h2>
+          <p className="text-pink-600 text-sm">
+            Accede a audios, rituales y guías para tu camino interior. Este
+            espacio es para ti 🌸
+          </p>
+        </div>
+
         <RecursosList recursos={recursosData} />
       </section>
 

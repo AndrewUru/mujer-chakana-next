@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
 interface Usuario {
-  id: string;
+  user_id: string;
   display_name: string;
   rol: string;
   suscripcion_activa: boolean;
@@ -22,6 +22,7 @@ export default function AdminPage() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
+
       if (!user) {
         router.push("/auth/login");
         return;
@@ -42,7 +43,8 @@ export default function AdminPage() {
 
       const { data: usersData } = await supabase
         .from("perfiles")
-        .select("id, display_name, rol, suscripcion_activa");
+        .select("user_id, display_name, rol, suscripcion_activa")
+        .returns<Usuario[]>();
 
       if (usersData) setUsuarios(usersData);
 
@@ -51,6 +53,21 @@ export default function AdminPage() {
 
     checkAdminAndFetchUsers();
   }, [router]);
+
+  const toggleSuscripcion = async (userId: string, estadoActual: boolean) => {
+    const { error } = await supabase
+      .from("perfiles")
+      .update({ suscripcion_activa: !estadoActual })
+      .eq("user_id", userId);
+
+    if (!error) {
+      setUsuarios((prev) =>
+        prev.map((u) =>
+          u.user_id === userId ? { ...u, suscripcion_activa: !estadoActual } : u
+        )
+      );
+    }
+  };
 
   if (loading) {
     return (
@@ -90,13 +107,12 @@ export default function AdminPage() {
               <tbody>
                 {usuarios.map((usuario) => (
                   <tr
-                    key={usuario.id}
+                    key={usuario.user_id}
                     className="hover:bg-pink-50 transition-all"
                   >
                     <td className="px-4 py-2 border-b text-xs text-gray-600">
-                      {usuario.id.slice(0, 8)}…
+                      {usuario.user_id.slice(0, 8)}…
                     </td>
-
                     <td className="px-4 py-2 border-b font-medium">
                       {usuario.display_name || "—"}
                     </td>
@@ -104,13 +120,21 @@ export default function AdminPage() {
                       {usuario.rol}
                     </td>
                     <td className="px-4 py-2 border-b text-center">
-                      {usuario.suscripcion_activa ? (
-                        <span className="text-green-600 font-semibold">
-                          ✅ Activa
-                        </span>
-                      ) : (
-                        <span className="text-gray-400">No</span>
-                      )}
+                      <button
+                        onClick={() =>
+                          toggleSuscripcion(
+                            usuario.user_id,
+                            usuario.suscripcion_activa
+                          )
+                        }
+                        className={`px-3 py-1 rounded-full text-sm font-semibold transition ${
+                          usuario.suscripcion_activa
+                            ? "bg-green-100 text-green-700 hover:bg-green-200"
+                            : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                        }`}
+                      >
+                        {usuario.suscripcion_activa ? "Activa" : "No activa"}
+                      </button>
                     </td>
                   </tr>
                 ))}

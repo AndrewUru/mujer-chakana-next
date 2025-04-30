@@ -1,5 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import Link from "next/link";
+
 export interface MujerChakanaData {
   arquetipo: string;
   elemento: string;
@@ -24,6 +28,29 @@ export default function CicloResumen({
   userName?: string;
   mujerChakanaData: MujerChakanaData;
 }) {
+  const [suscripcionActiva, setSuscripcionActiva] = useState(false);
+
+  useEffect(() => {
+    const fetchSuscripcion = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data } = await supabase
+        .from("perfiles")
+        .select("suscripcion_activa")
+        .eq("user_id", user.id)
+        .single();
+
+      if (data?.suscripcion_activa) {
+        setSuscripcionActiva(true);
+      }
+    };
+
+    fetchSuscripcion();
+  }, []);
+
   const fondoPorElemento: Record<string, string> = {
     Agua: "url('https://elsaltoweb.es/wp-content/uploads/2025/04/agua.png')",
     Fuego: "url('https://elsaltoweb.es/wp-content/uploads/2025/04/fuego.png')",
@@ -46,20 +73,17 @@ export default function CicloResumen({
         backgroundPosition: "center",
       }}
     >
-      {/* Overlay oscuro para legibilidad */}
       <div className="absolute inset-0 bg-black/50 rounded-2xl pointer-events-none" />
 
-      {/* Contenido */}
-      <div className="relative z-10 shadow-lg text-white">
+      <div className="relative z-10">
         <h2 className="text-xl mb-1">
           Elemento:{" "}
           <span className="font-semibold text-green-200">
             {mujerChakanaData.elemento}
           </span>
         </h2>
-        <h3 className="text-3xl font-bold mb-2 flex items-center gap-2">
-          🌙 Tu Ciclo Actual
-        </h3>
+
+        <h3 className="text-3xl font-bold mb-2">🌙 Tu Ciclo Actual</h3>
 
         {userName && (
           <p className="text-lg mb-4">
@@ -73,19 +97,16 @@ export default function CicloResumen({
           tu ciclo lunar ✨
         </p>
 
-        <div className="text-sm mb-4 space-y-1">
+        <div className="text-sm mb-4">
           <p>
-            <span className="font-semibold">Inicio:</span>{" "}
-            {fechaInicioCiclo.toLocaleDateString()}
+            <strong>Inicio:</strong> {fechaInicioCiclo.toLocaleDateString()}
           </p>
           <p>
-            <span className="font-semibold">Fin:</span>{" "}
-            {fechaFinCiclo.toLocaleDateString()}
+            <strong>Fin:</strong> {fechaFinCiclo.toLocaleDateString()}
           </p>
           {mujerChakanaData.semana && (
             <p>
-              <span className="font-semibold">Semana:</span>{" "}
-              {mujerChakanaData.semana} del ciclo lunar
+              <strong>Semana:</strong> {mujerChakanaData.semana} del ciclo lunar
             </p>
           )}
         </div>
@@ -94,28 +115,52 @@ export default function CicloResumen({
           <h4 className="text-xl font-bold mb-1">
             🔮 Arquetipo: {mujerChakanaData.arquetipo}
           </h4>
-
           <p className="text-sm italic text-white/80">
             {mujerChakanaData.descripcion}
           </p>
 
-          {mujerChakanaData.audio_url && (
-            <audio controls className="w-full mt-4">
-              <source src={mujerChakanaData.audio_url} type="audio/mpeg" />
-              Tu navegador no soporta audio.
-            </audio>
-          )}
+          {mujerChakanaData.audio_url &&
+            (suscripcionActiva ? (
+              <audio controls className="w-full mt-4">
+                <source src={mujerChakanaData.audio_url} type="audio/mpeg" />
+              </audio>
+            ) : (
+              <div className="mt-4 text-center">
+                <p className="text-pink-100 italic mb-2">
+                  🔒 Audio exclusivo para suscriptoras.
+                </p>
+                <Link
+                  href="/suscripcion"
+                  className="inline-block px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-sm font-medium"
+                >
+                  Activar mi suscripción
+                </Link>
+              </div>
+            ))}
 
-          {mujerChakanaData.ritual_pdf && (
-            <a
-              href={mujerChakanaData.ritual_pdf}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block mt-4 text-center p-2 bg-pink-600 rounded-lg text-white hover:bg-pink-700 transition"
-            >
-              📜 Ver Ritual del Día
-            </a>
-          )}
+          {mujerChakanaData.ritual_pdf &&
+            (suscripcionActiva ? (
+              <a
+                href={mujerChakanaData.ritual_pdf}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block mt-4 text-center p-2 bg-pink-600 rounded-lg text-white hover:bg-pink-700 transition"
+              >
+                📜 Ver Ritual del Día
+              </a>
+            ) : (
+              <div className="mt-4 text-center">
+                <p className="text-pink-100 italic mb-2">
+                  🔒 Ritual disponible solo con suscripción.
+                </p>
+                <Link
+                  href="/suscripcion"
+                  className="inline-block px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-sm font-medium"
+                >
+                  Ver planes de suscripción
+                </Link>
+              </div>
+            ))}
         </div>
 
         {mujerChakanaData.tip_extra && (
