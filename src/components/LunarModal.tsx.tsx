@@ -60,10 +60,10 @@ export default function LunarModal({
   }, [fecha]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center px-4">
+    <div className="fixed inset-0 z-50  backdrop-blur-sm flex items-center justify-center px-4">
       <div className="relative w-full max-w-md sm:max-w-lg bg-white/80 border border-pink-100 rounded-3xl p-8 shadow-2xl text-center animate-fade-in overflow-hidden backdrop-blur-md">
         {/* Imagen decorativa lunar */}
-        <div className="absolute inset-0 z-0 bg-[url('https://elsaltoweb.es/wp-content/uploads/2025/04/luna.png')] bg-cover bg-center opacity-30 blur-sm rounded-3xl" />
+        <div className="absolute inset-0 z-0 bg-[url('https://elsaltoweb.es/wp-content/uploads/2025/04/luna.png')] bg-cover bg-center opacity-90 blur-sm rounded-3xl" />
 
         <div className="relative z-10 space-y-4">
           <h2 className="text-3xl font-extrabold text-rose-700 tracking-wide">

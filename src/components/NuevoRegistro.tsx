@@ -37,7 +37,7 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
     },
     {
       id: "espiritualidad",
-      emoji: "✡️",
+      emoji: "🪷",
       label: "Espiritualidad",
       value: espiritualidad,
       setter: setEspiritualidad,
@@ -60,7 +60,7 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
     ]);
 
     if (error) {
-      setMensaje("❌ Error al guardar: " + error.message);
+      setMensaje("❌ Algo no se pudo guardar. Intenta nuevamente.");
     } else {
       setMensaje(
         "🌕 Tu huella de hoy ha sido sembrada. Gracias por escuchar a tu ciclo."
@@ -75,20 +75,20 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="bg-white/60 backdrop-blur-md rounded-3xl p-8 shadow-2xl mt-10 max-w-2xl mx-auto space-y-8 relative"
+      className="bg-pink-50/50 backdrop-blur-xl border border-rose-200 rounded-3xl p-8 shadow-xl mt-12 max-w-2xl mx-auto space-y-8 relative"
     >
-      {/* Fondo animado sutil */}
+      {/* Fondo animado */}
       <motion.div
-        className="absolute inset-0 rounded-3xl bg-gradient-to-br from-indigo-100/40 to-pink-100/40 z-0"
+        className="absolute inset-0 rounded-3xl bg-gradient-to-br from-pink-100/50 to-rose-100/50 z-0"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       />
 
       <motion.h2
-        className="relative z-10 text-4xl text-center font-extrabold bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent"
+        className="relative z-10 text-3xl sm:text-4xl text-center font-extrabold bg-gradient-to-r from-rose-500 to-pink-700 bg-clip-text text-transparent"
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.1, duration: 0.6 }}
+        transition={{ delay: 0.1 }}
       >
         🌸 Registrar mi día
       </motion.h2>
@@ -96,14 +96,14 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
       {/* Campo emociones */}
       <motion.input
         type="text"
-        placeholder="¿Qué emociones predominan hoy?"
+        placeholder="¿Qué emociones florecen hoy?"
         value={emociones}
         onChange={(e) => setEmociones(e.target.value)}
-        className="relative z-10 w-full p-4 rounded-xl border-2 border-indigo-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition-all placeholder:text-indigo-400"
+        className="relative z-10 w-full p-4 rounded-xl border-2 border-rose-200 focus:ring-2 focus:ring-rose-300 focus:outline-none transition-all placeholder:text-rose-400"
         whileFocus={{ scale: 1.02 }}
       />
 
-      {/* Sliders animados */}
+      {/* Sliders */}
       <div className="relative z-10 flex flex-col gap-6">
         {sliderConfigs.map((item, index) => (
           <motion.div
@@ -112,10 +112,10 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 + index * 0.1 }}
           >
-            <label className="text-lg font-semibold flex gap-2 items-center">
+            <label className="text-lg font-semibold flex gap-2 items-center text-rose-700">
               <motion.span
-                className="text-xl"
-                whileHover={{ rotate: [0, -10, 10, 0], scale: 1.2 }}
+                className="text-2xl"
+                whileHover={{ scale: 1.2, rotate: [0, 5, -5, 0] }}
               >
                 {item.emoji}
               </motion.span>
@@ -123,11 +123,11 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
             </label>
             <div className="relative mt-2">
               <motion.div
-                className="absolute h-2 rounded-full bg-gradient-to-r from-indigo-200 to-pink-200"
+                className="absolute h-2 rounded-full bg-gradient-to-r from-rose-300 to-pink-400"
                 style={{ width: `${(item.value / 5) * 100}%` }}
                 initial={{ width: 0 }}
                 animate={{ width: `${(item.value / 5) * 100}%` }}
-                transition={{ type: "spring", stiffness: 100 }}
+                transition={{ type: "spring", stiffness: 120 }}
               />
               <input
                 type="range"
@@ -135,7 +135,27 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
                 max="5"
                 value={item.value}
                 onChange={(e) => item.setter(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-full appearance-none relative z-10 cursor-pointer"
+                className="w-full h-2 appearance-none bg-rose-200 rounded-full outline-none cursor-pointer relative z-10
+    [&::-webkit-slider-thumb]:appearance-none
+    [&::-webkit-slider-thumb]:h-4
+    [&::-webkit-slider-thumb]:w-4
+    [&::-webkit-slider-thumb]:rounded-full
+    [&::-webkit-slider-thumb]:bg-pink-600
+    [&::-webkit-slider-thumb]:border-none
+    [&::-webkit-slider-thumb]:shadow-md
+    [&::-webkit-slider-thumb]:hover:scale-110
+    [&::-webkit-slider-thumb]:transition-all
+
+    [&::-moz-range-thumb]:appearance-none
+    [&::-moz-range-thumb]:h-4
+    [&::-moz-range-thumb]:w-4
+    [&::-moz-range-thumb]:rounded-full
+    [&::-moz-range-thumb]:bg-pink-600
+    [&::-moz-range-thumb]:border-none
+    [&::-moz-range-thumb]:shadow-md
+    [&::-moz-range-thumb]:hover:scale-110
+    [&::-moz-range-thumb]:transition-all
+"
               />
             </div>
           </motion.div>
@@ -144,10 +164,10 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
 
       {/* Notas */}
       <motion.textarea
-        placeholder="Notas personales o intuiciones..."
+        placeholder="Intuiciones, palabras clave, sueños, señales..."
         value={notas}
         onChange={(e) => setNotas(e.target.value)}
-        className="relative z-10 w-full p-4 rounded-xl border-2 border-indigo-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition-all resize-none"
+        className="relative z-10 w-full p-4 rounded-xl border-2 border-rose-200 focus:ring-2 focus:ring-rose-300 focus:outline-none transition-all resize-none"
         rows={4}
         initial={{ opacity: 0, height: 0 }}
         animate={{ opacity: 1, height: "auto" }}
@@ -159,23 +179,21 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
         onClick={handleGuardar}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="relative z-10 w-full py-4 rounded-xl font-bold text-lg text-white bg-gradient-to-br from-indigo-600 to-pink-500 shadow-lg hover:shadow-xl transition-all"
+        className="relative z-10 w-full py-4 rounded-xl font-bold text-lg text-white bg-gradient-to-br from-pink-600 to-rose-500 shadow-lg hover:shadow-xl transition-all"
       >
         <div className="flex items-center justify-center gap-2">
           <motion.span
-            animate={{ rotate: [0, 10, -10, 0] }}
+            animate={{ rotate: [0, 8, -8, 0] }}
             transition={{ repeat: Infinity, duration: 2 }}
-            className="text-xl"
           >
-            ✨
+            🌷
           </motion.span>
-          Guardar Registro
+          Guardar mi huella de hoy
           <motion.span
-            animate={{ rotate: [0, -10, 10, 0] }}
+            animate={{ rotate: [0, -8, 8, 0] }}
             transition={{ repeat: Infinity, duration: 2, delay: 0.5 }}
-            className="text-xl"
           >
-            🌸
+            🌙
           </motion.span>
         </div>
       </motion.button>
@@ -187,21 +205,7 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          <p className="text-green-700 font-semibold text-lg">✓ {mensaje}</p>
-          <motion.svg
-            viewBox="0 0 100 100"
-            className="w-10 h-10 mx-auto mt-2 text-green-600"
-          >
-            <motion.path
-              d="M20,50 L40,70 L80,30"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="8"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 0.5 }}
-            />
-          </motion.svg>
+          <p className="text-rose-700 font-semibold text-lg">✓ {mensaje}</p>
         </motion.div>
       )}
     </motion.div>
