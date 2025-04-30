@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 const getFaseColor = (nombre: string) => {
   switch (nombre?.toLowerCase()) {
@@ -33,6 +34,7 @@ const getFaseIcon = (nombre: string) => {
 interface Fase {
   nombre_fase: string;
   resumen_emocional: string;
+  fase_lunar?: "new" | "full" | "first_quarter" | "last_quarter"; // opcional
 }
 
 interface FaseActualCardProps {
@@ -46,12 +48,32 @@ export default function FaseActualCard({ fase }: FaseActualCardProps) {
         fase.nombre_fase
       )}`}
     >
-      {/* Ícono elemental sutil en el fondo */}
+      {/* 🌕 Luna llena con máscara */}
+      <div className="absolute -top-10 -left-10 w-40 h-40 opacity-30 pointer-events-none">
+        <Image
+          src="/luna.png"
+          alt="Luna llena"
+          width={160}
+          height={160}
+          className="object-contain rounded-full shadow-inner"
+          style={{
+            clipPath:
+              fase.fase_lunar === "new"
+                ? "inset(0 50% 0 50%)"
+                : fase.fase_lunar === "first_quarter"
+                ? "inset(0 25% 0 0)"
+                : fase.fase_lunar === "last_quarter"
+                ? "inset(0 0 0 25%)"
+                : "none", // full
+          }}
+        />
+      </div>
+
+      {/* Ícono elemental grande como atmósfera */}
       <div className="absolute -top-4 -right-4 opacity-10 text-6xl pointer-events-none">
         {getFaseIcon(fase.nombre_fase)}
       </div>
 
-      {/* Contenido principal */}
       <h3 className="text-2xl font-semibold tracking-wider italic mb-2">
         ✨ Fase actual: <span className="uppercase">{fase.nombre_fase}</span>
       </h3>
