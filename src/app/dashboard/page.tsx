@@ -18,7 +18,7 @@ export default function DashboardPage() {
   const [day, setDay] = useState<number>(1);
   const [estadoCiclo, setEstadoCiclo] = useState<EstadoCiclo | null>(null);
   const [recursosData, setRecursosData] = useState<Recurso[]>([]);
-  const [fechaInicioCiclo] = useState<Date | null>(null);
+  const [fechaInicioCiclo, setFechaInicioCiclo] = useState<Date | null>(null);
 
   const [fechaFinCiclo, setFechaFinCiclo] = useState<Date | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -47,6 +47,7 @@ export default function DashboardPage() {
 
     if (perfil?.fecha_inicio) {
       const inicio = new Date(perfil.fecha_inicio);
+      setFechaInicioCiclo(inicio); // 🔥 ESTO es lo que faltaba
       const hoy = new Date();
       const diferencia = Math.floor(
         (hoy.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24)
@@ -90,7 +91,8 @@ export default function DashboardPage() {
       const { data: mujerChakanaData, error } = await supabase
         .from("mujer_chakana")
         .select("*")
-        .eq("dia_ciclo", diferencia + 1)
+        .eq("dia_ciclo", (diferencia % 28) + 1)
+
         .single();
 
       if (error) {

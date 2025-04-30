@@ -25,14 +25,13 @@ export default function CicloResumen({
   mujerChakanaData: MujerChakanaData;
 }) {
   const fondoPorElemento: Record<string, string> = {
-    Agua: "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80')",
-    Fuego:
-      "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80')",
+    Agua: "url('https://elsaltoweb.es/wp-content/uploads/2025/04/agua.png')",
+    Fuego: "url('https://elsaltoweb.es/wp-content/uploads/2025/04/fuego.png')",
     Tierra:
-      "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80')",
-    Aire: "url('https://images.unsplash.com/photo-1498654209321-103b5fbc89a5?auto=format&fit=crop&w=1600&q=80')",
+      "url('https://elsaltoweb.es/wp-content/uploads/2025/04/tierra.png')",
+    Aire: "url('https://elsaltoweb.es/wp-content/uploads/2025/04/aire.png')",
     default:
-      "url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1600&q=80')",
+      "url('https://elsaltoweb.es/wp-content/uploads/2025/04/tierra.png')",
   };
 
   const fondoBg =
