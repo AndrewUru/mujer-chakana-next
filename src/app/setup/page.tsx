@@ -14,32 +14,38 @@ export default function SetupPage() {
         data: { user },
       } = await supabase.auth.getUser();
 
-      if (!user) {
-        router.push("/"); // 🔁 Redirige a la home si no está logueado
-      }
+      if (!user) router.push("/");
     }
 
     checkAuth();
   }, [router]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-100 flex flex-col items-center text-pink-900 px-4 py-12">
-      <div className="max-w-xl w-full text-center space-y-6 mb-10">
-        <h1 className="text-3xl font-bold">🌕 Estás comenzando tu viaje</h1>
+    <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-100 flex flex-col items-center justify-start px-6 py-12">
+      <div className="max-w-2xl w-full space-y-10">
+        <header className="text-center">
+          <h1 className="text-4xl font-extrabold text-pink-800 mb-3 tracking-tight">
+            🌕 Conecta con tu Ciclo
+          </h1>
 
-        <p className="text-base">
-          Configura tu perfil para que esta herramienta te acompañe en tu
-          recorrido personal y energético.
-        </p>
+          <p className="text-lg text-pink-700">
+            Para comenzar tu recorrido, necesitamos saber en qué momento estás
+            de tu ciclo lunar personal. Esta fecha será la base para acompañarte
+            con mensajes, rituales y arquetipos sincronizados con la luna.
+          </p>
 
-        <p className="italic text-pink-600">
-          “Cada ciclo es una oportunidad para florecer.”
-        </p>
+          <p className="italic text-pink-500 mt-4">
+            “Cuando eliges tu inicio, el universo te acompaña.” ✨
+          </p>
+        </header>
+
+        <section className="bg-white/70 backdrop-blur-md rounded-2xl p-8 shadow-lg border border-pink-200">
+          <h2 className="text-2xl font-semibold text-pink-700 mb-4 text-center">
+            📅 Configura la fecha de inicio de tu ciclo
+          </h2>
+          <SetupPerfil />
+        </section>
       </div>
-
-      <section className="w-full max-w-lg space-y-10">
-        <SetupPerfil />
-      </section>
     </main>
   );
 }
