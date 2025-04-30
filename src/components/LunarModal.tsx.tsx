@@ -51,7 +51,6 @@ export default function LunarModal({
         setFaseLunar(etiquetas[faseMasCercana]);
         setMensaje(consejos[faseMasCercana]);
       } else {
-        // 🌿 Elegancia para fases intermedias
         setFaseLunar("🌘 Transición lunar");
         setMensaje("Un momento suave para escuchar tu intuición. 🤍");
       }
@@ -62,24 +61,30 @@ export default function LunarModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl p-6 w-96 shadow-2xl text-center animate-fade-in">
-        <h2 className="text-2xl font-bold text-pink-700 mb-4">
-          Día {day} del ciclo
-        </h2>
+      <div className="relative bg-white rounded-3xl p-8 w-96 shadow-2xl text-center animate-fade-in overflow-hidden border border-rose-100">
+        {/* Fondo decorativo de luna */}
+        <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=800&q=60')] bg-cover bg-center pointer-events-none rounded-3xl" />
 
-        <p className="text-lg text-gray-700 mb-1">Fase lunar:</p>
-        <p className="text-xl font-semibold text-indigo-700 mb-4">
-          {faseLunar}
-        </p>
+        {/* Contenido */}
+        <div className="relative z-10">
+          <h2 className="text-2xl font-bold text-rose-700 mb-2 tracking-wide">
+            Día {day} del ciclo 🌺
+          </h2>
 
-        <p className="text-md italic text-gray-600">{mensaje}</p>
+          <p className="text-md text-gray-700 mb-1 italic">Fase lunar</p>
+          <p className="text-xl font-semibold text-indigo-600 mb-4">
+            {faseLunar}
+          </p>
 
-        <button
-          onClick={onClose}
-          className="mt-6 bg-gradient-to-r from-pink-500 to-pink-700 text-white px-6 py-2 rounded-full hover:scale-105 transition"
-        >
-          🌸 Cerrar
-        </button>
+          <p className="text-md italic text-gray-600">{mensaje}</p>
+
+          <button
+            onClick={onClose}
+            className="mt-6 bg-gradient-to-r from-rose-500 to-pink-600 text-white px-6 py-2 rounded-full hover:scale-105 transition shadow-md"
+          >
+            ✨ Cerrar
+          </button>
+        </div>
       </div>
     </div>
   );

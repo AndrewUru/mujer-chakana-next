@@ -50,8 +50,8 @@ export default function DashboardPage() {
       const diferencia = Math.floor(
         (hoy.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24)
       );
-      setDay(diferencia + 1);
-      setFechaInicioCiclo(inicio);
+      const diaCiclo = (diferencia % 28) + 1;
+      setDay(diaCiclo);
 
       const fin = new Date(inicio);
       fin.setDate(fin.getDate() + 27);
@@ -62,7 +62,7 @@ export default function DashboardPage() {
       const { data: mujerChakanaData } = await supabase
         .from("mujer_chakana")
         .select("*")
-        .eq("dia_ciclo", diferencia + 1)
+        .eq("dia_ciclo", diaCiclo)
         .single();
 
       setEstadoCiclo(mujerChakanaData || null);

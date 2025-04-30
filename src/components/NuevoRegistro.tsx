@@ -62,7 +62,9 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
     if (error) {
       setMensaje("❌ Error al guardar: " + error.message);
     } else {
-      setMensaje("✅ Registro guardado con éxito.");
+      setMensaje(
+        "🌕 Tu huella de hoy ha sido sembrada. Gracias por escuchar a tu ciclo."
+      );
       setEmociones("");
       setNotas("");
     }
