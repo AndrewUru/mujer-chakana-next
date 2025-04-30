@@ -158,7 +158,7 @@ export default function DashboardPage() {
         </section>
       )}
 
-      <section className="relative z-10 max-w-5xl mx-auto mt-8 sm:mt-12 mb-16 px-4 sm:px-6 lg:px-8">
+      <section className="relative z-10 mx-auto mt-8 sm:mt-12 mb-16 px-4 sm:px-6 lg:px-8">
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-10 shadow-2xl">
           <h2 className="text-3xl sm:text-4xl font-bold text-center text-pink-100 mb-6">
             🌕 Mi Moonboard Diario
