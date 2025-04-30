@@ -4,13 +4,21 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
+interface Usuario {
+  id: string;
+  display_name: string;
+  rol: string;
+  suscripcion_activa: boolean;
+}
+
 export default function AdminPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string | null>(null);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
 
   useEffect(() => {
-    async function checkAdmin() {
+    async function checkAdminAndFetchUsers() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -31,46 +39,106 @@ export default function AdminPage() {
       }
 
       setUserName(perfil.display_name);
+
+      const { data: usersData } = await supabase
+        .from("perfiles")
+        .select("id, display_name, rol, suscripcion_activa");
+
+      if (usersData) setUsuarios(usersData);
+
       setLoading(false);
     }
 
-    checkAdmin();
+    checkAdminAndFetchUsers();
   }, [router]);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-pink-700">
+      <div className="min-h-screen flex items-center justify-center text-pink-700 bg-pink-50">
         Cargando acceso de administradora...
       </div>
     );
   }
 
   return (
-    <main className="max-w-6xl mx-auto py-10 space-y-8">
-      <h1 className="text-3xl font-bold text-pink-800">🌟 Admin Dashboard</h1>
-      <p className="text-lg text-pink-600">Bienvenida, {userName}</p>
+    <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-100 px-6 py-10">
+      <div className="max-w-6xl mx-auto space-y-10">
+        <header className="text-center">
+          <h1 className="text-4xl font-extrabold text-pink-800">
+            🌟 Admin Dashboard
+          </h1>
+          <p className="text-pink-600 text-lg mt-2">Bienvenida, {userName}</p>
+        </header>
 
-      <section className="bg-white rounded-2xl p-6 shadow-md border border-pink-100">
-        <h2 className="text-2xl font-semibold text-pink-700 mb-4">
-          Administrar Tablas
-        </h2>
+        <section className="bg-white/60 backdrop-blur-md rounded-2xl shadow-lg border border-pink-200 p-6">
+          <h2 className="text-2xl font-bold text-pink-700 mb-4">
+            👥 Usuarios Registrados
+          </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <a
-            href="/admin/mujer-chakana"
-            className="p-4 rounded-lg bg-pink-50 hover:bg-pink-100 border border-pink-200 transition text-center text-pink-800 font-semibold"
-          >
-            ✨ Editar Mujer Chakana
-          </a>
-          <a
-            href="/admin/recursos"
-            className="p-4 rounded-lg bg-pink-50 hover:bg-pink-100 border border-pink-200 transition text-center text-pink-800 font-semibold"
-          >
-            🔮 Editar Recursos
-          </a>
-          {/* Puedes agregar más accesos directos aquí */}
-        </div>
-      </section>
+          <div className="overflow-x-auto rounded-xl">
+            <table className="w-full border border-pink-100 text-sm text-pink-900 bg-white/90 shadow-inner">
+              <thead className="bg-pink-100 text-pink-800">
+                <tr>
+                  <th className="py-3 px-4 border-b">ID</th>
+                  <th className="py-3 px-4 border-b">Nombre</th>
+                  <th className="py-3 px-4 border-b">Rol</th>
+                  <th className="py-3 px-4 border-b text-center">
+                    Suscripción
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {usuarios.map((usuario) => (
+                  <tr
+                    key={usuario.id}
+                    className="hover:bg-pink-50 transition-all"
+                  >
+                    <td className="px-4 py-2 border-b text-xs text-gray-600">
+                      {usuario.id.slice(0, 8)}…
+                    </td>
+
+                    <td className="px-4 py-2 border-b font-medium">
+                      {usuario.display_name || "—"}
+                    </td>
+                    <td className="px-4 py-2 border-b capitalize">
+                      {usuario.rol}
+                    </td>
+                    <td className="px-4 py-2 border-b text-center">
+                      {usuario.suscripcion_activa ? (
+                        <span className="text-green-600 font-semibold">
+                          ✅ Activa
+                        </span>
+                      ) : (
+                        <span className="text-gray-400">No</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="text-center">
+          <h3 className="text-lg text-pink-700 font-semibold mb-3">
+            Accesos rápidos de edición
+          </h3>
+          <div className="flex flex-wrap justify-center gap-4">
+            <a
+              href="/admin/mujer-chakana"
+              className="px-6 py-3 rounded-xl bg-pink-600 text-white hover:bg-pink-700 font-semibold shadow transition"
+            >
+              ✨ Editar Mujer Chakana
+            </a>
+            <a
+              href="/admin/recursos"
+              className="px-6 py-3 rounded-xl bg-rose-400 text-white hover:bg-rose-500 font-semibold shadow transition"
+            >
+              🔮 Editar Recursos
+            </a>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }
