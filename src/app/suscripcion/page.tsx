@@ -44,9 +44,9 @@ export default function SuscripcionPage() {
   }
 
   return (
-    <main className="flex items-center justify-center">
+    <main className="flex items-center justify-center mb-20">
       <div className="bg-white/80 p-8 rounded-3xl shadow-2xl max-w-md text-center border border-rose-200 space-y-4">
-        <h1 className="text-4xl font-extrabold text-pink-700 mb-2">
+        <h1 className="text-xl font-extrabold text-pink-700 mb-2">
           🌟 Suscripción Premium
         </h1>
         <p className="text-pink-600 mb-4 text-lg">
