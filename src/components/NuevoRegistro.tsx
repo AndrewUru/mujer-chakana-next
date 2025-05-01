@@ -44,7 +44,10 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
     },
   ];
 
+  const [cargando, setCargando] = useState(false);
+
   const handleGuardar = async () => {
+    setCargando(true); // inicia carga
     const fechaHoy = new Date().toISOString().split("T")[0];
 
     const { error } = await supabase.from("registros").insert([
@@ -61,6 +64,7 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
 
     if (error) {
       setMensaje("❌ Algo no se pudo guardar. Intenta nuevamente.");
+      setCargando(false);
       return;
     }
 
@@ -86,6 +90,7 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
     // Limpiar campos
     setEmociones("");
     setNotas("");
+    setCargando(false); // termina carga
   };
 
   return (
@@ -195,24 +200,46 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
       {/* Botón */}
       <motion.button
         onClick={handleGuardar}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="relative z-10 w-full py-4 rounded-xl font-bold text-lg text-white bg-gradient-to-br from-pink-600 to-rose-500 shadow-lg hover:shadow-xl transition-all"
+        whileHover={{ scale: cargando ? 1 : 1.05 }}
+        whileTap={{ scale: cargando ? 1 : 0.95 }}
+        disabled={cargando}
+        className={`relative z-10 w-full py-4 rounded-xl font-bold text-lg text-white 
+    ${
+      cargando
+        ? "bg-rose-300 cursor-not-allowed"
+        : "bg-gradient-to-br from-pink-600 to-rose-500 hover:shadow-xl"
+    } 
+    shadow-lg transition-all`}
       >
         <div className="flex items-center justify-center gap-2">
-          <motion.span
-            animate={{ rotate: [0, 8, -8, 0] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-          >
-            🌷
-          </motion.span>
-          Guardar mi huella de hoy
-          <motion.span
-            animate={{ rotate: [0, -8, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 2, delay: 0.5 }}
-          >
-            🌙
-          </motion.span>
+          {cargando ? (
+            <>
+              <motion.span
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 1 }}
+                className="text-2xl"
+              >
+                🔄
+              </motion.span>
+              Generando tu reflexión...
+            </>
+          ) : (
+            <>
+              <motion.span
+                animate={{ rotate: [0, 8, -8, 0] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+              >
+                🌷
+              </motion.span>
+              Guardar mi huella de hoy
+              <motion.span
+                animate={{ rotate: [0, -8, 8, 0] }}
+                transition={{ repeat: Infinity, duration: 2, delay: 0.5 }}
+              >
+                🌙
+              </motion.span>
+            </>
+          )}
         </div>
       </motion.button>
 
