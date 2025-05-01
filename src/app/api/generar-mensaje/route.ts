@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   - Espiritualidad: ${espiritualidad} de 5
   - Notas personales: ${notas}
 
-  Genera una reflexión de 2 a 3 frases que inspire y reconecte a la usuaria con su ciclo y arquetipo diario.
+  Genera una reflexión de 2 frases que inspire y reconecte a la usuaria con su ciclo y arquetipo diario e invita e seguir navegando o visitar el registro guardado y que está creado por Samari Luz.
   `;
 
   const completion = await openai.chat.completions.create({
