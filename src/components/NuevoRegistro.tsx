@@ -61,13 +61,31 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
 
     if (error) {
       setMensaje("❌ Algo no se pudo guardar. Intenta nuevamente.");
-    } else {
-      setMensaje(
-        "🌕 Tu huella de hoy ha sido sembrada. Gracias por escuchar a tu ciclo."
-      );
-      setEmociones("");
-      setNotas("");
+      return;
     }
+
+    // Llamar a la API para generar el mensaje
+    const response = await fetch("/api/generar-mensaje", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        emociones,
+        energia,
+        creatividad,
+        espiritualidad,
+        notas,
+      }),
+    });
+
+    const data = await response.json();
+    setMensaje(
+      data.mensaje ||
+        "🌕 Registro guardado, pero no se pudo generar el mensaje."
+    );
+
+    // Limpiar campos
+    setEmociones("");
+    setNotas("");
   };
 
   return (
