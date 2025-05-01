@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import SetupPerfil from "@/components/SetupPerfil";
+import Link from "next/link";
 
 export default function SetupPage() {
   const router = useRouter();
@@ -34,12 +35,21 @@ export default function SetupPage() {
             con mensajes, rituales y arquetipos sincronizados con la luna.
           </p>
 
+          <div className="text-center mt-8">
+            <Link
+              href="/manual"
+              className="text-pink-700 underline hover:text-pink-900 font-semibold"
+            >
+              📖 Ver Manual de Usuario y Moonboard
+            </Link>
+          </div>
+
           <p className="italic text-pink-500 mt-4">
             “Cuando eliges tu inicio, el universo te acompaña.” ✨
           </p>
         </header>
 
-        <section className="bg-white/70 backdrop-blur-md rounded-2xl p-8 shadow-lg border border-pink-200">
+        <section>
           <h2 className="text-2xl font-semibold text-pink-700 mb-4 text-center">
             📅 Configura la fecha de inicio de tu ciclo
           </h2>
