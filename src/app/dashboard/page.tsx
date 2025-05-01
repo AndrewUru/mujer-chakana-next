@@ -128,7 +128,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="w-full max-w-5xl  px-4 mx-auto p-6 space-y-12 text-white-900">
+    <main className="w-full max-w-5xl  px-4 mx-auto p-6 space-y-12 text-white-900 pb-24">
       {/* Encabezado */}
       <section className="bg-pink-100/80 backdrop-blur-sm shadow-md rounded-xl p-3 flex flex-col md:flex-row justify-between items-center gap-2 mb-8">
         <h1 className="text-lg font-semibold text-white-800 flex items-center gap-2">

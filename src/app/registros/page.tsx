@@ -58,7 +58,7 @@ export default function RegistroPage() {
     );
 
   return (
-    <main className="mx-auto px-4 py-8 text-rose-900 max-w-7xl">
+    <main className="mx-auto px-4 py-8 text-rose-900 max-w-7xl pb-20">
       <h1 className="text-3xl font-extrabold text-center mb-10 text-pink-700">
         📖 Mis Registros Diarios
       </h1>

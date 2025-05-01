@@ -55,7 +55,7 @@ export default function BienvenidaPage() {
             onClick={() => router.push("/dashboard")}
             className="mt-6 bg-pink-700 text-white py-3 px-6 rounded-full hover:bg-pink-800 transition"
           >
-            🌸 Iniciar mi camino
+            🌸 Continuar mi camino
           </button>
         </motion.div>
       )}

@@ -4,7 +4,7 @@ import "@/app/globals.css";
 
 export default function ManualPage() {
   return (
-    <main className="p-4 md:p-10 max-w-5xl mx-auto flex flex-col gap-6">
+    <main className="p-4 md:p-10 max-w-5xl mx-auto flex flex-col gap-6 pb-20">
       <header className="text-center">
         <h1 className="text-4xl md:text-5xl font-extrabold text-pink-800 mb-4">
           📚 Manual de Usuario Mujer Chakana
