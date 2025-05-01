@@ -61,6 +61,21 @@ _Ejemplo:_
   - Visualización previa de imágenes, audio y documentos PDF.
 - Integración directa con Supabase Storage para gestión de archivos.
 
+## 💳 Suscripción Premium
+
+Ahora Mujer Chakana permite suscripciones seguras a través de **PayPal**:
+
+- Plan mensual: 2,99 € / mes.
+- Plan anual: 29,99 € / año.
+
+Características:
+
+- Los botones de suscripción se integran dinámicamente usando el SDK oficial de PayPal.
+- Al completar el pago, el perfil del usuario se actualiza en Supabase (`perfiles.suscripcion_activa = true`).
+- El usuario es redirigido automáticamente a su **Dashboard**.
+
+> El código cumple con los estándares ESLint y TypeScript, evitando el uso de `any` y controlando la duplicación de botones en el DOM.
+
 ---
 
 ## 🗓️ Instalación

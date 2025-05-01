@@ -1,15 +1,14 @@
-// src/app/suscripcion/page.tsx
 "use client";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import PayPalSubscriptionButton from "@/components/PayPalSubscriptionButton";
 
 export default function SuscripcionPage() {
   const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [mensaje, setMensaje] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -29,49 +28,62 @@ export default function SuscripcionPage() {
     fetchUser();
   }, [router]);
 
-  const activarSuscripcion = async () => {
-    if (!userId) return;
-
-    const { error } = await supabase
-      .from("perfiles")
-      .update({ suscripcion_activa: true })
-      .eq("user_id", userId);
-
-    if (error) {
-      setMensaje("❌ Error al activar la suscripción.");
-    } else {
-      setMensaje("✅ ¡Gracias por suscribirte!");
+  // 🚨 Cargar el SDK SOLO una vez para toda la página
+  useEffect(() => {
+    if (!document.getElementById("paypal-sdk")) {
+      const script = document.createElement("script");
+      script.src =
+        "https://www.paypal.com/sdk/js?client-id=ASQix2Qu6atiH43_jrk18jeSMDjB_YdTjbfI8jrTJ7x5uagNzUhuNMXacO49ZxJWr_EMpBhrpVPbOvR_&vault=true&intent=subscription";
+      script.id = "paypal-sdk";
+      document.body.appendChild(script);
     }
-  };
+  }, []);
 
   if (loading) {
     return <p className="text-center py-10">Cargando...</p>;
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-100 flex items-center justify-center px-4">
-      <div className="bg-white/80 p-8 rounded-2xl shadow-xl max-w-md text-center border border-pink-200">
-        <h1 className="text-3xl font-extrabold text-pink-700 mb-2">
-          ✨ Suscripción Premium
+    <main className="min-h-screen flex items-center justify-center px-4">
+      <div className="bg-white/80 p-8 rounded-3xl shadow-2xl max-w-md text-center border border-rose-200 space-y-4">
+        <h1 className="text-4xl font-extrabold text-pink-700 mb-2">
+          🌟 Suscripción Premium
         </h1>
-        <p className="text-pink-600 mb-4">
-          Accede a contenido exclusivo por solo <strong>2,99 € al mes</strong>.
+        <p className="text-pink-600 mb-4 text-lg">
+          Accede a contenido exclusivo por solo{" "}
+          <span className="font-bold text-pink-800">2,99 € / mes</span> o{" "}
+          <span className="font-bold text-pink-800">29,99€ / año</span>.
         </p>
 
-        <ul className="text-left text-sm mb-6 text-gray-700">
+        <ul className="text-left text-sm mb-6 text-gray-800 space-y-2">
           <li>✅ Acceso a rituales PDF</li>
           <li>✅ Audios diarios exclusivos</li>
           <li>✅ Recursos sagrados desbloqueados</li>
         </ul>
 
-        <button
-          onClick={activarSuscripcion}
-          className="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-6 rounded-full transition"
-        >
-          Activar por 2,99 €/mes
-        </button>
+        <div className="space-y-2 border-t border-rose-100 pt-4">
+          <h2 className="font-semibold text-lg text-rose-700">
+            Suscripción mensual
+          </h2>
+          <PayPalSubscriptionButton
+            planId="P-7N840235CX057714NNAJYNLY"
+            userId={userId}
+          />
+        </div>
 
-        {mensaje && <p className="mt-4 text-pink-700 font-medium">{mensaje}</p>}
+        <div className="space-y-2 border-t border-rose-100 pt-4">
+          <h2 className="font-semibold text-lg text-rose-700">
+            Suscripción anual
+          </h2>
+          <PayPalSubscriptionButton
+            planId="P-98U01726LR562531RNAJYPGQ"
+            userId={userId}
+          />
+        </div>
+
+        <p className="text-xs text-gray-500 pt-2">
+          Cancelas cuando quieras. Procesado con PayPal.
+        </p>
       </div>
     </main>
   );
