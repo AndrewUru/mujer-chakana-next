@@ -21,11 +21,29 @@ Este proyecto nace de la visión canalizada por **Samarí Luz** y se entrelaza c
 
 ## 🛠️ Tecnologías
 
-- [Next.js](https://nextjs.org/) – framework React moderno.
-- [Supabase](https://supabase.com/) – base de datos y autenticación.
-- [Tailwind CSS](https://tailwindcss.com/) – estilos suaves y responsivos.
-- [Lucide Icons](https://lucide.dev/) – íconos simbólicos y sutiles.
-- [NextAuth.js](https://next-auth.js.org/) – autenticación segura (planificada para futuras versiones).
+- Next.js – framework React moderno.
+- Supabase – base de datos y autenticación.
+- Tailwind CSS – estilos suaves y responsivos.
+- Lucide Icons – íconos simbólicos y sutiles.
+- NextAuth.js – autenticación segura (planificada para futuras versiones).
+- 🧠 OpenAI (GPT-4o) – nueva integración de inteligencia artificial.
+
+---
+
+## ✨ Nueva funcionalidad: Reflexiones generadas por IA
+
+La aplicación ahora utiliza la inteligencia artificial de **OpenAI** para ofrecer a cada usuaria una **reflexión diaria personalizada** basada en sus registros de:
+
+- Emociones
+- Energía
+- Creatividad
+- Espiritualidad
+- Notas personales
+
+Cada vez que una usuaria guarda su huella del día, recibe un mensaje canalizado que inspira y reconecta con su ciclo y arquetipo diario, siguiendo la simbología y el lenguaje de la **Rueda Mujer Chakana** y la visión MaikU·.
+
+_Ejemplo:_  
+"Hoy tu intuición te invita a sembrar en calma y florecer en tu fuego interior."
 
 ---
 
@@ -33,14 +51,15 @@ Este proyecto nace de la visión canalizada por **Samarí Luz** y se entrelaza c
 
 - Registro e inicio de sesión con Supabase Auth.
 - Moonboard digital personalizado según el ciclo.
+- Reflexiones diarias generadas con IA (OpenAI GPT-4o).
 - Navegación móvil amigable, pensada para acompañar día a día.
 - Panel de configuración con acceso al manual integrativo.
 - Perfil con avatar y datos energéticos.
-- ✨ **Panel de Administración:**
+- ✨ Panel de Administración:
   - Crear, editar y eliminar Arquetipos Mujer Chakana.
   - Subir recursos complementarios (audios, PDFs, imágenes).
   - Visualización previa de imágenes, audio y documentos PDF.
-- 🔗 Integración directa con Supabase Storage para gestión de archivos.
+- Integración directa con Supabase Storage para gestión de archivos.
 
 ---
 
@@ -68,11 +87,12 @@ npm install
 
 4. Configura las variables de entorno:
 
-Crea un archivo `.env.local` y agrega tus claves de Supabase:
+Crea un archivo `.env.local` y agrega tus claves de Supabase y OpenAI:
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+OPENAI_API_KEY=your-openai-api-key
 ```
 
 5. Inicia el servidor de desarrollo:
@@ -116,7 +136,7 @@ Este proyecto está abierto a quienes deseen co-crear desde la sensibilidad, el 
 
 ## 📜 Licencia
 
-Este proyecto está bajo la licencia [Creative Commons BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/).  
+Este proyecto está bajo la licencia Creative Commons BY-NC-SA.  
 Consulta el archivo `LICENSE` para más detalles.  
 **Canalizado por Samarí Luz · Implementado por [@AndrewUru](https://github.com/AndrewUru)**  
 Todos los derechos reservados © Ginergía, Centro de Estudios de Metafísica Nativa A.C.  
