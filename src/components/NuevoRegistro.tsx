@@ -62,25 +62,30 @@ export default function NuevoRegistro({
     setCargando(true); // inicia carga
     const fechaHoy = new Date().toISOString().split("T")[0];
 
-    const { error } = await supabase.from("registros").insert([
-      {
-        fecha: fechaHoy,
-        emociones,
-        energia,
-        creatividad,
-        espiritualidad,
-        notas,
-        user_id: userId,
-      },
-    ]);
+    // 👉 Insertar y obtener el ID del nuevo registro
+    const { data: insertData, error } = await supabase
+      .from("registros")
+      .insert([
+        {
+          fecha: fechaHoy,
+          emociones,
+          energia,
+          creatividad,
+          espiritualidad,
+          notas,
+          user_id: userId,
+        },
+      ])
+      .select("id") // 👈 pedimos el ID
+      .single();
 
-    if (error) {
+    if (error || !insertData) {
       setMensaje("❌ Algo no se pudo guardar. Intenta nuevamente.");
       setCargando(false);
       return;
     }
 
-    // Llamar a la API para generar el mensaje
+    // 👉 Llamar a OpenAI para generar el mensaje
     const response = await fetch("/api/generar-mensaje", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -98,15 +103,23 @@ export default function NuevoRegistro({
     });
 
     const data = await response.json();
+
+    // 👉 Mostramos el mensaje generado
     setMensaje(
       data.mensaje ||
         "🌕 Registro guardado, pero no se pudo generar el mensaje."
     );
 
-    // Limpiar campos
+    // 👉 Actualizamos SOLO ese registro usando su ID único
+    await supabase
+      .from("registros")
+      .update({ mensaje: data.mensaje })
+      .eq("id", insertData.id);
+
+    // 👉 Limpiar campos
     setEmociones("");
     setNotas("");
-    setCargando(false); // termina carga
+    setCargando(false);
   };
 
   return (
