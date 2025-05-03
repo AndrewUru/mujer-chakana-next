@@ -1,6 +1,5 @@
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import SplashScreen from "@/components/SplashScreen"; // Ajusta la ruta si es necesario
 
 export const metadata = {
   title: "Mujer Chakana",
@@ -26,7 +25,6 @@ export default function RootLayout({
             "url('https://elsaltoweb.es/wp-content/uploads/2025/04/mujer-chakana.png')",
         }}
       >
-        <SplashScreen />
         {children}
         <Navbar />
       </body>
