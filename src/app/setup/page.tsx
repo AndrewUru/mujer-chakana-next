@@ -22,7 +22,7 @@ export default function SetupPage() {
   }, [router]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-100 flex flex-col items-center justify-start px-6 py-12">
+    <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-100 flex flex-col items-center justify-start pb-20 px-6 py-12">
       <div className="max-w-2xl w-full space-y-10">
         <header className="text-center">
           <h1 className="text-4xl font-extrabold text-pink-800 mb-3 tracking-tight">
@@ -50,9 +50,6 @@ export default function SetupPage() {
         </header>
 
         <section>
-          <h2 className="text-2xl font-semibold text-pink-700 mb-4 text-center">
-            📅 Configura la fecha de inicio de tu ciclo
-          </h2>
           <SetupPerfil />
         </section>
       </div>
