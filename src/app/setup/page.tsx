@@ -25,7 +25,7 @@ export default function SetupPage() {
     <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-100 flex flex-col items-center justify-start pb-20 px-6 py-12">
       <div className="max-w-2xl w-full space-y-10">
         <header className="text-center">
-          <h1 className="text-4xl font-extrabold text-pink-800 mb-3 tracking-tight">
+          <h1 className="text-2xl font-extrabold text-pink-800 mb-3 tracking-tight">
             🌕 Conecta con tu Ciclo
           </h1>
 
