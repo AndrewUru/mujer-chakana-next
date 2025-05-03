@@ -35,9 +35,9 @@ export default function CicloPage() {
   }, []);
 
   return (
-    <main className="min-h-screen max-w-7xl mx-auto px-6 py-12 space-y-10">
+    <main className="min-h-screen max-w-7xl mx-auto px-6 py-12 pb-20 space-y-10">
       <section className="text-center bg-amber-50/80 backdrop-blur-md border-pink-200 dark:border-pink-800 shadow-xl rounded-2xl p-6">
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-pink-800">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-pink-800">
           🌕 Galería de Arquetipos
         </h1>
         <p className="text-pink-600 mt-4 max-w-2xl mx-auto text-base sm:text-lg">
@@ -50,7 +50,7 @@ export default function CicloPage() {
       </section>
 
       {loading ? (
-        <p className="text-center mt-10 text-pink-600 text-lg italic animate-pulse">
+        <p className="text-center mt-10 text-white text-3xl italic animate-pulse">
           🌙 Cargando galería de arquetipos...
         </p>
       ) : (
