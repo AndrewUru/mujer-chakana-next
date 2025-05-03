@@ -10,7 +10,7 @@ export default function EstadoActualCiclo({
   };
 }) {
   return (
-    <section className="relative w-full h-[300px] md:h-[450px] rounded-3xl overflow-hidden shadow-2xl bg-pink-100">
+    <section className="relative w-full h-[300px] md:h-[450px] max-h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-pink-100 mx-auto">
       {data.imagen_url && (
         <Image
           src={data.imagen_url}
@@ -31,9 +31,6 @@ export default function EstadoActualCiclo({
           <h2 className="text-3xl md:text-4xl font-extrabold mb-1">
             🌺 {data.arquetipo}
           </h2>
-          <p className="uppercase text-xs tracking-widest font-semibold text-pink-600 mb-2">
-            Elemento: {data.elemento}
-          </p>
         </div>
       </div>
     </section>
