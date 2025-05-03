@@ -12,7 +12,19 @@ interface SliderConfig {
   setter: (value: number) => void;
 }
 
-export default function NuevoRegistro({ userId }: { userId: string }) {
+export default function NuevoRegistro({
+  userId,
+  nombre,
+  dia_ciclo,
+  ciclo_actual,
+  arquetipo,
+}: {
+  userId: string;
+  nombre: string;
+  dia_ciclo: number;
+  ciclo_actual: number;
+  arquetipo: string;
+}) {
   const [emociones, setEmociones] = useState("");
   const [energia, setEnergia] = useState(3);
   const [creatividad, setCreatividad] = useState(3);
@@ -73,11 +85,15 @@ export default function NuevoRegistro({ userId }: { userId: string }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        nombre,
         emociones,
         energia,
         creatividad,
         espiritualidad,
         notas,
+        dia_ciclo,
+        ciclo_actual,
+        arquetipo,
       }),
     });
 

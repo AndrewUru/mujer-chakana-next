@@ -167,9 +167,22 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {userId && (
+      {userId && estadoCiclo && (
         <section>
-          <NuevoRegistro userId={userId} />
+          <NuevoRegistro
+            userId={userId}
+            nombre={userName ?? "Guerrera"}
+            dia_ciclo={day}
+            ciclo_actual={
+              (Math.floor(
+                (new Date().getTime() - fechaInicioCiclo!.getTime()) /
+                  (1000 * 60 * 60 * 24)
+              ) /
+                28) |
+              (0 + 1)
+            }
+            arquetipo={estadoCiclo.arquetipo ?? "Guía"}
+          />
         </section>
       )}
 
