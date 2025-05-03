@@ -16,6 +16,8 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string | null>(null);
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [mensajeExito, setMensajeExito] = useState<string | null>(null);
+  const [mensajeError, setMensajeError] = useState<string | null>(null);
 
   useEffect(() => {
     async function checkAdminAndFetchUsers() {
@@ -41,12 +43,16 @@ export default function AdminPage() {
 
       setUserName(perfil.display_name);
 
-      const { data: usersData } = await supabase
+      const { data: usersData, error: errorUsers } = await supabase
         .from("perfiles")
         .select("user_id, display_name, rol, suscripcion_activa")
         .returns<Usuario[]>();
 
-      if (usersData) setUsuarios(usersData);
+      if (errorUsers) {
+        setMensajeError("No se pudo cargar la lista de usuarias.");
+      } else if (usersData) {
+        setUsuarios(usersData);
+      }
 
       setLoading(false);
     }
@@ -66,6 +72,13 @@ export default function AdminPage() {
           u.user_id === userId ? { ...u, suscripcion_activa: !estadoActual } : u
         )
       );
+      setMensajeExito(
+        `La suscripción de ${userId.slice(0, 8)}… se actualizó correctamente.`
+      );
+      setTimeout(() => setMensajeExito(null), 4000);
+    } else {
+      setMensajeError("No se pudo actualizar la suscripción.");
+      setTimeout(() => setMensajeError(null), 4000);
     }
   };
 
@@ -87,6 +100,19 @@ export default function AdminPage() {
           <p className="text-pink-600 text-lg mt-2">Bienvenida, {userName}</p>
         </header>
 
+        {/* Mensajes de éxito o error */}
+        {mensajeExito && (
+          <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded relative shadow">
+            {mensajeExito}
+          </div>
+        )}
+
+        {mensajeError && (
+          <div className="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded relative shadow">
+            {mensajeError}
+          </div>
+        )}
+
         <section className="bg-white/60 backdrop-blur-md rounded-2xl shadow-lg border border-pink-200 p-6">
           <h2 className="text-2xl font-bold text-pink-700 mb-4">
             👥 Usuarios Registrados
@@ -96,9 +122,9 @@ export default function AdminPage() {
             <table className="w-full border border-pink-100 text-sm text-pink-900 bg-white/90 shadow-inner">
               <thead className="bg-pink-100 text-pink-800">
                 <tr>
-                  <th className="py-3 px-4 border-b">ID</th>
-                  <th className="py-3 px-4 border-b">Nombre</th>
-                  <th className="py-3 px-4 border-b">Rol</th>
+                  <th className="py-3 px-4 border-b text-left">ID</th>
+                  <th className="py-3 px-4 border-b text-left">Nombre</th>
+                  <th className="py-3 px-4 border-b text-left">Rol</th>
                   <th className="py-3 px-4 border-b text-center">
                     Suscripción
                   </th>

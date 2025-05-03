@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; // 👈 Faltaba importar esto
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
 
@@ -11,15 +11,17 @@ interface MujerChakana {
   elemento: string;
   descripcion: string;
   imagen_url?: string;
-  audio_url?: string; // 👈 Agrego estos para que no dé error de tipos
+  audio_url?: string;
   ritual_pdf?: string;
 }
 
 export default function AdminMujerChakanaPage() {
-  const router = useRouter(); // 👈 Aquí inicializamos router
+  const router = useRouter();
 
   const [arquetipos, setArquetipos] = useState<MujerChakana[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mensajeExito, setMensajeExito] = useState<string | null>(null);
+  const [mensajeError, setMensajeError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchArquetipos();
@@ -27,30 +29,61 @@ export default function AdminMujerChakanaPage() {
 
   async function fetchArquetipos() {
     setLoading(true);
+    setMensajeError(null);
+
     const { data, error } = await supabase.from("mujer_chakana").select("*");
+
     if (!error && data) {
       setArquetipos(data);
+    } else {
+      setMensajeError("No se pudieron cargar los arquetipos.");
     }
     setLoading(false);
   }
 
   async function deleteArquetipo(id: number) {
-    if (confirm("¿Seguro que deseas eliminar este arquetipo?")) {
-      await supabase.from("mujer_chakana").delete().eq("id", id);
+    const confirmar = confirm(
+      "¿Seguro que deseas eliminar este arquetipo? Esta acción no se puede deshacer."
+    );
+    if (!confirmar) return;
+
+    const { error } = await supabase
+      .from("mujer_chakana")
+      .delete()
+      .eq("id", id);
+
+    if (!error) {
+      setMensajeExito("Arquetipo eliminado correctamente.");
       fetchArquetipos();
+      setTimeout(() => setMensajeExito(null), 4000);
+    } else {
+      setMensajeError("Ocurrió un error al eliminar el arquetipo.");
+      setTimeout(() => setMensajeError(null), 4000);
     }
   }
 
   return (
-    <main className="max-w-6xl mx-auto py-10 space-y-8">
+    <main className="max-w-6xl mx-auto py-10 space-y-8 px-4">
       <h1 className="text-3xl font-bold text-pink-800">
         ✨ Admin - Mujer Chakana
       </h1>
 
+      {/* Mensajes de éxito o error */}
+      {mensajeExito && (
+        <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded shadow">
+          {mensajeExito}
+        </div>
+      )}
+      {mensajeError && (
+        <div className="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded shadow">
+          {mensajeError}
+        </div>
+      )}
+
       <div className="flex justify-end">
         <button
-          className="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700"
-          onClick={() => router.push("/admin/mujer-chakana/crear")} // 👈 Aquí para crear nuevo
+          className="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700 font-semibold shadow"
+          onClick={() => router.push("/admin/mujer-chakana/crear")}
         >
           ➕ Crear Nuevo Arquetipo
         </button>
@@ -58,6 +91,10 @@ export default function AdminMujerChakanaPage() {
 
       {loading ? (
         <p className="text-pink-600">Cargando arquetipos...</p>
+      ) : arquetipos.length === 0 ? (
+        <p className="text-gray-500 italic">
+          No hay arquetipos registrados aún.
+        </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {arquetipos.map((item) => (
@@ -114,7 +151,7 @@ export default function AdminMujerChakanaPage() {
                   className="text-pink-600 hover:underline text-sm"
                   onClick={() =>
                     router.push(`/admin/mujer-chakana/editar/${item.id}`)
-                  } // 👈 Navegar a editar
+                  }
                 >
                   ✏️ Editar
                 </button>

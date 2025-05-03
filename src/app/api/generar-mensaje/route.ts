@@ -6,23 +6,42 @@ const openai = new OpenAI({
 });
 
 export async function POST(req: Request) {
-  const { emociones, energia, creatividad, espiritualidad, notas } =
-    await req.json();
+  const {
+    nombre,
+    emociones,
+    energia,
+    creatividad,
+    espiritualidad,
+    notas,
+    dia_ciclo,
+    ciclo_actual,
+    arquetipo,
+  } = await req.json();
 
   const prompt = `
-  Eres una guía espiritual del proyecto Mujer Chakana. Basándote en estos datos:
-  - Emociones: ${emociones}
-  - Energía: ${energia} de 5
-  - Creatividad: ${creatividad} de 5
-  - Espiritualidad: ${espiritualidad} de 5
-  - Notas personales: ${notas}
+Eres una guía espiritual del proyecto Mujer Chakana. Personaliza una reflexión breve (2 frases) para la usuaria utilizando estos datos:
 
-  Genera una reflexión de 2 frases que inspire y reconecte a la usuaria con su ciclo y arquetipo diario e invita e seguir navegando o visitar el registro guardado y que está creado por Samari Luz.
-  `;
+- Nombre de la usuaria: ${nombre}
+- Día actual del ciclo: Día ${dia_ciclo}
+- Número de ciclo lunar completado: ${ciclo_actual}
+- Arquetipo del día: ${arquetipo}
+- Emociones actuales: ${emociones}
+- Energía: ${energia} de 5
+- Creatividad: ${creatividad} de 5
+- Espiritualidad: ${espiritualidad} de 5
+- Notas personales: ${notas}
+
+Usa un tono amoroso y sabio, menciona el nombre "${nombre}" al inicio o dentro del mensaje. Relaciona la reflexión con el arquetipo y su etapa cíclica actual (Día ${dia_ciclo}, ciclo ${ciclo_actual}). Termina con una invitación a seguir explorando su viaje o revisar su registro. Este mensaje está creado por Samari Luz.
+
+Ejemplo:
+"Hoy como Guardiana del ciclo 5, tu creatividad fluye con poder renovado. Sigue navegando hacia tu sabiduría interior."
+
+Escribe ahora la reflexión personalizada:
+`;
 
   const completion = await openai.chat.completions.create({
     messages: [{ role: "user", content: prompt }],
-    model: "gpt-4o", // Puedes usar gpt-4o o gpt-3.5-turbo según tu plan
+    model: "gpt-4o",
   });
 
   const mensaje = completion.choices[0].message.content;

@@ -1,18 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
-// Configure Tailwind to scan your files for class usage
 module.exports = {
-  content: [
-    "./src/**/*.{js,ts,jsx,tsx}", // Adjust paths to match your project structure
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-};
-
-module.exports = {
-  darkMode: "class", // 🌙 Activamos modo oscuro
+  darkMode: "class",
   content: ["./src/**/*.{js,ts,jsx,tsx}", "./app/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
@@ -29,11 +18,11 @@ module.exports = {
           800: "#740c43",
           900: "#5c0531",
         },
-        background: "#fefefe", // Fondo claro
-        foreground: "#171717", // Texto principal
-        primary: "#8f1555", // Color principal para acciones (ej: botones)
-        accent: "#264653", // Color para detalles o énfasis
-        muted: "#a1a1aa", // Textos secundarios o apagados
+        background: "#fefefe",
+        foreground: "#171717",
+        primary: "#8f1555",
+        accent: "#264653",
+        muted: "#a1a1aa",
       },
       fontFamily: {
         sans: ["Poppins", "sans-serif"],
@@ -44,7 +33,46 @@ module.exports = {
         "3xl": "1.5rem",
       },
       boxShadow: {
-        soft: "0 4px 12px rgba(0, 0, 0, 0.08)", // Sombras suaves
+        soft: "0 4px 12px rgba(0, 0, 0, 0.08)",
+      },
+      keyframes: {
+        "fade-out": {
+          "0%": { opacity: "1" },
+          "100%": { opacity: "0" },
+        },
+        "scale-in": {
+          "0%": { transform: "scale(0.8)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+      },
+      animation: {
+        "fade-out": "fade-out 1s ease-out forwards",
+        "scale-in": "scale-in 1s ease-out",
+      },
+
+      keyframes: {
+        "fade-out": {
+          "0%": { opacity: "1" },
+          "100%": { opacity: "0" },
+        },
+        "scale-in": {
+          "0%": { transform: "scale(0.8)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        pulseRuby: {
+          "0%, 100%": { transform: "scale(1)", opacity: "1" },
+          "50%": { transform: "scale(1.05)", opacity: "0.9" },
+        },
+        "fade-in-up": {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+      },
+      animation: {
+        "fade-out": "fade-out 1s ease-out forwards",
+        "scale-in": "scale-in 1s ease-out",
+        "pulse-ruby": "pulseRuby 2s ease-in-out infinite",
+        "fade-in-up": "fade-in-up 1.5s ease-out forwards",
       },
     },
   },
