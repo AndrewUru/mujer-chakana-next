@@ -5,9 +5,8 @@
   "lang": "es",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000000",
+  "background_color": "#ffe4f0",
   "theme_color": "#e91e63",
-  "orientation": "portrait",
   "icons": [
     {
       "src": "/logo_chakana.png",

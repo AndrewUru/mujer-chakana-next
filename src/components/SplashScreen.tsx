@@ -14,7 +14,7 @@ export default function SplashScreen() {
   if (oculto) return null;
 
   return (
-    <div className="fixed inset-0 bg-black flex flex-col items-center justify-center z-[9999] animate-fade-out">
+    <div className="fixed inset-0 bg-pink-50 flex flex-col items-center justify-center z-[9999] animate-fade-out">
       <Image
         src="/logo_chakana.png"
         alt="Mujer Chakana Logo"
@@ -22,7 +22,7 @@ export default function SplashScreen() {
         height={180}
         className="animate-scale-in animate-pulse-ruby"
       />
-      <p className="mt-4 text-pink-300 text-lg font-semibold tracking-widest animate-fade-in-up">
+      <p className="mt-4 text-pink-700 text-lg font-semibold tracking-widest animate-fade-in-up">
         Mujer Chakana
       </p>
     </div>
