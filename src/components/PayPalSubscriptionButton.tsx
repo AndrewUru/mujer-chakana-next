@@ -35,7 +35,7 @@ export default function PayPalSubscriptionButton({
         `paypal-button-container-${planId}`
       );
       if (container) {
-        container.innerHTML = ""; // Elimina duplicados
+        container.innerHTML = ""; // Elimina botones antiguos
       }
 
       const paypal = window.paypal as unknown as {
@@ -61,7 +61,6 @@ export default function PayPalSubscriptionButton({
                 plan_id: planId,
               });
             },
-
             async onApprove(data: { subscriptionID: string }) {
               alert("¡Suscripción completada! ID: " + data.subscriptionID);
 
@@ -74,7 +73,7 @@ export default function PayPalSubscriptionButton({
                 alert("❌ No se pudo actualizar tu perfil. Contacta soporte.");
               } else {
                 alert("✅ Tu suscripción ha sido activada correctamente.");
-                router.push("/dashboard"); // 👈 Redirige al dashboard
+                router.push("/dashboard");
               }
             },
           })
@@ -83,20 +82,31 @@ export default function PayPalSubscriptionButton({
     };
 
     const loadPayPalScript = () => {
-      if (!document.getElementById("paypal-sdk")) {
+      const existingScript = document.getElementById(
+        "paypal-sdk"
+      ) as HTMLScriptElement;
+
+      if (!existingScript) {
         const script = document.createElement("script");
         script.src =
           "https://www.paypal.com/sdk/js?client-id=ASQix2Qu6atiH43_jrk18jeSMDjB_YdTjbfI8jrTJ7x5uagNzUhuNMXacO49ZxJWr_EMpBhrpVPbOvR_&vault=true&intent=subscription";
         script.id = "paypal-sdk";
-        script.onload = renderPayPalButton;
+
+        script.onload = () => {
+          // Esperar un breve momento para asegurar que PayPal esté listo
+          setTimeout(() => renderPayPalButton(), 100);
+        };
+
         document.body.appendChild(script);
       } else {
-        renderPayPalButton();
+        // Forzar render incluso si el script ya estaba cargado
+        setTimeout(() => renderPayPalButton(), 100);
       }
     };
 
     loadPayPalScript();
-  }, [planId, userId, router]); // 👈 Añadido userId y router
+  }, [planId, userId, router]);
+  // 👈 Añadido userId y router
 
   return (
     <div className="my-4">

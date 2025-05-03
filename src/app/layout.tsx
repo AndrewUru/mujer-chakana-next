@@ -1,5 +1,11 @@
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import Script from "next/script";
+
+<Script
+  src={`https://www.paypal.com/sdk/js?client-id=TU_CLIENT_ID&currency=EUR`}
+  strategy="afterInteractive"
+/>;
 
 export const metadata = {
   title: "Mujer Chakana",
