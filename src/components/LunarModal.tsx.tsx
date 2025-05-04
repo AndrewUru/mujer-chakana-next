@@ -118,7 +118,7 @@ export default function LunarModal({
         } bg-black/50 text-center space-y-6 animate-fade-in-up`}
       >
         <h2
-          className={`text-5xl sm:text-6xl font-extrabold ${
+          className={`text-3xl sm:text-6xl font-extrabold ${
             themeColor === "emerald"
               ? "text-emerald-300"
               : themeColor === "yellow"
@@ -150,7 +150,7 @@ export default function LunarModal({
 
         <button
           onClick={onClose}
-          className={`mt-6 px-10 py-4 rounded-full bg-gradient-to-r ${
+          className={`mt-6 px-8 py-2 rounded-full bg-gradient-to-r ${
             themeColor === "emerald"
               ? "from-emerald-500 to-emerald-700"
               : themeColor === "yellow"
@@ -160,7 +160,7 @@ export default function LunarModal({
               : "from-gray-500 to-gray-700"
           } text-white font-bold shadow-lg hover:scale-105 transition-all`}
         >
-          ✨ Cerrar portal lunar ✨
+          Cerrar portal lunar ✨
         </button>
       </div>
     </div>
