@@ -77,7 +77,7 @@ export default function LoginForm() {
     <div className="min-h-screen flex items-center justify-center">
       <form
         onSubmit={handleLogin}
-        className="max-w-md mx-auto mt-10 flex flex-col gap-5 bg-white p-8 rounded-2xl shadow-md border border-pink-100"
+        className="max-w-md mx-auto mt-10 flex flex-col gap-5 bg-white/90 p-8 rounded-2xl shadow-md border border-pink-100"
       >
         <h1 className="text-3xl font-bold text-center text-pink-800 mb-2">
           ✨ Iniciar sesión

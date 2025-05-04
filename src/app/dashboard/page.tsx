@@ -128,26 +128,32 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="w-full max-w-5xl  px-4 mx-auto p-6 space-y-12 text-white-900 pb-24">
-      {/* Encabezado */}
-      <section className="bg-pink-100/80 backdrop-blur-sm shadow-md rounded-xl p-3 flex flex-col md:flex-row justify-between items-center gap-2 mb-8">
-        <h1 className="text-lg font-semibold text-white-800 flex items-center gap-2">
-          🌸 Bienvenida, {userName}
-        </h1>
-        <p className="text-md">
-          Hoy es {fechaActual} — Día {day} de tu ciclo 🌙
-        </p>
+    <main className="w-full max-w-6xl px-4 mx-auto p-6 space-y-12 text-pink-900 pb-32">
+      {/* ENCABEZADO */}
+      <section className="relative bg-gradient-to-br from-pink-100/70 to-rose-200/50 backdrop-blur-sm shadow-lg rounded-3xl p-6 sm:p-8 flex flex-col gap-4 md:flex-row md:items-center justify-between">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
+            🌸 Bienvenida, {userName}
+          </h1>
+          <p className="text-lg sm:text-xl">
+            Hoy es {fechaActual} — Día {day} de tu ciclo 🌙
+          </p>
+        </div>
+        <div className="absolute -top-3 -right-3 bg-white text-pink-600 text-xs px-3 py-1 rounded-full shadow border border-pink-300">
+          Mujer Cíclica 🌿
+        </div>
       </section>
 
-      {/* Resto */}
+      {/* ESTADO ACTUAL */}
       {estadoCiclo && (
         <section>
           <EstadoActualCiclo data={estadoCiclo} />
         </section>
       )}
 
+      {/* RESUMEN DEL CICLO */}
       {day && fechaInicioCiclo && fechaFinCiclo && estadoCiclo && (
-        <section>
+        <section className="bg-white/20 backdrop-blur-md rounded-3xl shadow-xl border border-white/30 p-6 sm:p-10 space-y-4">
           <CicloResumen
             day={day}
             fechaInicioCiclo={fechaInicioCiclo}
@@ -158,17 +164,17 @@ export default function DashboardPage() {
         </section>
       )}
 
-      <section>
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-10 shadow-2xl">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center text-pink-100 mb-6">
-            🌕 Mi Moonboard Diario
-          </h2>
-          <Moonboard />
-        </div>
+      {/* MOONBOARD */}
+      <section className="bg-white/20 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-10 shadow-xl">
+        <h2 className="text-3xl sm:text-4xl font-bold text-center text-pink-900 mb-6">
+          🌕 Mi Moonboard Diario
+        </h2>
+        <Moonboard />
       </section>
 
+      {/* NUEVO REGISTRO */}
       {userId && estadoCiclo && (
-        <section>
+        <section className="bg-pink-50/50 backdrop-blur-sm border border-pink-200 rounded-3xl p-6 shadow-md">
           <NuevoRegistro
             userId={userId}
             nombre={userName ?? "Guerrera"}
@@ -186,28 +192,28 @@ export default function DashboardPage() {
         </section>
       )}
 
-      <section className="relative mt-12 bg-gradient-to-br from-pink-50 via-rose-100 to-white p-6 rounded-3xl shadow-md border border-pink-100">
+      {/* RECURSOS */}
+      <section className="relative mt-12 bg-gradient-to-br from-pink-50 via-rose-100 to-white p-6 rounded-3xl shadow-lg border border-pink-100">
         <div className="absolute -top-6 left-6 bg-white text-pink-700 px-4 py-1 rounded-full shadow text-sm font-medium border border-pink-200">
           ✨ Espacio de transformación
         </div>
-
         <div className="mb-6 text-center">
           <h2 className="text-3xl font-bold text-pink-800 mb-2">
             🔮 Recursos Sagrados
           </h2>
-          <p className="text-pink-600 text-sm">
+          <p className="text-pink-700 text-base">
             Accede a audios, rituales y guías para tu camino interior. Este
             espacio es para ti 🌸
           </p>
         </div>
-
         <RecursosList recursos={recursosData} />
       </section>
 
+      {/* BOTÓN GALERÍA */}
       <div className="flex justify-center mt-10">
         <button
           onClick={handleGoToCiclos}
-          className="flex items-center gap-2 bg-gradient-to-r from-pink-400 to-pink-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300"
+          className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-pink-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300"
         >
           🌕 Ver Galería de Arquetipos
         </button>

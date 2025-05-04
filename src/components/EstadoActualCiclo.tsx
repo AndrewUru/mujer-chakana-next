@@ -31,6 +31,7 @@ export default function EstadoActualCiclo({
           <h2 className="text-3xl md:text-4xl font-extrabold mb-1">
             🌺 {data.arquetipo}
           </h2>
+          <p>Tu arquetipo de hoy</p>
         </div>
       </div>
     </section>

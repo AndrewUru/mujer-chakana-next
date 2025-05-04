@@ -18,22 +18,24 @@ export default function HomePage() {
   }, [router]);
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-pink-50/25 text-pink-900">
-      <div className="max-w-2xl w-full text-center space-y-6 bg-white/20 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-xl transition-all hover:shadow-2xl">
-        {/* Logo con tamaño responsive y efecto sutil */}
-        <div className="mx-auto w-32 h-32 sm:w-40 sm:h-40 relative">
+    <main className="min-h-screen flex items-center justify-center bg-pink-50/25 text-pink-900 relative">
+      {/* Logo fuera de la tarjeta con blur */}
+      <div className="absolute top-8 sm:top-12 flex justify-center w-full z-10">
+        <div className="w-32 h-32 sm:w-40 sm:h-40 relative  rounded-full  shadow-md">
           <Image
             src="/logo_chakana.png"
             alt="Logo Mujer Chakana"
             fill
             priority
             sizes="(max-width: 640px) 128px, 160px"
-            className="object-contain opacity-95 hover:opacity-100 transition-opacity"
+            className="object-contain opacity-95 hover:opacity-100 transition-opacity rounded-full"
           />
         </div>
+      </div>
 
+      <div className="max-w-2xl w-full text-center space-y-6 bg-white/20 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-xl transition-all hover:shadow-2xl mt-20">
         <h1 className="text-4xl sm:text-5xl font-bold text-pink-800 tracking-tight">
-          Mujer Chakana
+          GINERGÉTICA
         </h1>
 
         <p className="text-lg sm:text-xl text-pink-900 leading-relaxed max-w-prose mx-auto">
