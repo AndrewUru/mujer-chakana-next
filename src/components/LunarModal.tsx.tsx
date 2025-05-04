@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { phase_hunt } from "lune";
+import { phase } from "lune";
 
 export default function LunarModal({
   day,
@@ -14,74 +14,150 @@ export default function LunarModal({
 }) {
   const [faseLunar, setFaseLunar] = useState("");
   const [mensaje, setMensaje] = useState("");
+  const [themeColor, setThemeColor] = useState("gray");
 
   useEffect(() => {
     const calcularFaseLunar = () => {
       const fechaActual = new Date(fecha);
-      const fases = phase_hunt(fechaActual);
-      const ahora = fechaActual.getTime();
+      const { phase: faseDecimal } = phase(fechaActual);
 
-      const proximasFases = Object.entries(fases)
-        .map(([nombre, date]) => ({
-          nombre,
-          timestamp: new Date(date as string | number | Date).getTime(),
-        }))
-        .sort(
-          (a, b) =>
-            Math.abs(a.timestamp - ahora) - Math.abs(b.timestamp - ahora)
-        );
+      let nombreFase = "";
+      let color = "";
+      let consejo = "";
 
-      const faseMasCercana = proximasFases[0].nombre;
-
-      const etiquetas: Record<string, string> = {
-        new_date: "🌑 Luna Nueva",
-        first_quarter: "🌓 Cuarto Creciente",
-        full_date: "🌕 Luna Llena",
-        last_quarter: "🌗 Cuarto Menguante",
-      };
-
-      const consejos: Record<string, string> = {
-        new_date: "Planta tu intención 🌱",
-        first_quarter: "Activa tu energía y creatividad 💡",
-        full_date: "Celebra y brilla con plenitud ✨",
-        last_quarter: "Libera lo que ya no sirve 🌬️",
-      };
-
-      if (etiquetas[faseMasCercana]) {
-        setFaseLunar(etiquetas[faseMasCercana]);
-        setMensaje(consejos[faseMasCercana]);
+      if (faseDecimal === 0) {
+        nombreFase = "🌑 Luna Nueva";
+        color = "gray";
+        consejo = "Planta tu intención 🌱";
+      } else if (faseDecimal > 0 && faseDecimal < 0.25) {
+        nombreFase = "🌒 Luna Creciente";
+        color = "emerald";
+        consejo = "Activa tu energía y creatividad 💡";
+      } else if (faseDecimal === 0.25) {
+        nombreFase = "🌓 Cuarto Creciente";
+        color = "emerald";
+        consejo = "Construye tus proyectos 🏗️";
+      } else if (faseDecimal > 0.25 && faseDecimal < 0.5) {
+        nombreFase = "🌔 Gibosa Creciente";
+        color = "emerald";
+        consejo = "Expande tu poder y conecta ✨";
+      } else if (faseDecimal === 0.5) {
+        nombreFase = "🌕 Luna Llena";
+        color = "yellow";
+        consejo = "Celebra y brilla con plenitud 🌟";
+      } else if (faseDecimal > 0.5 && faseDecimal < 0.75) {
+        nombreFase = "🌖 Gibosa Menguante";
+        color = "purple";
+        consejo = "Reflexiona y comparte aprendizajes 🪞";
+      } else if (faseDecimal === 0.75) {
+        nombreFase = "🌗 Cuarto Menguante";
+        color = "purple";
+        consejo = "Libera lo que ya no sirve 🌬️";
+      } else if (faseDecimal > 0.75 && faseDecimal < 1) {
+        nombreFase = "🌘 Luna Menguante";
+        color = "purple";
+        consejo = "Introspección y descanso 💤";
       } else {
-        setFaseLunar("🌘 Transición lunar");
-        setMensaje("Un momento suave para escuchar tu intuición 🤍");
+        nombreFase = "🌑 Luna Nueva";
+        color = "gray";
+        consejo = "Reinicia tu ciclo con nuevas intenciones 🌱";
       }
+
+      setFaseLunar(nombreFase);
+      setMensaje(consejo);
+      setThemeColor(color);
     };
 
     calcularFaseLunar();
   }, [fecha]);
 
+  const fondos: Record<string, string> = {
+    gray: "/luna.png",
+    emerald: "/luna.png",
+    yellow: "/luna.png",
+    purple: "/luna.png",
+  };
+
   return (
-    <div className="fixed inset-0 z-50  backdrop-blur-sm flex items-center justify-center px-4">
-      <div className="relative w-full max-w-md sm:max-w-lg bg-white/80 border border-pink-100 rounded-3xl p-8 shadow-2xl text-center animate-fade-in overflow-hidden backdrop-blur-md">
-        {/* Imagen decorativa lunar */}
-        <div className="absolute inset-0 z-0 bg-[url('https://elsaltoweb.es/wp-content/uploads/2025/04/luna.png')] bg-cover bg-center opacity-90 blur-sm rounded-3xl" />
+    <div
+      className="fixed inset-0 z-50 w-full h-full overflow-hidden flex flex-col items-center justify-center"
+      style={{
+        backgroundColor: "black",
+        backgroundImage: `url(${fondos[themeColor]})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      {/* Luna con opacidad baja y más chica */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <img
+          src="/luna.png"
+          alt="Luna"
+          className="w-[50%] max-w-[400px] opacity-10 animate-pulse-ruby drop-shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+        />
+      </div>
 
-        <div className="relative z-10 space-y-4">
-          <h2 className="text-3xl font-extrabold text-rose-700 tracking-wide">
-            Día {day} del ciclo 🌸
-          </h2>
+      {/* NIEBLA y ESTRELLAS por ENCIMA de la luna */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-800 to-black opacity-60 animate-pulse" />
+      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-15 animate-twinkle" />
 
-          <p className="text-sm text-gray-600">Fase lunar actual:</p>
-          <p className="text-xl font-semibold text-indigo-600">{faseLunar}</p>
+      {/* MODAL grande con fondo traslúcido oscuro */}
+      <div
+        className={`relative z-10 max-w-3xl w-[90%] mx-4 p-10 rounded-3xl backdrop-blur-xl shadow-2xl border-4 ${
+          themeColor === "emerald"
+            ? "border-emerald-400/60"
+            : themeColor === "yellow"
+            ? "border-yellow-400/60"
+            : themeColor === "purple"
+            ? "border-purple-400/60"
+            : "border-gray-400/60"
+        } bg-black/50 text-center space-y-6 animate-fade-in-up`}
+      >
+        <h2
+          className={`text-5xl sm:text-6xl font-extrabold ${
+            themeColor === "emerald"
+              ? "text-emerald-300"
+              : themeColor === "yellow"
+              ? "text-yellow-300"
+              : themeColor === "purple"
+              ? "text-purple-300"
+              : "text-gray-300"
+          } drop-shadow-md`}
+        >
+          Día {day} del ciclo 🌙
+        </h2>
 
-          <p className="text-base italic text-gray-700">{mensaje}</p>
+        <p className="text-lg text-gray-200">Fase lunar actual:</p>
+        <p
+          className={`text-3xl sm:text-4xl font-semibold ${
+            themeColor === "emerald"
+              ? "text-emerald-200"
+              : themeColor === "yellow"
+              ? "text-yellow-200"
+              : themeColor === "purple"
+              ? "text-purple-200"
+              : "text-gray-200"
+          }`}
+        >
+          {faseLunar}
+        </p>
 
-          <button
-            onClick={onClose}
-            className="mt-6 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-semibold px-6 py-2 rounded-full hover:scale-105 transition-all shadow-md"
-          >
-            ✨ Cerrar
-          </button>
-        </div>
+        <p className="text-lg italic text-gray-300">{mensaje}</p>
+
+        <button
+          onClick={onClose}
+          className={`mt-6 px-10 py-4 rounded-full bg-gradient-to-r ${
+            themeColor === "emerald"
+              ? "from-emerald-500 to-emerald-700"
+              : themeColor === "yellow"
+              ? "from-yellow-500 to-yellow-700"
+              : themeColor === "purple"
+              ? "from-purple-500 to-purple-700"
+              : "from-gray-500 to-gray-700"
+          } text-white font-bold shadow-lg hover:scale-105 transition-all`}
+        >
+          ✨ Cerrar portal lunar ✨
+        </button>
       </div>
     </div>
   );

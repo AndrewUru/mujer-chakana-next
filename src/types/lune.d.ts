@@ -5,4 +5,8 @@ declare module "lune" {
     full_date: Date;
     last_quarter: Date;
   };
+
+  export function phase(fechaActual: Date): { phase: any } {
+    throw new Error("Function not implemented.");
+  }
 }

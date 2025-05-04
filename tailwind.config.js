@@ -44,21 +44,6 @@ module.exports = {
           "0%": { transform: "scale(0.8)", opacity: "0" },
           "100%": { transform: "scale(1)", opacity: "1" },
         },
-      },
-      animation: {
-        "fade-out": "fade-out 1s ease-out forwards",
-        "scale-in": "scale-in 1s ease-out",
-      },
-
-      keyframes: {
-        "fade-out": {
-          "0%": { opacity: "1" },
-          "100%": { opacity: "0" },
-        },
-        "scale-in": {
-          "0%": { transform: "scale(0.8)", opacity: "0" },
-          "100%": { transform: "scale(1)", opacity: "1" },
-        },
         pulseRuby: {
           "0%, 100%": { transform: "scale(1)", opacity: "1" },
           "50%": { transform: "scale(1.05)", opacity: "0.9" },
@@ -67,12 +52,22 @@ module.exports = {
           "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        twinkle: {
+          "0%, 100%": { opacity: "0.2" },
+          "50%": { opacity: "0.4" },
+        },
+        "slow-float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
       },
       animation: {
         "fade-out": "fade-out 1s ease-out forwards",
         "scale-in": "scale-in 1s ease-out",
         "pulse-ruby": "pulseRuby 2s ease-in-out infinite",
         "fade-in-up": "fade-in-up 1.5s ease-out forwards",
+        twinkle: "twinkle 3s infinite",
+        "slow-float": "slow-float 10s ease-in-out infinite",
       },
     },
   },

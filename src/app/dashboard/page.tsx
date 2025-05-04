@@ -153,7 +153,7 @@ export default function DashboardPage() {
 
       {/* RESUMEN DEL CICLO */}
       {day && fechaInicioCiclo && fechaFinCiclo && estadoCiclo && (
-        <section className="bg-white/20 backdrop-blur-md rounded-3xl shadow-xl border border-white/30 p-6 sm:p-10 space-y-4">
+        <section>
           <CicloResumen
             day={day}
             fechaInicioCiclo={fechaInicioCiclo}
@@ -174,7 +174,7 @@ export default function DashboardPage() {
 
       {/* NUEVO REGISTRO */}
       {userId && estadoCiclo && (
-        <section className="bg-pink-50/50 backdrop-blur-sm border border-pink-200 rounded-3xl p-6 shadow-md">
+        <section>
           <NuevoRegistro
             userId={userId}
             nombre={userName ?? "Guerrera"}
