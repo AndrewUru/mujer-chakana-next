@@ -6,7 +6,5 @@ declare module "lune" {
     last_quarter: Date;
   };
 
-  export function phase(fechaActual: Date): { phase: any } {
-    throw new Error("Function not implemented.");
-  }
+  export function phase(date: Date): { phase: number };
 }

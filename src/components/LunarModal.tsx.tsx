@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { phase } from "lune";
+import Image from "next/image";
 
 export default function LunarModal({
   day,
@@ -90,10 +91,13 @@ export default function LunarModal({
     >
       {/* Luna con opacidad baja y más chica */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <img
+        <Image
           src="/luna.png"
           alt="Luna"
-          className="w-[50%] max-w-[400px] opacity-10 animate-pulse-ruby drop-shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+          width={400}
+          height={400}
+          className="w-[50%] max-w-[400px] opacity-30 animate-pulse-ruby drop-shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+          priority
         />
       </div>
 
