@@ -74,17 +74,20 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center bg-pink-50/25">
       <form
         onSubmit={handleLogin}
-        className="max-w-md mx-auto mt-10 flex flex-col gap-5 bg-white/90 p-8 rounded-2xl shadow-md border border-pink-100"
+        className="max-w-md mx-auto mt-10 flex flex-col gap-1 bg-white p-8 rounded-2xl shadow-md border border-pink-100"
       >
         <h1 className="text-3xl font-bold text-center text-pink-800 mb-2">
           ✨ Iniciar sesión
         </h1>
 
         <p className="text-center text-sm text-pink-600">
-          Bienvenida de nuevo, hermana. Conectemos con tu camino 🌸
+          Bienvenida de nuevo, hermana.
+        </p>
+        <p className="text-center text-sm text-pink-600">
+          Conectemos con tu camino 🌸
         </p>
 
         <input

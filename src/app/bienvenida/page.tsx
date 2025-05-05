@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import EstrellasFondo from "@/components/EstrellasFondo";
 
 export default function BienvenidaPage() {
   const router = useRouter();
@@ -13,26 +14,24 @@ export default function BienvenidaPage() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       router.prefetch("/dashboard");
-    }, 10000);
+    }, 5000);
 
     return () => clearTimeout(timeout);
   }, [router]);
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center flex flex-col justify-center items-center text-center text-pink-800 px-4 py-8"
-      style={{
-        backgroundImage:
-          "url('https://elsaltoweb.es/wp-content/uploads/2025/04/mujer-chakana.png')",
-      }}
-    >
+    <div className="relative h-screen bg-cover bg-center flex flex-col justify-center bg-pink-50/25 items-center text-center text-pink-800 px-4 py-8 overflow-hidden">
       {isLoggedIn && (
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1 }}
-          className="w-full max-w-md space-y-6"
+          className="w-full max-w-md space-y-6 z-10"
         >
+          {/* Fondo de estrellas y cometas */}
+          <div className="absolute inset-0 z-10">
+            <EstrellasFondo />
+          </div>
           <Image
             src="/logo_chakana.png"
             alt="Luna Chakana"

@@ -68,7 +68,7 @@ export default function RootLayout({
         <link rel="icon" href="/icon-192x192.png" />
       </head>
       <body
-        className="h-screen bg-fixed bg-center bg-no-repeat bg-pink-50/25 bg-cover text-pink-900 font-sans pb-20"
+        className="h-screen min-h-screen bg-fixed bg-center bg-no-repeat bg-pink-50/25 bg-cover text-pink-900 font-sans pb-20"
         style={{
           backgroundImage:
             "url('https://elsaltoweb.es/wp-content/uploads/2025/04/mujer-chakana.png')",
