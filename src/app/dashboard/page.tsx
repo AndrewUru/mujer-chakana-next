@@ -128,18 +128,18 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="w-full max-w-6xl px-4 mx-auto p-6 space-y-12 text-pink-900 pb-32">
+    <main className="w-full max-w-6xl  px-4 mx-auto p-6 space-y-12 text-pink-900 pb-32">
       {/* ENCABEZADO */}
-      <section className="relative bg-gradient-to-br from-pink-100/70 to-rose-200/50 backdrop-blur-sm shadow-lg rounded-3xl p-6 sm:p-8 flex flex-col gap-4 md:flex-row md:items-center justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
+      <section className="relative bg-gradient-to-br from-pink-100/70 to-rose-200/50 backdrop-blur-sm shadow-lg rounded-2xl p-4 flex flex-col gap-2 sm:flex-row sm:items-center justify-between text-center sm:text-left">
+        <div className="space-y-1">
+          <h1 className="text-lg sm:text-2xl font-semibold flex items-center gap-1">
             🌸 Bienvenida, {userName}
           </h1>
-          <p className="text-lg sm:text-xl">
+          <p className="text-sm sm:text-lg">
             Hoy es {fechaActual} — Día {day} de tu ciclo 🌙
           </p>
         </div>
-        <div className="absolute -top-3 -right-3 bg-white text-pink-600 text-xs px-3 py-1 rounded-full shadow border border-pink-300">
+        <div className="absolute -top-2 -right-2 bg-white text-pink-600 text-[10px] sm:text-xs px-2 py-1 rounded-full shadow border border-pink-300">
           Mujer Cíclica 🌿
         </div>
       </section>
