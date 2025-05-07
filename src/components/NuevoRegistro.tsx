@@ -48,7 +48,7 @@ export default function NuevoRegistro({
     },
     {
       id: "espiritualidad",
-      emoji: "🪷",
+      emoji: "✨",
       label: "Espiritualidad",
       value: espiritualidad,
       setter: setEspiritualidad,

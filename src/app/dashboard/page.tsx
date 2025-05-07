@@ -10,6 +10,7 @@ import Moonboard from "@/components/Moonboard";
 import RecursosList from "@/components/RecursosList";
 import CicloResumen from "@/components/CicloResumen";
 import NuevoRegistro from "@/components/NuevoRegistro";
+import { Flower, Moon, Leaf, Gem, GalleryThumbnails } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -132,15 +133,16 @@ export default function DashboardPage() {
       {/* ENCABEZADO */}
       <section className="relative bg-gradient-to-br from-pink-100/70 to-rose-200/50 backdrop-blur-sm shadow-lg rounded-2xl p-4 flex flex-col gap-2 sm:flex-row sm:items-center justify-between text-center sm:text-left">
         <div className="space-y-1">
-          <h1 className="text-lg sm:text-2xl font-semibold flex items-center gap-1">
-            🌸 Bienvenida, {userName}
+          <h1 className="text-lg sm:text-2xl font-semibold flex items-center gap-2">
+            <Flower className="w-5 h-5 text-pink-600" /> Bienvenida, {userName}
           </h1>
-          <p className="text-sm sm:text-lg">
-            Hoy es {fechaActual} — Día {day} de tu ciclo 🌙
+          <p className="text-sm sm:text-lg flex items-center gap-1">
+            Hoy es {fechaActual} — Día {day} de tu ciclo{" "}
+            <Moon className="w-4 h-4 text-pink-500" />
           </p>
         </div>
-        <div className="absolute -top-2 -right-2 bg-white text-pink-600 text-[10px] sm:text-xs px-2 py-1 rounded-full shadow border border-pink-300">
-          Mujer Cíclica 🌿
+        <div className="absolute -top-2 -right-2 bg-white text-pink-600 text-[10px] sm:text-xs px-2 py-1 rounded-full shadow border border-pink-300 flex items-center gap-1">
+          <Leaf className="w-3 h-3" /> Mujer Cíclica
         </div>
       </section>
 
@@ -198,8 +200,8 @@ export default function DashboardPage() {
           ✨ Espacio de transformación
         </div>
         <div className="mb-6 text-center">
-          <h2 className="text-3xl font-bold text-pink-800 mb-2">
-            🔮 Recursos Sagrados
+          <h2 className="text-3xl font-bold text-pink-800 mb-2 flex items-center gap-2">
+            <Gem className="w-6 h-6 text-pink-700" /> Recursos Sagrados
           </h2>
           <p className="text-pink-700 text-base">
             Accede a audios, rituales y guías para tu camino interior. Este
@@ -215,7 +217,7 @@ export default function DashboardPage() {
           onClick={handleGoToCiclos}
           className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-pink-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300"
         >
-          🌕 Ver Galería de Arquetipos
+          <GalleryThumbnails className="w-5 h-5" /> Ver Galería de Arquetipos
         </button>
       </div>
     </main>

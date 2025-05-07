@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { phase } from "lune";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 export default function LunarModal({
   day,
@@ -91,14 +92,26 @@ export default function LunarModal({
     >
       {/* Luna con opacidad baja y más chica */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <Image
-          src="/luna.png"
-          alt="Luna"
-          width={400}
-          height={400}
-          className="w-[50%] max-w-[400px] opacity-30 animate-pulse-ruby drop-shadow-[0_0_30px_rgba(0,0,0,0.5)]"
-          priority
-        />
+        <motion.div
+          animate={{
+            y: [0, -10, 0], // Movimiento vertical suave
+            rotate: [0, 1, -1, 0], // Pequeña rotación
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 6,
+            ease: "easeInOut",
+          }}
+        >
+          <Image
+            src="/luna.png"
+            alt="Luna"
+            width={400}
+            height={400}
+            className="w-[50%] max-w-[400px] opacity-30 drop-shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+            priority
+          />
+        </motion.div>
       </div>
 
       {/* NIEBLA y ESTRELLAS por ENCIMA de la luna */}
