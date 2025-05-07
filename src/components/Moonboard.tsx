@@ -78,11 +78,11 @@ const Moonboard = () => {
   };
 
   // Fase de ciclo y colores por día
-  const getColorPorDia = (day: number) => {
-    if (day >= 1 && day <= 7) return "bg-indigo-200"; // Menstrual
-    if (day >= 8 && day <= 14) return "bg-green-200"; // Doncella
-    if (day >= 15 && day <= 21) return "bg-amber-200"; // Madre
-    return "bg-rose-200"; // Hechicera
+  const getBackgroundPorDia = (day: number) => {
+    if (day >= 1 && day <= 7) return "url('/agua-ui.webp')"; // Menstrual (Agua)
+    if (day >= 8 && day <= 14) return "url('/tierra-ui.webp')"; // Doncella (Tierra)
+    if (day >= 15 && day <= 21) return "url('/fuego-ui.webp')"; // Madre (Fuego)
+    return "url('/cielo-ui.webp')"; // Hechicera (Aire)
   };
 
   if (isLoading) {
@@ -133,33 +133,29 @@ const Moonboard = () => {
               key={day}
               aria-label={`Día ${day}${isToday ? " (Actual)" : ""}`}
               role="button"
-              className={`relative rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center font-bold transition-all duration-300 border-2
-                ${
-                  isToday
-                    ? `${getColorPorDia(
-                        day
-                      )} ring-4 ring-white/50 text-white scale-110 shadow-lg`
-                    : ""
-                }
-                ${
-                  isPastOrToday && !isToday
-                    ? `${getColorPorDia(
-                        day
-                      )} text-white hover:brightness-110 cursor-pointer shadow-md`
-                    : ""
-                }
-                ${
-                  isFuture
-                    ? "bg-white/20 text-pink-100 border-pink-200/30 cursor-not-allowed"
-                    : ""
-                }
-                motion-reduce:transform-none`}
+              className={`relative rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center font-bold transition-all duration-300 border-2 overflow-hidden
+        ${
+          isFuture
+            ? "bg-white/20 text-pink-100 border-pink-200/30 cursor-not-allowed"
+            : ""
+        }
+        ${isToday ? "ring-4 ring-white/60 scale-110 shadow-lg" : ""}
+        motion-reduce:transform-none`}
+              style={
+                isPastOrToday
+                  ? {
+                      backgroundImage: getBackgroundPorDia(day),
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }
+                  : {}
+              }
               onClick={() => handleClickDay(day)}
               disabled={isFuture}
             >
-              <span className="relative z-10">{day}</span>
+              <span className="relative z-10 text-shadow-sm">{day}</span>
 
-              {/* Sombra para días interactivos */}
+              {/* Brillo hover */}
               {isPastOrToday && !isToday && (
                 <div className="absolute inset-0 rounded-full opacity-0 hover:opacity-20 transition-opacity duration-200 bg-white/30" />
               )}
