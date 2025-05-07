@@ -52,13 +52,11 @@ export default function CicloResumen({
   }, []);
 
   const fondoPorElemento: Record<string, string> = {
-    Agua: "url('https://elsaltoweb.es/wp-content/uploads/2025/04/agua.png')",
-    Fuego: "url('https://elsaltoweb.es/wp-content/uploads/2025/04/fuego.png')",
-    Tierra:
-      "url('https://elsaltoweb.es/wp-content/uploads/2025/04/tierra.png')",
-    Aire: "url('https://elsaltoweb.es/wp-content/uploads/2025/04/aire.png')",
-    default:
-      "url('https://elsaltoweb.es/wp-content/uploads/2025/04/tierra.png')",
+    Agua: "url('/agua-ui.webp')",
+    Fuego: "url('/fuego-ui.webp')",
+    Tierra: "url('/tierra-ui.webp')",
+    Aire: "url('/cielo-ui.webp')",
+    default: "url('/tierra-ui.webp')",
   };
 
   const fondoBg =
@@ -71,6 +69,7 @@ export default function CicloResumen({
         backgroundImage: fondoBg,
         backgroundSize: "cover",
         backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
       }}
     >
       <div className="absolute inset-0 bg-black/50 rounded-2xl pointer-events-none" />
