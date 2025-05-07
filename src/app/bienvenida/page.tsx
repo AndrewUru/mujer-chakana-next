@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import EstrellasFondo from "@/components/EstrellasFondo";
 
 export default function BienvenidaPage() {
   const router = useRouter();
@@ -28,10 +27,6 @@ export default function BienvenidaPage() {
           transition={{ duration: 1 }}
           className="w-full max-w-md space-y-6 z-10"
         >
-          {/* Fondo de estrellas y cometas */}
-          <div className="absolute inset-0 z-10">
-            <EstrellasFondo />
-          </div>
           <Image
             src="/logo_chakana.png"
             alt="Luna Chakana"

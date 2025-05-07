@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
 
 interface Registro {
@@ -64,6 +64,18 @@ export default function RegistroPage() {
       </div>
     );
 
+  async function eliminarRegistro(id: string) {
+    const { error } = await supabase.from("registros").delete().eq("id", id);
+
+    if (error) {
+      console.error("Error eliminando el registro:", error.message);
+      return;
+    }
+
+    // Actualizar el estado quitando el registro eliminado
+    setRegistros((prev) => prev.filter((r) => r.id !== id));
+  }
+
   return (
     <main className="mx-auto px-4 py-8 text-rose-900 max-w-7xl pb-24">
       <section className="text-center bg-pink-100/60 backdrop-blur-md rounded-3xl p-8 shadow-xl mb-10">
@@ -90,57 +102,67 @@ export default function RegistroPage() {
         </p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {registros.map((registro) => (
-            <motion.div
-              key={registro.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className={`rounded-3xl p-6 shadow-xl border transition-all hover:scale-[1.02] hover:shadow-2xl bg-white/90
+          <AnimatePresence>
+            {registros.map((registro) => (
+              <motion.div
+                key={registro.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                exit={{ opacity: 0, x: -50 }}
+                className={`rounded-3xl p-6 shadow-xl border transition-all hover:scale-[1.02] hover:shadow-2xl bg-white/90
           ${
             registro.energia && registro.energia >= 4
               ? "border-pink-400"
               : "border-rose-200"
           }`}
-            >
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-pink-700">
-                📅 {new Date(registro.fecha).toLocaleDateString()}
-              </h2>
+              >
+                <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-pink-700">
+                  📅 {new Date(registro.fecha).toLocaleDateString()}
+                </h2>
 
-              <ul className="text-sm space-y-2">
-                <li>
-                  💬 <strong>Emociones:</strong>{" "}
-                  {registro.emociones || "Sin registrar"}
-                </li>
-                <li>
-                  🔥 <strong>Energía:</strong>{" "}
-                  {registro.energia ?? "No registrado"}
-                </li>
-                <li>
-                  🎨 <strong>Creatividad:</strong>{" "}
-                  {registro.creatividad ?? "No registrado"}
-                </li>
-                <li>
-                  🪷 <strong>Espiritualidad:</strong>{" "}
-                  {registro.espiritualidad ?? "No registrado"}
-                </li>
-              </ul>
+                <ul className="text-sm space-y-2">
+                  <li>
+                    💬 <strong>Emociones:</strong>{" "}
+                    {registro.emociones || "Sin registrar"}
+                  </li>
+                  <li>
+                    🔥 <strong>Energía:</strong>{" "}
+                    {registro.energia ?? "No registrado"}
+                  </li>
+                  <li>
+                    🎨 <strong>Creatividad:</strong>{" "}
+                    {registro.creatividad ?? "No registrado"}
+                  </li>
+                  <li>
+                    🪷 <strong>Espiritualidad:</strong>{" "}
+                    {registro.espiritualidad ?? "No registrado"}
+                  </li>
+                </ul>
 
-              {registro.notas && (
-                <blockquote className="mt-4 text-sm italic text-rose-600 border-l-4 border-rose-300 pl-4">
-                  “{registro.notas}”
-                </blockquote>
-              )}
+                {registro.notas && (
+                  <blockquote className="mt-4 text-sm italic text-rose-600 border-l-4 border-rose-300 pl-4">
+                    “{registro.notas}”
+                  </blockquote>
+                )}
 
-              {registro.mensaje && (
-                <div className="mt-4 p-4 rounded-xl bg-pink-50 border-l-4 border-pink-300 text-rose-800 text-sm shadow-sm">
-                  🌸 <strong>Reflexión del día:</strong>
-                  <br />
-                  {registro.mensaje}
-                </div>
-              )}
-            </motion.div>
-          ))}
+                {registro.mensaje && (
+                  <div className="mt-4 p-4 rounded-xl bg-pink-50 border-l-4 border-pink-300 text-rose-800 text-sm shadow-sm">
+                    🌸 <strong>Reflexión del día:</strong>
+                    <br />
+                    {registro.mensaje}
+                  </div>
+                )}
+
+                <button
+                  onClick={() => eliminarRegistro(registro.id)}
+                  className="mt-4 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition"
+                >
+                  🗑 Eliminar
+                </button>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       )}
     </main>
