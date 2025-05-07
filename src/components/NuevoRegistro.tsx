@@ -203,7 +203,7 @@ export default function NuevoRegistro({
             Generando tu reflexión...
           </div>
         ) : (
-          <>🌷 Genera mi reflexión de hoy 🌙</>
+          <>Genera mi reflexión de hoy🌙</>
         )}
       </button>
 

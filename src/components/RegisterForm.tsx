@@ -23,9 +23,16 @@ export default function RegisterForm() {
     e.preventDefault();
     setMensaje("");
 
-    // Validar inicio de ciclo
     if (!inicioCiclo) {
       setMensaje("❌ Debes indicar tu fecha de inicio de ciclo.");
+      return;
+    }
+
+    const hoy = new Date();
+    const fechaCiclo = new Date(inicioCiclo);
+
+    if (fechaCiclo > hoy) {
+      setMensaje("❌ La fecha de inicio de ciclo no puede ser futura.");
       return;
     }
 
@@ -83,7 +90,7 @@ export default function RegisterForm() {
 
   return (
     <div className="min-h-[calc(100vh-60px)] flex justify-center items-center overflow-hidden">
-      <div className="w-full max-w-md h-full overflow-y-auto px-4">
+      <div className="w-full max-w-md min-h-screen overflow-y-auto px-4 pb-32">
         <form
           onSubmit={handleRegister}
           className="flex flex-col gap-3 bg-white p-8 rounded-2xl shadow-md border border-pink-100"
