@@ -13,6 +13,7 @@ export default function RegisterForm() {
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [userId, setUserId] = useState("");
+  const [inicioCiclo, setInicioCiclo] = useState(""); // NUEVO CAMPO
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -21,6 +22,13 @@ export default function RegisterForm() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setMensaje("");
+
+    // Validar inicio de ciclo
+    if (!inicioCiclo) {
+      setMensaje("❌ Debes indicar tu fecha de inicio de ciclo.");
+      return;
+    }
+
     setLoading(true);
 
     const { data, error } = await supabase.auth.signUp({
@@ -45,6 +53,7 @@ export default function RegisterForm() {
           display_name: username,
           avatar_url: avatarUrl,
           perfil_completo: false,
+          inicio_ciclo: inicioCiclo, // Guardar fecha de inicio del ciclo
         },
       ]);
 
@@ -77,7 +86,7 @@ export default function RegisterForm() {
       <div className="w-full max-w-md h-full overflow-y-auto px-4">
         <form
           onSubmit={handleRegister}
-          className="flex flex-col gap-1 bg-white p-8 rounded-2xl shadow-md border border-pink-100"
+          className="flex flex-col gap-3 bg-white p-8 rounded-2xl shadow-md border border-pink-100"
         >
           <h1 className="text-3xl font-bold text-center text-pink-800">
             🌺 Crear cuenta
@@ -133,6 +142,17 @@ export default function RegisterForm() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="border border-pink-300 p-3 rounded-lg placeholder-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-200 transition"
+          />
+
+          <label className="text-sm text-pink-700 mt-2">
+            🩸 Fecha de comienzo de tu ciclo (obligatorio)
+          </label>
+          <input
+            type="date"
+            value={inicioCiclo}
+            onChange={(e) => setInicioCiclo(e.target.value)}
+            className="border border-pink-300 p-3 rounded-lg placeholder-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-200 transition"
+            required
           />
 
           {userId && (
