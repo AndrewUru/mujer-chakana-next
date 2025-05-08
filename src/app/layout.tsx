@@ -68,7 +68,7 @@ export default function RootLayout({
         {/* Favicon */}
         <link rel="icon" href="/icon-192x192.png" />
       </head>
-      <body className="min-h-screen font-sans text-pink-900 relative pb-20">
+      <body className="min-h-screen bg-pink-50/25 font-sans text-pink-900 relative pb-20">
         {/* Capa de la imagen */}
         <div
           className="fixed inset-0 bg-center bg-no-repeat bg-cover z-0"

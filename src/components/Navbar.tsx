@@ -35,8 +35,8 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-amber-50/80 backdrop-blur-md  border-pink-200 dark:border-pink-800 shadow-xl rounded-t-2xl">
-      <div className="max-w-md mx-auto flex justify-around items-center py-1 px-4 text-pink-700 text-sm">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-amber-50/80 backdrop-blur-md border-pink-200 dark:border-pink-800 shadow-xl rounded-t-2xl">
+      <div className="max-w-md md:max-w-2xl lg:max-w-3xl mx-auto flex justify-around items-center py-1 px-4 text-pink-700 text-sm">
         <NavItem href="/" icon={<Home />} label="Inicio" />
         <NavItem href="/dashboard" icon={<Moon />} label="Ciclo" />
         <NavItem href="/registros" icon={<BookOpen />} label="Registros" />
