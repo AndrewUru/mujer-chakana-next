@@ -17,6 +17,7 @@ export default function LunarModal({
   const [faseLunar, setFaseLunar] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [themeColor, setThemeColor] = useState("gray");
+  const [emocion, setEmocion] = useState<string | null>(null); // Estado para emoción
 
   useEffect(() => {
     const calcularFaseLunar = () => {
@@ -80,9 +81,15 @@ export default function LunarModal({
     purple: "/luna.png",
   };
 
+  // Posible función para guardar emoción en la base de datos (aún no implementada)
+  const guardarEmocion = () => {
+    console.log("Emoción seleccionada:", emocion);
+    // Aquí luego puedes integrar Supabase u otra persistencia
+  };
+
   return (
     <div
-      className="fixed inset-0 z-50 w-full h-full overflow-hidden flex flex-col items-center justify-center"
+      className="fixed inset-0 z-50 w-full h-full overflow-hidden flex flex-col items-center justify-center pt-20" // pt-20 para que no tape la navbar
       style={{
         backgroundColor: "black",
         backgroundImage: `url(${fondos[themeColor]})`,
@@ -90,12 +97,11 @@ export default function LunarModal({
         backgroundPosition: "center",
       }}
     >
-      {/* Luna con opacidad baja y más chica */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <motion.div
           animate={{
-            y: [0, -10, 0], // Movimiento vertical suave
-            rotate: [0, 1, -1, 0], // Pequeña rotación
+            y: [0, -10, 0],
+            rotate: [0, 1, -1, 0],
           }}
           transition={{
             repeat: Infinity,
@@ -108,17 +114,15 @@ export default function LunarModal({
             alt="Luna"
             width={400}
             height={400}
-            className="w-[50%] max-w-[400px] opacity-30 drop-shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+            className="w-[50%] max-w-[400px] opacity-30"
             priority
           />
         </motion.div>
       </div>
 
-      {/* NIEBLA y ESTRELLAS por ENCIMA de la luna */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-800 to-black opacity-60 animate-pulse" />
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-15 animate-twinkle" />
 
-      {/* MODAL grande con fondo traslúcido oscuro */}
       <div
         className={`relative z-10 max-w-3xl w-[90%] mx-4 p-10 rounded-3xl backdrop-blur-xl shadow-2xl border-4 ${
           themeColor === "emerald"
@@ -139,7 +143,7 @@ export default function LunarModal({
               : themeColor === "purple"
               ? "text-purple-300"
               : "text-gray-300"
-          } drop-shadow-md`}
+          }`}
         >
           Día {day} del ciclo 🌙
         </h2>
@@ -161,8 +165,37 @@ export default function LunarModal({
 
         <p className="text-lg italic text-gray-300">{mensaje}</p>
 
+        {/* Selector de emoción */}
+        <div className="space-y-2">
+          <p className="text-lg text-gray-200">¿Cómo te sientes hoy?</p>
+          <div className="flex justify-center gap-4">
+            <button
+              onClick={() => setEmocion("tranquila")}
+              className={`w-12 h-12 rounded-full ${
+                emocion === "tranquila" ? "ring-4 ring-blue-300" : ""
+              } bg-blue-500`}
+            ></button>
+            <button
+              onClick={() => setEmocion("intensa")}
+              className={`w-12 h-12 rounded-full ${
+                emocion === "intensa" ? "ring-4 ring-red-300" : ""
+              } bg-red-500`}
+            ></button>
+            <button
+              onClick={() => setEmocion("creativa")}
+              className={`w-12 h-12 rounded-full ${
+                emocion === "creativa" ? "ring-4 ring-green-300" : ""
+              } bg-green-500`}
+            ></button>
+          </div>
+        </div>
+
+        {/* Botón cerrar */}
         <button
-          onClick={onClose}
+          onClick={() => {
+            guardarEmocion();
+            onClose();
+          }}
           className={`mt-6 px-8 py-2 rounded-full bg-gradient-to-r ${
             themeColor === "emerald"
               ? "from-emerald-500 to-emerald-700"

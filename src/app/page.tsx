@@ -18,7 +18,7 @@ export default function HomePage() {
   }, [router]);
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-pink-50/25 text-pink-900 relative">
+    <main className="min-h-screen flex items-center justify-center text-pink-900 relative">
       {/* Logo fuera de la tarjeta con blur */}
       <div className="absolute top-8 sm:top-12 flex justify-center w-full z-10">
         <div className="w-32 h-32 sm:w-40 sm:h-40 relative  rounded-full  shadow-md">

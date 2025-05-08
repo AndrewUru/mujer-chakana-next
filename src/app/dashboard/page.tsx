@@ -129,7 +129,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="w-full max-w-6xl  px-4 mx-auto p-6 space-y-12 text-pink-900 pb-32">
+    <main className="w-full max-w-6xl px-4 mx-auto p-6 space-y-12 text-pink-900 pb-32">
       {/* ENCABEZADO */}
       <section className="relative bg-gradient-to-br from-pink-100/70 to-rose-200/50 backdrop-blur-sm shadow-lg rounded-2xl p-4 flex flex-col gap-2 sm:flex-row sm:items-center justify-between text-center sm:text-left">
         <div className="space-y-1">

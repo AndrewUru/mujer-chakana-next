@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
+
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -123,8 +124,9 @@ export default function LoginForm() {
         </button>
 
         {mensaje && (
-          <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-md text-sm">
-            {mensaje}
+          <div className="flex items-center space-x-2 bg-rose-50 border border-rose-200 text-rose-700 p-3 rounded-xl text-sm shadow-md transition-all duration-300">
+            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+            <span>{mensaje}</span>
           </div>
         )}
       </form>

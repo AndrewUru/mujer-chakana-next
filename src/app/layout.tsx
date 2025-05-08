@@ -1,6 +1,7 @@
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Script from "next/script";
+import CookieConsent from "@/components/CookieConsent";
 
 <Script
   src={`https://www.paypal.com/sdk/js?client-id=TU_CLIENT_ID&currency=EUR`}
@@ -67,15 +68,25 @@ export default function RootLayout({
         {/* Favicon */}
         <link rel="icon" href="/icon-192x192.png" />
       </head>
-      <body
-        className="h-screen min-h-screen bg-fixed bg-center bg-no-repeat bg-pink-50/25 bg-cover text-pink-900 font-sans pb-20"
-        style={{
-          backgroundImage:
-            "url('https://elsaltoweb.es/wp-content/uploads/2025/04/mujer-chakana.png')",
-        }}
-      >
-        {children}
-        <Navbar />
+      <body className="h-screen min-h-screen font-sans text-pink-900 relative overflow-hidden pb-20">
+        {/* Capa de la imagen */}
+        <div
+          className="absolute inset-0 bg-fixed bg-center bg-no-repeat bg-cover z-0"
+          style={{
+            backgroundImage:
+              "url('https://elsaltoweb.es/wp-content/uploads/2025/04/mujer-chakana.png')",
+          }}
+        ></div>
+
+        {/* Capa rosa con opacidad */}
+        <div className="absolute inset-0 bg-pink-50/25 z-10"></div>
+
+        {/* Contenido */}
+        <div className="relative z-20">
+          {children}
+          <Navbar />
+        </div>
+        <CookieConsent />
       </body>
     </html>
   );

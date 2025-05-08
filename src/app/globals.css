@@ -1,14 +1,6 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans, system-ui, sans-serif);
-  --font-mono: var(--font-geist-mono, monospace);
-
   /* Paleta Mujer Chakana */
   --chakra-pink: #fbb6ce;
   --chakra-rose: #f43f5e;
@@ -20,9 +12,6 @@
 }
 
 /* Body global */
-body {
-  @apply bg-[var(--background)] text-[var(--foreground)] transition-colors duration-500 ease-in-out;
-}
 
 /* Textos */
 

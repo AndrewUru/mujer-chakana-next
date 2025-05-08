@@ -23,7 +23,7 @@ export default function SetupPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-100 flex flex-col items-center justify-start pb-20 px-6 py-12">
-      <div className="max-w-2xl w-full space-y-10">
+      <div className="max-w-4xl w-full space-y-10">
         <header className="text-center">
           <h1 className="text-2xl font-extrabold text-pink-800 mb-3 tracking-tight">
             🌕 Conecta con tu Ciclo
@@ -43,12 +43,7 @@ export default function SetupPage() {
               📖 Ver Manual de Usuario y Moonboard
             </Link>
           </div>
-
-          <p className="italic text-pink-500 mt-4">
-            “Cuando eliges tu inicio, el universo te acompaña.” ✨
-          </p>
         </header>
-
         <section>
           <SetupPerfil />
         </section>

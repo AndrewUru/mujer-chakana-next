@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
 import AvatarUploader from "./AvatarUploader";
 import { Loader2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 export default function RegisterForm() {
   const [email, setEmail] = useState("");
@@ -90,7 +91,7 @@ export default function RegisterForm() {
 
   return (
     <div className="min-h-[calc(100vh-60px)] flex justify-center items-center overflow-hidden">
-      <div className="w-full max-w-md min-h-screen overflow-y-auto px-4 pb-32">
+      <div className="w-full max-w-md min-h-screen overflow-y-auto px-4 pb-32 ">
         <form
           onSubmit={handleRegister}
           className="flex flex-col gap-3 bg-white p-8 rounded-2xl shadow-md border border-pink-100"
@@ -98,11 +99,9 @@ export default function RegisterForm() {
           <h1 className="text-3xl font-bold text-center text-pink-800">
             🌺 Crear cuenta
           </h1>
-
           <p className="text-center text-sm text-pink-600">
             Únete al camino del ciclo y la transformación.
           </p>
-
           <div className="flex flex-col gap-2">
             <button
               type="button"
@@ -118,13 +117,11 @@ export default function RegisterForm() {
               Continuar con Google
             </button>
           </div>
-
           <div className="flex items-center my-1">
             <hr className="flex-grow border-pink-200" />
             <span className="px-3 text-pink-400 text-sm">o</span>
             <hr className="flex-grow border-pink-200" />
           </div>
-
           <input
             type="email"
             placeholder="Correo electrónico"
@@ -133,7 +130,6 @@ export default function RegisterForm() {
             className="border border-pink-300 p-3 rounded-lg placeholder-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-200 transition"
             required
           />
-
           <input
             type="password"
             placeholder="Contraseña"
@@ -142,7 +138,6 @@ export default function RegisterForm() {
             className="border border-pink-300 p-3 rounded-lg placeholder-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-200 transition"
             required
           />
-
           <input
             type="text"
             placeholder="Nombre de usuaria"
@@ -150,7 +145,6 @@ export default function RegisterForm() {
             onChange={(e) => setUsername(e.target.value)}
             className="border border-pink-300 p-3 rounded-lg placeholder-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-200 transition"
           />
-
           <label className="text-sm text-pink-700 mt-2">
             🩸 Fecha de comienzo de tu ciclo (obligatorio)
           </label>
@@ -161,7 +155,6 @@ export default function RegisterForm() {
             className="border border-pink-300 p-3 rounded-lg placeholder-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-200 transition"
             required
           />
-
           {userId && (
             <div>
               <label className="text-sm font-medium text-pink-700">
@@ -182,7 +175,6 @@ export default function RegisterForm() {
               )}
             </div>
           )}
-
           <button
             type="submit"
             disabled={loading}
@@ -196,10 +188,10 @@ export default function RegisterForm() {
               "Registrarse con email"
             )}
           </button>
-
           {mensaje && (
-            <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-md text-sm">
-              {mensaje}
+            <div className="flex items-center space-x-2 bg-rose-50 border border-rose-200 text-rose-700 p-3 rounded-xl text-sm shadow-md transition-all duration-300">
+              <AlertCircle className="w-5 h-5 flex-shrink-0" />
+              <span>{mensaje}</span>
             </div>
           )}
         </form>
