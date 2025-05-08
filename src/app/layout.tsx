@@ -68,10 +68,10 @@ export default function RootLayout({
         {/* Favicon */}
         <link rel="icon" href="/icon-192x192.png" />
       </head>
-      <body className="h-screen min-h-screen font-sans text-pink-900 relative overflow-x-hidden pb-20">
+      <body className="min-h-screen font-sans text-pink-900 relative pb-20">
         {/* Capa de la imagen */}
         <div
-          className="absolute inset-0 bg-fixed bg-center bg-no-repeat bg-cover z-0"
+          className="fixed inset-0 bg-center bg-no-repeat bg-cover z-0"
           style={{
             backgroundImage:
               "url('https://elsaltoweb.es/wp-content/uploads/2025/04/mujer-chakana.png')",
@@ -79,7 +79,7 @@ export default function RootLayout({
         ></div>
 
         {/* Capa rosa con opacidad */}
-        <div className="absolute inset-0 bg-pink-50/25 z-10"></div>
+        <div className="fixed inset-0 bg-pink-50/25 z-10"></div>
 
         {/* Contenido */}
         <div className="relative z-20">
