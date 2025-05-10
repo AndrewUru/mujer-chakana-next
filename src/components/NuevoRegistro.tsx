@@ -124,7 +124,7 @@ export default function NuevoRegistro({
   return (
     <div className="bg-white/90 border border-rose-200 rounded-3xl p-8 shadow-2xl mt-12 mx-auto space-y-8 relative transition-all duration-500">
       <h2 className="text-3xl sm:text-4xl text-center font-extrabold text-rose-700 drop-shadow-sm">
-        🌸 Registrar mi día
+        🌸 Registra tu día y recibe una reflexión GRATIS!
       </h2>
 
       {/* Campo emociones */}

@@ -183,49 +183,6 @@ export default function DashboardPage() {
         <Moonboard />
       </section>
 
-      {/* NUEVO REGISTRO */}
-      {userId && estadoCiclo && (
-        <section>
-          <NuevoRegistro
-            userId={userId}
-            nombre={userName ?? "Guerrera"}
-            dia_ciclo={day}
-            ciclo_actual={
-              (Math.floor(
-                (new Date().getTime() - fechaInicioCiclo!.getTime()) /
-                  (1000 * 60 * 60 * 24)
-              ) /
-                28) |
-              (0 + 1)
-            }
-            arquetipo={estadoCiclo.arquetipo ?? "Guía"}
-          />
-        </section>
-      )}
-
-      {/* RECURSOS */}
-      <section className="relative mt-16 mx-auto max-w-5xl bg-gradient-to-br from-pink-50 via-rose-100 to-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-pink-100">
-        {/* Cinta superior */}
-        <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-white text-pink-700 px-5 py-1.5 rounded-full shadow-md text-sm font-semibold border border-pink-200">
-          ✨ Espacio de transformación
-        </div>
-
-        {/* Encabezado centrado */}
-        <div className="mb-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-pink-800 mb-3 flex justify-center items-center gap-2">
-            <Gem className="w-7 h-7 text-pink-700" />
-            Recursos Sagrados
-          </h2>
-          <p className="text-pink-700 text-base sm:text-lg max-w-2xl mx-auto">
-            Audios, rituales y guías para tu camino interior. Este espacio es
-            para ti. 🌸
-          </p>
-        </div>
-
-        {/* Lista de recursos */}
-        <RecursosList recursos={recursosData} />
-      </section>
-
       {/* BOTÓN GALERÍA */}
       <section className="mt-16 text-center bg-white/70 border border-pink-200 rounded-2xl shadow-md p-8 space-y-4 mb-20">
         <h2 className="text-2xl font-bold text-pink-700 flex items-center justify-center gap-2 mb-2">
@@ -255,6 +212,49 @@ export default function DashboardPage() {
             Suscríbete para acceder
           </a>
         )}
+      </section>
+
+      {/* NUEVO REGISTRO */}
+      {userId && estadoCiclo && (
+        <section>
+          <NuevoRegistro
+            userId={userId}
+            nombre={userName ?? "Guerrera"}
+            dia_ciclo={day}
+            ciclo_actual={
+              (Math.floor(
+                (new Date().getTime() - fechaInicioCiclo!.getTime()) /
+                  (1000 * 60 * 60 * 24)
+              ) /
+                28) |
+              (0 + 1)
+            }
+            arquetipo={estadoCiclo.arquetipo ?? "Guía"}
+          />
+        </section>
+      )}
+
+      {/* RECURSOS */}
+      <section className="relative mt-16 mx-auto max-w-5xl bg-gradient-to-br from-pink-50 via-rose-100 to-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-pink-100 mb-20">
+        {/* Cinta superior */}
+        <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-white text-pink-700 px-5 py-1.5 rounded-full shadow-md text-sm font-semibold border border-pink-200">
+          ✨ Espacio de transformación
+        </div>
+
+        {/* Encabezado centrado */}
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-pink-800 mb-3 flex justify-center items-center gap-2">
+            <Gem className="w-7 h-7 text-pink-700" />
+            Recursos Sagrados
+          </h2>
+          <p className="text-pink-700 text-base sm:text-lg max-w-2xl mx-auto">
+            Audios, rituales y guías para tu camino interior. Este espacio es
+            para ti. 🌸
+          </p>
+        </div>
+
+        {/* Lista de recursos */}
+        <RecursosList recursos={recursosData} />
       </section>
     </main>
   );
