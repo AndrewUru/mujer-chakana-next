@@ -53,4 +53,5 @@ export interface Recurso {
   titulo: string;
   url: string;
   descripcion: string;
+  tipo_suscripcion: "gratuito" | "mensual" | "anual";
 }
