@@ -10,7 +10,7 @@ export default function EstadoActualCiclo({
   };
 }) {
   return (
-    <section className="relative w-full h-[280px] sm:h-[320px] md:h-[450px] max-h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-pink-100 mx-auto">
+    <section className="relative w-full h-[580px] sm:h-[480px] md:h-[520px] max-h-[640px] rounded-3xl overflow-hidden shadow-2xl bg-pink-100 mx-auto">
       {data.imagen_url && (
         <Image
           src={data.imagen_url}

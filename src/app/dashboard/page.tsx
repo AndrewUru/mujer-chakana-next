@@ -24,6 +24,14 @@ export default function DashboardPage() {
   const [fechaFinCiclo, setFechaFinCiclo] = useState<Date | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true); // << AGREGADO
+  interface Perfil {
+    display_name: string;
+    avatar_url: string;
+    fecha_inicio: string;
+    suscripcion_activa?: boolean;
+  }
+
+  const [perfil, setPerfil] = useState<Perfil | null>(null); // Add state for perfil
 
   async function loadData() {
     setLoading(true);
@@ -38,16 +46,17 @@ export default function DashboardPage() {
 
     setUserId(user.id);
 
-    const { data: perfil } = await supabase
+    const { data: perfilData } = await supabase
       .from("perfiles")
       .select("display_name, avatar_url, fecha_inicio")
       .eq("user_id", user.id)
       .single();
+    setUserName(perfilData?.display_name || "");
+    setPerfil(perfilData); // Save perfil data for later use
+    setUserName(perfilData?.display_name || "");
 
-    setUserName(perfil?.display_name || "");
-
-    if (perfil?.fecha_inicio) {
-      const inicio = new Date(perfil.fecha_inicio);
+    if (perfilData?.fecha_inicio) {
+      const inicio = new Date(perfilData.fecha_inicio);
       setFechaInicioCiclo(inicio); // 🔥 ESTO es lo que faltaba
       const hoy = new Date();
       const diferencia = Math.floor(
@@ -129,7 +138,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="w-full max-w-6xl px-4 mx-auto p-6 space-y-12 text-pink-900 pb-32">
+    <main className="w-full max-w-6xl px-4 mx-auto p-6 space-y-12 text-pink-900">
       {/* ENCABEZADO */}
       <section className="relative bg-gradient-to-br from-pink-100/70 to-rose-200/50 backdrop-blur-sm shadow-lg rounded-2xl p-4 flex flex-col gap-2 sm:flex-row sm:items-center justify-between text-center sm:text-left">
         <div className="space-y-1">
@@ -195,31 +204,58 @@ export default function DashboardPage() {
       )}
 
       {/* RECURSOS */}
-      <section className="relative mt-12 bg-gradient-to-br from-pink-50 via-rose-100 to-white p-6 rounded-3xl shadow-lg border border-pink-100">
-        <div className="absolute -top-6 left-6 bg-white text-pink-700 px-4 py-1 rounded-full shadow text-sm font-medium border border-pink-200">
+      <section className="relative mt-16 mx-auto max-w-5xl bg-gradient-to-br from-pink-50 via-rose-100 to-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-pink-100">
+        {/* Cinta superior */}
+        <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-white text-pink-700 px-5 py-1.5 rounded-full shadow-md text-sm font-semibold border border-pink-200">
           ✨ Espacio de transformación
         </div>
-        <div className="mb-6 text-center">
-          <h2 className="text-3xl font-bold text-pink-800 mb-2 flex items-center gap-2">
-            <Gem className="w-6 h-6 text-pink-700" /> Recursos Sagrados
+
+        {/* Encabezado centrado */}
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-pink-800 mb-3 flex justify-center items-center gap-2">
+            <Gem className="w-7 h-7 text-pink-700" />
+            Recursos Sagrados
           </h2>
-          <p className="text-pink-700 text-base">
-            Accede a audios, rituales y guías para tu camino interior. Este
-            espacio es para ti 🌸
+          <p className="text-pink-700 text-base sm:text-lg max-w-2xl mx-auto">
+            Audios, rituales y guías para tu camino interior. Este espacio es
+            para ti. 🌸
           </p>
         </div>
+
+        {/* Lista de recursos */}
         <RecursosList recursos={recursosData} />
       </section>
 
       {/* BOTÓN GALERÍA */}
-      <div className="flex justify-center mt-10">
-        <button
-          onClick={handleGoToCiclos}
-          className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-pink-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300"
-        >
-          <GalleryThumbnails className="w-5 h-5" /> Ver Galería de Arquetipos
-        </button>
-      </div>
+      <section className="mt-16 text-center bg-white/70 border border-pink-200 rounded-2xl shadow-md p-8 space-y-4 mb-20">
+        <h2 className="text-2xl font-bold text-pink-700 flex items-center justify-center gap-2 mb-2">
+          <GalleryThumbnails className="w-6 h-6" />
+          Galería de Arquetipos
+        </h2>
+        <p className="text-pink-600 max-w-md mx-auto">
+          Accede a todos los arquetipos visuales y sus enseñanzas a través de la
+          Galería. Disponible para todas las suscripciones activas — ya sea
+          mensual o anual.
+        </p>
+
+        {perfil?.suscripcion_activa ? (
+          <button
+            onClick={handleGoToCiclos}
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 to-pink-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300"
+          >
+            <GalleryThumbnails className="w-5 h-5" />
+            Ver Galería de Arquetipos
+          </button>
+        ) : (
+          <a
+            href="/suscripcion"
+            className="inline-flex items-center gap-2 text-pink-700 bg-rose-100 border border-rose-300 py-3 px-8 rounded-full font-semibold hover:bg-rose-200 transition"
+          >
+            <GalleryThumbnails className="w-5 h-5" />
+            Suscríbete para acceder
+          </a>
+        )}
+      </section>
     </main>
   );
 }

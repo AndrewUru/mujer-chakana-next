@@ -2,7 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Book, Music, FileText, Lock } from "lucide-react";
+import {
+  Book,
+  Music,
+  FileText,
+  Lock,
+  BadgeCheck,
+  Star,
+  Gift,
+} from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 
 type Recurso = {
@@ -52,8 +60,18 @@ export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
     }
   };
 
-  const renderCards = (lista: Recurso[], bloqueado = false) =>
-    lista.map((recurso) =>
+  const renderCards = (
+    lista: Recurso[],
+    bloqueado = false,
+    tipo?: "gratuito" | "mensual" | "anual"
+  ) => {
+    const badgeStyle = {
+      gratuito: "bg-emerald-100 text-emerald-700",
+      mensual: "bg-yellow-100 text-yellow-700",
+      anual: "bg-rose-100 text-rose-700",
+    };
+  
+    return lista.map((recurso) =>
       !bloqueado ? (
         <Link
           key={recurso.id}
@@ -61,11 +79,20 @@ export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
           target="_blank"
           className="bg-white p-5 rounded-2xl shadow-md hover:shadow-xl transition-all border border-pink-100 hover:border-pink-300"
         >
-          <div className="flex items-center gap-3 mb-2">
-            {iconByTipo(recurso.tipo)}
-            <h3 className="text-lg font-semibold text-rose-800">
-              {recurso.titulo}
-            </h3>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              {iconByTipo(recurso.tipo)}
+              <h3 className="text-lg font-semibold text-rose-800">
+                {recurso.titulo}
+              </h3>
+            </div>
+            {tipo && (
+              <span
+                className={`text-xs font-semibold px-2 py-1 rounded-full ${badgeStyle[tipo]}`}
+              >
+                {tipo}
+              </span>
+            )}
           </div>
           <p className="text-sm text-gray-600">{recurso.descripcion}</p>
         </Link>
@@ -74,11 +101,20 @@ export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
           key={recurso.id}
           className="bg-gray-50 p-5 rounded-2xl shadow-inner border border-gray-200 opacity-60 cursor-not-allowed flex flex-col justify-between"
         >
-          <div className="flex items-center gap-3 mb-2">
-            {iconByTipo(recurso.tipo, true)}
-            <h3 className="text-lg font-semibold text-gray-500 line-through">
-              {recurso.titulo}
-            </h3>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              {iconByTipo(recurso.tipo, true)}
+              <h3 className="text-lg font-semibold text-gray-500 line-through">
+                {recurso.titulo}
+              </h3>
+            </div>
+            {tipo && (
+              <span
+                className={`text-xs font-semibold px-2 py-1 rounded-full ${badgeStyle[tipo]}`}
+              >
+                {tipo}
+              </span>
+            )}
           </div>
           <p className="text-sm text-gray-400 italic">{recurso.descripcion}</p>
           <div className="mt-4 text-center">
@@ -93,7 +129,8 @@ export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
         </div>
       )
     );
-
+  };
+  
   const recursosGratuitos = recursos.filter(
     (r) => r.tipo_suscripcion === "gratuito"
   );
@@ -108,31 +145,34 @@ export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
     <div className="space-y-12">
       {/* Gratuitos */}
       <section>
-        <h2 className="text-2xl font-bold text-emerald-700 mb-4">
-          🌱 Recursos Gratuitos
+        <h2 className="text-xl sm:text-2xl font-bold text-emerald-700 mb-4 flex items-center gap-2">
+          <Gift className="w-5 h-5 text-emerald-600" />
+          Recursos Gratuitos
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {renderCards(recursosGratuitos, false)}
+          {renderCards(recursosGratuitos, false, "gratuito")}
         </div>
       </section>
 
       {/* Mensuales */}
       <section>
-        <h2 className="text-2xl font-bold text-yellow-600 mb-4">
-          🌒 Recursos para Suscripción Mensual
+        <h2 className="text-xl sm:text-2xl font-bold text-yellow-600 mb-4 flex items-center gap-2">
+          <Star className="w-5 h-5 text-yellow-500" />
+          Recursos para Suscripción Mensual
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {renderCards(recursosMensuales, !suscripcionActiva)}
+          {renderCards(recursosMensuales, !suscripcionActiva, "mensual")}
         </div>
       </section>
 
       {/* Anuales */}
       <section>
-        <h2 className="text-2xl font-bold text-rose-700 mb-4">
-          🌕 Recursos para Suscripción Anual
+        <h2 className="text-xl sm:text-2xl font-bold text-rose-700 mb-4 flex items-center gap-2">
+          <BadgeCheck className="w-5 h-5 text-rose-600" />
+          Recursos para Suscripción Anual
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {renderCards(recursosAnuales, !suscripcionActiva)}
+          {renderCards(recursosAnuales, !suscripcionActiva, "anual")}
         </div>
       </section>
     </div>
