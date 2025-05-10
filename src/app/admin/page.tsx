@@ -7,8 +7,10 @@ import { supabase } from "@/lib/supabaseClient";
 interface Usuario {
   user_id: string;
   display_name: string;
+  email: string; // Added email property
   rol: string;
   suscripcion_activa: boolean;
+  tipo_plan?: string; // Added tipo_plan property
 }
 
 export default function AdminPage() {
@@ -45,7 +47,9 @@ export default function AdminPage() {
 
       const { data: usersData, error: errorUsers } = await supabase
         .from("perfiles")
-        .select("user_id, display_name, rol, suscripcion_activa")
+        .select(
+          "user_id, email, display_name, rol, tipo_plan, suscripcion_activa"
+        )
         .returns<Usuario[]>();
 
       if (errorUsers) {
@@ -122,9 +126,10 @@ export default function AdminPage() {
             <table className="w-full border border-pink-100 text-sm text-pink-900 bg-white/90 shadow-inner">
               <thead className="bg-pink-100 text-pink-800">
                 <tr>
-                  <th className="py-3 px-4 border-b text-left">ID</th>
                   <th className="py-3 px-4 border-b text-left">Nombre</th>
+                  <th className="py-3 px-4 border-b text-left">Correo</th>
                   <th className="py-3 px-4 border-b text-left">Rol</th>
+                  <th className="py-3 px-4 border-b text-left">Plan</th>
                   <th className="py-3 px-4 border-b text-center">
                     Suscripción
                   </th>
@@ -136,14 +141,17 @@ export default function AdminPage() {
                     key={usuario.user_id}
                     className="hover:bg-pink-50 transition-all"
                   >
-                    <td className="px-4 py-2 border-b text-xs text-gray-600">
-                      {usuario.user_id.slice(0, 8)}…
-                    </td>
                     <td className="px-4 py-2 border-b font-medium">
                       {usuario.display_name || "—"}
                     </td>
+                    <td className="px-4 py-2 border-b text-sm text-gray-600">
+                      {usuario.email || "—"}
+                    </td>
                     <td className="px-4 py-2 border-b capitalize">
                       {usuario.rol}
+                    </td>
+                    <td className="px-4 py-2 border-b capitalize text-pink-700 font-semibold">
+                      {usuario.tipo_plan || "—"}
                     </td>
                     <td className="px-4 py-2 border-b text-center">
                       <button
@@ -169,7 +177,7 @@ export default function AdminPage() {
           </div>
         </section>
 
-        <section className="text-center">
+        <section className="text-center mt-10">
           <h3 className="text-lg text-pink-700 font-semibold mb-3">
             Accesos rápidos de edición
           </h3>

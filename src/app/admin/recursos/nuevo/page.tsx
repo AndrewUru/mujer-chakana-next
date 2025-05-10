@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { useUser } from "@supabase/auth-helpers-react";
 
 const NuevoRecursoPage = () => {
   const [titulo, setTitulo] = useState("");
@@ -10,12 +9,14 @@ const NuevoRecursoPage = () => {
   const [tipo, setTipo] = useState("pdf");
   const [url, setUrl] = useState("");
   const [tipoSuscripcion, setTipoSuscripcion] = useState("gratuito");
-  const user = useUser();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!user) {
+    const { data, error: userError } = await supabase.auth.getUser();
+    const userId = data?.user?.id;
+
+    if (!userId || userError) {
       alert("Debes iniciar sesión para crear un recurso.");
       return;
     }
@@ -27,7 +28,7 @@ const NuevoRecursoPage = () => {
         tipo,
         url,
         tipo_suscripcion: tipoSuscripcion,
-        creado_por: user.id,
+        creado_por: userId,
         activo: true,
       },
     ]);
