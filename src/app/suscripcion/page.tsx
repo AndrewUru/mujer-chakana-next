@@ -10,6 +10,7 @@ export default function SuscripcionPage() {
   const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sdkReady, setSdkReady] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -42,15 +43,24 @@ export default function SuscripcionPage() {
     fetchUser();
   }, [router]);
 
-  // 🚨 Cargar el SDK SOLO una vez para toda la página
   useEffect(() => {
-    if (!document.getElementById("paypal-sdk")) {
-      const script = document.createElement("script");
-      script.src =
-        "https://www.paypal.com/sdk/js?client-id=ASQix2Qu6atiH43_jrk18jeSMDjB_YdTjbfI8jrTJ7x5uagNzUhuNMXacO49ZxJWr_EMpBhrpVPbOvR_&vault=true&intent=subscription";
-      script.id = "paypal-sdk";
-      document.body.appendChild(script);
-    }
+    const loadPayPalScript = () => {
+      return new Promise((resolve) => {
+        if (document.getElementById("paypal-sdk")) {
+          resolve(true);
+          return;
+        }
+
+        const script = document.createElement("script");
+        script.src =
+          "https://www.paypal.com/sdk/js?client-id=ASQix2Qu6atiH43_jrk18jeSMDjB_YdTjbfI8jrTJ7x5uagNzUhuNMXacO49ZxJWr_EMpBhrpVPbOvR_&vault=true&intent=subscription";
+        script.id = "paypal-sdk";
+        script.onload = () => resolve(true);
+        document.body.appendChild(script);
+      });
+    };
+
+    loadPayPalScript().then(() => setSdkReady(true));
   }, []);
 
   if (loading) {
@@ -75,25 +85,33 @@ export default function SuscripcionPage() {
           <li>✅ Recursos sagrados desbloqueados</li>
         </ul>
 
-        <div className="space-y-2 border-t border-rose-100 pt-4">
-          <h2 className="font-semibold text-lg text-rose-700">
-            Suscripción mensual
-          </h2>
-          <PayPalSubscriptionButton
-            planId={PAYPAL_PLANS.mensual.id}
-            userId={userId}
-          />
-        </div>
+        {sdkReady && (
+          <>
+            <div className="space-y-2 border-t border-rose-100 pt-4">
+              <h2 className="font-semibold text-lg text-rose-700">
+                Suscripción mensual
+              </h2>
+              <PayPalSubscriptionButton
+                planId={PAYPAL_PLANS.mensual.id}
+                userId={userId}
+              />
+            </div>
 
-        <div className="space-y-2 border-t border-rose-100 pt-4">
-          <h2 className="font-semibold text-lg text-rose-700">
-            Suscripción anual
-          </h2>
-          <PayPalSubscriptionButton
-            planId={PAYPAL_PLANS.anual.id}
-            userId={userId}
-          />
-        </div>
+            <div className="space-y-2 border-t border-rose-100 pt-4">
+              <h2 className="font-semibold text-lg text-rose-700">
+                Suscripción anual
+              </h2>
+              <PayPalSubscriptionButton
+                planId={PAYPAL_PLANS.anual.id}
+                userId={userId}
+              />
+            </div>
+          </>
+        )}
+
+        {!sdkReady && (
+          <p className="text-sm text-gray-500 italic">Cargando PayPal...</p>
+        )}
 
         <p className="text-xs text-gray-500 pt-2">
           Cancelas cuando quieras. Procesado con PayPal.
