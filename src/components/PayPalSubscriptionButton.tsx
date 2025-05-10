@@ -66,7 +66,10 @@ export default function PayPalSubscriptionButton({
 
               const { error } = await supabase
                 .from("perfiles")
-                .update({ suscripcion_activa: true })
+                .update({
+                  suscripcion_activa: true,
+                  tipo_plan: planId === "P-XXXXXXX1" ? "mensual" : "anual", // <--- reemplazar
+                })
                 .eq("user_id", userId);
 
               if (error) {

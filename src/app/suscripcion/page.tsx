@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import PayPalSubscriptionButton from "@/components/PayPalSubscriptionButton";
+import { PAYPAL_PLANS } from "@/lib/paypalPlans";
 
 export default function SuscripcionPage() {
   const router = useRouter();
@@ -22,6 +23,19 @@ export default function SuscripcionPage() {
       }
 
       setUserId(user.id);
+
+      const { data: perfil } = await supabase
+        .from("perfiles")
+        .select("tipo_plan, suscripcion_activa")
+        .eq("user_id", user.id)
+        .single();
+
+      if (perfil?.suscripcion_activa) {
+        alert(`Ya tienes una suscripción ${perfil.tipo_plan}.`);
+        router.push("/dashboard");
+        return;
+      }
+
       setLoading(false);
     };
 
@@ -66,7 +80,7 @@ export default function SuscripcionPage() {
             Suscripción mensual
           </h2>
           <PayPalSubscriptionButton
-            planId="P-7N840235CX057714NNAJYNLY"
+            planId={PAYPAL_PLANS.mensual.id}
             userId={userId}
           />
         </div>
@@ -76,7 +90,7 @@ export default function SuscripcionPage() {
             Suscripción anual
           </h2>
           <PayPalSubscriptionButton
-            planId="P-98U01726LR562531RNAJYPGQ"
+            planId={PAYPAL_PLANS.anual.id}
             userId={userId}
           />
         </div>
