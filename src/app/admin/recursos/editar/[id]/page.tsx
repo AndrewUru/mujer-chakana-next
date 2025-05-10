@@ -13,6 +13,7 @@ export default function EditarRecursoPage() {
     descripcion: string;
     url: string;
     tipo: string;
+    plan_acceso?: "gratuito" | "mensual" | "anual";
   }
 
   const [recurso, setRecurso] = useState<Recurso | null>(null);
@@ -57,6 +58,7 @@ export default function EditarRecursoPage() {
         descripcion: recurso.descripcion,
         url: recurso.url,
         tipo: recurso.tipo,
+        plan_acceso: recurso.plan_acceso || "gratuito",
       })
       .eq("id", id);
 
@@ -97,7 +99,6 @@ export default function EditarRecursoPage() {
         son obligatorios.
       </p>
 
-      {/* Mensajes de éxito o error */}
       {mensajeExito && (
         <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded shadow">
           {mensajeExito}
@@ -110,7 +111,6 @@ export default function EditarRecursoPage() {
       )}
 
       <div className="space-y-5">
-        {/* Título */}
         <div className="flex flex-col gap-2">
           <label className="font-semibold text-pink-700">Título *</label>
           <input
@@ -123,7 +123,6 @@ export default function EditarRecursoPage() {
           />
         </div>
 
-        {/* Descripción */}
         <div className="flex flex-col gap-2">
           <label className="font-semibold text-pink-700">Descripción</label>
           <textarea
@@ -137,7 +136,6 @@ export default function EditarRecursoPage() {
           />
         </div>
 
-        {/* URL */}
         <div className="flex flex-col gap-2">
           <label className="font-semibold text-pink-700">URL *</label>
           <input
@@ -150,7 +148,6 @@ export default function EditarRecursoPage() {
           />
         </div>
 
-        {/* Tipo */}
         <div className="flex flex-col gap-2">
           <label className="font-semibold text-pink-700">Tipo de recurso</label>
           <input
@@ -162,7 +159,27 @@ export default function EditarRecursoPage() {
           />
         </div>
 
-        {/* Botón */}
+        {/* Nuevo campo: Plan de acceso */}
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold text-pink-700">
+            Accesible para el plan:
+          </label>
+          <select
+            value={recurso.plan_acceso || "gratuito"}
+            onChange={(e) =>
+              setRecurso({
+                ...recurso,
+                plan_acceso: e.target.value as Recurso["plan_acceso"],
+              })
+            }
+            className="w-full border border-pink-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-400 text-gray-700"
+          >
+            <option value="gratuito">Gratuito</option>
+            <option value="mensual">Suscripción mensual</option>
+            <option value="anual">Suscripción anual</option>
+          </select>
+        </div>
+
         <div className="pt-4">
           <button
             onClick={handleSave}
