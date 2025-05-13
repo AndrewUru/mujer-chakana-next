@@ -1,9 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { phase } from "lune";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { getLunarPhase } from "@/lib/getLunarPhase";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+
+interface FaseLunar {
+  id: string;
+  nombre_fase: string;
+  simbolo: string;
+  color: "gray" | "emerald" | "yellow" | "purple";
+  rango_inicio: number;
+  rango_fin: number;
+  mensaje: string;
+  decimalFase: number;
+}
 
 export default function LunarModal({
   day,
@@ -14,63 +27,13 @@ export default function LunarModal({
   fecha: string;
   onClose: () => void;
 }) {
-  const [faseLunar, setFaseLunar] = useState("");
-  const [mensaje, setMensaje] = useState("");
-  const [themeColor, setThemeColor] = useState("gray");
+  const [fase, setFase] = useState<FaseLunar | null>(null);
 
   useEffect(() => {
-    const calcularFaseLunar = () => {
-      const fechaActual = new Date(fecha);
-      const { phase: faseDecimal } = phase(fechaActual);
-
-      let nombreFase = "";
-      let color = "";
-      let consejo = "";
-
-      if (faseDecimal === 0) {
-        nombreFase = "🌑 Luna Nueva";
-        color = "gray";
-        consejo = "Planta tu intención 🌱";
-      } else if (faseDecimal > 0 && faseDecimal < 0.25) {
-        nombreFase = "🌒 Luna Creciente";
-        color = "emerald";
-        consejo = "Activa tu energía y creatividad 💡";
-      } else if (faseDecimal === 0.25) {
-        nombreFase = "🌓 Cuarto Creciente";
-        color = "emerald";
-        consejo = "Construye tus proyectos 🏗️";
-      } else if (faseDecimal > 0.25 && faseDecimal < 0.5) {
-        nombreFase = "🌔 Gibosa Creciente";
-        color = "emerald";
-        consejo = "Expande tu poder y conecta ✨";
-      } else if (faseDecimal === 0.5) {
-        nombreFase = "🌕 Luna Llena";
-        color = "yellow";
-        consejo = "Celebra y brilla con plenitud 🌟";
-      } else if (faseDecimal > 0.5 && faseDecimal < 0.75) {
-        nombreFase = "🌖 Gibosa Menguante";
-        color = "purple";
-        consejo = "Reflexiona y comparte aprendizajes 🪞";
-      } else if (faseDecimal === 0.75) {
-        nombreFase = "🌗 Cuarto Menguante";
-        color = "purple";
-        consejo = "Libera lo que ya no sirve 🌬️";
-      } else if (faseDecimal > 0.75 && faseDecimal < 1) {
-        nombreFase = "🌘 Luna Menguante";
-        color = "purple";
-        consejo = "Introspección y descanso 💤";
-      } else {
-        nombreFase = "🌑 Luna Nueva";
-        color = "gray";
-        consejo = "Reinicia tu ciclo con nuevas intenciones 🌱";
-      }
-
-      setFaseLunar(nombreFase);
-      setMensaje(consejo);
-      setThemeColor(color);
-    };
-
-    calcularFaseLunar();
+    getLunarPhase(fecha).then((data) => {
+      console.log("Fase lunar obtenida:", data);
+      if (data) setFase(data);
+    });
   }, [fecha]);
 
   const fondos: Record<string, string> = {
@@ -80,27 +43,22 @@ export default function LunarModal({
     purple: "/luna.png",
   };
 
+  if (!fase) return null;
+
   return (
     <div
-      className="fixed inset-0 z-50 w-full h-full overflow-hidden flex flex-col items-center justify-center pt-20" // pt-20 para que no tape la navbar
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center pt-20"
       style={{
         backgroundColor: "black",
-        backgroundImage: `url(${fondos[themeColor]})`,
+        backgroundImage: `url(${fondos[fase.color]})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
       <div className="absolute flex items-center justify-center pointer-events-none">
         <motion.div
-          animate={{
-            y: [0, -10, 0],
-            rotate: [0, 1, -1, 0],
-          }}
-          transition={{
-            repeat: Infinity,
-            duration: 6,
-            ease: "easeInOut",
-          }}
+          animate={{ y: [0, -10, 0], rotate: [0, 1, -1, 0] }}
+          transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
         >
           <Image
             src="/luna.png"
@@ -117,23 +75,23 @@ export default function LunarModal({
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-15 animate-twinkle" />
 
       <div
-        className={`relative z-10 max-w-3xl w-[90%] mx-4 p-10 rounded-3xl backdrop-blur-xl shadow-2xl border-4 ${
-          themeColor === "emerald"
+        className={`relative z-10 max-w-3xl p-10 rounded-3xl backdrop-blur-xl shadow-2xl border-4 ${
+          fase.color === "emerald"
             ? "border-emerald-400/60"
-            : themeColor === "yellow"
+            : fase.color === "yellow"
             ? "border-yellow-400/60"
-            : themeColor === "purple"
+            : fase.color === "purple"
             ? "border-purple-400/60"
             : "border-gray-400/60"
-        } bg-black/50 text-center space-y-6 animate-fade-in-up`}
+        } bg-black/50 text-center space-y-6`}
       >
         <h2
-          className={`text-3xl sm:text-6xl font-extrabold ${
-            themeColor === "emerald"
+          className={`text-2xl sm:text-4xl font-extrabold ${
+            fase.color === "emerald"
               ? "text-emerald-300"
-              : themeColor === "yellow"
+              : fase.color === "yellow"
               ? "text-yellow-300"
-              : themeColor === "purple"
+              : fase.color === "purple"
               ? "text-purple-300"
               : "text-gray-300"
           }`}
@@ -141,32 +99,53 @@ export default function LunarModal({
           Día {day} del ciclo 🌙
         </h2>
 
-        <p className="text-lg text-gray-200">Fase lunar actual:</p>
+        <p className="text-5xl">{fase.simbolo}</p>
+
         <p
-          className={`text-3xl sm:text-4xl font-semibold ${
-            themeColor === "emerald"
+          className={`text-3xl font-semibold ${
+            fase.color === "emerald"
               ? "text-emerald-200"
-              : themeColor === "yellow"
+              : fase.color === "yellow"
               ? "text-yellow-200"
-              : themeColor === "purple"
+              : fase.color === "purple"
               ? "text-purple-200"
               : "text-gray-200"
           }`}
         >
-          {faseLunar}
+          {fase.nombre_fase}
         </p>
 
-        <p className="text-lg italic text-gray-300">{mensaje}</p>
+        <p className="text-lg italic text-gray-300 max-w-md mx-auto">
+          {fase.mensaje || "🌑 Sin mensaje definido para esta fase lunar."}
+        </p>
 
-        {/* Botón cerrar */}
+        <div className="w-32 h-32 mx-auto">
+          <CircularProgressbar
+            value={fase.decimalFase * 100}
+            text={`${Math.round(fase.decimalFase * 100)}%`}
+            styles={buildStyles({
+              textColor: "#fff",
+              pathColor:
+                fase.color === "emerald"
+                  ? "#34d399"
+                  : fase.color === "yellow"
+                  ? "#facc15"
+                  : fase.color === "purple"
+                  ? "#a855f7"
+                  : "#9ca3af",
+              trailColor: "#1f2937",
+            })}
+          />
+        </div>
+
         <button
           onClick={onClose}
           className={`mt-6 px-8 py-2 rounded-full bg-gradient-to-r ${
-            themeColor === "emerald"
+            fase.color === "emerald"
               ? "from-emerald-500 to-emerald-700"
-              : themeColor === "yellow"
+              : fase.color === "yellow"
               ? "from-yellow-500 to-yellow-700"
-              : themeColor === "purple"
+              : fase.color === "purple"
               ? "from-purple-500 to-purple-700"
               : "from-gray-500 to-gray-700"
           } text-white font-bold shadow-lg hover:scale-105 transition-all`}
