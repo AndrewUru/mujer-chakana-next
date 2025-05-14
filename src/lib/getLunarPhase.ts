@@ -1,5 +1,5 @@
 import { phase } from "lune";
-import { supabase } from "./supabaseClient"; // asegúrate de importar bien
+import { supabase } from "./supabaseClient";
 
 export async function getLunarPhase(fecha: string) {
   const { phase: decimalFase } = phase(new Date(fecha));
@@ -7,8 +7,8 @@ export async function getLunarPhase(fecha: string) {
   const { data, error } = await supabase
     .from("fases_lunares")
     .select("*")
-    .lte("rango_inicio", decimalFase)
-    .gte("rango_fin", decimalFase)
+    .filter("rango_inicio", "lte", decimalFase)
+    .filter("rango_fin", "gte", decimalFase)
     .limit(1);
 
   if (error || !data || data.length === 0) {
