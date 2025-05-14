@@ -10,52 +10,51 @@ export default function HomePage() {
     <main className="min-h-screen bg-[url('/bg-chakana.png')] bg-cover bg-center text-pink-900 px-4 py-2 sm:py-2 ">
       <div className="max-w-4xl mx-auto rounded-2xl space-y-12 pb-20">
         {/* Logo y bienvenida - Versión Mejorada */}
-        <div className="relative overflow-hidden">
-          {/* Fondo blur general */}
-          <div className="absolute inset-0 bg-white/50 backdrop-blur-4xl z-0" />
 
-          {/* Contenido principal */}
-          <div className="relative flex flex-col items-center text-center space-y-8 py-8 px-6 rounded-2xl max-w-4xl mx-auto z-10">
-            {/* Logo circular con glow y sombra */}
-            <div className="relative w-44 h-44 sm:w-52 sm:h-52 rounded-full backdrop-blur-lg overflow-hidden">
-              <Image
-                src="/logo_chakana.png"
-                alt="Logo Mujer Chakana"
-                fill
-                priority
-                className="object-contain rounded-full hover:scale-[1.03] transition-transform duration-300"
-              />
-            </div>
+        {/* Fondo blur general */}
+        <div className="absolute inset-0 bg-white/50 backdrop-blur-4xl z-0" />
 
-            {/* Título con imagen de luna */}
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-700 to-rose-900 flex items-center gap-4 drop-shadow-lg rounded-2xl">
-              Mujer Chakana
-            </h1>
+        {/* Contenido principal */}
+        <div className="relative flex flex-col items-center text-center space-y-8 py-4 px-6 max-w-4xl mx-auto z-10">
+          {/* Logo circular con glow y sombra */}
+          <div className="relative w-44 h-44 sm:w-52 sm:h-52 overflow-hidden">
+            <Image
+              src="/logo_chakana.png"
+              alt="Logo Mujer Chakana"
+              fill
+              priority
+              className="object-contain  hover:scale-[1.03] transition-transform duration-300"
+            />
+          </div>
 
-            {/* Descripción con fondo suave y blur */}
-            <p className="text-lg sm:text-xl text-rose-900 max-w-2xl bg-white/50 backdrop-blur-md px-8 py-5 rounded-2xl shadow-md leading-relaxed">
-              Una guía espiritual y cíclica para reconectar con tu sabiduría
-              femenina a través del registro emocional, creativo y lunar.
-            </p>
+          {/* Título con imagen de luna */}
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-700 to-rose-900 flex items-center gap-4 drop-shadow-lg rounded-2xl">
+            Mujer Chakana
+          </h1>
 
-            {/* Botones de acción */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-6">
-              <button
-                onClick={() => router.push("/auth/register")}
-                className="group inline-flex items-center justify-center gap-2 px-10 py-4 bg-gradient-to-br from-rose-600 to-rose-700 text-white font-medium rounded-2xl shadow-xl hover:scale-105 transition transform active:scale-95"
-              >
-                <SparklesIcon className="w-6 h-6 group-hover:animate-pulse" />
-                <span>Regístrate GRATIS</span>
-              </button>
+          {/* Descripción con fondo suave y blur */}
+          <p className="text-lg sm:text-xl text-rose-900 max-w-2xl bg-white/50 backdrop-blur-md px-8 py-5 rounded-2xl shadow-md leading-relaxed">
+            Una guía espiritual y cíclica para reconectar con tu sabiduría
+            femenina a través del registro emocional, creativo y lunar.
+          </p>
 
-              <button
-                onClick={() => router.push("/auth/login")}
-                className="group inline-flex items-center justify-center gap-2 px-10 py-4 bg-white/60 text-rose-800 font-medium border border-rose-200 rounded-2xl shadow-md hover:bg-white hover:scale-105 transition transform active:scale-95"
-              >
-                <StarIcon className="w-6 h-6 group-hover:animate-spin" />
-                <span>Ya tengo cuenta</span>
-              </button>
-            </div>
+          {/* Botones de acción */}
+          <div className="flex flex-col sm:flex-row gap-4 pt-6">
+            <button
+              onClick={() => router.push("/auth/register")}
+              className="group inline-flex items-center justify-center gap-2 px-10 py-4 bg-gradient-to-br from-rose-600 to-rose-700 text-white font-medium rounded-2xl shadow-xl hover:scale-105 transition transform active:scale-95"
+            >
+              <SparklesIcon className="w-6 h-6 group-hover:animate-pulse" />
+              <span>Regístrate GRATIS</span>
+            </button>
+
+            <button
+              onClick={() => router.push("/auth/login")}
+              className="group inline-flex items-center justify-center gap-2 px-10 py-4 bg-white/60 text-rose-800 font-medium border border-rose-200 rounded-2xl shadow-md hover:bg-white hover:scale-105 transition transform active:scale-95"
+            >
+              <StarIcon className="w-6 h-6 group-hover:animate-spin" />
+              <span>Ya tengo cuenta</span>
+            </button>
           </div>
         </div>
 
