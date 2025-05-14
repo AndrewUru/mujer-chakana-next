@@ -105,15 +105,20 @@ export default function EditarMoonboardPage() {
   };
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Editar Fases Lunares 🌙</h1>
+    <div className="p-4 max-w-4xl mx-auto bg-rose-50/90 rounded-2xl shadow-xl">
+      <h1 className="text-2xl font-bold mb-6 text-pink-900">
+        Editar Fases Lunares 🌙
+      </h1>
 
       {loading ? (
         <p>Cargando...</p>
       ) : (
         <>
           {fases.map((fase) => (
-            <div key={fase.id} className="border rounded-lg p-4 mb-4 shadow">
+            <div
+              key={fase.id}
+              className="bg-white/80 border rounded-lg p-4 mb-6 shadow-md"
+            >
               <div className="grid grid-cols-2 gap-4">
                 <input
                   value={fase.nombre_fase || ""}
@@ -176,17 +181,18 @@ export default function EditarMoonboardPage() {
               </div>
               <button
                 onClick={() => handleDelete(fase.id)}
-                className="mt-2 text-sm text-red-600 hover:underline"
+                className="mt-3 text-sm text-red-600 hover:underline"
               >
                 Eliminar fase
               </button>
             </div>
           ))}
 
-          <h2 className="text-xl font-semibold mt-6 mb-2">
+          <h2 className="text-xl font-semibold mt-6 mb-3 text-pink-800">
             Agregar nueva fase
           </h2>
-          <div className="grid grid-cols-2 gap-4 border p-4 rounded shadow bg-gray-50">
+
+          <div className="grid grid-cols-2 gap-4 border p-4 rounded-lg shadow bg-white/80 pb-40">
             <input
               value={nuevo.nombre_fase}
               onChange={(e) =>
