@@ -12,7 +12,7 @@ export default function HomePage() {
         {/* Logo y bienvenida - Versión Mejorada */}
         <div className="relative overflow-hidden">
           {/* Luna atravesando el fondo oscuro */}
-          <div className="absolute inset-0 bg-black z-[-1] overflow-hidden">
+          <div className="absolute inset-0 bg-transparent z-[-1] overflow-hidden">
             <div className="absolute top-1/2 -translate-y-1/2 w-20 h-20 animate-[moon-pass_10s_linear_infinite]">
               <Image
                 src="/luna.png"
@@ -24,11 +24,24 @@ export default function HomePage() {
             </div>
           </div>
           {/* Fondo blur general */}
-          <div className="absolute inset-0 bg-white/5 backdrop-blur-4xl z-0" />
+          <div className="absolute inset-0 bg-white/50 backdrop-blur-4xl z-0" />
 
           {/* Fondos decorativos con luces suaves */}
           <div className="absolute -top-24 -left-24 w-96 h-96 bg-rose-200 opacity-30 rounded-full blur-[120px] z-0" />
           <div className="absolute top-1/2 -right-20 w-72 h-72 bg-rose-300 opacity-20 rounded-full blur-[100px] z-0" />
+
+          {/* Luna atravesando el fondo oscuro */}
+          <div className="absolute inset-0 bg-transparent z-[-1] blur-md overflow-hidden">
+            <div className="absolute top-1/2 -translate-y-1/2 w-20 h-20 animate-[moon-pass_10s_linear_infinite]">
+              <Image
+                src="/luna.png"
+                alt="Luna fondo"
+                width={566}
+                height={566}
+                className="object-contain opacity-60 blur-sm"
+              />
+            </div>
+          </div>
 
           {/* Contenido principal */}
           <div className="relative flex flex-col items-center text-center space-y-8 py-8 px-6 rounded-2xl max-w-4xl mx-auto z-10">
