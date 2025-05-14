@@ -11,6 +11,8 @@ interface Usuario {
   rol: string;
   suscripcion_activa: boolean;
   tipo_plan?: string; // Added tipo_plan property
+  fecha_inicio?: string; // <-- agregar esto
+  fecha_expiracion?: string; // <-- y esto también
 }
 
 export default function AdminPage() {
@@ -130,6 +132,8 @@ export default function AdminPage() {
                   <th className="py-3 px-4 border-b text-left">Correo</th>
                   <th className="py-3 px-4 border-b text-left">Rol</th>
                   <th className="py-3 px-4 border-b text-left">Plan</th>
+                  <th className="py-3 px-4 border-b text-left">Inicio</th>
+                  <th className="py-3 px-4 border-b text-left">Vencimiento</th>
                   <th className="py-3 px-4 border-b text-center">
                     Suscripción
                   </th>
@@ -152,6 +156,18 @@ export default function AdminPage() {
                     </td>
                     <td className="px-4 py-2 border-b capitalize text-pink-700 font-semibold">
                       {usuario.tipo_plan || "—"}
+                    </td>
+                    <td className="px-4 py-2 border-b text-sm">
+                      {usuario.fecha_inicio
+                        ? new Date(usuario.fecha_inicio).toLocaleDateString()
+                        : "—"}
+                    </td>
+                    <td className="px-4 py-2 border-b text-sm text-gray-500">
+                      {usuario.fecha_expiracion
+                        ? new Date(
+                            usuario.fecha_expiracion
+                          ).toLocaleDateString()
+                        : "—"}
                     </td>
                     <td className="px-4 py-2 border-b text-center">
                       <button
