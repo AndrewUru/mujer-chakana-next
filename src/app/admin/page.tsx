@@ -194,6 +194,12 @@ export default function AdminPage() {
             >
               🔮 Editar Recursos
             </a>
+            <a
+              href="/admin/moonboard"
+              className="px-6 py-3 rounded-xl bg-rose-400 text-white hover:bg-rose-500 font-semibold shadow transition"
+            >
+              🔮 Editar Moonboard
+            </a>
           </div>
         </section>
       </div>
