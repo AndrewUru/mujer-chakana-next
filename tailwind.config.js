@@ -39,6 +39,10 @@ module.exports = {
         "fade-out": {
           "0%": { opacity: "1" },
           "100%": { opacity: "0" },
+          "moon-pass": {
+            "0%": { transform: "translateX(-100%) translateY(-50%)" },
+            "100%": { transform: "translateX(100vw) translateY(-50%)" },
+          },
         },
         "scale-in": {
           "0%": { transform: "scale(0.8)", opacity: "0" },
@@ -68,6 +72,7 @@ module.exports = {
         "fade-in-up": "fade-in-up 1.5s ease-out forwards",
         twinkle: "twinkle 3s infinite",
         "slow-float": "slow-float 10s ease-in-out infinite",
+        "moon-pass": "moon-pass 30s linear infinite",
       },
     },
   },

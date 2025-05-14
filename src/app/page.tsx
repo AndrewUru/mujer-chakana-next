@@ -7,19 +7,31 @@ export default function HomePage() {
   const router = useRouter();
 
   return (
-    <main className="min-h-screen bg-[url('/bg-chakana.png')] bg-cover bg-center rounded-2xl text-pink-900 px-4 py-20 sm:py-28 relative">
+    <main className="min-h-screen bg-[url('/bg-chakana.png')] bg-cover bg-center rounded-2xl text-pink-900 px-4 py-2 sm:py-2 relative pb-30">
       <div className="max-w-4xl mx-auto rounded-2xl space-y-12">
         {/* Logo y bienvenida - Versión Mejorada */}
         <div className="relative overflow-hidden">
+          {/* Luna atravesando el fondo oscuro */}
+          <div className="absolute inset-0 bg-black z-[-1] overflow-hidden">
+            <div className="absolute top-1/2 -translate-y-1/2 w-20 h-20 animate-[moon-pass_10s_linear_infinite]">
+              <Image
+                src="/luna.png"
+                alt="Luna fondo"
+                width={566}
+                height={566}
+                className="object-contain opacity-30 blur-sm"
+              />
+            </div>
+          </div>
           {/* Fondo blur general */}
-          <div className="absolute inset-0 bg-white/30 backdrop-blur-4xl z-0" />
+          <div className="absolute inset-0 bg-white/5 backdrop-blur-4xl z-0" />
 
           {/* Fondos decorativos con luces suaves */}
           <div className="absolute -top-24 -left-24 w-96 h-96 bg-rose-200 opacity-30 rounded-full blur-[120px] z-0" />
           <div className="absolute top-1/2 -right-20 w-72 h-72 bg-rose-300 opacity-20 rounded-full blur-[100px] z-0" />
 
           {/* Contenido principal */}
-          <div className="relative flex flex-col items-center text-center space-y-8 py-16 px-6 rounded-2xl max-w-4xl mx-auto z-10">
+          <div className="relative flex flex-col items-center text-center space-y-8 py-8 px-6 rounded-2xl max-w-4xl mx-auto z-10">
             {/* Logo circular con glow y sombra */}
             <div className="relative w-44 h-44 sm:w-52 sm:h-52 rounded-full backdrop-blur-lg overflow-hidden">
               <Image
@@ -32,15 +44,8 @@ export default function HomePage() {
             </div>
 
             {/* Título con imagen de luna */}
-            <h1 className="text-5xl sm:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-700 to-rose-900 flex items-center gap-4 drop-shadow-lg">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-700 to-rose-900 flex items-center gap-4 drop-shadow-lg">
               Mujer Chakana
-              <Image
-                src="/luna.png"
-                alt="Luna"
-                width={64}
-                height={64}
-                className="backdrop-blur-md"
-              />
             </h1>
 
             {/* Descripción con fondo suave y blur */}
