@@ -1,9 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
 import * as lune from "lune";
 import { createClient } from "@supabase/supabase-js";
 
@@ -18,34 +15,21 @@ interface FaseLunarDB {
   color: "gray" | "emerald" | "yellow" | "purple";
   rango_inicio: number;
   rango_fin: number;
+  mensaje?: string;
 }
 
-export default LunarModalWithCalendar;
+interface FaseDia {
+  date: Date;
+  day: number;
+  simbolo: string;
+  color: "gray" | "emerald" | "yellow" | "purple";
+  nombre_fase: string;
+  mensaje?: string;
+}
 
-function LunarModalWithCalendar() {
-  const [fasesDB, setFasesDB] = useState<FaseLunarDB[]>([]);
-
-  useEffect(() => {
-    const fetchFases = async () => {
-      const { data, error } = await supabase.from("fases_lunares").select("*");
-      if (error) {
-        console.error("Error cargando fases:", error);
-      } else {
-        setFasesDB(data);
-      }
-    };
-    fetchFases();
-  }, []);
-
-  interface FaseDia {
-    date: Date;
-    day: number;
-    illumination: number;
-    age: number;
-    simbolo: string;
-    color: "gray" | "emerald" | "yellow" | "purple";
-    nombre_fase: string;
-  }
+export default function LunarModalMVP() {
+  // Removed unused state declaration
+  const [phases, setPhases] = useState<FaseDia[]>([]);
 
   function getFaseFromAge(age: number, fases: FaseLunarDB[]) {
     return (
@@ -55,172 +39,90 @@ function LunarModalWithCalendar() {
         nombre_fase: "Desconocida",
         simbolo: "❓",
         color: "gray",
+        mensaje: "",
       }
     );
   }
 
-  function getMonthPhases(year: number, month: number): FaseDia[] {
+  function generateMonthPhases(fases: FaseLunarDB[]) {
+    const today = new Date();
+
+    const year = today.getFullYear();
+    const month = today.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const phases: FaseDia[] = [];
+    const generatedPhases: FaseDia[] = [];
+
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
       const { phase: phaseValue } = lune.phase(date);
-      const illumination = Math.abs(Math.sin(phaseValue * Math.PI));
       const age = phaseValue * 29.53;
-      const faseMatch = getFaseFromAge(age, fasesDB);
+      const faseMatch = getFaseFromAge(age, fases);
 
-      phases.push({
+      console.log("🔍 faseMatch:", faseMatch);
+
+      generatedPhases.push({
         date,
         day,
-        illumination,
-        age,
         simbolo: faseMatch.simbolo,
         color: faseMatch.color,
         nombre_fase: faseMatch.nombre_fase,
+        mensaje: faseMatch.mensaje,
       });
     }
 
-    return phases;
+    setPhases(generatedPhases);
   }
-  const [phases, setPhases] = useState<FaseDia[]>([]);
-  const [selectedDay, setSelectedDay] = useState<FaseDia | null>(null);
 
   useEffect(() => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    const data = getMonthPhases(year, month);
-    setPhases(data);
+    const fetchFases = async () => {
+      const { data, error } = await supabase.from("fases_lunares").select("*");
+      if (!error && data) {
+        generateMonthPhases(data); // ✅ esto es lo único que necesitas
+      } else {
+        console.error("Error cargando fases:", error);
+      }
+    };
+    fetchFases();
   }, []);
-
-  const fondos: Record<string, string> = {
-    gray: "/luna.png",
-    emerald: "/luna.png",
-    yellow: "/luna.png",
-    purple: "/luna.png",
-  };
-
-  const [monthName, setMonthName] = useState("");
-  useEffect(() => {
-    const now = new Date();
-    const monthNames = [
-      "Enero",
-      "Febrero",
-      "Marzo",
-      "Abril",
-      "Mayo",
-      "Junio",
-      "Julio",
-      "Agosto",
-      "Septiembre",
-      "Octubre",
-      "Noviembre",
-      "Diciembre",
-    ];
-    setMonthName(monthNames[now.getMonth()]);
-  }, []);
-
-  function getColorFromAge(age: number): string {
-    const fase = getFaseFromAge(age, fasesDB);
-    return fase.nombre_fase;
-  }
 
   return (
-    <div
-      className="relative min-h-screen p-6 flex flex-col items-center justify-start"
-      style={{
-        backgroundImage: `url(${fondos.gray})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      {/* Capa oscura para contraste */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-md z-0" />
-
-      {/* Encabezado */}
-      <h1 className="z-10 text-white text-4xl font-semibold tracking-wide mb-8 animate-fade-in">
-        🌓 Calendario Lunar – {monthName}
-      </h1>
-
-      {/* Calendario lunar */}
-      <div className="z-10 grid grid-cols-7 gap-4 max-w-4xl mx-auto">
-        {phases.map((fase) => (
-          <div
-            key={fase.day}
-            onClick={() => setSelectedDay(fase)}
-            className={`cursor-pointer w-14 h-14 md:w-16 md:h-16 flex items-center justify-center rounded-full transition-all hover:scale-110 shadow-lg
-              ${
-                fase.color === "emerald"
-                  ? "bg-emerald-700/60 border-2 border-emerald-400"
-                  : fase.color === "yellow"
-                  ? "bg-yellow-600/60 border-2 border-yellow-300"
-                  : fase.color === "purple"
-                  ? "bg-purple-700/60 border-2 border-purple-400"
-                  : "bg-gray-700/50 border-2 border-gray-400"
-              }`}
-          >
-            <div className="flex flex-col items-center text-white text-sm font-medium">
-              <div>{fase.day}</div>
-              <div className="text-lg">{fase.simbolo}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Modal lunar del día seleccionado */}
-      {selectedDay && (
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
+      {/* Tarjeta del día lunar actual */}
+      {phases.length > 0 && (
         <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center px-4"
-          onClick={() => setSelectedDay(null)}
+          className={`relative bg-opacity-90 backdrop-blur-xl text-white rounded-3xl shadow-2xl p-8 w-full max-w-sm border-l-4
+            ${
+              phases[0].color === "emerald"
+                ? "bg-emerald-800/90 border-emerald-400"
+                : phases[0].color === "yellow"
+                ? "bg-yellow-700/90 border-yellow-300"
+                : phases[0].color === "purple"
+                ? "bg-purple-800/90 border-purple-400"
+                : "bg-stone-800/90 border-stone-400"
+            }`}
         >
-          <div
-            className={`relative bg-black rounded-3xl shadow-2xl p-6 w-full max-w-md text-center border-4
-              ${
-                selectedDay.color === "emerald"
-                  ? "border-emerald-400"
-                  : selectedDay.color === "yellow"
-                  ? "border-yellow-400"
-                  : selectedDay.color === "purple"
-                  ? "border-purple-400"
-                  : "border-gray-400"
-              }`}
+          {/* Botón de cerrar */}
+          <button
+            onClick={() => window.location.reload()} // o cerrar con un state si es modal real
+            className="absolute top-3 right-3 text-white bg-rose-600 hover:bg-rose-500 px-3 py-1 rounded-full text-sm font-medium"
           >
-            <h2 className="text-2xl text-white mb-2 font-semibold">
-              Día {selectedDay.day}
-            </h2>
-            <div className="text-5xl mb-2">{selectedDay.simbolo}</div>
-            <div className="text-white mb-4 capitalize">
-              Fase: {getColorFromAge(selectedDay.age)}
-            </div>
-            <p className="text-white text-xl italic mb-2">
-              {selectedDay.nombre_fase}
-            </p>
+            ✕
+          </button>
 
-            <div className="w-24 h-24 mx-auto mb-4">
-              <CircularProgressbar
-                value={selectedDay.illumination * 100}
-                text={`${Math.round(selectedDay.illumination * 100)}%`}
-                styles={buildStyles({
-                  textColor: "#fff",
-                  pathColor:
-                    selectedDay.color === "emerald"
-                      ? "#34d399"
-                      : selectedDay.color === "yellow"
-                      ? "#facc15"
-                      : selectedDay.color === "purple"
-                      ? "#a855f7"
-                      : "#9ca3af",
-                  trailColor: "#1f2937",
-                })}
-              />
-            </div>
-            <button
-              className="mt-4 px-6 py-2 rounded-full bg-white text-black font-semibold shadow hover:scale-105 transition-all"
-              onClick={() => setSelectedDay(null)}
-            >
-              ✨ Cerrar ✨
-            </button>
-          </div>
+          {/* Símbolo lunar */}
+          <div className="text-5xl text-center mb-2">{phases[0].simbolo}</div>
+
+          {/* Nombre de la fase */}
+          <h2 className="text-center text-2xl font-semibold mb-1">
+            {phases[0].nombre_fase}
+          </h2>
+
+          {/* Mensaje */}
+          {phases[0].mensaje && (
+            <p className="text-center text-sm text-stone-200 italic mt-3">
+              “{phases[0].mensaje}”
+            </p>
+          )}
         </div>
       )}
     </div>

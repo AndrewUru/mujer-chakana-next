@@ -32,13 +32,6 @@ const Moonboard = () => {
     fetchFechaInicio();
   }, []);
 
-  const calcularFechaPorDia = (dia: number) => {
-    if (!fechaInicio) return "";
-    const fecha = new Date(fechaInicio);
-    fecha.setDate(fecha.getDate() + dia - 1);
-    return fecha.toISOString().split("T")[0];
-  };
-
   const handleClickDay = (day: number) => {
     if (diaActual !== null && day <= diaActual) {
       setSelectedDay(day);
@@ -114,13 +107,7 @@ const Moonboard = () => {
       </div>
 
       {/* Modal con información del día */}
-      {selectedDay !== null && (
-        <LunarModal
-          day={selectedDay}
-          fecha={calcularFechaPorDia(selectedDay)}
-          onClose={() => setSelectedDay(null)}
-        />
-      )}
+      {selectedDay !== null && <LunarModal />}
     </>
   );
 };
