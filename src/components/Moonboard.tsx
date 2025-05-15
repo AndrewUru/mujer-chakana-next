@@ -32,11 +32,15 @@ const Moonboard = () => {
     fetchFechaInicio();
   }, []);
 
-  const handleClickDay = (day: number) => {
-    if (diaActual !== null && day <= diaActual) {
+  function handleClickDay(day: number) {
+    if (selectedDay === day) {
+      // Reinicia si es el mismo día
+      setSelectedDay(null);
+      setTimeout(() => setSelectedDay(day), 50); // pequeño delay
+    } else {
       setSelectedDay(day);
     }
-  };
+  }
 
   const calcularDiaActual = () => {
     if (!fechaInicio) return null;
@@ -57,6 +61,12 @@ const Moonboard = () => {
 
   const diaActual = calcularDiaActual();
   const ciclosCompletos = calcularCiclosCompletos();
+
+  function calcularFechaPorDia(dia: number, fechaInicio: Date): Date {
+    const fecha = new Date(fechaInicio);
+    fecha.setDate(fecha.getDate() + dia - 1);
+    return fecha;
+  }
 
   return (
     <>
@@ -107,7 +117,12 @@ const Moonboard = () => {
       </div>
 
       {/* Modal con información del día */}
-      {selectedDay !== null && <LunarModal />}
+      {selectedDay !== null && fechaInicio && (
+        <LunarModal
+          fecha={calcularFechaPorDia(selectedDay, fechaInicio)}
+          onClose={() => setSelectedDay(null)}
+        />
+      )}
     </>
   );
 };

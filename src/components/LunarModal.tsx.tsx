@@ -18,111 +18,125 @@ interface FaseLunarDB {
   mensaje?: string;
 }
 
-interface FaseDia {
-  date: Date;
-  day: number;
-  simbolo: string;
-  color: "gray" | "emerald" | "yellow" | "purple";
-  nombre_fase: string;
-  mensaje?: string;
+interface LunarModalProps {
+  fecha: Date;
+  onClose: () => void;
 }
 
-export default function LunarModalMVP() {
-  // Removed unused state declaration
-  const [phases, setPhases] = useState<FaseDia[]>([]);
-
-  function getFaseFromAge(age: number, fases: FaseLunarDB[]) {
-    return (
-      fases.find(
-        (fase) => age >= fase.rango_inicio && age <= fase.rango_fin
-      ) || {
-        nombre_fase: "Desconocida",
-        simbolo: "❓",
-        color: "gray",
-        mensaje: "",
-      }
-    );
-  }
-
-  function generateMonthPhases(fases: FaseLunarDB[]) {
-    const today = new Date();
-
-    const year = today.getFullYear();
-    const month = today.getMonth();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const generatedPhases: FaseDia[] = [];
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(year, month, day);
-      const { phase: phaseValue } = lune.phase(date);
-      const age = phaseValue * 29.53;
-      const faseMatch = getFaseFromAge(age, fases);
-
-      console.log("🔍 faseMatch:", faseMatch);
-
-      generatedPhases.push({
-        date,
-        day,
-        simbolo: faseMatch.simbolo,
-        color: faseMatch.color,
-        nombre_fase: faseMatch.nombre_fase,
-        mensaje: faseMatch.mensaje,
-      });
-    }
-
-    setPhases(generatedPhases);
-  }
+export default function LunarModal({ fecha, onClose }: LunarModalProps) {
+  const [fase, setFase] = useState<FaseLunarDB | null>(null);
+  const [closing, setClosing] = useState(false);
 
   useEffect(() => {
-    const fetchFases = async () => {
+    const fetchFase = async () => {
+      const { phase } = lune.phase(fecha);
+      const age = phase * 29.53;
+
       const { data, error } = await supabase.from("fases_lunares").select("*");
-      if (!error && data) {
-        generateMonthPhases(data); // ✅ esto es lo único que necesitas
-      } else {
-        console.error("Error cargando fases:", error);
+      if (error || !data) {
+        console.error("Error al cargar fases lunares:", error);
+        return;
       }
+
+      const match = data.find(
+        (f: FaseLunarDB) => age >= f.rango_inicio && age <= f.rango_fin
+      );
+
+      setFase(
+        match || {
+          nombre_fase: "Desconocida",
+          simbolo: "❓",
+          color: "gray",
+          mensaje: "No hay datos para esta fase.",
+        }
+      );
     };
-    fetchFases();
-  }, []);
+
+    fetchFase();
+  }, [fecha]);
+
+  const handleClose = () => {
+    setClosing(true);
+    setTimeout(onClose, 300); // para que la animación tenga tiempo
+  };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
-      {/* Tarjeta del día lunar actual */}
-      {phases.length > 0 && (
+    <div
+      className={`fixed inset-0 z-50 bg-gradient-to-br from-black/60 to-purple-900/30 bg-[url('/luna.png')] bg-cover bg-center backdrop-blur-lg flex items-center justify-center transition-all duration-300 ${
+        closing
+          ? "opacity-0 scale-95 pointer-events-none"
+          : "opacity-100 scale-100"
+      }`}
+    >
+      {fase && (
         <div
-          className={`relative bg-opacity-90 backdrop-blur-xl text-white rounded-3xl shadow-2xl p-8 w-full max-w-sm border-l-4
-            ${
-              phases[0].color === "emerald"
-                ? "bg-emerald-800/90 border-emerald-400"
-                : phases[0].color === "yellow"
-                ? "bg-yellow-700/90 border-yellow-300"
-                : phases[0].color === "purple"
-                ? "bg-purple-800/90 border-purple-400"
-                : "bg-stone-800/90 border-stone-400"
-            }`}
+          className={`relative rounded-3xl shadow-[0_0_30px_-5px_rgba(255,255,255,0.3)] p-8 w-full max-w-md mx-4 border-2 transition-all duration-300 transform backdrop-blur-xl ${
+            fase.color === "emerald"
+              ? "border-emerald-400/40 bg-emerald-900/80"
+              : fase.color === "yellow"
+              ? "border-amber-300/40 bg-yellow-800/80"
+              : fase.color === "purple"
+              ? "border-purple-300/40 bg-purple-900/80"
+              : "border-stone-300/40 bg-stone-800/80"
+          }`}
         >
-          {/* Botón de cerrar */}
+          {/* Botón de cerrar mejorado */}
           <button
-            onClick={() => window.location.reload()} // o cerrar con un state si es modal real
-            className="absolute top-3 right-3 text-white bg-rose-600 hover:bg-rose-500 px-3 py-1 rounded-full text-sm font-medium"
+            onClick={handleClose}
+            className="absolute -top-4 -right-4 text-white bg-rose-600/90 hover:bg-rose-500 px-3 py-2 rounded-full text-lg font-bold shadow-xl hover:scale-105 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-white/50"
+            aria-label="Cerrar modal"
           >
-            ✕
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
           </button>
 
-          {/* Símbolo lunar */}
-          <div className="text-5xl text-center mb-2">{phases[0].simbolo}</div>
+          {/* Contenido con mejor espaciado */}
+          <div className="space-y-6">
+            {/* Icono con efecto flotante */}
+            <div className="text-7xl text-center animate-float drop-shadow-[0_5px_10px_rgba(255,255,255,0.3)]">
+              {fase.simbolo}
+            </div>
 
-          {/* Nombre de la fase */}
-          <h2 className="text-center text-2xl font-semibold mb-1">
-            {phases[0].nombre_fase}
-          </h2>
+            {/* Título con efecto tipográfico */}
+            <h2 className="text-center text-3xl font-extrabold bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent tracking-wide">
+              {fase.nombre_fase}
+            </h2>
 
-          {/* Mensaje */}
-          {phases[0].mensaje && (
-            <p className="text-center text-sm text-stone-200 italic mt-3">
-              “{phases[0].mensaje}”
-            </p>
-          )}
+            {/* Mensaje con mejor jerarquía */}
+            {fase.mensaje && (
+              <div className="relative group">
+                <div className="absolute inset-0 bg-white/10 rounded-xl filter blur-xl -z-10 group-hover:opacity-50 transition-opacity" />
+                <p className="text-center text-lg leading-relaxed font-medium px-4 py-3 rounded-lg transition-all duration-300">
+                  &quot;{fase.mensaje}&quot;
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Efecto de partículas decorativas */}
+          <div className="absolute inset-0 overflow-hidden rounded-3xl">
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-1 h-1 bg-white/30 rounded-full animate-star"
+                style={{
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  animationDelay: `${i * 0.5}s`,
+                }}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>
