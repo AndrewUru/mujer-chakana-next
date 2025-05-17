@@ -48,7 +48,7 @@ export default function DashboardPage() {
 
     const { data: perfilData } = await supabase
       .from("perfiles")
-      .select("display_name, avatar_url, fecha_inicio")
+      .select("display_name, avatar_url, fecha_inicio, suscripcion_activa")
       .eq("user_id", user.id)
       .single();
     setUserName(perfilData?.display_name || "");
@@ -194,7 +194,11 @@ export default function DashboardPage() {
           mensual o anual.
         </p>
 
-        {perfil?.suscripcion_activa ? (
+        {perfil === null ? (
+          <p className="text-center text-sm text-gray-500">
+            Cargando perfil...
+          </p>
+        ) : perfil.suscripcion_activa ? (
           <button
             onClick={handleGoToCiclos}
             className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 to-pink-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300"
@@ -203,13 +207,13 @@ export default function DashboardPage() {
             🌕 Explorar mis arquetipos
           </button>
         ) : (
-          <a
-            href="/suscripcion"
-            className="inline-flex items-center gap-2 text-pink-700 bg-rose-100 border border-rose-300 py-3 px-8 rounded-full font-semibold hover:bg-rose-200 transition"
+          <button
+            onClick={() => router.push("/suscripcion")}
+            className="inline-flex items-center gap-2 bg-pink-100 text-pink-800 font-semibold py-3 px-8 rounded-full border border-pink-300 shadow hover:bg-pink-200 transition"
           >
             <GalleryThumbnails className="w-5 h-5" />
             Suscríbete para acceder
-          </a>
+          </button>
         )}
       </section>
 

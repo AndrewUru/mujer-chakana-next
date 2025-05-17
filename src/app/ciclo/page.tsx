@@ -20,6 +20,15 @@ export default function CicloPage() {
 
   useEffect(() => {
     const checkAuthAndSubscription = async () => {
+      // 0. Verificar si el usuario está autenticado
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        router.push("/auth/login");
+        return;
+      }
+
       // 1. Verificar sesión del usuario
       const {
         data: { session },
@@ -68,6 +77,15 @@ export default function CicloPage() {
     return (
       <p className="text-center mt-10 text-white text-3xl italic animate-pulse">
         🔒 Verificando acceso...
+      </p>
+    );
+  }
+  // Si no tiene suscripción activa, redirigir a la página de suscripción
+  if (ciclo.length === 0) {
+    return (
+      <p className="text-center mt-10 text-white text-3xl italic animate-pulse">
+        🚫 No tienes acceso a la galería de arquetipos. Por favor, revisa tu
+        suscripción.
       </p>
     );
   }
