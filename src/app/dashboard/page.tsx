@@ -204,7 +204,7 @@ export default function DashboardPage() {
             className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 to-pink-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300"
           >
             <GalleryThumbnails className="w-5 h-5" />
-            🌕 Explorar mis arquetipos
+            Ver Arquetipos
           </button>
         ) : (
           <button
