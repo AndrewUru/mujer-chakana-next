@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
-import type { PostgrestError } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,14 +21,6 @@ type FaseLunar = {
 export default function EditarMoonboardPage() {
   const [fases, setFases] = useState<FaseLunar[]>([]);
   const [loading, setLoading] = useState(true);
-  const [nuevo, setNuevo] = useState<Omit<FaseLunar, "id">>({
-    color: "",
-    rango_inicio: 0,
-    rango_fin: 0,
-    mensaje: "",
-    nombre_fase: "",
-    simbolo: "",
-  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,28 +70,35 @@ export default function EditarMoonboardPage() {
     setFases((prev) => prev.filter((f) => f.id !== id));
   };
 
-  const handleCreate = async () => {
-    const {
-      data,
-      error,
-    }: { data: FaseLunar[] | null; error: PostgrestError | null } =
-      await supabase.from("fases_lunares").insert([nuevo]).select();
+  const handleSaveAll = async () => {
+    try {
+      for (const fase of fases) {
+        await updateFaseInDB(fase); // Implementa esta función según cómo guardas los datos (Supabase, API, etc.)
+      }
+      alert("Cambios guardados exitosamente 🌕");
+    } catch (error) {
+      console.error("Error al guardar fases:", error);
+      alert("Hubo un error al guardar los cambios.");
+    }
+  };
+
+  const updateFaseInDB = async (fase: FaseLunar) => {
+    const { error } = await supabase
+      .from("fases_lunares")
+      .update({
+        nombre_fase: fase.nombre_fase,
+        color: fase.color,
+        simbolo: fase.simbolo,
+        rango_inicio: fase.rango_inicio,
+        rango_fin: fase.rango_fin,
+        mensaje: fase.mensaje,
+      })
+      .eq("id", fase.id);
 
     if (error) {
-      alert("Error creando: " + error.message);
-      return;
-    }
-
-    if (data && data.length > 0) {
-      setFases((prev) => [...prev, data[0]]);
-      setNuevo({
-        color: "",
-        rango_inicio: 0,
-        rango_fin: 0,
-        mensaje: "",
-        nombre_fase: "",
-        simbolo: "",
-      });
+      throw new Error(
+        `Error actualizando fase ${fase.nombre_fase}: ${error.message}`
+      );
     }
   };
 
@@ -188,60 +186,12 @@ export default function EditarMoonboardPage() {
             </div>
           ))}
 
-          <h2 className="text-xl font-semibold mt-6 mb-3 text-pink-800">
-            Agregar nueva fase
-          </h2>
-
-          <div className="grid grid-cols-2 gap-4 border p-4 rounded-lg shadow bg-white/80 pb-40">
-            <input
-              value={nuevo.nombre_fase}
-              onChange={(e) =>
-                setNuevo({ ...nuevo, nombre_fase: e.target.value })
-              }
-              placeholder="Nombre de la fase"
-              className="border rounded px-2 py-1"
-            />
-            <input
-              value={nuevo.color}
-              onChange={(e) => setNuevo({ ...nuevo, color: e.target.value })}
-              placeholder="Color"
-              className="border rounded px-2 py-1"
-            />
-            <input
-              value={nuevo.simbolo}
-              onChange={(e) => setNuevo({ ...nuevo, simbolo: e.target.value })}
-              placeholder="Símbolo"
-              className="border rounded px-2 py-1"
-            />
-            <input
-              type="number"
-              value={nuevo.rango_inicio}
-              onChange={(e) =>
-                setNuevo({ ...nuevo, rango_inicio: parseFloat(e.target.value) })
-              }
-              className="border rounded px-2 py-1"
-              placeholder="Rango inicio"
-            />
-            <input
-              type="number"
-              value={nuevo.rango_fin}
-              onChange={(e) =>
-                setNuevo({ ...nuevo, rango_fin: parseFloat(e.target.value) })
-              }
-              className="border rounded px-2 py-1"
-              placeholder="Rango fin"
-            />
-            <textarea
-              value={nuevo.mensaje}
-              onChange={(e) => setNuevo({ ...nuevo, mensaje: e.target.value })}
-              placeholder="Mensaje"
-              className="col-span-2 border rounded px-2 py-1"
-            />
+          <div className="text-center mt-6">
             <button
-              onClick={handleCreate}
-              className="col-span-2 mt-2 bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700"
+              onClick={handleSaveAll}
+              className="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-2xl shadow-lg"
             >
-              Crear fase
+              Guardar cambios 💾
             </button>
           </div>
         </>
