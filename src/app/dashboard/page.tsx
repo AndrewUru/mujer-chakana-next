@@ -238,7 +238,7 @@ export default function DashboardPage() {
       )}
 
       {/* RECURSOS */}
-      <section className="relative mt-16 mx-auto max-w-5xl bg-gradient-to-br from-pink-50 via-rose-100 to-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-pink-100 mb-20">
+      <section className="relative mt-16 mx-auto bg-gradient-to-br from-pink-50 via-rose-100 to-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-pink-100 mb-20">
         {/* Cinta superior */}
         <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-white text-pink-700 px-5 py-1.5 rounded-full shadow-md text-sm font-semibold border border-pink-200">
           ✨ Espacio de transformación
@@ -251,8 +251,10 @@ export default function DashboardPage() {
             Recursos Sagrados
           </h2>
           <p className="text-pink-700 text-base sm:text-lg max-w-2xl mx-auto">
-            Audios, rituales y guías para tu camino interior. Este espacio es
-            para ti. 🌸
+            Audios, rituales y guías para tu camino interior.
+          </p>
+          <p className="text-pink-700 text-base sm:text-lg max-w-2xl mx-auto">
+            Este espacio es para ti. 🌸
           </p>
         </div>
 

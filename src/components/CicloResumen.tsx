@@ -29,23 +29,25 @@ export default function CicloResumen({
   mujerChakanaData: MujerChakanaData;
 }) {
   const [suscripcionActiva, setSuscripcionActiva] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchSuscripcion = async () => {
+      setLoading(true);
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (!user) return;
-
+      if (!user) {
+        setLoading(false);
+        return;
+      }
       const { data } = await supabase
         .from("perfiles")
         .select("suscripcion_activa")
         .eq("user_id", user.id)
         .single();
-
-      if (data?.suscripcion_activa) {
-        setSuscripcionActiva(true);
-      }
+      setSuscripcionActiva(!!data?.suscripcion_activa);
+      setLoading(false);
     };
 
     fetchSuscripcion();
@@ -61,6 +63,14 @@ export default function CicloResumen({
 
   const fondoBg =
     fondoPorElemento[mujerChakanaData.elemento] || fondoPorElemento.default;
+
+  if (loading) {
+    return (
+      <div className="mb-6 p-6 rounded-2xl shadow-lg border text-white bg-black/60">
+        Cargando tu ciclo...
+      </div>
+    );
+  }
 
   return (
     <div
