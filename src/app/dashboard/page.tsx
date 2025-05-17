@@ -110,7 +110,7 @@ export default function DashboardPage() {
       }
 
       setEstadoCiclo(mujerChakanaData || null);
-      setDay(diferencia + 1);
+      setDay((diferencia % 28) + 1); // ✅ BIEN
     }
 
     recargarEstadoCiclo();
