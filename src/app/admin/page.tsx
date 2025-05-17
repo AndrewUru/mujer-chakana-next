@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 interface Usuario {
   user_id: string;
@@ -90,86 +91,113 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-pink-700 bg-pink-50">
-        Cargando acceso de administradora...
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 via-white to-pink-100">
+        <div className="flex flex-col items-center gap-3">
+          <span className="animate-spin rounded-full h-8 w-8 border-4 border-pink-400 border-t-transparent"></span>
+          <span className="text-pink-700 font-medium">
+            Cargando acceso de administradora...
+          </span>
+        </div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-100 px-6 py-10 pb-40">
-      <div className="max-w-6xl mx-auto space-y-10">
-        <header className="text-center">
-          <h1 className="text-4xl font-extrabold text-pink-800">
+    <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-100 px-2 py-8 pb-24">
+      <div className="max-w-6xl mx-auto space-y-8">
+        <header className="text-center space-y-1">
+          <Breadcrumbs
+            items={[
+              { label: "Admin", href: "/admin" },
+              { label: "Usuarios" }, // página actual (sin href)
+            ]}
+          />
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-pink-800 drop-shadow">
             🌟 Admin Dashboard
           </h1>
-          <p className="text-pink-600 text-lg mt-2">Bienvenida, {userName}</p>
+          <p className="text-pink-600 text-base sm:text-lg mt-1">
+            Bienvenida, <span className="font-semibold">{userName}</span>
+          </p>
         </header>
 
         {/* Mensajes de éxito o error */}
-        {mensajeExito && (
-          <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded relative shadow">
-            {mensajeExito}
-          </div>
-        )}
+        <div className="space-y-2">
+          {mensajeExito && (
+            <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 px-4 py-2 rounded-lg shadow text-sm font-medium">
+              <span>✅</span> <span>{mensajeExito}</span>
+            </div>
+          )}
+          {mensajeError && (
+            <div className="flex items-center gap-2 bg-rose-50 border border-rose-200 text-rose-700 px-4 py-2 rounded-lg shadow text-sm font-medium">
+              <span>⚠️</span> <span>{mensajeError}</span>
+            </div>
+          )}
+        </div>
 
-        {mensajeError && (
-          <div className="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded relative shadow">
-            {mensajeError}
-          </div>
-        )}
-
-        <section className="bg-white/60 backdrop-blur-md rounded-2xl shadow-lg border border-pink-200 p-6">
-          <h2 className="text-2xl font-bold text-pink-700 mb-4">
-            👥 Usuarios Registrados
+        <section className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-pink-100 p-5 overflow-x-auto">
+          <h2 className="text-xl sm:text-2xl font-bold text-pink-700 mb-4 flex items-center gap-2">
+            <span className="text-2xl">👥</span> Usuarios Registrados
           </h2>
-
           <div className="overflow-x-auto rounded-xl">
-            <table className="w-full border border-pink-100 text-sm text-pink-900 bg-white/90 shadow-inner">
-              <thead className="bg-pink-100 text-pink-800">
+            <table className="w-full border border-pink-50 text-xs sm:text-sm text-pink-900 bg-white/90 shadow-inner">
+              <thead className="bg-pink-100 text-pink-800 sticky top-0 z-10">
                 <tr>
-                  <th className="py-3 px-4 border-b text-left">Nombre</th>
-                  <th className="py-3 px-4 border-b text-left">Correo</th>
-                  <th className="py-3 px-4 border-b text-left">Rol</th>
-                  <th className="py-3 px-4 border-b text-left">Plan</th>
-                  <th className="py-3 px-4 border-b text-left">Inicio</th>
-                  <th className="py-3 px-4 border-b text-left">Vencimiento</th>
-                  <th className="py-3 px-4 border-b text-center">
+                  <th className="py-2 px-3 border-b font-semibold text-left">
+                    Nombre
+                  </th>
+                  <th className="py-2 px-3 border-b font-semibold text-left">
+                    Correo
+                  </th>
+                  <th className="py-2 px-3 border-b font-semibold text-left">
+                    Rol
+                  </th>
+                  <th className="py-2 px-3 border-b font-semibold text-left">
+                    Plan
+                  </th>
+                  <th className="py-2 px-3 border-b font-semibold text-left">
+                    Inicio
+                  </th>
+                  <th className="py-2 px-3 border-b font-semibold text-left">
+                    Vencimiento
+                  </th>
+                  <th className="py-2 px-3 border-b font-semibold text-center">
                     Suscripción
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {usuarios.map((usuario) => (
+                {usuarios.map((usuario, i) => (
                   <tr
                     key={usuario.user_id}
-                    className="hover:bg-pink-50 transition-all"
+                    className={`transition-all ${
+                      i % 2 === 0 ? "bg-white" : "bg-pink-50"
+                    } hover:bg-pink-100`}
                   >
-                    <td className="px-4 py-2 border-b font-medium">
+                    <td className="px-3 py-2 border-b font-medium max-w-[120px] truncate">
                       {usuario.display_name || "—"}
                     </td>
-                    <td className="px-4 py-2 border-b text-sm text-gray-600">
+                    <td className="px-3 py-2 border-b text-xs text-gray-600 max-w-[160px] truncate">
                       {usuario.email || "—"}
                     </td>
-                    <td className="px-4 py-2 border-b capitalize">
+                    <td className="px-3 py-2 border-b capitalize">
                       {usuario.rol}
                     </td>
-                    <td className="px-4 py-2 border-b capitalize text-pink-700 font-semibold">
+                    <td className="px-3 py-2 border-b capitalize text-pink-700 font-semibold">
                       {usuario.tipo_plan || "—"}
                     </td>
-                    <td className="px-4 py-2 border-b text-sm">
+                    <td className="px-3 py-2 border-b text-xs">
                       {usuario.fecha_inicio
                         ? new Date(usuario.fecha_inicio).toLocaleDateString()
                         : "—"}
                     </td>
-                    <td className="px-4 py-2 border-b text-sm text-gray-500">
+                    <td className="px-3 py-2 border-b text-xs text-gray-500">
                       {usuario.fecha_expiracion
                         ? new Date(
                             usuario.fecha_expiracion
                           ).toLocaleDateString()
                         : "—"}
                     </td>
-                    <td className="px-4 py-2 border-b text-center">
+                    <td className="px-3 py-2 border-b text-center">
                       <button
                         onClick={() =>
                           toggleSuscripcion(
@@ -177,11 +205,14 @@ export default function AdminPage() {
                             usuario.suscripcion_activa
                           )
                         }
-                        className={`px-3 py-1 rounded-full text-sm font-semibold transition ${
-                          usuario.suscripcion_activa
-                            ? "bg-green-100 text-green-700 hover:bg-green-200"
-                            : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-                        }`}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold shadow-sm border transition
+                          ${
+                            usuario.suscripcion_activa
+                              ? "bg-green-100 text-green-700 border-green-200 hover:bg-green-200"
+                              : "bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200"
+                          }
+                        `}
+                        title="Cambiar estado de suscripción"
                       >
                         {usuario.suscripcion_activa ? "Activa" : "No activa"}
                       </button>
@@ -194,27 +225,27 @@ export default function AdminPage() {
         </section>
 
         <section className="text-center mt-10">
-          <h3 className="text-lg text-pink-700 font-semibold mb-3">
+          <h3 className="text-base sm:text-lg text-pink-700 font-semibold mb-3">
             Accesos rápidos de edición
           </h3>
           <div className="flex flex-wrap justify-center gap-4">
             <a
               href="/admin/mujer-chakana"
-              className="px-6 py-3 rounded-xl bg-pink-600 text-white hover:bg-pink-700 font-semibold shadow transition"
+              className="px-5 py-2.5 rounded-xl bg-pink-600 text-white hover:bg-pink-700 font-semibold shadow transition text-sm"
             >
               ✨ Editar Mujer Chakana
             </a>
             <a
               href="/admin/recursos"
-              className="px-6 py-3 rounded-xl bg-rose-400 text-white hover:bg-rose-500 font-semibold shadow transition"
+              className="px-5 py-2.5 rounded-xl bg-rose-400 text-white hover:bg-rose-500 font-semibold shadow transition text-sm"
             >
               🔮 Editar Recursos
             </a>
             <a
               href="/admin/moonboard"
-              className="px-6 py-3 rounded-xl bg-rose-400 text-white hover:bg-rose-500 font-semibold shadow transition"
+              className="px-5 py-2.5 rounded-xl bg-rose-400 text-white hover:bg-rose-500 font-semibold shadow transition text-sm"
             >
-              🔮 Editar Moonboard
+              🌙 Editar Moonboard
             </a>
           </div>
         </section>

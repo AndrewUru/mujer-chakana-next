@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 interface Recurso {
   id: number;
@@ -42,16 +43,21 @@ export default function RecursosAdminPage() {
 
   return (
     <main className="max-w-6xl mx-auto py-10 space-y-8">
-      <h1 className="text-3xl font-bold text-pink-800">
-        🔮 Administrar Recursos
-      </h1>
+      <div className="bg-white/60 backdrop-blur-md border border-pink-100 rounded-2xl shadow-lg px-6 py-5 mb-6 flex flex-col gap-3 items-start">
+        <h1 className="text-3xl font-bold text-pink-800 flex items-center gap-2">
+          🔮 Administrar Recursos
+        </h1>
+        <Breadcrumbs
+          items={[{ label: "Admin", href: "/admin" }, { label: "Recursos" }]}
+        />
 
-      <button
-        onClick={() => router.push("/admin/recursos/nuevo")}
-        className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition"
-      >
-        ➕ Añadir nuevo recurso
-      </button>
+        <button
+          onClick={() => router.push("/admin/recursos/nuevo")}
+          className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition font-semibold shadow"
+        >
+          ➕ Añadir nuevo recurso
+        </button>
+      </div>
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         {recursos.map((recurso) => (

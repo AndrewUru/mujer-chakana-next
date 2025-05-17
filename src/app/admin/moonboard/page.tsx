@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -107,6 +108,9 @@ export default function EditarMoonboardPage() {
       <h1 className="text-2xl font-bold mb-6 text-pink-900">
         Editar Fases Lunares 🌙
       </h1>
+      <Breadcrumbs
+        items={[{ label: "Admin", href: "/admin" }, { label: "Moonboard" }]}
+      />
 
       {loading ? (
         <p>Cargando...</p>

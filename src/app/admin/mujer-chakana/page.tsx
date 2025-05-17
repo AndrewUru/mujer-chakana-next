@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 interface MujerChakana {
   id: number;
@@ -63,29 +64,39 @@ export default function AdminMujerChakanaPage() {
   }
 
   return (
-    <main className="max-w-6xl mx-auto py-10 space-y-8 px-4">
-      <h1 className="text-3xl font-bold text-pink-800">
-        ✨ Admin - Mujer Chakana
-      </h1>
+    <main className="max-w-6xl mx-auto py-8 space-y-6 px-2 sm:px-6 pb-40">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl shadow-lg border border-pink-100 px-6 py-5 mb-6 flex flex-col gap-2">
+        <Breadcrumbs
+          items={[
+            { label: "Admin", href: "/admin" },
+            { label: "Mujer Chakana", href: "/admin/mujer-chakana" },
+            { label: "Editar Arquetipo" },
+          ]}
+        />
+
+        <h1 className="text-2xl font-extrabold text-pink-800 tracking-tight">
+          ✨ Admin · Mujer Chakana
+        </h1>
+      </div>
 
       {/* Mensajes de éxito o error */}
       {mensajeExito && (
-        <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded shadow">
+        <div className="bg-green-50 border border-green-300 text-green-700 px-3 py-2 rounded-lg shadow text-sm">
           {mensajeExito}
         </div>
       )}
       {mensajeError && (
-        <div className="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded shadow">
+        <div className="bg-red-50 border border-red-300 text-red-700 px-3 py-2 rounded-lg shadow text-sm">
           {mensajeError}
         </div>
       )}
 
-      <div className="flex justify-end">
+      <div className="flex justify-end mb-2">
         <button
-          className="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700 font-semibold shadow"
+          className="bg-pink-600 text-white px-4 py-2 rounded-xl hover:bg-pink-700 font-semibold shadow flex items-center gap-2 transition"
           onClick={() => router.push("/admin/mujer-chakana/crear")}
         >
-          ➕ Crear Nuevo Arquetipo
+          <span className="text-lg">+</span> Nuevo Arquetipo
         </button>
       </div>
 
@@ -96,72 +107,76 @@ export default function AdminMujerChakanaPage() {
           No hay arquetipos registrados aún.
         </p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {arquetipos.map((item) => (
             <div
               key={item.id}
-              className="bg-white border border-pink-200 rounded-xl p-6 shadow-md space-y-3"
+              className="bg-white border border-pink-100 rounded-2xl p-4 shadow-md hover:shadow-lg transition-all flex flex-col gap-2 relative group"
             >
-              <h2 className="text-xl font-bold text-pink-800">
-                {item.arquetipo}
-              </h2>
-              <p className="text-sm text-pink-600">Elemento: {item.elemento}</p>
-              <p className="text-gray-700 text-sm">{item.descripcion}</p>
-
-              {/* Imagen */}
+              {/* Imagen pequeña */}
               {item.imagen_url && (
-                <div className="mt-3">
+                <div className="flex justify-center mb-2">
                   <Image
                     src={item.imagen_url}
                     alt={`Imagen del arquetipo ${item.arquetipo}`}
-                    className="rounded-lg border border-pink-100 shadow-sm object-cover"
-                    width={500}
-                    height={192}
+                    className="rounded-xl border border-pink-50 object-cover shadow w-28 h-28"
+                    width={112}
+                    height={112}
                   />
                 </div>
               )}
 
-              {/* Audio */}
-              {item.audio_url && (
-                <div className="mt-3">
-                  <audio controls className="w-full">
-                    <source src={item.audio_url} type="audio/mpeg" />
-                    Tu navegador no soporta audio 😢
-                  </audio>
-                </div>
-              )}
+              {/* Info principal */}
+              <h2 className="text-base font-bold text-pink-800 truncate">
+                {item.arquetipo}
+              </h2>
+              <p className="text-xs text-pink-600 mb-1">
+                Elemento: <span className="font-semibold">{item.elemento}</span>
+              </p>
+              <p className="text-gray-700 text-xs line-clamp-3">
+                {item.descripcion}
+              </p>
 
-              {/* Ritual PDF */}
-              {item.ritual_pdf && (
-                <div className="mt-3">
+              {/* Audio y PDF */}
+              <div className="flex flex-col gap-1 mt-2">
+                {item.audio_url && (
+                  <audio controls className="w-full rounded">
+                    <source src={item.audio_url} type="audio/mpeg" />
+                    Tu navegador no soporta audio.
+                  </audio>
+                )}
+                {item.ritual_pdf && (
                   <a
                     href={item.ritual_pdf}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-pink-700 hover:underline text-sm"
+                    className="text-pink-700 hover:underline text-xs mt-1"
                   >
-                    📄 Ver ritual en PDF
+                    📄 Ritual PDF
                   </a>
-                </div>
-              )}
+                )}
+              </div>
 
-              {/* Botones editar/eliminar */}
-              <div className="flex gap-4 pt-4">
+              {/* Acciones */}
+              <div className="flex gap-4 mt-3">
                 <button
-                  className="text-pink-600 hover:underline text-sm"
+                  className="flex items-center gap-1 text-pink-600 hover:underline text-xs"
                   onClick={() =>
                     router.push(`/admin/mujer-chakana/editar/${item.id}`)
                   }
                 >
-                  ✏️ Editar
+                  <span className="text-lg">✏️</span> Editar
                 </button>
                 <button
-                  className="text-rose-500 hover:underline text-sm"
+                  className="flex items-center gap-1 text-rose-500 hover:underline text-xs"
                   onClick={() => deleteArquetipo(item.id)}
                 >
-                  🗑️ Eliminar
+                  <span className="text-lg">🗑️</span> Eliminar
                 </button>
               </div>
+
+              {/* Sombra extra en hover */}
+              <span className="absolute inset-0 rounded-2xl ring-1 ring-pink-100 group-hover:ring-rose-200 transition pointer-events-none" />
             </div>
           ))}
         </div>
