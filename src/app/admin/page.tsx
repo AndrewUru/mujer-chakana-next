@@ -97,7 +97,7 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-100 px-6 py-10">
+    <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-100 px-6 py-10 pb-40">
       <div className="max-w-6xl mx-auto space-y-10">
         <header className="text-center">
           <h1 className="text-4xl font-extrabold text-pink-800">

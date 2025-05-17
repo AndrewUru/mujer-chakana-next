@@ -103,7 +103,7 @@ export default function EditarMoonboardPage() {
   };
 
   return (
-    <div className="p-4 max-w-4xl mx-auto bg-rose-50/90 rounded-2xl shadow-xl">
+    <div className="p-4 max-w-4xl mx-auto bg-rose-50/90 rounded-2xl shadow-xl pb-40">
       <h1 className="text-2xl font-bold mb-6 text-pink-900">
         Editar Fases Lunares 🌙
       </h1>
