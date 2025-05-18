@@ -70,13 +70,13 @@ export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
       mensual: "bg-yellow-100 text-yellow-700",
       anual: "bg-rose-100 text-rose-700",
     };
-  
+
     return lista.map((recurso) =>
       !bloqueado ? (
         <Link
           key={recurso.id}
-          href={recurso.url}
-          target="_blank"
+          href={`/recursos/${recurso.id}`}
+          target="_self"
           className="bg-white p-5 rounded-2xl shadow-md hover:shadow-xl transition-all border border-pink-100 hover:border-pink-300"
         >
           <div className="flex items-center justify-between mb-2">
@@ -130,7 +130,7 @@ export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
       )
     );
   };
-  
+
   const recursosGratuitos = recursos.filter(
     (r) => r.tipo_suscripcion === "gratuito"
   );
