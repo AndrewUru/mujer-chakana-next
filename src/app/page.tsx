@@ -11,15 +11,31 @@ export default function HomePage() {
   const supabase = createClientComponentClient();
 
   useEffect(() => {
-    const checkSession = async () => {
+    let active = true;
+
+    const handleRedirectIfLoggedIn = async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      if (session) {
+      if (active && session) {
         router.replace("/dashboard");
       }
     };
-    checkSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (active && session) {
+          router.replace("/dashboard");
+        }
+      }
+    );
+
+    handleRedirectIfLoggedIn();
+
+    return () => {
+      active = false;
+      listener.subscription.unsubscribe();
+    };
   }, [router, supabase]);
 
   return (
