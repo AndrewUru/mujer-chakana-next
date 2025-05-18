@@ -8,8 +8,15 @@ import { motion } from "framer-motion";
 
 interface MujerChakanaData {
   id: number;
+  dia_ciclo: number;
+  semana: number;
   arquetipo: string;
+  descripcion: string;
   imagen_url?: string;
+  elemento: string;
+  audio_url?: string;
+  ritual_pdf?: string;
+  tip_extra?: string;
 }
 
 export default function CicloPage() {
@@ -20,7 +27,6 @@ export default function CicloPage() {
 
   useEffect(() => {
     const checkAuthAndSubscription = async () => {
-      // 0. Verificar si el usuario está autenticado
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -29,11 +35,9 @@ export default function CicloPage() {
         return;
       }
 
-      // 1. Verificar sesión del usuario
       const {
         data: { session },
       } = await supabase.auth.getSession();
-
       if (!session) {
         router.push("/auth/login");
         return;
@@ -41,22 +45,22 @@ export default function CicloPage() {
 
       const userId = session.user.id;
 
-      // 2. Verificar si tiene suscripción activa
       const { data: perfil, error: perfilError } = await supabase
-        .from("perfiles") // ← Asegúrate que este es el nombre correcto de la tabla
+        .from("perfiles")
         .select("suscripcion_activa")
         .eq("user_id", userId)
         .maybeSingle();
 
       if (perfilError || !perfil?.suscripcion_activa) {
-        router.push("/suscripcion"); // Redirigir si no tiene acceso
+        router.push("/suscripcion");
         return;
       }
 
-      // 3. Si todo está bien, cargar los datos del ciclo
       const { data: cicloData, error: cicloError } = await supabase
         .from("mujer_chakana")
-        .select("id, arquetipo, imagen_url")
+        .select(
+          "id, dia_ciclo, semana, arquetipo, descripcion, imagen_url, elemento, audio_url, ritual_pdf, tip_extra"
+        )
         .order("id", { ascending: true });
 
       if (!cicloError) {
@@ -72,64 +76,101 @@ export default function CicloPage() {
     checkAuthAndSubscription();
   }, [router]);
 
-  // Mientras verifica sesión y suscripción
   if (!authChecked || loading) {
     return (
-      <p className="text-center mt-10 text-white text-3xl italic animate-pulse">
-        🔒 Verificando acceso...
-      </p>
-    );
-  }
-  // Si no tiene suscripción activa, redirigir a la página de suscripción
-  if (ciclo.length === 0) {
-    return (
-      <p className="text-center mt-10 text-white text-3xl italic animate-pulse">
-        🚫 No tienes acceso a la galería de arquetipos. Por favor, revisa tu
-        suscripción.
-      </p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-100 via-amber-100 to-pink-100">
+        <p className="text-2xl text-pink-700 animate-pulse italic">
+          🔒 Verificando acceso...
+        </p>
+      </div>
     );
   }
 
-  // Renderizado normal si pasa el filtro
+  if (ciclo.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-red-50">
+        <p className="text-xl text-red-700 text-center">
+          🚫 No tienes acceso a la galería de arquetipos. <br />
+          Por favor, revisa tu suscripción.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <main className="min-h-screen max-w-7xl mx-auto px-6 py-12 pb-20 space-y-10">
-      <section className="text-center bg-amber-50/80 backdrop-blur-md border-pink-200 dark:border-pink-800 shadow-xl rounded-2xl p-6">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-pink-800">
+    <main className="min-h-screen py-12 px-6 pb-40">
+      <section className="max-w-5xl mx-auto text-center bg-white/80 backdrop-blur-md border border-rose-200 rounded-3xl shadow-2xl px-8 py-10 space-y-4">
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-pink-800">
           🌕 Galería de Arquetipos
         </h1>
-        <p className="text-pink-600 mt-4 max-w-2xl mx-auto text-base sm:text-lg">
-          Explora los 28 arquetipos del ciclo Chakana, cada uno con su energía
-          única para acompañarte día a día.
+        <p className="text-lg text-pink-700 max-w-3xl mx-auto">
+          Explora los 28 arquetipos del ciclo Chakana. Cada día es una puerta
+          hacia tu sabiduría interior y tu energía femenina cambiante.
         </p>
-        <p className="text-pink-700 mt-2 italic">
-          Recuerda que cada día trae un mensaje de tu sabiduría ancestral.
+        <p className="italic text-pink-600">
+          Lo que hoy necesitas está en ti. Solo es cuestión de recordarlo.
         </p>
       </section>
 
-      <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+      <section className="max-w-6xl mx-auto mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
         {ciclo.map((dia) => (
           <motion.article
             key={dia.id}
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
             viewport={{ once: true }}
-            className="relative overflow-hidden rounded-2xl shadow-lg border border-pink-200 group aspect-square bg-white"
+            className="bg-white rounded-2xl shadow-lg border border-pink-200 flex flex-col overflow-hidden"
           >
             {dia.imagen_url ? (
-              <Image
-                src={dia.imagen_url}
-                alt={`Día ${dia.id}: Arquetipo ${dia.arquetipo}`}
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-              />
+              <div className="relative w-full aspect-square">
+                <Image
+                  src={dia.imagen_url}
+                  alt={`Día ${dia.id}: ${dia.arquetipo}`}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
             ) : (
-              <div className="flex items-center justify-center w-full h-full bg-pink-100 text-pink-600 text-sm">
+              <div className="flex items-center justify-center w-full aspect-square bg-pink-100 text-pink-600 text-sm">
                 Sin imagen
               </div>
             )}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-pink-900/90 to-transparent text-white text-sm font-semibold py-3 px-2 text-center shadow-md">
-              Día {dia.id} · {dia.arquetipo}
+
+            <div className="p-4 flex flex-col gap-2">
+              <h3 className="text-pink-800 font-bold text-lg">
+                Día {dia.dia_ciclo} · {dia.arquetipo}
+              </h3>
+
+              <p className="text-sm text-pink-700">{dia.descripcion}</p>
+
+              <p className="text-xs text-pink-500 italic">
+                Elemento: {dia.elemento}
+              </p>
+
+              {dia.audio_url && (
+                <audio controls className="w-full mt-2">
+                  <source src={dia.audio_url} type="audio/mpeg" />
+                  Tu navegador no soporta audio.
+                </audio>
+              )}
+
+              {dia.ritual_pdf && (
+                <a
+                  href={dia.ritual_pdf}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-rose-700 underline mt-1 hover:text-rose-900"
+                >
+                  📜 Ver ritual PDF
+                </a>
+              )}
+
+              {dia.tip_extra && (
+                <p className="text-xs text-amber-700 mt-1 italic">
+                  🌟 Tip: {dia.tip_extra}
+                </p>
+              )}
             </div>
           </motion.article>
         ))}

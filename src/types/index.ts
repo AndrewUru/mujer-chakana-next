@@ -5,14 +5,14 @@
 export interface MujerChakanaData {
   id: number;
   dia_ciclo: number;
+  semana: number;
   arquetipo: string;
   descripcion: string;
-  imagen_url?: string;
+  imagen_url?: string | null;
   elemento: string;
-  audio_url?: string;
-  ritual_pdf?: string;
+  audio_url?: string | null;
+  ritual_pdf?: string | null;
   tip_extra: string;
-  semana?: number;
 }
 
 export interface Perfil {
