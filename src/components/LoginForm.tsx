@@ -85,7 +85,7 @@ export default function LoginForm() {
       initial={{ opacity: 0, y: 30, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="w-full flex flex-col gap-1 bg-white/90 p-8 rounded-2xl shadow-md border border-pink-100"
+      className="w-full flex flex-col gap-1 bg-transparent p-2 rounded-2xl shadow-md border border-pink-100"
       autoComplete="on"
     >
       <p className="text-center text-xl text-pink-600">
@@ -96,7 +96,7 @@ export default function LoginForm() {
       <div className="my-2">
         <label
           htmlFor="email"
-          className="block text-xs text-pink-600 font-semibold mb-1 ml-1"
+          className="block text-xs text-pink-600 font-semibold ml-1"
         >
           Correo electrónico
         </label>
@@ -183,7 +183,7 @@ export default function LoginForm() {
       </AnimatePresence>
 
       {/* CTA registro */}
-      <div className="flex flex-col items-center mt-6">
+      <div className="flex flex-col items-center mt-1">
         <span className="text-xs text-pink-500 mb-1">
           ¿Aún no tienes cuenta?
         </span>
