@@ -42,7 +42,7 @@ export default function RecursosAdminPage() {
   }
 
   return (
-    <main className="max-w-6xl mx-auto py-10 space-y-8">
+    <main className="max-w-6xl mx-auto py-10 space-y-8 pb-40">
       <div className="bg-white/60 backdrop-blur-md border border-pink-100 rounded-2xl shadow-lg px-6 py-5 mb-6 flex flex-col gap-3 items-start">
         <h1 className="text-3xl font-bold text-pink-800 flex items-center gap-2">
           🔮 Administrar Recursos
