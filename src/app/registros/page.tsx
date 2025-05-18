@@ -172,8 +172,8 @@ export default function RegistroPage() {
           autoconocimiento y bienestar cíclico.
           <p>
             <span className="font-semibold">
-              Las suscriptoras pueden, al completar sus registros, solicitar una
-              video consulta personalizada con Samari Luz
+              Las suscriptoras pueden solicitar una video consulta personalizada
+              con Samari Luz
             </span>
           </p>
           para profundizar en su camino y recibir una guía exclusiva. ✨
