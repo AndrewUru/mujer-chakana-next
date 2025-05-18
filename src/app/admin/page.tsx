@@ -133,6 +133,31 @@ export default function AdminPage() {
             </div>
           )}
         </div>
+        <section className="text-center mt-10">
+          <h3 className="text-base sm:text-lg text-pink-700 font-semibold mb-3">
+            Accesos rápidos de edición
+          </h3>
+          <div className="flex flex-wrap justify-center gap-4">
+            <a
+              href="/admin/mujer-chakana"
+              className="px-5 py-2.5 rounded-xl bg-pink-600 text-white hover:bg-pink-700 font-semibold shadow transition text-sm"
+            >
+              ✨ Editar Mujer Chakana
+            </a>
+            <a
+              href="/admin/recursos"
+              className="px-5 py-2.5 rounded-xl bg-rose-400 text-white hover:bg-rose-500 font-semibold shadow transition text-sm"
+            >
+              🔮 Editar Recursos
+            </a>
+            <a
+              href="/admin/moonboard"
+              className="px-5 py-2.5 rounded-xl bg-rose-400 text-white hover:bg-rose-500 font-semibold shadow transition text-sm"
+            >
+              🌙 Editar Moonboard
+            </a>
+          </div>
+        </section>
 
         <section className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-pink-100 p-5 overflow-x-auto">
           <h2 className="text-xl sm:text-2xl font-bold text-pink-700 mb-4 flex items-center gap-2">
@@ -221,32 +246,6 @@ export default function AdminPage() {
                 ))}
               </tbody>
             </table>
-          </div>
-        </section>
-
-        <section className="text-center mt-10">
-          <h3 className="text-base sm:text-lg text-pink-700 font-semibold mb-3">
-            Accesos rápidos de edición
-          </h3>
-          <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href="/admin/mujer-chakana"
-              className="px-5 py-2.5 rounded-xl bg-pink-600 text-white hover:bg-pink-700 font-semibold shadow transition text-sm"
-            >
-              ✨ Editar Mujer Chakana
-            </a>
-            <a
-              href="/admin/recursos"
-              className="px-5 py-2.5 rounded-xl bg-rose-400 text-white hover:bg-rose-500 font-semibold shadow transition text-sm"
-            >
-              🔮 Editar Recursos
-            </a>
-            <a
-              href="/admin/moonboard"
-              className="px-5 py-2.5 rounded-xl bg-rose-400 text-white hover:bg-rose-500 font-semibold shadow transition text-sm"
-            >
-              🌙 Editar Moonboard
-            </a>
           </div>
         </section>
       </div>

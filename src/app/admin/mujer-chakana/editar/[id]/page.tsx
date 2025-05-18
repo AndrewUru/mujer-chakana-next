@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export default function EditarArquetipoPage() {
   const { id } = useParams();
@@ -24,7 +25,6 @@ export default function EditarArquetipoPage() {
   const [mensajeError, setMensajeError] = useState<string | null>(null);
   const [guardando, setGuardando] = useState(false);
 
-  // Cargar datos del arquetipo
   useEffect(() => {
     async function fetchData() {
       const { data, error } = await supabase
@@ -46,8 +46,7 @@ export default function EditarArquetipoPage() {
     fetchData();
   }, [id]);
 
-  // Función de actualizar
-  async function handleUpdate(e: React.FormEvent) {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!arquetipo) return;
 
@@ -72,15 +71,14 @@ export default function EditarArquetipoPage() {
 
     if (error) {
       console.error("Error actualizando arquetipo:", error.message);
-      setMensajeError("Ocurrió un error al guardar los cambios.");
-      return;
+      setMensajeError("❌ Ocurrió un error al guardar los cambios.");
+    } else {
+      setMensajeExito("✅ Cambios guardados correctamente.");
+      setTimeout(() => {
+        router.push("/admin/mujer-chakana");
+      }, 2000);
     }
-
-    setMensajeExito("✅ Cambios guardados correctamente.");
-    setTimeout(() => {
-      router.push("/admin/mujer-chakana");
-    }, 2000);
-  }
+  };
 
   if (loading || !arquetipo) {
     return (
@@ -91,16 +89,23 @@ export default function EditarArquetipoPage() {
   }
 
   return (
-    <main className="max-w-3xl bg-white/90 mx-auto py-10 px-6 rounded-2xl shadow-md pb-20 space-y-6">
+    <main className="max-w-3xl mx-auto bg-white/90 py-10 px-6 rounded-2xl shadow-md pb-20 space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: "Admin", href: "/admin" },
+          { label: "Mujer Chakana", href: "/admin/mujer-chakana" },
+          { label: `Editar: ${arquetipo.arquetipo}` },
+        ]}
+      />
+
       <h1 className="text-3xl font-bold text-pink-800 mb-2">
-        Editar Arquetipo
+        ✨ Editar Arquetipo
       </h1>
       <p className="text-sm text-gray-600 mb-4">
-        Modifica los datos del arquetipo seleccionado. Los campos marcados con *
-        son obligatorios.
+        Modifica los atributos del arquetipo. Los campos marcados con * son
+        obligatorios.
       </p>
 
-      {/* Mensajes de éxito o error */}
       {mensajeExito && (
         <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded shadow mb-4">
           {mensajeExito}
@@ -113,122 +118,83 @@ export default function EditarArquetipoPage() {
         </div>
       )}
 
-      <form onSubmit={handleUpdate} className="space-y-5">
-        {/* Nombre del Arquetipo */}
-        <div className="flex flex-col gap-2">
-          <label className="font-semibold text-pink-700">
-            Nombre del Arquetipo *
-          </label>
-          <input
-            type="text"
-            value={arquetipo.arquetipo}
-            onChange={(e) =>
-              setArquetipo({ ...arquetipo, arquetipo: e.target.value })
-            }
-            required
-            className="border border-pink-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-400 placeholder-gray-400"
-            placeholder="Ej. La Sabia"
-          />
-        </div>
+      <form onSubmit={handleUpdate} className="space-y-6">
+        {[
+          {
+            label: "Nombre del Arquetipo *",
+            key: "arquetipo",
+            placeholder: "Ej. La Sabia",
+          },
+          { label: "Elemento *", key: "elemento", isSelect: true },
+          {
+            label: "Imagen URL",
+            key: "imagen_url",
+            placeholder: "https://...",
+          },
+          { label: "Audio URL", key: "audio_url", placeholder: "https://..." },
+          {
+            label: "Ritual PDF URL",
+            key: "ritual_pdf",
+            placeholder: "https://...",
+          },
+          {
+            label: "Tip Extra (opcional)",
+            key: "tip_extra",
+            placeholder: "Consejo breve",
+          },
+        ].map(({ label, key, isSelect, placeholder }) => (
+          <div key={key} className="flex flex-col gap-2">
+            <label className="font-semibold text-pink-700">{label}</label>
+            {isSelect ? (
+              <select
+                required
+                value={arquetipo[key as keyof Arquetipo] || ""}
+                onChange={(e) =>
+                  setArquetipo({ ...arquetipo, [key]: e.target.value })
+                }
+                className="border border-pink-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-400"
+              >
+                <option value="">Selecciona un elemento</option>
+                <option value="Agua">Agua</option>
+                <option value="Tierra">Tierra</option>
+                <option value="Fuego">Fuego</option>
+                <option value="Aire">Aire</option>
+              </select>
+            ) : (
+              <input
+                type="text"
+                value={arquetipo[key as keyof Arquetipo] || ""}
+                onChange={(e) =>
+                  setArquetipo({ ...arquetipo, [key]: e.target.value })
+                }
+                required={label.includes("*")}
+                placeholder={placeholder}
+                className="border border-pink-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-400 placeholder-gray-400"
+              />
+            )}
+          </div>
+        ))}
 
-        {/* Descripción */}
+        {/* Descripción (textarea) */}
         <div className="flex flex-col gap-2">
           <label className="font-semibold text-pink-700">Descripción *</label>
           <textarea
+            required
+            rows={5}
             value={arquetipo.descripcion}
             onChange={(e) =>
               setArquetipo({ ...arquetipo, descripcion: e.target.value })
             }
-            required
-            rows={4}
             className="border border-pink-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-400 placeholder-gray-400"
-            placeholder="Breve descripción simbólica del arquetipo."
+            placeholder="Breve descripción simbólica del arquetipo"
           />
         </div>
 
-        {/* Elemento */}
-        <div className="flex flex-col gap-2">
-          <label className="font-semibold text-pink-700">Elemento *</label>
-          <select
-            value={arquetipo.elemento}
-            onChange={(e) =>
-              setArquetipo({ ...arquetipo, elemento: e.target.value })
-            }
-            required
-            className="border border-pink-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-400"
-          >
-            <option value="">Selecciona un elemento</option>
-            <option value="Agua">Agua</option>
-            <option value="Tierra">Tierra</option>
-            <option value="Fuego">Fuego</option>
-            <option value="Aire">Aire</option>
-          </select>
-        </div>
-
-        {/* Imagen URL */}
-        <div className="flex flex-col gap-2">
-          <label className="font-semibold text-pink-700">Imagen URL</label>
-          <input
-            type="text"
-            value={arquetipo.imagen_url}
-            onChange={(e) =>
-              setArquetipo({ ...arquetipo, imagen_url: e.target.value })
-            }
-            className="border border-pink-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-400 placeholder-gray-400"
-            placeholder="https://..."
-          />
-        </div>
-
-        {/* Audio URL */}
-        <div className="flex flex-col gap-2">
-          <label className="font-semibold text-pink-700">Audio URL</label>
-          <input
-            type="text"
-            value={arquetipo.audio_url}
-            onChange={(e) =>
-              setArquetipo({ ...arquetipo, audio_url: e.target.value })
-            }
-            className="border border-pink-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-400 placeholder-gray-400"
-            placeholder="https://..."
-          />
-        </div>
-
-        {/* Ritual PDF URL */}
-        <div className="flex flex-col gap-2">
-          <label className="font-semibold text-pink-700">Ritual PDF URL</label>
-          <input
-            type="text"
-            value={arquetipo.ritual_pdf}
-            onChange={(e) =>
-              setArquetipo({ ...arquetipo, ritual_pdf: e.target.value })
-            }
-            className="border border-pink-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-400 placeholder-gray-400"
-            placeholder="https://..."
-          />
-        </div>
-
-        {/* Tip Extra */}
-        <div className="flex flex-col gap-2">
-          <label className="font-semibold text-pink-700">
-            Tip Extra (opcional)
-          </label>
-          <input
-            type="text"
-            value={arquetipo.tip_extra}
-            onChange={(e) =>
-              setArquetipo({ ...arquetipo, tip_extra: e.target.value })
-            }
-            className="border border-pink-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-400 placeholder-gray-400"
-            placeholder="Consejo breve para este arquetipo."
-          />
-        </div>
-
-        {/* Botón de guardar */}
-        <div className="sticky bottom-5">
+        <div className="pt-4 sticky bottom-5 bg-white/90 pb-4">
           <button
             type="submit"
             disabled={guardando}
-            className={`w-full bg-pink-700 text-white font-semibold py-3 px-6 rounded-lg transition text-lg ${
+            className={`w-full bg-pink-700 text-white font-semibold py-3 px-6 rounded-lg text-lg transition ${
               guardando ? "opacity-50 cursor-not-allowed" : "hover:bg-pink-800"
             }`}
           >

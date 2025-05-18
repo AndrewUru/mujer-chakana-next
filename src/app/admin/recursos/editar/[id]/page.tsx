@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export default function EditarRecursoPage() {
   const { id } = useParams();
@@ -58,7 +59,6 @@ export default function EditarRecursoPage() {
         descripcion: recurso.descripcion,
         url: recurso.url,
         tipo: recurso.tipo,
-        
       })
       .eq("id", id);
 
@@ -91,6 +91,15 @@ export default function EditarRecursoPage() {
 
   return (
     <main className="max-w-3xl mx-auto bg-white/80 backdrop-blur-sm py-10 space-y-8 px-6 rounded-2xl shadow-lg pb-24">
+      <Breadcrumbs
+        items={[
+          { label: "Admin", href: "/admin" },
+          { label: "Recursos", href: "/admin/recursos" },
+          recurso?.titulo
+            ? { label: `Editar: ${recurso.titulo}` }
+            : { label: "Editar recurso" },
+        ]}
+      />
       <h1 className="text-3xl font-bold text-pink-800 mb-2">
         ✏️ Editar Recurso
       </h1>
