@@ -13,7 +13,7 @@ export default function EditarRecursoPage() {
     descripcion: string;
     url: string;
     tipo: string;
-    plan_acceso?: "gratuito" | "mensual" | "anual";
+    tipo_suscripcion?: string[];
   }
 
   const [recurso, setRecurso] = useState<Recurso | null>(null);
@@ -58,7 +58,7 @@ export default function EditarRecursoPage() {
         descripcion: recurso.descripcion,
         url: recurso.url,
         tipo: recurso.tipo,
-        plan_acceso: recurso.plan_acceso || "gratuito",
+        
       })
       .eq("id", id);
 
@@ -162,22 +162,32 @@ export default function EditarRecursoPage() {
         {/* Nuevo campo: Plan de acceso */}
         <div className="flex flex-col gap-2">
           <label className="font-semibold text-pink-700">
-            Accesible para el plan:
+            Planes de acceso
           </label>
-          <select
-            value={recurso.plan_acceso || "gratuito"}
-            onChange={(e) =>
-              setRecurso({
-                ...recurso,
-                plan_acceso: e.target.value as Recurso["plan_acceso"],
-              })
-            }
-            className="w-full border border-pink-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-400 text-gray-700"
-          >
-            <option value="gratuito">Gratuito</option>
-            <option value="mensual">Suscripción mensual</option>
-            <option value="anual">Suscripción anual</option>
-          </select>
+
+          {Array.isArray(recurso.tipo_suscripcion) &&
+          recurso.tipo_suscripcion.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {recurso.tipo_suscripcion.map((plan) => (
+                <span
+                  key={plan}
+                  className="px-3 py-1 text-xs rounded-full bg-rose-100 text-rose-800 border border-rose-200"
+                >
+                  {plan === "gratuito"
+                    ? "Gratuito"
+                    : plan === "mensual"
+                    ? "Mensual"
+                    : "Anual"}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm italic text-gray-500">Sin planes asignados</p>
+          )}
+
+          <p className="text-xs text-gray-500 italic mt-1">
+            Los planes de acceso no se pueden modificar desde aquí.
+          </p>
         </div>
 
         <div className="pt-4">

@@ -8,7 +8,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 
 interface Recurso {
   id: number;
-  nombre: string;
+  titulo: string;
   tipo: string;
   descripcion: string;
   url?: string;
@@ -66,7 +66,7 @@ export default function RecursosAdminPage() {
             className="bg-white border border-pink-100 rounded-xl p-5 shadow"
           >
             <h2 className="text-xl font-semibold text-pink-700">
-              {recurso.nombre}
+              {recurso.titulo}
             </h2>
             <p className="text-sm text-gray-600">{recurso.tipo}</p>
             <p className="mt-2 text-gray-700">{recurso.descripcion}</p>
