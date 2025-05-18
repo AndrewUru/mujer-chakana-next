@@ -1,11 +1,26 @@
 "use client";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { SparklesIcon, StarIcon } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function HomePage() {
   const router = useRouter();
+  const supabase = createClientComponentClient();
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session) {
+        router.replace("/dashboard");
+      }
+    };
+    checkSession();
+  }, [router, supabase]);
 
   return (
     <main className="min-h-screen bg-[url('/bg-chakana.png')] bg-cover bg-center text-pink-900 px-4 py-2 sm:py-2">
