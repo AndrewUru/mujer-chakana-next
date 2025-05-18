@@ -88,9 +88,6 @@ export default function LoginForm() {
       className="w-full flex flex-col gap-1 bg-white/90 p-8 rounded-2xl shadow-md border border-pink-100"
       autoComplete="on"
     >
-      <h1 className="text-3xl font-bold text-center text-pink-800 mb-2">
-        ✨ Iniciar sesión
-      </h1>
       <p className="text-center text-sm text-pink-600">
         Bienvenida de nuevo, hermana.
         <br />

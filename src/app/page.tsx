@@ -41,7 +41,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
-            className="max-w-2xl mx-auto my-10 px-6 py-8 bg-white/60 backdrop-blur-md rounded-3xl shadow-2xl flex flex-col items-center"
+            className="max-w-2xl mx-auto my-10 px-6 py-4 bg-white/60 backdrop-blur-md rounded-3xl shadow-2xl flex flex-col items-center"
           >
             <motion.h1
               initial={{ opacity: 0, y: -20 }}

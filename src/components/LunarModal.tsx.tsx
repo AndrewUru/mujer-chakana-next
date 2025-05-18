@@ -116,7 +116,7 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
             {fase.mensaje && (
               <div className="relative group">
                 <div className="absolute inset-0 bg-white/10 rounded-xl filter blur-xl -z-10 group-hover:opacity-50 transition-opacity" />
-                <p className="text-center text-lg leading-relaxed font-medium px-4 py-3 rounded-lg transition-all duration-300">
+                <p className="text-center text-lg leading-relaxed text-white font-medium px-4 py-3 rounded-lg transition-all duration-300">
                   &quot;{fase.mensaje}&quot;
                 </p>
               </div>

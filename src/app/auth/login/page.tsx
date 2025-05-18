@@ -31,7 +31,7 @@ export default function LoginPage() {
 
         {/* Título */}
         <h1 className="text-2xl sm:text-3xl font-bold text-center bg-gradient-to-r from-rose-700 to-rose-900 bg-clip-text text-transparent mb-3 drop-shadow">
-          Inicia sesión en <span className="font-extrabold">Mujer Chakana</span>
+          Inicia sesión en <p className="font-extrabold">Mujer Chakana</p>
         </h1>
 
         {/* Frase bienvenida */}
