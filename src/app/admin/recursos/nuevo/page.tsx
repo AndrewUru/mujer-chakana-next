@@ -47,7 +47,7 @@ const NuevoRecursoPage = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-12 p-8 bg-white shadow-xl rounded-2xl border border-rose-200">
+    <div className="max-w-2xl mx-auto mt-12 p-8 bg-white shadow-xl rounded-2xl border border-rose-200 pb-40">
       <h1 className="text-2xl font-bold text-rose-700 mb-6 text-center">
         🌕 Añadir Nuevo Recurso
       </h1>

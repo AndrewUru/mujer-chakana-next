@@ -67,6 +67,7 @@ interface Registro {
 export default function RegistroPage() {
   const [registros, setRegistros] = useState<Registro[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mesSeleccionado, setMesSeleccionado] = useState<string>("todos");
   const router = useRouter();
   const [registroAEliminar, setRegistroAEliminar] = useState<string | null>(
     null
@@ -102,15 +103,37 @@ export default function RegistroPage() {
     fetchRegistros();
   }, [router]);
 
-  // ----- Pedir confirmación antes de eliminar -----
+  // Agrupa meses disponibles
+  const mesesDisponibles = Array.from(
+    new Set(
+      registros.map((r) =>
+        new Date(r.fecha).toLocaleString("default", {
+          month: "long",
+          year: "numeric",
+        })
+      )
+    )
+  );
 
+  // Filtrar por mes
+  const registrosFiltrados =
+    mesSeleccionado === "todos"
+      ? registros
+      : registros.filter(
+          (r) =>
+            new Date(r.fecha).toLocaleString("default", {
+              month: "long",
+              year: "numeric",
+            }) === mesSeleccionado
+        );
+
+  // ----- Pedir confirmación antes de eliminar -----
   function pedirConfirmacion(id: string) {
     setRegistroAEliminar(id);
     setMostrandoConfirmacion(true);
   }
 
   // ----- Eliminar registro -----
-
   async function eliminarRegistro(id: string) {
     const { error } = await supabase.from("registros").delete().eq("id", id);
 
@@ -124,7 +147,6 @@ export default function RegistroPage() {
   }
 
   // ----- Loading -----
-
   if (loading)
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-white-700">
@@ -139,7 +161,6 @@ export default function RegistroPage() {
     );
 
   // ----- Render -----
-
   return (
     <main className="mx-auto px-4 py-8 text-rose-900 max-w-7xl pb-24">
       <section className="text-center bg-pink-100/60 backdrop-blur-md rounded-3xl p-8 shadow-xl mb-10">
@@ -159,14 +180,29 @@ export default function RegistroPage() {
         </p>
       </section>
 
-      {registros.length === 0 ? (
+      <div className="mb-6 flex justify-center">
+        <select
+          className="p-2 border border-rose-300 rounded-xl text-rose-800 bg-white shadow"
+          onChange={(e) => setMesSeleccionado(e.target.value)}
+          value={mesSeleccionado}
+        >
+          <option value="todos">🌕 Ver todos los meses</option>
+          {mesesDisponibles.map((mes) => (
+            <option key={mes} value={mes}>
+              {mes}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {registrosFiltrados.length === 0 ? (
         <p className="text-center text-pink-500 italic text-lg">
-          No has registrado ningún día aún. 🌸
+          No hay registros para este mes. 🌸
         </p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           <AnimatePresence>
-            {registros.map((registro) => (
+            {registrosFiltrados.map((registro) => (
               <motion.div
                 key={registro.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -174,11 +210,11 @@ export default function RegistroPage() {
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.4 }}
                 className={`rounded-3xl p-6 shadow-xl border transition-all hover:scale-[1.02] hover:shadow-2xl bg-white/90
-            ${
-              registro.energia && registro.energia >= 4
-                ? "border-pink-400"
-                : "border-rose-200"
-            }`}
+              ${
+                registro.energia && registro.energia >= 4
+                  ? "border-pink-400"
+                  : "border-rose-200"
+              }`}
               >
                 <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-pink-700">
                   📅 {new Date(registro.fecha).toLocaleDateString()}
