@@ -88,10 +88,8 @@ export default function LoginForm() {
       className="w-full flex flex-col gap-1 bg-white/90 p-8 rounded-2xl shadow-md border border-pink-100"
       autoComplete="on"
     >
-      <p className="text-center text-sm text-pink-600">
-        Bienvenida de nuevo, hermana.
-        <br />
-        <span className="text-pink-400">Accede a tu espacio sagrado 🌙</span>
+      <p className="text-center text-xl text-pink-600">
+        Accede a tu espacio sagrado 🌙
       </p>
 
       {/* Email */}
