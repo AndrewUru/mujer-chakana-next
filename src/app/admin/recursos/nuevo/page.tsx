@@ -8,7 +8,13 @@ const NuevoRecursoPage = () => {
   const [descripcion, setDescripcion] = useState("");
   const [tipo, setTipo] = useState("pdf");
   const [url, setUrl] = useState("");
-  const [tipoSuscripcion, setTipoSuscripcion] = useState("gratuito");
+  const [tipoSuscripcion, setTipoSuscripcion] = useState<string[]>([]);
+
+  const handleCheckboxChange = (valor: string) => {
+    setTipoSuscripcion((prev) =>
+      prev.includes(valor) ? prev.filter((v) => v !== valor) : [...prev, valor]
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,7 +48,7 @@ const NuevoRecursoPage = () => {
       setDescripcion("");
       setTipo("pdf");
       setUrl("");
-      setTipoSuscripcion("gratuito");
+      setTipoSuscripcion([]);
     }
   };
 
@@ -120,23 +126,22 @@ const NuevoRecursoPage = () => {
         </div>
 
         <div>
-          <label
-            htmlFor="tipoSuscripcion"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Tipo de Suscripción
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Tipos de Suscripción
           </label>
-          <select
-            id="tipoSuscripcion"
-            value={tipoSuscripcion}
-            onChange={(e) => setTipoSuscripcion(e.target.value)}
-            required
-            className="mt-1 block w-full rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-rose-500 focus:border-rose-500"
-          >
-            <option value="gratuito">Gratuito</option>
-            <option value="mensual">Mensual</option>
-            <option value="anual">Anual</option>
-          </select>
+          <div className="space-y-2">
+            {["gratuito", "mensual", "anual"].map((opcion) => (
+              <label key={opcion} className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  value={opcion}
+                  checked={tipoSuscripcion.includes(opcion)}
+                  onChange={() => handleCheckboxChange(opcion)}
+                />
+                {opcion.charAt(0).toUpperCase() + opcion.slice(1)}
+              </label>
+            ))}
+          </div>
         </div>
 
         <div className="text-center">
