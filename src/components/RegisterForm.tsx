@@ -24,7 +24,10 @@ export default function RegisterForm() {
     setMensaje("");
     setLoading(true);
 
-    const { data, error } = await supabase.auth.signUp({
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.signUp({
       email,
       password,
     });
@@ -35,7 +38,6 @@ export default function RegisterForm() {
       return;
     }
 
-    const user = data.user;
     if (user) {
       setUserId(user.id);
 
@@ -54,6 +56,32 @@ export default function RegisterForm() {
         setMensaje("❌ Error al crear el perfil: " + insertError.message);
         setLoading(false);
         return;
+      }
+
+      // 📿 Inserción automática del día 1 del ciclo
+      const today = new Date().toISOString().split("T")[0];
+      const arquetipoInicial = "La Visionaria";
+      const descripcionInicial =
+        "En su cueva interior, La Visionaria recibe imágenes, sueños y revelaciones. Día para descansar y visionar el ciclo que comienza.";
+
+      const { error: cicloError } = await supabase
+        .from("mujer_chakana")
+        .insert([
+          {
+            user_id: user.id,
+            dia_ciclo: 1,
+            semana: 1,
+            fecha: today,
+            arquetipo: arquetipoInicial,
+            descripcion: descripcionInicial,
+          },
+        ]);
+
+      if (cicloError) {
+        console.error(
+          "❌ Error al asignar día 1 del ciclo:",
+          cicloError.message
+        );
       }
 
       if (tipoPlan === "gratuito") {
