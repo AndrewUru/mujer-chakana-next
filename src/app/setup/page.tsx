@@ -19,11 +19,11 @@ export default function SetupPage() {
   const [perfil, setPerfil] = useState<{
     tipo_plan: string | null;
     suscripcion_activa: boolean | null;
-    updated_at?: string | null;
+    fecha_expiracion?: string | null;
     display_name: string;
     avatar_url: string | null;
     email: string;
-    inicio_ciclo: string | null;
+    fecha_inicio: string | null;
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -41,7 +41,7 @@ export default function SetupPage() {
       const { data, error } = await supabase
         .from("perfiles")
         .select(
-          "tipo_plan, suscripcion_activa, updated_at, display_name, avatar_url, email, inicio_ciclo"
+          "tipo_plan, suscripcion_activa, fecha_expiracion, display_name, avatar_url, email, fecha_inicio"
         )
         .eq("user_id", user.id)
         .single();
@@ -120,21 +120,14 @@ export default function SetupPage() {
                             Inicio de ciclo
                           </p>
                           <p className="font-medium text-gray-700">
-                            {perfil.inicio_ciclo
+                            {perfil.fecha_inicio
                               ? new Date(
-                                  perfil.inicio_ciclo
+                                  perfil.fecha_inicio
                                 ).toLocaleDateString("es-ES")
                               : "No registrado"}
                           </p>
                         </div>
                       </div>
-                      <Link
-                        href="/registros"
-                        className="text-pink-600 hover:text-pink-800 text-sm font-medium flex items-center space-x-1"
-                      >
-                        <span>Gestionar</span>
-                        <ArrowRightIcon className="w-4 h-4" />
-                      </Link>
                     </div>
                   </div>
 

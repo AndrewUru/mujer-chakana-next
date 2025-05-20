@@ -196,9 +196,11 @@ export default function RegistroPage() {
       </div>
 
       {registrosFiltrados.length === 0 ? (
-        <p className="text-center text-pink-500 italic text-lg">
-          No hay registros para este mes. 🌸
-        </p>
+        <div className="bg-pink-50 border border-pink-100 p-4 rounded-xl shadow-sm max-w-md mx-auto">
+          <p className="text-center text-pink-500 italic text-lg">
+            No hay registros para este mes. 🌸
+          </p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           <AnimatePresence>
