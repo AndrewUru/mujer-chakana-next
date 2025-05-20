@@ -107,14 +107,11 @@ export default function RegisterForm() {
     <div className="w-full max-w-md">
       <form
         onSubmit={handleRegister}
-        className="flex flex-col gap-4 bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-rose-200"
+        className="flex flex-col gap-4 bg-white p-3 sm:p-4 rounded-2xl shadow-xl border border-rose-200"
       >
         <h1 className="text-3xl font-bold text-center text-pink-800">
           🌺 Crear cuenta
         </h1>
-        <p className="text-center text-sm text-pink-600">
-          Únete al camino del ciclo y la transformación.
-        </p>
 
         <button
           type="button"
@@ -170,11 +167,18 @@ export default function RegisterForm() {
                 alt="Avatar preview"
                 width={80}
                 height={80}
-                className="mt-2 rounded-full border-2 border-pink-500 object-cover"
+                className="mt-1 rounded-full border-2 border-pink-500 object-cover"
               />
             )}
           </div>
         )}
+
+        {/* ⚠️ Advertencia sobre inicio automático del ciclo */}
+        <div className="bg-yellow-100 border-l-4 border-yellow-400 text-yellow-800 p-4 text-sm rounded-xl shadow-sm">
+          🔔 <strong>Importante:</strong> Al crear tu cuenta, el sistema
+          iniciará tu ciclo en el <strong>Día 1</strong> automáticamente. Podrás
+          modificarlo más adelante si lo necesitas.
+        </div>
 
         <label className="text-sm text-pink-700 mt-2">
           🌕 Tipo de plan que deseas activar
