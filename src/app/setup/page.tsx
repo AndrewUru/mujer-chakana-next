@@ -5,6 +5,13 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import SetupPerfil from "@/components/SetupPerfil";
 import Link from "next/link";
+import Image from "next/image";
+
+import {
+  ArrowRightIcon,
+  SparklesIcon,
+  BookOpenIcon,
+} from "@heroicons/react/24/outline";
 
 export default function SetupPage() {
   const router = useRouter();
@@ -13,6 +20,10 @@ export default function SetupPage() {
     tipo_plan: string | null;
     suscripcion_activa: boolean | null;
     updated_at?: string | null;
+    display_name: string;
+    avatar_url: string | null;
+    email: string;
+    inicio_ciclo: string | null;
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -29,7 +40,9 @@ export default function SetupPage() {
 
       const { data, error } = await supabase
         .from("perfiles")
-        .select("tipo_plan, suscripcion_activa, updated_at")
+        .select(
+          "tipo_plan, suscripcion_activa, updated_at, display_name, avatar_url, email, inicio_ciclo"
+        )
         .eq("user_id", user.id)
         .single();
 
@@ -37,7 +50,7 @@ export default function SetupPage() {
         setPerfil(data);
       } else {
         console.warn("No se encontró perfil o hubo un error", error);
-        setPerfil(null); // ← Para desbloquear la vista aunque sea sin datos
+        setPerfil(null);
       }
 
       setLoading(false);
@@ -47,77 +60,152 @@ export default function SetupPage() {
   }, [router]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-100 flex flex-col items-center justify-start pb-20 px-6 py-12">
-      <div className="max-w-4xl w-full space-y-10">
+    <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-50 flex flex-col items-center justify-start pb-20 px-4 py-10 backdrop-blur-sm">
+      <div className="max-w-6xl w-full space-y-12">
+        {/* Header Section */}
         <header className="text-center">
-          <div className="mt-6 mb-10 mx-auto bg-white/90 border border-pink-200 p-6 rounded-2xl shadow-md max-w-md text-center">
-            <h1 className="text-2xl font-extrabold text-pink-800 mb-3 tracking-tight">
-              ✨ Bienvenida a tu espacio personal
-            </h1>
+          <div className="mb-12 mx-auto bg-white/95 border border-pink-100 p-8 rounded-3xl shadow-lg max-w-2xl text-center backdrop-blur-md">
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4 tracking-wide">
+                🌸 Bienvenida a tu Santuario Lunar
+              </h1>
 
-            <p className="text-lg text-pink-700 mb-6">
-              Este es tu lugar para reconectar contigo misma 🌸. Aquí puedes
-              ajustar tu perfil, indicar el comienzo de tu ciclo y conocer el
-              estado de tu suscripción. Todo está diseñado para acompañarte con
-              mensajes, rituales y arquetipos sincronizados con la energía lunar
-              🌕.
-            </p>
-
-            <h2 className="text-xl font-bold text-pink-700 mb-2">
-              💫 Estado de tu Suscripción
-            </h2>
+              <p className="text-base text-gray-600 leading-relaxed max-w-2xl mx-auto px-4">
+                Tu espacio sagrado para reconectar con tu esencia. Gestiona tu
+                perfil, sigue tu ciclo y descubre contenido exclusivo
+                sincronizado con las fases lunares. Todo diseñado para nutrir tu
+                feminidad.
+              </p>
+            </div>
 
             {loading ? (
-              <p className="text-sm text-gray-500 italic">Cargando datos...</p>
-            ) : perfil && perfil.suscripcion_activa ? (
-              <>
-                <p className="text-sm text-pink-700 mb-1">
-                  Tienes un plan activo:{" "}
-                  <span className="font-bold uppercase">
-                    {perfil.tipo_plan}
-                  </span>
-                </p>
-                {perfil.updated_at && (
-                  <p className="text-sm text-pink-600">
-                    Activado desde el{" "}
-                    <strong>
-                      {new Date(perfil.updated_at).toLocaleDateString("es-ES")}
-                    </strong>
-                  </p>
-                )}
-                <Link
-                  href="/suscripcion"
-                  className="mt-4 inline-block bg-pink-600 hover:bg-pink-700 text-white font-semibold px-5 py-2 rounded-full transition"
-                >
-                  Cambiar o gestionar mi plan
-                </Link>
-              </>
+              <div className="animate-pulse space-y-6">
+                <div className="h-24 bg-pink-100 rounded-2xl"></div>
+              </div>
             ) : (
-              <>
-                <p className="text-sm text-gray-600 italic mb-2">
-                  Aún no tienes una suscripción activa.
-                </p>
-                <Link
-                  href="/suscripcion"
-                  className="inline-block bg-pink-100 hover:bg-pink-200 text-pink-800 font-semibold px-5 py-2 rounded-full border border-pink-300"
-                >
-                  Ver opciones de suscripción
-                </Link>
-              </>
+              perfil && (
+                <div className="grid gap-6">
+                  {/* Profile Card */}
+                  <div className="bg-white/80 border border-pink-100 p-6 rounded-2xl shadow-sm">
+                    <div className="flex flex-col items-center space-y-4">
+                      {perfil.avatar_url && (
+                        <Image
+                          src={perfil.avatar_url}
+                          alt="avatar"
+                          width={96}
+                          height={96}
+                          className="rounded-full border-4 border-pink-200 shadow-lg"
+                        />
+                      )}
+                      <div>
+                        <h2 className="text-xl font-semibold text-gray-800 bg-gradient-to-r from-pink-700 to-purple-700 bg-clip-text text-transparent">
+                          {perfil.display_name}
+                        </h2>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {perfil.email}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Cycle Status */}
+                  <div className="backdrop-blur-lg bg-white/50 border border-pink-100 p-5 rounded-2xl">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="bg-pink-100 p-2 rounded-lg">
+                          <span className="text-pink-600 text-xl">🌱</span>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">
+                            Inicio de ciclo
+                          </p>
+                          <p className="font-medium text-gray-700">
+                            {perfil.inicio_ciclo
+                              ? new Date(
+                                  perfil.inicio_ciclo
+                                ).toLocaleDateString("es-ES")
+                              : "No registrado"}
+                          </p>
+                        </div>
+                      </div>
+                      <Link
+                        href="/registros"
+                        className="text-pink-600 hover:text-pink-800 text-sm font-medium flex items-center space-x-1"
+                      >
+                        <span>Gestionar</span>
+                        <ArrowRightIcon className="w-4 h-4" />
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Subscription Card */}
+                  <div className="bg-gradient-to-br from-pink-50 to-white border border-pink-100 p-6 rounded-2xl shadow-sm">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+                      <span className="bg-pink-600 text-white p-2 rounded-lg">
+                        💎
+                      </span>
+                      <span>Estado de Suscripción</span>
+                    </h3>
+
+                    {perfil.suscripcion_activa ? (
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="text-sm text-gray-500">Plan actual</p>
+                            <p className="font-medium text-gray-800 uppercase">
+                              {perfil.tipo_plan}
+                            </p>
+                          </div>
+                          <span className="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
+                            Activa
+                          </span>
+                        </div>
+                        <Link
+                          href="/suscripcion"
+                          className="w-full inline-flex justify-center items-center space-x-2 bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl transition-all shadow-sm hover:shadow-md"
+                        >
+                          <span>Gestionar Plan</span>
+                          <ArrowRightIcon className="w-4 h-4" />
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="text-center py-4">
+                          <p className="text-gray-500 text-sm mb-2">
+                            No tienes suscripción activa
+                          </p>
+                          <Link
+                            href="/suscripcion"
+                            className="inline-flex items-center space-x-2 bg-white border border-pink-200 hover:border-pink-300 text-pink-600 px-6 py-3 rounded-xl transition-all shadow-sm hover:shadow-md"
+                          >
+                            <SparklesIcon className="w-5 h-5" />
+                            <span>Ver Planes</span>
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
             )}
           </div>
         </header>
 
-        <section>
-          <SetupPerfil />
+        {/* Profile Settings */}
+        <section className="max-w-4xl mx-auto">
+          <div className="backdrop-blur-lg bg-white/80 border border-pink-100 rounded-2xl shadow-sm">
+            <SetupPerfil />
+          </div>
         </section>
 
-        <div className="text-center mt-4">
+        {/* Documentation Link */}
+        <div className="text-center">
           <Link
             href="/manual"
-            className="text-pink-700 underline hover:text-pink-900 font-semibold"
+            className="inline-flex items-center space-x-2 text-pink-600 hover:text-pink-800 bg-pink-50 hover:bg-pink-100 px-6 py-3 rounded-full transition-all"
           >
-            📖 Ver Manual de Usuario y Moonboard
+            <BookOpenIcon className="w-5 h-5" />
+            <span className="font-medium">Guía de Usuario</span>
           </Link>
         </div>
       </div>

@@ -11,6 +11,7 @@ export default function BienvenidaPage() {
   const [inicioCiclo, setInicioCiclo] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Obtener datos del perfil
   useEffect(() => {
     async function fetchInicioCiclo() {
       const {
@@ -41,6 +42,17 @@ export default function BienvenidaPage() {
     router.prefetch("/dashboard");
   }, [router]);
 
+  // Redirigir automáticamente después de 5 segundos
+  useEffect(() => {
+    if (!loading) {
+      const timer = setTimeout(() => {
+        router.push("/dashboard");
+      }, 5000); // 5000ms = 5s
+
+      return () => clearTimeout(timer);
+    }
+  }, [loading, router]);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen text-pink-700">
@@ -52,7 +64,7 @@ export default function BienvenidaPage() {
   return (
     <div className="relative min-h-screen flex flex-col justify-center items-center text-center text-pink-800 px-4 py-8 overflow-hidden">
       <Image
-        src="/fondo_chakana_sutil.png" // opcional si tienes fondo
+        src="/fondo_chakana_sutil.png"
         alt=""
         fill
         className="object-cover opacity-10 absolute z-0"
@@ -86,7 +98,7 @@ export default function BienvenidaPage() {
           Que la Chakana Rubí guíe tu corazón en espiral.
         </p>
 
-        {/* 💡 Confirmación del inicio automático del ciclo */}
+        {/* 🌕 Confirmación del inicio del ciclo */}
         {!inicioCiclo ? (
           <div className="p-3 bg-yellow-100 border-l-4 border-yellow-400 text-yellow-800 rounded-md text-sm">
             🌕 Tu ciclo ha comenzado automáticamente en el{" "}
