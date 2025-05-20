@@ -86,11 +86,17 @@ export default function BienvenidaPage() {
           Que la Chakana Rubí guíe tu corazón en espiral.
         </p>
 
-        {/* 🔥 Advertencia si falta el inicio de ciclo */}
-        {!inicioCiclo && (
+        {/* 💡 Confirmación del inicio automático del ciclo */}
+        {!inicioCiclo ? (
           <div className="p-3 bg-yellow-100 border-l-4 border-yellow-400 text-yellow-800 rounded-md text-sm">
-            ⚠️ Recuerda registrar tu <strong>fecha de comienzo de ciclo</strong>{" "}
-            para que el sistema funcione correctamente.
+            🌕 Tu ciclo ha comenzado automáticamente en el{" "}
+            <strong>Día 1</strong>. Podrás ajustarlo más adelante si lo deseas
+            desde tu dashboard.
+          </div>
+        ) : (
+          <div className="p-3 bg-green-100 border-l-4 border-green-400 text-green-800 rounded-md text-sm">
+            ✅ Tu ciclo comenzó el{" "}
+            <strong>{new Date(inicioCiclo).toLocaleDateString()}</strong>.
           </div>
         )}
 

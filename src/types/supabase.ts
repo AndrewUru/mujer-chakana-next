@@ -4,7 +4,7 @@ export interface Database {
       perfiles: {
         Row: {
           id: string;
-          fecha_inicio: string; // formato YYYY-MM-DD
+          inicio_ciclo: string; // asegúrate del nombre
           avatar_url: string | null;
           display_name: string;
           user_id: string;
@@ -17,7 +17,7 @@ export interface Database {
         };
         Insert: {
           id?: string;
-          fecha_inicio: string;
+          inicio_ciclo: string;
           avatar_url?: string | null;
           display_name: string;
           user_id: string;

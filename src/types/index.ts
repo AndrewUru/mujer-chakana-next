@@ -19,6 +19,8 @@ export interface Perfil {
   display_name: string;
   avatar_url: string | null;
   user_id: string;
+  inicio_ciclo: string | null; // formato YYYY-MM-DD
+  perfil_completo: boolean;
 }
 
 export interface Fase {
