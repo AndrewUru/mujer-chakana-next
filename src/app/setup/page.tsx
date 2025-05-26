@@ -181,15 +181,9 @@ export default function SetupPage() {
                 </div>
               )
             )}
-          </div>
-        </header>
-
-        {/* Profile Settings */}
-        <section className="max-w-4xl mx-auto">
-          <div className="backdrop-blur-lg bg-white/80 border border-pink-100 rounded-2xl shadow-sm">
             <SetupPerfil />
           </div>
-        </section>
+        </header>
 
         {/* Documentation Link */}
         <div className="text-center">
