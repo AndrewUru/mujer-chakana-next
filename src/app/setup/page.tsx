@@ -154,7 +154,7 @@ export default function SetupPage() {
                           </span>
                         </div>
                         <Link
-                          href="/suscripcion"
+                          href="/suscripcion/gestionar"
                           className="w-full inline-flex justify-center items-center space-x-2 bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl transition-all shadow-sm hover:shadow-md"
                         >
                           <span>Gestionar Plan</span>

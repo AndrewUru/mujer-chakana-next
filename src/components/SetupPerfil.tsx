@@ -143,10 +143,7 @@ export default function SetupPerfil() {
     );
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-xl border border-pink-100 text-pink-900 max-w-md mx-auto mt-10 relative overflow-hidden">
-      {/* Detalle lunar decorativo */}
-      <div className="absolute inset-0 bg-gradient-to-br from-rose-100 via-white to-pink-100 opacity-20 pointer-events-none" />
-
+    <div className="bg-white p-6 rounded-2xl shadow-xl border border-pink-100 text-pink-900  mx-auto mt-10 relative overflow-hidden">
       <div className="relative z-10">
         <label className="block text-sm font-semibold mb-1">
           🌸 Tu nombre o seudónimo
