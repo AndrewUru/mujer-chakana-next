@@ -5,7 +5,7 @@ import LoginForm from "@/components/LoginForm";
 
 export default function LoginPage() {
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-100 via-pink-200 to-rose-300 relative overflow-hidden pb-20">
+    <main className="min-h-screen flex items-center justify-center  relative overflow-hidden pb-20">
       {/* Fondo blur decorativo */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-rose-300 rounded-full blur-3xl opacity-20" />
