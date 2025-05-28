@@ -1,17 +1,14 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import RitualViewer from "@/components/RitualViewer";
+import { Suspense } from "react";
+import RitualViewerWrapper from "@/components/RitualViewerWrapper";
 
 export default function RitualPage() {
-  const params = useSearchParams();
-  const audioUrl = params.get("audio") || undefined;
-  const pdfUrl = params.get("pdf") || undefined;
-  const videoUrl = params.get("video") || undefined;
-
   return (
-    <RitualViewer audioUrl={audioUrl} pdfUrl={pdfUrl} videoUrl={videoUrl} />
+    <Suspense
+      fallback={<div className="p-6 text-center">Cargando ritual...</div>}
+    >
+      <RitualViewerWrapper />
+    </Suspense>
   );
 }
-
-export const dynamic = "force-dynamic";
