@@ -20,19 +20,23 @@ export default function GestionarSuscripcionPage() {
       } = await supabase.auth.getUser();
 
       if (!user || userError) {
+        console.error("No se encontró usuario:", userError);
         router.push("/");
         return;
       }
 
+      console.log("✅ User ID:", user.id); // <- ESTE está bien aquí adentro
+
       const { data, error } = await supabase
         .from("perfiles")
-        .select("tipo_plan, suscripcion_activa, inicio_ciclo")
+        .select("*")
         .eq("user_id", user.id)
         .single<Perfil>();
 
       if (error) {
         console.error("Error al obtener perfil:", error);
       } else {
+        console.log("Perfil recuperado:", data); // NUEVO
         setPerfil(data);
       }
 

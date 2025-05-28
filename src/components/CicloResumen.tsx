@@ -11,6 +11,7 @@ export interface MujerChakanaData {
   imagen_url?: string;
   audio_url?: string;
   ritual_pdf?: string;
+  video_url?: string;
   tip_extra?: string;
   semana?: number;
 }
@@ -120,57 +121,21 @@ export default function CicloResumen({
           )}
         </div>
 
-        <div className="mt-6 p-4 rounded-lg bg-white/10 border border-white/20">
-          <h4 className="text-xl font-bold mb-1">
-            🔮 Arquetipo: {mujerChakanaData.arquetipo}
-          </h4>
-          <p className="text-sm italic text-white/80">
-            {mujerChakanaData.descripcion}
-          </p>
-
-          {mujerChakanaData.audio_url &&
-            (suscripcionActiva ? (
-              <audio controls className="w-full mt-4">
-                <source src={mujerChakanaData.audio_url} type="audio/mpeg" />
-              </audio>
-            ) : (
-              <div className="mt-4 text-center">
-                <p className="text-pink-100 italic mb-2">
-                  🔒 Audio exclusivo para suscriptoras.
-                </p>
-                <Link
-                  href="/suscripcion"
-                  className="inline-block px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-sm font-medium"
-                >
-                  Activar mi suscripción
-                </Link>
-              </div>
-            ))}
-
-          {mujerChakanaData.ritual_pdf &&
-            (suscripcionActiva ? (
-              <a
-                href={mujerChakanaData.ritual_pdf}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block mt-4 text-center p-2 bg-pink-600 rounded-lg text-white hover:bg-pink-700 transition"
-              >
-                📜 Ver Ritual del Día
-              </a>
-            ) : (
-              <div className="mt-4 text-center">
-                <p className="text-pink-100 italic mb-2">
-                  🔒 Ritual disponible solo con suscripción.
-                </p>
-                <Link
-                  href="/suscripcion"
-                  className="inline-block px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-sm font-medium"
-                >
-                  Ver planes de suscripción
-                </Link>
-              </div>
-            ))}
-        </div>
+        {(mujerChakanaData.audio_url ||
+          mujerChakanaData.ritual_pdf ||
+          mujerChakanaData.video_url) &&
+          suscripcionActiva && (
+            <Link
+              href={`/ritual?pdf=${encodeURIComponent(
+                mujerChakanaData.ritual_pdf || ""
+              )}&audio=${encodeURIComponent(
+                mujerChakanaData.audio_url || ""
+              )}&video=${encodeURIComponent(mujerChakanaData.video_url || "")}`}
+              className="block mt-4 text-center p-2 bg-pink-600 rounded-lg text-white hover:bg-pink-700 transition"
+            >
+              🌕 Ver Contenido del Día
+            </Link>
+          )}
 
         {mujerChakanaData.tip_extra && (
           <div className="mt-6 bg-yellow-100/10 border-l-4 border-yellow-300 p-4 rounded-md text-sm italic text-yellow-100">
