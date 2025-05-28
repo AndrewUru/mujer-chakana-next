@@ -13,3 +13,5 @@ export default function RitualPage() {
     <RitualViewer audioUrl={audioUrl} pdfUrl={pdfUrl} videoUrl={videoUrl} />
   );
 }
+
+export const dynamic = "force-dynamic";
