@@ -1,4 +1,3 @@
-// app/suscripcion/gestionar/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -17,21 +16,25 @@ export default function GestionarSuscripcionPage() {
     async function fetchPerfil() {
       const {
         data: { user },
+        error: userError,
       } = await supabase.auth.getUser();
 
-      if (!user) {
+      if (!user || userError) {
         router.push("/");
         return;
       }
 
       const { data, error } = await supabase
         .from("perfiles")
-        .select("tipo_plan, suscripcion_activa, fecha_inicio, fecha_expiracion")
+        .select("tipo_plan, suscripcion_activa, inicio_ciclo")
         .eq("user_id", user.id)
         .single<Perfil>();
 
-      if (!error && data) setPerfil(data);
-      else console.error("Error al obtener perfil:", error);
+      if (error) {
+        console.error("Error al obtener perfil:", error);
+      } else {
+        setPerfil(data);
+      }
 
       setLoading(false);
     }
@@ -39,11 +42,10 @@ export default function GestionarSuscripcionPage() {
     fetchPerfil();
   }, [router]);
 
-  async function handleCancelarSuscripcion() {
+  const handleCancelarInternamente = async () => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-
     if (!user) return;
 
     const { error } = await supabase
@@ -52,12 +54,12 @@ export default function GestionarSuscripcionPage() {
       .eq("user_id", user.id);
 
     if (!error) {
-      alert("Tu suscripción ha sido cancelada.");
+      alert("Tu suscripción ha sido marcada como inactiva en el sistema.");
       router.refresh();
     } else {
-      console.error("Error al cancelar:", error);
+      console.error("Error al cancelar localmente:", error);
     }
-  }
+  };
 
   if (loading) return <p className="text-center mt-10">Cargando...</p>;
 
@@ -91,12 +93,26 @@ export default function GestionarSuscripcionPage() {
           </p>
 
           {perfil.suscripcion_activa && (
-            <div className="pt-4 text-center">
+            <div className="space-y-4 pt-6 text-center">
+              <a
+                href="https://www.paypal.com/myaccount/autopay/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full shadow-md transition"
+              >
+                Gestionar en PayPal 🌐
+              </a>
+
+              <p className="text-sm text-gray-500 italic">
+                Si ya cancelaste en PayPal y deseas marcar tu suscripción como
+                inactiva aquí, puedes hacerlo abajo.
+              </p>
+
               <button
-                onClick={() => setShowModal(true)}
+                onClick={handleCancelarInternamente}
                 className="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-6 py-3 rounded-full shadow-md hover:shadow-lg hover:from-rose-600 hover:to-pink-700 transition"
               >
-                Cancelar Suscripción 🌑
+                Marcar como Cancelada 🌑
               </button>
             </div>
           )}
