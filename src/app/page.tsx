@@ -80,7 +80,7 @@ export default function HomePage() {
               transition={{ delay: 0.6, duration: 0.7 }}
               className="text-3xl sm:text-4xl font-extrabold bg-clip-text bg-gradient-to-r from-rose-700 to-rose-900 text-transparent drop-shadow mb-4 text-center"
             >
-              Mujer Chakana
+              GINERGETICA
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -88,8 +88,7 @@ export default function HomePage() {
               transition={{ delay: 0.8, duration: 0.7 }}
               className="text-lg sm:text-xl text-rose-900 leading-relaxed text-center"
             >
-              Una guía para reconectar con tu energía femenina y vivir cada fase
-              con consciencia, creatividad y armonía lunar.
+              Una guía para reconectar con tu energía femenina.
             </motion.p>
           </motion.div>
 
