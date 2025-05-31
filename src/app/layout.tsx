@@ -9,7 +9,7 @@ import CookieConsent from "@/components/CookieConsent";
 />;
 
 export const metadata = {
-  title: "Mujer Chakana",
+  title: "Ginergética",
   description: "Ciclos femeninos guiados por la Chakana",
 };
 
@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="es" className="dark">
       <head>
-        <title>Mujer Chakana | Ciclo Lunar y Autoexploración</title>
+        <title>Ginergética | Ciclo Lunar y Autoexploración</title>
         <meta
           name="description"
           content="Mujer Chakana: Registra tu ciclo, conecta con las fases lunares y descubre tu Ginergía. Una herramienta espiritual y práctica para mujeres cíclicas."
@@ -50,12 +50,12 @@ export default function RootLayout({
           property="og:image"
           content="https://elsaltoweb.es/wp-content/uploads/2025/04/mujer-chakana.png"
         />
-        <meta property="og:url" content="https://tudominio.com" />
+        <meta property="og:url" content="https://ginergetica.com" />
         <meta property="og:type" content="website" />
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Mujer Chakana" />
+        <meta name="twitter:title" content="Ginergética" />
         <meta
           name="twitter:description"
           content="Autoexploración femenina con sincronía lunar y ginergía."
