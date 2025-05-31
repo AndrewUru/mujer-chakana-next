@@ -167,6 +167,52 @@ export default function HomePage() {
             necesitamos recuperar.
           </p>
         </motion.section>
+
+        {/* Créditos y referencia a la creadora */}
+        <motion.section
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
+          className="mx-auto mt-8 mb-4 max-w-lg w-full flex flex-col items-center bg-white/80 backdrop-blur-lg px-6 py-5 rounded-2xl shadow-md border border-rose-100"
+        >
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <svg
+              className="w-5 h-5 text-rose-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 21C12 21 7 16.5 4.5 13.5C2 10.5 3 7 6 5C8.5 3.5 12 6.5 12 6.5C12 6.5 15.5 3.5 18 5C21 7 22 10.5 19.5 13.5C17 16.5 12 21 12 21Z"
+              />
+            </svg>
+            <span className="text-rose-800 text-sm font-medium">
+              Esta aplicación ha sido creada por
+            </span>
+          </div>
+          <div className="flex flex-wrap justify-center gap-1">
+            <a
+              href="https://www.samariluz.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-3 py-1 bg-rose-100/80 text-rose-800 font-semibold rounded-xl hover:bg-rose-200 transition text-sm"
+            >
+              Samari Luz
+            </a>
+            <span className="text-sm text-rose-800">
+              para acompañar y empoderar a mujeres en su viaje de
+              autoconocimiento.
+            </span>
+          </div>
+          <span className="block mt-2 text-xs text-pink-400/80 text-center">
+            &copy; {new Date().getFullYear()} Ginergética.com · Todos los
+            derechos reservados.
+          </span>
+        </motion.section>
       </div>
     </main>
   );
