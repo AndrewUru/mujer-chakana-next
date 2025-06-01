@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import * as lune from "lune";
 import { createClient } from "@supabase/supabase-js";
 
@@ -78,15 +79,6 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
               "0 0 40px 8px rgba(103, 232, 249, 0.3), 0 4px 40px rgba(60, 60, 100, 0.3)",
           }}
         >
-          {/* Fondo imagen fase lunar */}
-          {fase.imagen_url && (
-            <img
-              src={fase.imagen_url}
-              alt={fase.nombre_fase}
-              className="absolute inset-0 w-full h-full object-cover opacity-80"
-            />
-          )}
-
           {/* Glassmorphism nocturno */}
           <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-blue-950/60 to-slate-900/60 backdrop-blur-2xl z-10" />
 
@@ -110,20 +102,23 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
           </div>
 
           {/* Contenido lunar */}
-          <div className="relative z-30 flex flex-col justify-center items-center h-[640px] px-8 py-6 space-y-5 text-center">
+          <div className="relative z-30 flex flex-col justify-center items-center h-[480px] px-8 py-6 space-y-5 text-center">
             {/* Animación luna con imagen */}
             <div className="animate-float flex items-center justify-center">
+              {/* Use Next.js Image for optimization */}
               {fase.imagen_url ? (
-                <img
+                <Image
                   src={fase.imagen_url}
                   alt={fase.nombre_fase}
-                  className="w-96 h-96 object-contain drop-shadow-[0_0_22px_#f9fafbcc] drop-shadow-[0_0_16px_#38bdf8cc] shadow-lg"
+                  width={384}
+                  height={384}
+                  className="w-96 h-96 object-contain drop-shadow-[0_0_22px_#f9fafbcc] shadow-lg"
                   style={{
                     filter:
                       "drop-shadow(0 0 22px #f9fafb99) drop-shadow(0 0 16px #38bdf8cc)",
-                    // Puedes ajustar w-72 h-72 para hacerla más grande o pequeña
                   }}
                   loading="lazy"
+                  unoptimized
                 />
               ) : (
                 <div className="w-32 h-32 flex items-center justify-center bg-slate-700/30 rounded-full">
