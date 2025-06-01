@@ -31,13 +31,12 @@ export default function LoginPage() {
 
         {/* Título */}
         <h1 className="text-2xl sm:text-3xl font-bold text-center bg-gradient-to-r from-rose-700 to-rose-900 bg-clip-text text-transparent mb-3 drop-shadow">
-          Inicia sesión en <p className="font-extrabold">Mujer Chakana</p>
+          Inicia sesión en <p className="font-extrabold">GINERGETICA</p>
         </h1>
 
         {/* Frase bienvenida */}
         <p className="text-rose-900/90 text-center mb-7">
-          Bienvenida de nuevo. <br />
-          Conecta con tu ciclo y tu sabiduría interior.
+          Bienvenida de nuevo.
         </p>
 
         {/* Aquí va tu formulario */}

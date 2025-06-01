@@ -94,10 +94,6 @@ export default function BienvenidaPage() {
           ritmo sagrado con cada paso.
         </p>
 
-        <p className="mt-2 text-sm text-pink-600 italic">
-          Que la Chakana Rubí guíe tu corazón en espiral.
-        </p>
-
         {/* 🌕 Confirmación del inicio del ciclo */}
         {!inicioCiclo ? (
           <div className="p-3 bg-yellow-100 border-l-4 border-yellow-400 text-yellow-800 rounded-md text-sm">
