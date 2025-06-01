@@ -133,7 +133,7 @@ export default function HomePage() {
             ¿Qué es esta app?
           </h2>
           <p>
-            Mujer Chakana es un sistema de autoconocimiento basado en el ciclo
+            GINERGETICA es un sistema de autoconocimiento basado en el ciclo
             menstrual, inspirado en la metafísica nativa femenina. Ofrece
             herramientas como el <strong>moonboard</strong>, un mandala lunar
             donde puedes registrar tus emociones, energía y estados internos a
@@ -153,18 +153,25 @@ export default function HomePage() {
           className="space-y-4 bg-white/60 backdrop-blur-lg p-6 rounded-2xl shadow-md"
         >
           <h2 className="text-2xl font-semibold text-pink-700">
-            ¿Por qué una suscripción?
+            ¿Por qué ofrecemos una suscripción?
           </h2>
           <p>
-            El mantenimiento, desarrollo y expansión de esta app requiere
-            tiempo, amor y recursos. Hemos decidido fijar un precio accesible de{" "}
-            <strong>2,99€/mes</strong> para cubrir costos técnicos y seguir
-            mejorándola.
+            Mujer Chakana es una app que honra el conocimiento cíclico y
+            ancestral. Por eso, mantenemos algunas funciones esenciales como el{" "}
+            <strong>moonboard</strong> y los{" "}
+            <strong>registros personales</strong> disponibles de forma gratuita,
+            para que todas puedan comenzar este viaje de autoconocimiento.
           </p>
           <p>
-            Esta contribución no solo mantiene vivo el proyecto, también apoya
-            la misión de expandir el conocimiento cíclico y ancestral que tanto
-            necesitamos recuperar.
+            Sin embargo, el desarrollo, la mejora continua y la expansión de
+            este espacio requieren cuidado, tiempo y recursos. Hemos creado una
+            suscripción simbólica de <strong>2,99 €/mes</strong> para cubrir los
+            costos técnicos y seguir ofreciendo contenido de calidad, rituales,
+            enseñanzas y nuevas herramientas.
+          </p>
+          <p>
+            Tu contribución sostiene este tejido colectivo y nos ayuda a seguir
+            compartiendo la sabiduría lunar que tanto necesitamos recordar.
           </p>
         </motion.section>
 
