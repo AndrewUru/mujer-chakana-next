@@ -1,19 +1,15 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
 
-export interface MujerChakanaData {
-  arquetipo: string;
+// Define or import the MujerChakanaData type/interface
+interface MujerChakanaData {
   elemento: string;
-  descripcion: string;
-  imagen_url?: string;
+  semana?: string;
   audio_url?: string;
   ritual_pdf?: string;
   video_url?: string;
   tip_extra?: string;
-  semana?: number;
 }
 
 export default function CicloResumen({
@@ -31,6 +27,7 @@ export default function CicloResumen({
 }) {
   const [suscripcionActiva, setSuscripcionActiva] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showUpsell, setShowUpsell] = useState(false);
 
   useEffect(() => {
     const fetchSuscripcion = async () => {
@@ -64,6 +61,12 @@ export default function CicloResumen({
 
   const fondoBg =
     fondoPorElemento[mujerChakanaData.elemento] || fondoPorElemento.default;
+
+  // --- NUEVO: handle para click en botón
+  const handleNoAccess = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowUpsell(true);
+  };
 
   if (loading) {
     return (
@@ -124,7 +127,7 @@ export default function CicloResumen({
         {(mujerChakanaData.audio_url ||
           mujerChakanaData.ritual_pdf ||
           mujerChakanaData.video_url) &&
-          suscripcionActiva && (
+          (suscripcionActiva ? (
             <Link
               href={`/ritual?pdf=${encodeURIComponent(
                 mujerChakanaData.ritual_pdf || ""
@@ -135,7 +138,15 @@ export default function CicloResumen({
             >
               🌕 Ver Contenido del Día
             </Link>
-          )}
+          ) : (
+            <button
+              className="block mt-4 text-center p-2 bg-pink-300/60 rounded-lg text-pink-700 cursor-not-allowed opacity-60"
+              onClick={handleNoAccess}
+              title="Necesitas suscripción para acceder"
+            >
+              🌕 Ver Contenido del Día
+            </button>
+          ))}
 
         {mujerChakanaData.tip_extra && (
           <div className="mt-6 bg-yellow-100/10 border-l-4 border-yellow-300 p-4 rounded-md text-sm italic text-yellow-100">
@@ -148,6 +159,34 @@ export default function CicloResumen({
           🌺
         </p>
       </div>
+
+      {/* Modal o aviso de upsell */}
+      {showUpsell && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 shadow-2xl max-w-sm mx-auto text-center text-black">
+            <h3 className="text-2xl font-bold mb-2">Contenido exclusivo</h3>
+            <p className="mb-4">
+              Necesitas una{" "}
+              <span className="text-pink-600 font-bold">
+                suscripción activa
+              </span>{" "}
+              para acceder a este recurso del día.
+            </p>
+            <Link
+              href="/suscripcion"
+              className="inline-block px-4 py-2 rounded-lg bg-pink-600 text-white font-semibold hover:bg-pink-700 transition mb-2"
+            >
+              Ver planes de suscripción
+            </Link>
+            <button
+              onClick={() => setShowUpsell(false)}
+              className="mt-2 block text-sm text-gray-600 hover:underline mx-auto"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
