@@ -15,6 +15,7 @@ interface FaseLunarDB {
   color: "gray" | "emerald" | "yellow" | "purple";
   rango_inicio: number;
   rango_fin: number;
+  imagen_url: string;
   mensaje?: string;
 }
 
@@ -47,6 +48,7 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
           nombre_fase: "Desconocida",
           simbolo: "❓",
           color: "gray",
+          imagen_url: "",
           mensaje: "No hay datos para esta fase.",
         }
       );
@@ -57,12 +59,12 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
 
   const handleClose = () => {
     setClosing(true);
-    setTimeout(onClose, 300); // para que la animación tenga tiempo
+    setTimeout(onClose, 300);
   };
 
   return (
     <div
-      className={`fixed inset-0 z-50 bg-gradient-to-br from-black/60 to-purple-900/30 bg-[url('/luna.png')] bg-cover bg-center backdrop-blur-lg flex items-center justify-center transition-all duration-300 ${
+      className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-2xl flex items-center justify-center transition-all duration-300 ${
         closing
           ? "opacity-0 scale-95 pointer-events-none"
           : "opacity-100 scale-100"
@@ -70,75 +72,130 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
     >
       {fase && (
         <div
-          className={`relative rounded-3xl shadow-[0_0_30px_-5px_rgba(255,255,255,0.3)] p-8 w-full max-w-md mx-4 border-2 transition-all duration-300 transform backdrop-blur-xl ${
-            fase.color === "emerald"
-              ? "border-emerald-400/40 bg-emerald-900/80"
-              : fase.color === "yellow"
-              ? "border-amber-300/40 bg-yellow-800/80"
-              : fase.color === "purple"
-              ? "border-purple-300/40 bg-purple-900/80"
-              : "border-stone-300/40 bg-stone-800/80"
-          }`}
+          className="relative w-full max-w-lg mx-4 rounded-3xl overflow-hidden shadow-2xl ring-2 ring-blue-400/30 backdrop-blur-md border border-white/10"
+          style={{
+            boxShadow:
+              "0 0 40px 8px rgba(103, 232, 249, 0.3), 0 4px 40px rgba(60, 60, 100, 0.3)",
+          }}
         >
-          {/* Botón de cerrar mejorado */}
-          <button
-            onClick={handleClose}
-            className="absolute -top-4 -right-4 text-white bg-rose-600/90 hover:bg-rose-500 px-3 py-2 rounded-full text-lg font-bold shadow-xl hover:scale-105 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-white/50"
-            aria-label="Cerrar modal"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
+          {/* Fondo imagen fase lunar */}
+          {fase.imagen_url && (
+            <img
+              src={fase.imagen_url}
+              alt={fase.nombre_fase}
+              className="absolute inset-0 w-full h-full object-cover opacity-80"
+            />
+          )}
 
-          {/* Contenido con mejor espaciado */}
-          <div className="space-y-6">
-            {/* Icono con efecto flotante */}
-            <div className="text-7xl text-center animate-float drop-shadow-[0_5px_10px_rgba(255,255,255,0.3)]">
-              {fase.simbolo}
-            </div>
+          {/* Glassmorphism nocturno */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-blue-950/60 to-slate-900/60 backdrop-blur-2xl z-10" />
 
-            {/* Título con efecto tipográfico */}
-            <h2 className="text-center text-3xl font-extrabold bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent tracking-wide">
-              {fase.nombre_fase}
-            </h2>
-
-            {/* Mensaje con mejor jerarquía */}
-            {fase.mensaje && (
-              <div className="relative group">
-                <div className="absolute inset-0 bg-white/10 rounded-xl filter blur-xl -z-10 group-hover:opacity-50 transition-opacity" />
-                <p className="text-center text-lg leading-relaxed text-white font-medium px-4 py-3 rounded-lg transition-all duration-300">
-                  &quot;{fase.mensaje}&quot;
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Efecto de partículas decorativas */}
-          <div className="absolute inset-0 overflow-hidden rounded-3xl">
-            {[...Array(6)].map((_, i) => (
-              <div
+          {/* Estrellas: microinteracciones */}
+          <div className="absolute inset-0 z-50 pointer-events-none">
+            {[...Array(26)].map((_, i) => (
+              <span
                 key={i}
-                className="absolute w-1 h-1 bg-white/30 rounded-full animate-star"
+                className={`absolute rounded-full bg-white/[${
+                  10 + Math.floor(Math.random() * 30)
+                }] animate-twinkle`}
                 style={{
                   top: `${Math.random() * 100}%`,
                   left: `${Math.random() * 100}%`,
-                  animationDelay: `${i * 0.5}s`,
+                  width: `${Math.random() * 1.6 + 0.4}px`,
+                  height: `${Math.random() * 1.6 + 0.4}px`,
+                  animationDelay: `${Math.random() * 3}s`,
                 }}
               />
             ))}
           </div>
+
+          {/* Contenido lunar */}
+          <div className="relative z-30 flex flex-col justify-center items-center h-[640px] px-8 py-6 space-y-5 text-center">
+            {/* Animación luna con imagen */}
+            <div className="animate-float flex items-center justify-center">
+              {fase.imagen_url ? (
+                <img
+                  src={fase.imagen_url}
+                  alt={fase.nombre_fase}
+                  className="w-96 h-96 object-contain drop-shadow-[0_0_22px_#f9fafbcc] drop-shadow-[0_0_16px_#38bdf8cc] shadow-lg"
+                  style={{
+                    filter:
+                      "drop-shadow(0 0 22px #f9fafb99) drop-shadow(0 0 16px #38bdf8cc)",
+                    // Puedes ajustar w-72 h-72 para hacerla más grande o pequeña
+                  }}
+                  loading="lazy"
+                />
+              ) : (
+                <div className="w-32 h-32 flex items-center justify-center bg-slate-700/30 rounded-full">
+                  <span className="text-4xl">🌑</span>
+                </div>
+              )}
+            </div>
+
+            <h2
+              className="text-3xl sm:text-4xl font-bold tracking-wide text-white drop-shadow-lg mb-1"
+              style={{ textShadow: "0 4px 32px #1e293b" }}
+            >
+              {fase.nombre_fase}
+            </h2>
+            <div className="text-base text-slate-200/90">
+              {fecha.toLocaleDateString("es-ES", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </div>
+            {fase.mensaje && (
+              <p className="text-lg sm:text-xl font-medium italic text-sky-100/90 max-w-xl mx-auto drop-shadow">
+                {fase.mensaje}
+              </p>
+            )}
+          </div>
+
+          {/* Cerrar (glow) */}
+          <button
+            onClick={handleClose}
+            className="absolute top-5 right-5 z-50 flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600/80 via-sky-400/60 to-blue-500/80 hover:scale-105 shadow-xl border border-white/10 transition-all hover:from-rose-600 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-sky-200/60"
+            aria-label="Cerrar modal"
+            style={{
+              boxShadow: "0 0 16px 2px #7dd3fc, 0 0 6px 1px #fff2",
+              color: "#fff",
+            }}
+          >
+            <span className="text-2xl font-bold">×</span>
+          </button>
         </div>
       )}
+
+      {/* Animaciones CSS extra */}
+      <style jsx global>{`
+        @keyframes float {
+          0% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-16px);
+          }
+          100% {
+            transform: translateY(0px);
+          }
+        }
+        .animate-float {
+          animation: float 3.3s ease-in-out infinite;
+        }
+        @keyframes twinkle {
+          0%,
+          100% {
+            opacity: 0.7;
+          }
+          50% {
+            opacity: 0.1;
+          }
+        }
+        .animate-twinkle {
+          animation: twinkle 2.7s infinite;
+        }
+      `}</style>
     </div>
   );
 }
