@@ -102,9 +102,10 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
           </div>
 
           {/* Contenido lunar */}
-          <div className="relative z-30 flex flex-col justify-center items-center h-[90vh] px-8 py-6  text-center">
+          <div className="relative z-30 flex flex-col justify-center items-center h-[640px] px-8 py-6 space-y-5 text-center">
             {/* Animación luna con imagen */}
             <div className="animate-float flex items-center justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               {/* Use Next.js Image for optimization */}
               {fase.imagen_url ? (
                 <Image
