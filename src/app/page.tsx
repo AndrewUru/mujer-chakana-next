@@ -156,22 +156,30 @@ export default function HomePage() {
             ¿Por qué ofrecemos una suscripción?
           </h2>
           <p>
-            Mujer Chakana es una app que honra el conocimiento cíclico y
-            ancestral. Por eso, mantenemos algunas funciones esenciales como el{" "}
+            Mujer Chakana es un espacio de conexión con la sabiduría cíclica y
+            ancestral. Mantenemos funciones esenciales como el{" "}
             <strong>moonboard</strong> y los{" "}
-            <strong>registros personales</strong> disponibles de forma gratuita,
-            para que todas puedan comenzar este viaje de autoconocimiento.
+            <strong>registros personales</strong> completamente gratuitas, para
+            que cualquier mujer pueda iniciar su camino de autoconocimiento, sin
+            barreras.
           </p>
           <p>
-            Sin embargo, el desarrollo, la mejora continua y la expansión de
-            este espacio requieren cuidado, tiempo y recursos. Hemos creado una
-            suscripción simbólica de <strong>2,99 €/mes</strong> para cubrir los
-            costos técnicos y seguir ofreciendo contenido de calidad, rituales,
-            enseñanzas y nuevas herramientas.
+            Sin embargo, sostener y hacer crecer esta plataforma implica
+            dedicación, amor y recursos. Por eso, hemos creado una suscripción
+            accesible de <strong>2,99 €/mes</strong>, que permite cubrir los
+            costos técnicos y continuar tejiendo nuevas herramientas, contenidos
+            y mejoras.
           </p>
           <p>
-            Tu contribución sostiene este tejido colectivo y nos ayuda a seguir
-            compartiendo la sabiduría lunar que tanto necesitamos recordar.
+            Como agradecimiento, las suscriptoras acceden{" "}
+            <strong>de forma anticipada</strong> a nuevos contenidos,{" "}
+            <strong>audio-guías</strong> y recursos especiales para profundizar
+            su práctica.
+          </p>
+          <p>
+            Tu apoyo hace posible que esta medicina llegue más lejos,
+            sosteniendo la misión de reconectar con nuestra naturaleza
+            cambiante, intuitiva y luminosa.
           </p>
         </motion.section>
 
