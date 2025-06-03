@@ -120,9 +120,9 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
                 <Image
                   src={fase.imagen_url}
                   alt={fase.nombre_fase}
-                  width={240}
-                  height={240}
-                  className="w-60 h-60 sm:w-96 sm:h-96 object-contain drop-shadow-[0_0_22px_#f9fafbcc] shadow-lg"
+                  width={160}
+                  height={160}
+                  className="w-30 h-30 sm:w-56 sm:h-56 object-contain drop-shadow-[0_0_22px_#f9fafbcc] shadow-lg"
                   style={{
                     filter:
                       "drop-shadow(0 0 22px #f9fafb99) drop-shadow(0 0 16px #38bdf8cc)",
