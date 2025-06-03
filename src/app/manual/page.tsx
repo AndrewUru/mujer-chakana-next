@@ -116,11 +116,6 @@ export default function ManualPage() {
           </a>
         </div>
       </section>
-
-      <footer className="text-center text-green-800 mt-10 text-base md:text-lg">
-        🌸 Que esta herramienta te acompañe a reconectar con tu sabiduría
-        cíclica 🌸
-      </footer>
     </main>
   );
 }

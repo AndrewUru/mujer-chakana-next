@@ -116,8 +116,7 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
           <div
             className="
               relative z-30 flex flex-col justify-center items-center
-              h-auto max-h-[90vh] sm:h-[640px] sm:max-h-[90vh]
-              px-4 py-6 space-y-5 text-center
+              h-auto px-4 py-2 space-y-5 text-center
               overflow-y-auto
             "
           >
