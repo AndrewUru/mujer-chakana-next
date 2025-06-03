@@ -113,13 +113,7 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
           </div>
 
           {/* Contenido lunar */}
-          <div
-            className="
-              relative z-30 flex flex-col justify-center items-center
-              h-auto px-4 py-2 space-y-5 text-center
-              overflow-y-auto
-            "
-          >
+          <div className="relative z-30 flex flex-col justify-center items-center not-[]:h-auto px-4 py-2 space-y-5 text-center overflow-y-auto">
             {/* Animación luna con imagen, responsive */}
             <div className="animate-float flex items-center justify-center">
               {fase.imagen_url ? (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import LunarModal from "./LunarModal.tsx";
+import LunarModal from "./LunarModal";
 import { supabase } from "@/lib/supabaseClient";
 
 const Moonboard = () => {
