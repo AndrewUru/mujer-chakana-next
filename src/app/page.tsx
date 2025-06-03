@@ -156,7 +156,7 @@ export default function HomePage() {
             ¿Por qué ofrecemos una suscripción?
           </h2>
           <p>
-            Mujer Chakana es un espacio de conexión con la sabiduría cíclica y
+            Ginergética es un espacio de conexión con la sabiduría cíclica y
             ancestral. Mantenemos funciones esenciales como el{" "}
             <strong>moonboard</strong> y los{" "}
             <strong>registros personales</strong> completamente gratuitas, para

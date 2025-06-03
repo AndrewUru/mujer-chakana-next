@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
 import * as lune from "lune";
 import { createClient } from "@supabase/supabase-js";
@@ -28,6 +28,19 @@ interface LunarModalProps {
 export default function LunarModal({ fecha, onClose }: LunarModalProps) {
   const [fase, setFase] = useState<FaseLunarDB | null>(null);
   const [closing, setClosing] = useState(false);
+
+  // Genera estrellas solo una vez por apertura del modal
+  const stars = useMemo(
+    () =>
+      [...Array(26)].map(() => ({
+        top: Math.random() * 100,
+        left: Math.random() * 100,
+        size: Math.random() * 1.6 + 0.4,
+        opacity: 10 + Math.floor(Math.random() * 30),
+        delay: Math.random() * 3,
+      })),
+    []
+  );
 
   useEffect(() => {
     const fetchFase = async () => {
@@ -79,41 +92,44 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
               "0 0 40px 8px rgba(103, 232, 249, 0.3), 0 4px 40px rgba(60, 60, 100, 0.3)",
           }}
         >
-          {/* Glassmorphism nocturno */}
+          {/* Fondo Glassmorphism nocturno */}
           <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-blue-950/60 to-slate-900/60 backdrop-blur-2xl z-10" />
 
-          {/* Estrellas: microinteracciones */}
-          <div className="absolute inset-0 z-50 pointer-events-none">
-            {[...Array(26)].map((_, i) => (
+          {/* Estrellas animadas, posición estable */}
+          <div className="absolute inset-0 z-20 pointer-events-none">
+            {stars.map((s, i) => (
               <span
                 key={i}
-                className={`absolute rounded-full bg-white/[${
-                  10 + Math.floor(Math.random() * 30)
-                }] animate-twinkle`}
+                className={`absolute rounded-full bg-white/[${s.opacity}] animate-twinkle`}
                 style={{
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  width: `${Math.random() * 1.6 + 0.4}px`,
-                  height: `${Math.random() * 1.6 + 0.4}px`,
-                  animationDelay: `${Math.random() * 3}s`,
+                  top: `${s.top}%`,
+                  left: `${s.left}%`,
+                  width: `${s.size}px`,
+                  height: `${s.size}px`,
+                  animationDelay: `${s.delay}s`,
                 }}
               />
             ))}
           </div>
 
           {/* Contenido lunar */}
-          <div className="relative z-30 flex flex-col justify-center items-center h-[640px] px-8 py-6 space-y-5 text-center">
-            {/* Animación luna con imagen */}
+          <div
+            className="
+              relative z-30 flex flex-col justify-center items-center
+              h-auto max-h-[90vh] sm:h-[640px] sm:max-h-[90vh]
+              px-4 py-6 space-y-5 text-center
+              overflow-y-auto
+            "
+          >
+            {/* Animación luna con imagen, responsive */}
             <div className="animate-float flex items-center justify-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              {/* Use Next.js Image for optimization */}
               {fase.imagen_url ? (
                 <Image
                   src={fase.imagen_url}
                   alt={fase.nombre_fase}
-                  width={384}
-                  height={384}
-                  className="w-96 h-96 object-contain drop-shadow-[0_0_22px_#f9fafbcc] shadow-lg"
+                  width={240}
+                  height={240}
+                  className="w-60 h-60 sm:w-96 sm:h-96 object-contain drop-shadow-[0_0_22px_#f9fafbcc] shadow-lg"
                   style={{
                     filter:
                       "drop-shadow(0 0 22px #f9fafb99) drop-shadow(0 0 16px #38bdf8cc)",
@@ -148,7 +164,7 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
             )}
           </div>
 
-          {/* Cerrar (glow) */}
+          {/* Botón cerrar */}
           <button
             onClick={handleClose}
             className="absolute top-5 right-5 z-50 flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600/80 via-sky-400/60 to-blue-500/80 hover:scale-105 shadow-xl border border-white/10 transition-all hover:from-rose-600 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-sky-200/60"
