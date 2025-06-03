@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
@@ -33,7 +34,7 @@ export default function DashboardPage() {
 
   const [perfil, setPerfil] = useState<Perfil | null>(null); // Add state for perfil
 
-  async function loadData() {
+  const loadData = useCallback(async () => {
     setLoading(true);
     const {
       data: { user },
@@ -80,14 +81,19 @@ export default function DashboardPage() {
       setEstadoCiclo(mujerChakanaData || null);
     }
 
-    const { data: recursos } = await supabase.from("recursos").select("*");
+    const { data: recursos } = await supabase
+      .from("recursos")
+      .select("*")
+      .eq("activo", true); // <-- Esto filtra sólo recursos visibles
+    console.log("🎯 Recursos cargados:", recursos);
+
     setRecursosData(recursos || []);
     setLoading(false); // << Finaliza carga
-  }
+  }, [router]);
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [loadData]);
 
   useEffect(() => {
     async function recargarEstadoCiclo() {

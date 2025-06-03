@@ -72,7 +72,6 @@ export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
       anual:
         "bg-rose-100 text-rose-700 font-semibold px-2 py-1 rounded-full text-xs flex items-center gap-1 shadow",
     };
-
     return lista.map((recurso) => {
       // ¿Está bloqueado para el usuario?
       const isBlocked = tipo !== "gratuito" && !suscripcionActiva;
