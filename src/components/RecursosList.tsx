@@ -163,13 +163,15 @@ export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
   };
 
   const recursosGratuitos = recursos.filter(
-    (r) => r.tipo_suscripcion === "gratuito"
+    (r) => r.tipo_suscripcion?.toLowerCase().trim() === "gratuito"
   );
+
   const recursosMensuales = recursos.filter(
-    (r) => r.tipo_suscripcion === "mensual"
+    (r) => r.tipo_suscripcion?.toLowerCase().trim() === "mensual"
   );
+
   const recursosAnuales = recursos.filter(
-    (r) => r.tipo_suscripcion === "anual"
+    (r) => r.tipo_suscripcion?.toLowerCase().trim() === "anual"
   );
 
   return (
