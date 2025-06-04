@@ -249,7 +249,6 @@ export default function DashboardPage() {
         <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-white text-pink-700 px-5 py-1.5 rounded-full shadow-md text-sm font-semibold border border-pink-200">
           ✨ Espacio de transformación
         </div>
-
         {/* Encabezado centrado */}
         <div className="mb-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-pink-800 mb-3 flex justify-center items-center gap-2">
@@ -263,9 +262,9 @@ export default function DashboardPage() {
             Este espacio es para ti. 🌸
           </p>
         </div>
-
         {/* Lista de recursos */}
         <RecursosList recursos={recursosData} />
+        console.log(🔁 Recursos que llegan al componente:, recursos);
       </section>
     </main>
   );
