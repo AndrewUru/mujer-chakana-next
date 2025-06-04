@@ -27,19 +27,30 @@ export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
 
   useEffect(() => {
     const fetchPerfil = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
+      try {
+        const {
+          data: { user },
+          error: authError,
+        } = await supabase.auth.getUser();
 
-      const { data } = await supabase
-        .from("perfiles")
-        .select("suscripcion_activa")
-        .eq("user_id", user.id)
-        .single();
+        if (authError || !user) return;
 
-      if (data?.suscripcion_activa) {
-        setSuscripcionActiva(true);
+        const { data, error } = await supabase
+          .from("perfiles")
+          .select("suscripcion_activa")
+          .eq("user_id", user.id)
+          .single();
+
+        if (error) {
+          console.error("Error obteniendo perfil:", error.message);
+          return;
+        }
+
+        if (data?.suscripcion_activa) {
+          setSuscripcionActiva(true);
+        }
+      } catch (err) {
+        console.error("Error general en fetchPerfil:", err);
       }
     };
 
