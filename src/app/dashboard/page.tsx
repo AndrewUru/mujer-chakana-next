@@ -11,7 +11,7 @@ import Moonboard from "@/components/Moonboard";
 import RecursosList from "@/components/RecursosList";
 import CicloResumen from "@/components/CicloResumen";
 import NuevoRegistro from "@/components/NuevoRegistro";
-import { Flower, Moon, Leaf, Gem, GalleryThumbnails } from "lucide-react";
+import { Flower, Moon, Leaf, GalleryThumbnails } from "lucide-react";
 import Link from "next/link";
 
 export default function DashboardPage() {
@@ -245,35 +245,93 @@ export default function DashboardPage() {
       )}
 
       {/* RECURSOS */}
-      <section className="relative mt-16 mx-auto bg-gradient-to-br from-pink-50 via-rose-100 to-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-pink-100 mb-20">
-        {/* Cinta superior */}
-        <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-white text-pink-700 px-5 py-1.5 rounded-full shadow-md text-sm font-semibold border border-pink-200">
-          ✨ Espacio de transformación
+      <section className="relative mt-20 mx-auto bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 rounded-3xl shadow-2xl border border-rose-200 mb-24 overflow-hidden">
+        {/* Elementos decorativos de fondo */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-br from-rose-300 to-pink-300 rounded-full blur-2xl"></div>
+          <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-br from-pink-300 to-orange-300 rounded-full blur-2xl"></div>
+          <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-gradient-to-br from-rose-200 to-pink-200 rounded-full blur-xl"></div>
         </div>
-        {/* Encabezado centrado */}
-        <div className="mb-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-pink-800 mb-3 flex justify-center items-center gap-2">
-            <Gem className="w-7 h-7 text-pink-700" />
-            Recursos Sagrados
-          </h2>
-          <p className="text-pink-700 text-base sm:text-lg max-w-2xl mx-auto">
-            Audios, rituales y guías para tu camino interior.
-          </p>
-          <p className="text-pink-700 text-base sm:text-lg max-w-2xl mx-auto">
-            Este espacio es para ti. 🌸
-          </p>
+
+        {/* Cinta superior mejorada */}
+        <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-6 py-2 rounded-full shadow-lg border border-white/20 backdrop-blur-sm">
+            <div className="flex items-center gap-2 text-sm font-semibold">
+              <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+              ✨ Espacio de transformación
+              <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+            </div>
+          </div>
         </div>
-        {/* Enlace a todos los recursos */}
-        <div className="mt-6">
-          <Link
-            href="/recursos"
-            className="inline-block bg-white border border-pink-300 text-pink-700 px-5 py-2 rounded-lg font-medium shadow hover:bg-pink-50 transition"
-          >
-            🔍 Ver todos los recursos
-          </Link>
+
+        <div className="relative z-10 p-8 sm:p-12 pt-12">
+          {/* Encabezado mejorado */}
+          <div className="mb-10 text-center">
+            <h2 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-4">
+              Recursos Sagrados
+            </h2>
+
+            <div className="space-y-2 max-w-3xl mx-auto">
+              <p className="text-rose-700 text-lg sm:text-xl font-medium">
+                Audios, rituales y guías para tu camino interior
+              </p>
+              <p className="text-pink-600 text-base sm:text-lg flex items-center justify-center gap-2">
+                Este espacio es para ti
+                <span className="text-xl">🌸</span>
+              </p>
+            </div>
+          </div>
+
+          {/* Enlace a todos los recursos mejorado */}
+          <div className="flex justify-center mb-10">
+            <Link
+              href="/recursos"
+              className="group inline-flex items-center gap-3 bg-white/80 backdrop-blur-sm border border-rose-200 text-rose-700 px-6 py-3 rounded-2xl font-semibold shadow-lg hover:shadow-xl hover:bg-white hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <div className="w-8 h-8 bg-gradient-to-r from-rose-100 to-pink-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                <span className="text-sm">🔍</span>
+              </div>
+              <span>Ver todos los recursos</span>
+              <svg
+                className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </Link>
+          </div>
+
+          {/* Contenedor para la lista de recursos con diseño mejorado */}
+          <div className="bg-white/40 backdrop-blur-sm rounded-2xl border border-rose-100 p-6 shadow-inner">
+            <RecursosList recursos={recursosData} />
+          </div>
+
+          {/* Elemento decorativo inferior */}
+          <div className="flex justify-center mt-8 pt-6 border-t border-rose-200/50">
+            <div className="flex items-center gap-3 text-sm text-rose-500/70">
+              <div className="flex gap-1">
+                <span className="w-1.5 h-1.5 bg-rose-300 rounded-full"></span>
+                <span className="w-1.5 h-1.5 bg-pink-300 rounded-full"></span>
+                <span className="w-1.5 h-1.5 bg-orange-300 rounded-full"></span>
+              </div>
+              <span className="font-medium italic">
+                Conecta con tu esencia interior
+              </span>
+              <div className="flex gap-1">
+                <span className="w-1.5 h-1.5 bg-orange-300 rounded-full"></span>
+                <span className="w-1.5 h-1.5 bg-pink-300 rounded-full"></span>
+                <span className="w-1.5 h-1.5 bg-rose-300 rounded-full"></span>
+              </div>
+            </div>
+          </div>
         </div>
-        {/* Lista de recursos */}
-        <RecursosList recursos={recursosData} />
       </section>
     </main>
   );
