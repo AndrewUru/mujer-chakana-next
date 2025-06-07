@@ -245,55 +245,56 @@ export default function DashboardPage() {
       )}
 
       {/* RECURSOS */}
-      <section className="relative mt-20 mx-auto bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 rounded-3xl shadow-2xl border border-rose-200 mb-24 overflow-hidden">
-        {/* Elementos decorativos de fondo */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-br from-rose-300 to-pink-300 rounded-full blur-2xl"></div>
-          <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-br from-pink-300 to-orange-300 rounded-full blur-2xl"></div>
-          <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-gradient-to-br from-rose-200 to-pink-200 rounded-full blur-xl"></div>
+      <section className="relative mx-auto bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 rounded-3xl shadow-2xl border border-rose-200/50 mb-24 overflow-hidden group">
+        {/* Patrón decorativo de fondo */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-rose-200/40 to-transparent rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-pink-200/40 to-transparent rounded-full blur-2xl"></div>
         </div>
 
-        {/* Cinta superior mejorada */}
-        <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-10">
-          <div className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-6 py-2 rounded-full shadow-lg border border-white/20 backdrop-blur-sm">
-            <div className="flex items-center gap-2 text-sm font-semibold">
-              <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-              ✨ Espacio de transformación
-              <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+        <div className="relative z-10 p-6 sm:p-10 lg:p-12">
+          {/* Encabezado con mejor jerarquía visual */}
+          <div className="mb-12 text-center">
+            {/* Badge superior */}
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-rose-100 to-pink-100 text-rose-700 px-4 py-2 rounded-full text-sm font-medium mb-6 shadow-sm">
+              <span className="w-2 h-2 bg-rose-400 rounded-full animate-pulse"></span>
+              Recursos Espirituales
             </div>
-          </div>
-        </div>
 
-        <div className="relative z-10 p-8 sm:p-12 pt-12">
-          {/* Encabezado mejorado */}
-          <div className="mb-10 text-center">
-            <h2 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-4">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-rose-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-6 leading-tight">
               Recursos Sagrados
             </h2>
 
-            <div className="space-y-2 max-w-3xl mx-auto">
-              <p className="text-rose-700 text-lg sm:text-xl font-medium">
+            <div className="max-w-2xl mx-auto">
+              <p className="text-rose-700/80 text-lg sm:text-xl font-medium mb-2">
                 Audios, rituales y guías para tu camino interior
               </p>
-              <p className="text-pink-600 text-base sm:text-lg flex items-center justify-center gap-2">
-                Este espacio es para ti
-                <span className="text-xl">🌸</span>
+              <p className="text-rose-600/60 text-base">
+                Herramientas cuidadosamente seleccionadas para tu crecimiento
+                espiritual
               </p>
             </div>
           </div>
 
-          {/* Enlace a todos los recursos mejorado */}
-          <div className="flex justify-center mb-10">
+          {/* Call-to-action mejorado */}
+          <div className="flex justify-center mb-12">
             <Link
               href="/recursos"
-              className="group inline-flex items-center gap-3 bg-white/80 backdrop-blur-sm border border-rose-200 text-rose-700 px-6 py-3 rounded-2xl font-semibold shadow-lg hover:shadow-xl hover:bg-white hover:-translate-y-0.5 transition-all duration-300"
+              className="group relative inline-flex items-center gap-3 bg-white/90 backdrop-blur-md border border-rose-200/80 text-rose-700 px-8 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-2xl hover:bg-white hover:-translate-y-1 hover:scale-105 transition-all duration-300 overflow-hidden"
             >
-              <div className="w-8 h-8 bg-gradient-to-r from-rose-100 to-pink-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                <span className="text-sm">🔍</span>
+              {/* Efecto de brillo al hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+
+              <div className="relative w-10 h-10 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-inner">
+                <span className="text-lg">🔍</span>
               </div>
-              <span>Ver todos los recursos</span>
+
+              <span className="relative text-lg">
+                Explorar todos los recursos
+              </span>
+
               <svg
-                className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                className="relative w-5 h-5 group-hover:translate-x-2 transition-transform duration-300"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -308,31 +309,68 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          {/* Contenedor para la lista de recursos con diseño mejorado */}
-          <div className="bg-white/40 backdrop-blur-sm rounded-2xl border border-rose-100 p-6 shadow-inner">
-            <RecursosList recursos={recursosData} />
+          {/* Contenedor principal con diseño más sofisticado */}
+          <div className="relative bg-white/60 backdrop-blur-md rounded-3xl border border-rose-100/80 p-6 sm:p-8 shadow-2xl shadow-rose-100/50">
+            {/* Decoración superior */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              <div className="w-12 h-12 bg-gradient-to-br from-rose-200 to-pink-200 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-2xl">✨</span>
+              </div>
+            </div>
+
+            {/* Lista de recursos */}
+            <div className="pt-4">
+              <RecursosList recursos={recursosData} />
+            </div>
           </div>
 
-          {/* Elemento decorativo inferior */}
-          <div className="flex justify-center mt-8 pt-6 border-t border-rose-200/50">
-            <div className="flex items-center gap-3 text-sm text-rose-500/70">
-              <div className="flex gap-1">
-                <span className="w-1.5 h-1.5 bg-rose-300 rounded-full"></span>
-                <span className="w-1.5 h-1.5 bg-pink-300 rounded-full"></span>
-                <span className="w-1.5 h-1.5 bg-orange-300 rounded-full"></span>
+          {/* Footer decorativo más elegante */}
+          <div className="mt-10 pt-8 border-t border-gradient-to-r from-transparent via-rose-200/50 to-transparent">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-center">
+              {/* Indicadores animados */}
+              <div className="flex items-center gap-2">
+                <div className="flex gap-1">
+                  <span className="w-2 h-2 bg-rose-400 rounded-full animate-pulse"></span>
+                  <span className="w-2 h-2 bg-pink-400 rounded-full animate-pulse animation-delay-75"></span>
+                  <span className="w-2 h-2 bg-orange-400 rounded-full animate-pulse animation-delay-150"></span>
+                </div>
               </div>
-              <span className="font-medium italic">
-                Conecta con tu esencia interior
-              </span>
-              <div className="flex gap-1">
-                <span className="w-1.5 h-1.5 bg-orange-300 rounded-full"></span>
-                <span className="w-1.5 h-1.5 bg-pink-300 rounded-full"></span>
-                <span className="w-1.5 h-1.5 bg-rose-300 rounded-full"></span>
+
+              {/* Mensaje inspiracional */}
+              <div className="text-rose-600/70">
+                <p className="font-medium italic text-lg">
+                  Conecta con tu esencia interior
+                </p>
+                <p className="text-sm text-rose-500/60 mt-1">
+                  Tu viaje de autodescubrimiento comienza aquí
+                </p>
+              </div>
+
+              {/* Indicadores animados espejo */}
+              <div className="flex items-center gap-2">
+                <div className="flex gap-1">
+                  <span className="w-2 h-2 bg-orange-400 rounded-full animate-pulse animation-delay-150"></span>
+                  <span className="w-2 h-2 bg-pink-400 rounded-full animate-pulse animation-delay-75"></span>
+                  <span className="w-2 h-2 bg-rose-400 rounded-full animate-pulse"></span>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Efecto de brillo sutil en toda la sección */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-rose-100/10 pointer-events-none group-hover:opacity-70 transition-opacity duration-500"></div>
       </section>
+
+      {/* Estilos CSS adicionales para las animaciones */}
+      <style jsx>{`
+        .animation-delay-75 {
+          animation-delay: 0.075s;
+        }
+        .animation-delay-150 {
+          animation-delay: 0.15s;
+        }
+      `}</style>
     </main>
   );
 }

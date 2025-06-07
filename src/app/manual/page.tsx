@@ -7,7 +7,7 @@ export default function ManualPage() {
     <main className="p-4 md:p-10 max-w-5xl mx-auto flex flex-col gap-6 pb-20">
       <header className="relative text-center bg-pink-100/60 backdrop-blur-md rounded-3xl p-8 shadow-xl overflow-hidden">
         <h1 className="text-4xl md:text-5xl font-extrabold text-pink-800 mb-4 leading-tight">
-          🌸 Manual de Usuario <br /> Mujer Chakana
+          🌸 Manual de Usuario <br /> GINERGETICA
         </h1>
         <p className="text-lg md:text-xl text-rose-700 max-w-3xl mx-auto mb-4">
           Bienvenida a <strong>Mujer Chakana</strong>, tu espacio sagrado para
@@ -49,7 +49,7 @@ export default function ManualPage() {
               target="_blank"
               className="text-pink-700 underline hover:text-pink-900"
             >
-              📄 INTRO MUJER CHAKANA (PDF)
+              📄 INTRO GINERGETICA (PDF)
             </a>
           </li>
           <li>
@@ -75,7 +75,7 @@ export default function ManualPage() {
               target="_blank"
               className="text-pink-700 underline hover:text-pink-900"
             >
-              ✨ Introducción a la Mujer Chakana
+              ✨ Introducción a la GINERGETICA
             </a>
           </li>
           <li>

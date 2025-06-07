@@ -104,8 +104,8 @@ export default function CicloPage() {
           🌕 Galería de Arquetipos
         </h1>
         <p className="text-lg text-pink-700 max-w-3xl mx-auto">
-          Explora los 28 arquetipos del ciclo Chakana. Cada día es una puerta
-          hacia tu sabiduría interior y tu energía femenina cambiante.
+          Los 28 arquetipos del ciclo GINERGETICA. Cada día es una puerta hacia
+          tu sabiduría interior y tu energía femenina cambiante.
         </p>
         <p className="italic text-pink-600">
           Lo que hoy necesitas está en ti. Solo es cuestión de recordarlo.

@@ -100,12 +100,13 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
             {stars.map((s, i) => (
               <span
                 key={i}
-                className={`absolute rounded-full bg-white/[${s.opacity}] animate-twinkle`}
+                className="absolute rounded-full bg-white animate-twinkle"
                 style={{
                   top: `${s.top}%`,
                   left: `${s.left}%`,
                   width: `${s.size}px`,
                   height: `${s.size}px`,
+                  opacity: s.opacity,
                   animationDelay: `${s.delay}s`,
                 }}
               />
@@ -120,9 +121,9 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
                 <Image
                   src={fase.imagen_url}
                   alt={fase.nombre_fase}
-                  width={160}
-                  height={160}
-                  className="w-30 h-30 sm:w-56 sm:h-56 object-contain drop-shadow-[0_0_22px_#f9fafbcc] shadow-lg"
+                  width={140}
+                  height={140}
+                  className="w-25 h-25 sm:w-50 sm:h-50 object-contain drop-shadow-[0_0_22px_#f9fafbcc] shadow-lg"
                   style={{
                     filter:
                       "drop-shadow(0 0 22px #f9fafb99) drop-shadow(0 0 16px #38bdf8cc)",
@@ -143,13 +144,7 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
             >
               {fase.nombre_fase}
             </h2>
-            <div className="text-base text-slate-200/90">
-              {fecha.toLocaleDateString("es-ES", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </div>
+
             {fase.mensaje && (
               <p className="text-lg sm:text-xl font-medium italic text-sky-100/90 max-w-xl mx-auto drop-shadow">
                 {fase.mensaje}
@@ -191,10 +186,10 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
         @keyframes twinkle {
           0%,
           100% {
-            opacity: 0.7;
+            opacity: 0.8;
           }
           50% {
-            opacity: 0.1;
+            opacity: 0.2;
           }
         }
         .animate-twinkle {

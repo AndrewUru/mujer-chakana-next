@@ -47,7 +47,7 @@ export default function RecursosPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-white via-rose-25 to-pink-25 pb-4 px-4 py-12">
+    <main className="min-h-screen bg-gradient-to-br from-white via-rose-25 to-pink-25 pb-20 px-4 py-12">
       <div className="max-w-7xl mx-auto">
         {/* Header mejorado */}
         <div className="text-center mb-12">
@@ -55,8 +55,7 @@ export default function RecursosPage() {
             Recursos Disponibles
           </h1>
           <p className="text-gray-700 text-lg max-w-2xl mx-auto">
-            Explora nuestra colección de recursos educativos cuidadosamente
-            seleccionados
+            Colección de recursos educativos cuidadosamente seleccionados
           </p>
         </div>
 
