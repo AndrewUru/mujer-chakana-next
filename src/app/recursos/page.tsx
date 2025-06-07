@@ -28,7 +28,7 @@ export default function RecursosPage() {
       const { data, error } = await supabase
         .from("recursos")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("creado_en", { ascending: false });
       if (!error && data) setRecursos(data);
       setLoading(false);
     };

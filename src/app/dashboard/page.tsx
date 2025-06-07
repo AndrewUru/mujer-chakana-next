@@ -12,6 +12,7 @@ import RecursosList from "@/components/RecursosList";
 import CicloResumen from "@/components/CicloResumen";
 import NuevoRegistro from "@/components/NuevoRegistro";
 import { Flower, Moon, Leaf, Gem, GalleryThumbnails } from "lucide-react";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -261,6 +262,15 @@ export default function DashboardPage() {
           <p className="text-pink-700 text-base sm:text-lg max-w-2xl mx-auto">
             Este espacio es para ti. 🌸
           </p>
+        </div>
+        {/* Enlace a todos los recursos */}
+        <div className="mt-6">
+          <Link
+            href="/recursos"
+            className="inline-block bg-white border border-pink-300 text-pink-700 px-5 py-2 rounded-lg font-medium shadow hover:bg-pink-50 transition"
+          >
+            🔍 Ver todos los recursos
+          </Link>
         </div>
         {/* Lista de recursos */}
         <RecursosList recursos={recursosData} />
