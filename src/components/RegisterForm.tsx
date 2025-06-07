@@ -15,7 +15,7 @@ export default function RegisterForm() {
   const [userId, setUserId] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);
-  const [tipoPlan, setTipoPlan] = useState("gratuito");
+  const [tipoPlan] = useState("gratuito");
 
   const router = useRouter();
 
@@ -49,6 +49,7 @@ export default function RegisterForm() {
           avatar_url: avatarUrl,
           perfil_completo: false,
           tipo_plan: tipoPlan,
+          activo: true, // <-- si lo necesitas explícitamente
         },
       ]);
 
@@ -179,20 +180,6 @@ export default function RegisterForm() {
           iniciará tu ciclo en el <strong>Día 1</strong> automáticamente. Podrás
           modificarlo más adelante si lo necesitas.
         </div>
-
-        <label className="text-sm text-pink-700 mt-2">
-          🌕 Tipo de plan que deseas activar
-        </label>
-        <select
-          value={tipoPlan}
-          onChange={(e) => setTipoPlan(e.target.value)}
-          className="border border-pink-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-200 transition"
-        >
-          <option value="gratuito">Gratuito</option>
-          <option value="mensual">Mensual</option>
-          <option value="anual">Anual</option>
-        </select>
-
         <button
           type="submit"
           disabled={loading}
