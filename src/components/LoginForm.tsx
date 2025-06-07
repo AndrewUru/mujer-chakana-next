@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function LoginForm() {
@@ -11,10 +11,11 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPass, setShowPass] = useState(false);
+  const [touched, setTouched] = useState({ email: false, password: false });
   const router = useRouter();
   const passwordRef = useRef<HTMLInputElement>(null);
 
-  // Verificar sesión activa al cargar
   useEffect(() => {
     async function checkSession() {
       const {
@@ -25,7 +26,6 @@ export default function LoginForm() {
           .from("perfiles")
           .select("perfil_completo")
           .eq("user_id", user.id);
-
         if (perfiles && perfiles.length > 0) {
           const perfil = perfiles[0];
           router.push(perfil.perfil_completo ? "/bienvenida" : "/setup");
@@ -34,6 +34,13 @@ export default function LoginForm() {
     }
     checkSession();
   }, [router]);
+
+  // Validaciones simples
+  const emailRegex = /\S+@\S+\.\S+/;
+  const passMin = 6;
+
+  const isEmailInvalid = touched.email && !emailRegex.test(email);
+  const isPasswordInvalid = touched.password && password.length < passMin;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,56 +92,99 @@ export default function LoginForm() {
       initial={{ opacity: 0, y: 30, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="w-full flex flex-col gap-1 bg-transparent p-2 rounded-2xl shadow-md border border-pink-100"
+      className="w-full max-w-md flex flex-col gap-2 bg-white/70  p-6 rounded-2xl shadow-xl border border-pink-100"
       autoComplete="on"
+      aria-label="Formulario de inicio de sesión"
     >
-      <p className="text-center text-xl text-pink-600">
-        Accede a tu espacio sagrado 🌙
-      </p>
-
       {/* Email */}
-      <div className="my-2">
+      <div className="my-1">
         <label
           htmlFor="email"
-          className="block text-xs text-pink-600 font-semibold ml-1"
+          className="block text-xs text-pink-900 font-semibold ml-1 mb-1"
         >
           Correo electrónico
         </label>
-        <motion.input
-          id="email"
-          type="email"
-          placeholder="tu@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          disabled={loading}
-          whileFocus={{ scale: 1.04, boxShadow: "0 0 0 2px #f472b6" }}
-          className="w-full border border-pink-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all placeholder:text-pink-200 text-pink-900"
-          autoComplete="email"
-        />
+        <div className="relative">
+          <motion.input
+            id="email"
+            type="email"
+            placeholder="tu@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+            required
+            disabled={loading}
+            whileFocus={{ scale: 1.03, boxShadow: "0 0 0 2px #f472b6" }}
+            className={`w-full border ${
+              isEmailInvalid ? "border-rose-400" : "border-pink-300"
+            } p-3 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all placeholder:text-pink-700 text-pink-900`}
+            autoComplete="email"
+            aria-invalid={isEmailInvalid}
+            aria-describedby={isEmailInvalid ? "email-error" : undefined}
+          />
+          {loading && (
+            <Loader2 className="animate-spin h-5 w-5 absolute right-3 top-3 text-pink-400" />
+          )}
+        </div>
+        {isEmailInvalid && (
+          <motion.div
+            id="email-error"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-xs text-rose-500 mt-1 flex items-center gap-1"
+          >
+            <AlertCircle className="w-4 h-4" /> Ingresa un correo válido.
+          </motion.div>
+        )}
       </div>
 
       {/* Password */}
       <div className="mb-1">
         <label
           htmlFor="password"
-          className="block text-xs text-pink-600 font-semibold mb-1 ml-1"
+          className="block text-xs text-pink-600 font-semibold ml-1 mb-1"
         >
           Contraseña
         </label>
-        <motion.input
-          id="password"
-          ref={passwordRef}
-          type="password"
-          placeholder="Tu contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          disabled={loading}
-          whileFocus={{ scale: 1.04, boxShadow: "0 0 0 2px #f472b6" }}
-          className="w-full border border-pink-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all placeholder:text-pink-200 text-pink-900"
-          autoComplete="current-password"
-        />
+        <div className="relative">
+          <motion.input
+            id="password"
+            ref={passwordRef}
+            type={showPass ? "text" : "password"}
+            placeholder="Tu contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onBlur={() => setTouched((t) => ({ ...t, password: true }))}
+            required
+            disabled={loading}
+            whileFocus={{ scale: 1.03, boxShadow: "0 0 0 2px #f472b6" }}
+            className={`w-full border ${
+              isPasswordInvalid ? "border-rose-400" : "border-pink-300"
+            } p-3 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all placeholder:text-pink-700 text-pink-900`}
+            autoComplete="current-password"
+            aria-invalid={isPasswordInvalid}
+            aria-describedby={isPasswordInvalid ? "password-error" : undefined}
+          />
+          <button
+            type="button"
+            tabIndex={-1}
+            className="absolute right-3 top-3 text-pink-400 hover:text-pink-600 transition"
+            onClick={() => setShowPass((v) => !v)}
+            aria-label={showPass ? "Ocultar contraseña" : "Mostrar contraseña"}
+          >
+            {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
+        {isPasswordInvalid && (
+          <motion.div
+            id="password-error"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-xs text-rose-500 mt-1 flex items-center gap-1"
+          >
+            <AlertCircle className="w-4 h-4" /> Mínimo {passMin} caracteres.
+          </motion.div>
+        )}
         {/* Recuperar contraseña */}
         <div className="flex justify-end mt-1">
           <button
@@ -151,10 +201,10 @@ export default function LoginForm() {
       {/* Botón login */}
       <motion.button
         type="submit"
-        disabled={loading}
-        whileHover={{ scale: !loading ? 1.03 : 1 }}
-        whileTap={{ scale: 0.97 }}
-        className="mt-2 bg-gradient-to-br from-pink-700 to-pink-600 text-white py-3 rounded-lg font-semibold flex justify-center items-center gap-2 shadow-md hover:from-pink-800 hover:to-pink-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={loading || isEmailInvalid || isPasswordInvalid}
+        whileHover={{ scale: !loading ? 1.04 : 1 }}
+        whileTap={{ scale: 0.96 }}
+        className="mt-2 bg-gradient-to-br from-pink-700 to-pink-600 text-white py-3 rounded-lg font-bold flex justify-center items-center gap-2 shadow-lg hover:from-pink-800 hover:to-pink-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? (
           <>
@@ -183,17 +233,18 @@ export default function LoginForm() {
       </AnimatePresence>
 
       {/* CTA registro */}
-      <div className="flex flex-col items-center mt-1">
-        <span className="text-xs text-pink-500 mb-1">
+      <div className="flex flex-col items-center mt-3">
+        <span className="text-xs text-pink-500 mb-1 font-semibold tracking-wide">
           ¿Aún no tienes cuenta?
         </span>
-        <button
+        <motion.button
           type="button"
+          whileTap={{ scale: 0.97 }}
           onClick={() => router.push("/auth/register")}
-          className="text-pink-700 font-bold hover:underline hover:text-pink-900 text-sm transition"
+          className="text-pink-700 font-bold bg-pink-50 hover:bg-pink-100 rounded-lg px-4 py-2 mt-1 shadow transition text-base"
         >
           Regístrate gratis aquí
-        </button>
+        </motion.button>
       </div>
     </motion.form>
   );
