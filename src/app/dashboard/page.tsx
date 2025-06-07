@@ -264,7 +264,6 @@ export default function DashboardPage() {
         </div>
         {/* Lista de recursos */}
         <RecursosList recursos={recursosData} />
-        console.log(🔁 Recursos que llegan al componente:, recursos);
       </section>
     </main>
   );
