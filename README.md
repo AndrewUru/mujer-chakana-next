@@ -1,14 +1,14 @@
-# ✨ Mujer Chakana Next
+# ✨ GINERGETICA NEXT
 
-**Mujer Chakana Next** es una aplicación web espiritual y cíclica, diseñada con amor para acompañar el recorrido de autoconocimiento, conexión lunar y florecimiento interior de mujeres que vibran con su energía ancestral.
+**GINERGETICA Next** es una aplicación web espiritual y cíclica, diseñada con amor para acompañar el recorrido de autoconocimiento, conexión lunar y florecimiento interior de mujeres que vibran con su energía ancestral.
 
 🔗 Sitio oficial del proyecto: [samariluz.com](https://samariluz.com)
 
 ---
 
-## 🌙 ¿Qué es Mujer Chakana?
+## 🌙 ¿Qué es GINERGETICA?
 
-**Mujer Chakana** es una guía digital viva que integra:
+**GINERGETICA** es una guía digital viva que integra:
 
 - 🄀 Autoconocimiento cíclico emocional, biológico, creativo y espiritual.
 - 🧬 Ginergía: la energía natural del ciclo femenino.
@@ -63,7 +63,7 @@ _Ejemplo:_
 
 ## 💳 Suscripción Premium
 
-Ahora Mujer Chakana permite suscripciones seguras a través de **PayPal**:
+Ahora GINERGETICA permite suscripciones seguras a través de **PayPal**:
 
 - Plan mensual: 2,99 € / mes.
 - Plan anual: 29,99 € / año.
@@ -165,4 +165,4 @@ Todos los derechos reservados © Ginergía, Centro de Estudios de Metafísica Na
 
 📧 atobio459@gmail.com
 
-> "Cuando me escucho, recuerdo quién soy." – Mujer Chakana
+> "Cuando me escucho, recuerdo quién soy." – GINERGETICA
