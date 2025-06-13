@@ -11,7 +11,7 @@ export default function PoliticaCookies() {
       </div>
 
       <p>
-        En <strong>Mujer Chakana</strong>, utilizamos cookies para ofrecerte una
+        En <strong>Ginergética</strong>, utilizamos cookies para ofrecerte una
         mejor experiencia de navegación, personalizar contenido y comprender
         cómo interactúas con nuestra plataforma.
       </p>
