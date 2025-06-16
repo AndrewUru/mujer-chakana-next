@@ -116,7 +116,7 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
           {/* Contenido lunar */}
           <div className="relative z-30 flex flex-col justify-center items-center not-[]:h-auto px-4 py-2 space-y-5 text-center overflow-y-auto">
             {/* Animación luna con imagen, responsive */}
-            <div className="animate-float flex items-center justify-center">
+            <div className="animate-slide flex items-center justify-center">
               {fase.imagen_url ? (
                 <Image
                   src={fase.imagen_url}
@@ -169,19 +169,19 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
 
       {/* Animaciones CSS extra */}
       <style jsx global>{`
-        @keyframes float {
+        @keyframes slide {
           0% {
-            transform: translateY(0px);
+            transform: translateX(-10vw);
           }
           50% {
-            transform: translateY(-16px);
+            transform: translateX(10vw);
           }
           100% {
-            transform: translateY(0px);
+            transform: translateX(-10vw);
           }
         }
-        .animate-float {
-          animation: float 3.3s ease-in-out infinite;
+        .animate-slide {
+          animation: slide 45s ease-in-out infinite;
         }
         @keyframes twinkle {
           0%,
