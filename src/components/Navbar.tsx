@@ -10,6 +10,8 @@ import Image from "next/image";
 export default function Navbar() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -29,13 +31,37 @@ export default function Navbar() {
     });
   }, [pathname]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Mostrar navbar cuando se hace scroll hacia arriba o está en la parte superior
+      if (currentScrollY < lastScrollY || currentScrollY < 100) {
+        setIsVisible(true);
+      } else {
+        // Ocultar navbar cuando se hace scroll hacia abajo
+        setIsVisible(false);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/auth/login");
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-amber-50/80 backdrop-blur-md border-pink-200 dark:border-pink-800 shadow-xl rounded-t-2xl">
+    <nav
+      className={`fixed bottom-0 left-0 right-0 z-50 bg-amber-50/80 backdrop-blur-md border-pink-200 dark:border-pink-800 shadow-xl rounded-t-2xl transition-transform duration-300 ${
+        isVisible ? "translate-y-0" : "translate-y-full"
+      }`}
+    >
       <div className="max-w-md md:max-w-2xl lg:max-w-3xl mx-auto flex justify-around items-center py-1 px-4 text-pink-700 text-sm">
         <NavItem
           href={loggedIn ? "/dashboard" : "/"}

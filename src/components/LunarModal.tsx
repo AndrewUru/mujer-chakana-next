@@ -86,7 +86,7 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
     >
       {fase && (
         <div
-          className="relative w-full max-w-lg mx-4 rounded-3xl overflow-hidden shadow-2xl ring-2 ring-blue-400/30 backdrop-blur-md border border-white/10"
+          className="relative  mx-4 rounded-3xl overflow-hidden shadow-2xl ring-2 ring-blue-400/30 backdrop-blur-md border border-white/10"
           style={{
             boxShadow:
               "0 0 40px 8px rgba(103, 232, 249, 0.3), 0 4px 40px rgba(60, 60, 100, 0.3)",
@@ -181,7 +181,7 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
           }
         }
         .animate-slide {
-          animation: slide 45s ease-in-out infinite;
+          animation: slide 65s ease-in-out infinite;
         }
         @keyframes twinkle {
           0%,
