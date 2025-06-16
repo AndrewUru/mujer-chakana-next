@@ -1,16 +1,30 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-export default function RitualViewer({
+interface RitualProgress {
+  audio: { viewed: boolean; duration?: number };
+  video: { viewed: boolean; duration?: number };
+  pdf: { viewed: boolean; duration?: number };
+}
+
+interface RitualNotes {
+  audio: string;
+  video: string;
+  pdf: string;
+}
+
+export default function RitualViewerEnhanced({
   pdfUrl,
   audioUrl,
   videoUrl,
+  ritualId,
 }: {
   pdfUrl?: string;
   audioUrl?: string;
   videoUrl?: string;
+  ritualId?: string;
 }) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>(() => {
@@ -22,11 +36,111 @@ export default function RitualViewer({
   const [isLoading, setIsLoading] = useState(true);
   const [mediaError, setMediaError] = useState<string | null>(null);
 
-  // Simular carga inicial
+  // Nuevas funcionalidades
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [showNotes, setShowNotes] = useState(false);
+  const [notes, setNotes] = useState<RitualNotes>({
+    audio: "",
+    video: "",
+    pdf: "",
+  });
+  const [progress, setProgress] = useState<RitualProgress>({
+    audio: { viewed: false },
+    video: { viewed: false },
+    pdf: { viewed: false },
+  });
+  const [timer, setTimer] = useState<number | null>(null);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [timerDuration, setTimerDuration] = useState(15); // minutos por defecto
+
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cargar datos guardados al inicializar
   useEffect(() => {
+    if (ritualId) {
+      const savedProgress = localStorage.getItem(`ritual-progress-${ritualId}`);
+      const savedNotes = localStorage.getItem(`ritual-notes-${ritualId}`);
+      const savedFavorite = localStorage.getItem(`ritual-favorite-${ritualId}`);
+
+      if (savedProgress) {
+        setProgress(JSON.parse(savedProgress));
+      }
+      if (savedNotes) {
+        setNotes(JSON.parse(savedNotes));
+      }
+      if (savedFavorite) {
+        setIsFavorite(JSON.parse(savedFavorite));
+      }
+    }
+
     const timer = setTimeout(() => setIsLoading(false), 800);
     return () => clearTimeout(timer);
-  }, []);
+  }, [ritualId]);
+
+  // Guardar progreso automáticamente
+  useEffect(() => {
+    if (ritualId) {
+      localStorage.setItem(
+        `ritual-progress-${ritualId}`,
+        JSON.stringify(progress)
+      );
+    }
+  }, [progress, ritualId]);
+
+  // Guardar notas automáticamente
+  useEffect(() => {
+    if (ritualId) {
+      localStorage.setItem(`ritual-notes-${ritualId}`, JSON.stringify(notes));
+    }
+  }, [notes, ritualId]);
+
+  // Guardar favorito automáticamente
+  useEffect(() => {
+    if (ritualId) {
+      localStorage.setItem(
+        `ritual-favorite-${ritualId}`,
+        JSON.stringify(isFavorite)
+      );
+    }
+  }, [isFavorite, ritualId]);
+
+  // Timer functionality
+  useEffect(() => {
+    if (isTimerRunning && timer !== null) {
+      timerIntervalRef.current = setInterval(() => {
+        setTimer((prev) => {
+          if (prev !== null && prev > 0) {
+            return prev - 1;
+          } else {
+            setIsTimerRunning(false);
+            // Notificación cuando termina el timer
+            if (
+              "Notification" in window &&
+              Notification.permission === "granted"
+            ) {
+              new Notification("¡Meditación completada!", {
+                body: "Has completado tu tiempo de meditación.",
+                icon: "/favicon.ico",
+              });
+            }
+            return 0;
+          }
+        });
+      }, 1000);
+    } else {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+      }
+    }
+
+    return () => {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+      }
+    };
+  }, [isTimerRunning, timer]);
 
   const tabs = [
     {
@@ -62,7 +176,6 @@ export default function RitualViewer({
   };
 
   const handleBackClick = () => {
-    // Agregar animación de salida
     const container = document.querySelector(".ritual-container");
     if (container) {
       container.classList.add("fade-out");
@@ -70,6 +183,59 @@ export default function RitualViewer({
     } else {
       router.back();
     }
+  };
+
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    // Marcar como visto cuando se cambia de tab
+    setProgress((prev) => ({
+      ...prev,
+      [tabId]: { ...prev[tabId as keyof RitualProgress], viewed: true },
+    }));
+  };
+
+  const handleFavoriteToggle = () => {
+    setIsFavorite(!isFavorite);
+  };
+
+  const handleNotesChange = (tabId: string, value: string) => {
+    setNotes((prev) => ({
+      ...prev,
+      [tabId]: value,
+    }));
+  };
+
+  const startTimer = () => {
+    setTimer(timerDuration * 60); // Convertir minutos a segundos
+    setIsTimerRunning(true);
+
+    // Solicitar permisos de notificación
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  };
+
+  const pauseTimer = () => {
+    setIsTimerRunning(false);
+  };
+
+  const resetTimer = () => {
+    setIsTimerRunning(false);
+    setTimer(null);
+  };
+
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  const getProgressPercentage = (): number => {
+    const totalTabs = tabs.length;
+    const viewedTabs = Object.values(progress).filter((p) => p.viewed).length;
+    return totalTabs > 0 ? (viewedTabs / totalTabs) * 100 : 0;
   };
 
   if (isLoading) {
@@ -113,7 +279,7 @@ export default function RitualViewer({
       </div>
 
       <div className="relative w-full max-w-6xl">
-        {/* Header mejorado con mejor accesibilidad */}
+        {/* Header mejorado con funcionalidades adicionales */}
         <div className="bg-white/95 backdrop-blur-md rounded-t-3xl border border-rose-200/80 shadow-2xl">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-6 sm:px-8 py-6 gap-4">
             <div className="flex items-center gap-4">
@@ -129,33 +295,155 @@ export default function RitualViewer({
                 <p className="text-rose-600/70 text-sm font-medium">
                   GINERGETICA
                 </p>
+
+                {/* Barra de progreso */}
+                {tabs.length > 0 && (
+                  <div className="mt-2 flex items-center gap-2">
+                    <div className="flex-1 bg-rose-100 rounded-full h-2">
+                      <div
+                        className="bg-gradient-to-r from-rose-500 to-pink-500 h-2 rounded-full transition-all duration-500"
+                        style={{ width: `${getProgressPercentage()}%` }}
+                      ></div>
+                    </div>
+                    <span className="text-xs text-rose-600/70 font-medium">
+                      {Math.round(getProgressPercentage())}%
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 
-            <button
-              onClick={handleBackClick}
-              className="group flex items-center gap-2 bg-rose-100/80 hover:bg-rose-200/80 text-rose-700 px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-rose-300 focus:ring-offset-2"
-              aria-label="Volver a la página anterior"
-            >
-              <svg
-                className="w-4 h-4 group-hover:-translate-x-1 transition-transform"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
+            <div className="flex items-center gap-3">
+              {/* Timer */}
+              {activeTab === "audio" && (
+                <div className="flex items-center gap-2 bg-blue-100/80 rounded-xl px-3 py-2">
+                  {timer !== null ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-blue-700 font-mono text-sm">
+                        {formatTime(timer)}
+                      </span>
+                      <div className="flex gap-1">
+                        <button
+                          onClick={isTimerRunning ? pauseTimer : startTimer}
+                          className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-blue-600 transition-colors"
+                          aria-label={
+                            isTimerRunning ? "Pausar timer" : "Iniciar timer"
+                          }
+                        >
+                          {isTimerRunning ? "⏸️" : "▶️"}
+                        </button>
+                        <button
+                          onClick={resetTimer}
+                          className="w-6 h-6 bg-blue-400 text-white rounded-full flex items-center justify-center text-xs hover:bg-blue-500 transition-colors"
+                          aria-label="Reiniciar timer"
+                        >
+                          🔄
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={timerDuration}
+                        onChange={(e) =>
+                          setTimerDuration(Number(e.target.value))
+                        }
+                        className="text-xs bg-white/80 rounded px-2 py-1 border border-blue-200"
+                      >
+                        <option value={5}>5 min</option>
+                        <option value={10}>10 min</option>
+                        <option value={15}>15 min</option>
+                        <option value={20}>20 min</option>
+                        <option value={30}>30 min</option>
+                      </select>
+                      <button
+                        onClick={startTimer}
+                        className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition-colors"
+                      >
+                        Iniciar
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Botón de favoritos */}
+              <button
+                onClick={handleFavoriteToggle}
+                className={`p-2 rounded-xl transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-rose-300 focus:ring-offset-2 ${
+                  isFavorite
+                    ? "bg-rose-100 text-rose-600 shadow-lg"
+                    : "bg-rose-50 text-rose-400 hover:bg-rose-100"
+                }`}
+                aria-label={
+                  isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"
+                }
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              <span>Volver</span>
-            </button>
+                <svg
+                  className="w-5 h-5"
+                  fill={isFavorite ? "currentColor" : "none"}
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+              </button>
+
+              {/* Botón de notas */}
+              <button
+                onClick={() => setShowNotes(!showNotes)}
+                className={`p-2 rounded-xl transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-rose-300 focus:ring-offset-2 ${
+                  showNotes
+                    ? "bg-amber-100 text-amber-600 shadow-lg"
+                    : "bg-amber-50 text-amber-400 hover:bg-amber-100"
+                }`}
+                aria-label="Mostrar/ocultar notas"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  />
+                </svg>
+              </button>
+
+              <button
+                onClick={handleBackClick}
+                className="group flex items-center gap-2 bg-rose-100/80 hover:bg-rose-200/80 text-rose-700 px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-rose-300 focus:ring-offset-2"
+                aria-label="Volver a la página anterior"
+              >
+                <svg
+                  className="w-4 h-4 group-hover:-translate-x-1 transition-transform"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+                <span>Volver</span>
+              </button>
+            </div>
           </div>
 
-          {/* Tabs de navegación mejorados */}
+          {/* Tabs de navegación mejorados con indicadores de progreso */}
           {tabs.length > 1 && (
             <div className="px-6 sm:px-8 pb-4">
               <div
@@ -166,11 +454,11 @@ export default function RitualViewer({
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
+                    onClick={() => handleTabChange(tab.id)}
                     role="tab"
                     aria-selected={activeTab === tab.id}
                     aria-controls={`panel-${tab.id}`}
-                    className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-rose-300 focus:ring-offset-2 ${
+                    className={`relative flex items-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-rose-300 focus:ring-offset-2 ${
                       activeTab === tab.id
                         ? "bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg scale-105 ring-2 ring-rose-300/50"
                         : "bg-rose-100/60 text-rose-700 hover:bg-rose-200/80 hover:scale-105 hover:shadow-md"
@@ -187,6 +475,11 @@ export default function RitualViewer({
                         {tab.description}
                       </span>
                     </div>
+
+                    {/* Indicador de progreso */}
+                    {progress[tab.id as keyof RitualProgress]?.viewed && (
+                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                    )}
                   </button>
                 ))}
               </div>
@@ -254,6 +547,35 @@ export default function RitualViewer({
                   </div>
                 )}
 
+                {/* Panel de notas */}
+                {showNotes && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-amber-600">📝</span>
+                      <h3 className="font-semibold text-amber-800">
+                        Notas Personales
+                      </h3>
+                    </div>
+                    <textarea
+                      value={notes[activeTab as keyof RitualNotes] || ""}
+                      onChange={(e) =>
+                        handleNotesChange(activeTab, e.target.value)
+                      }
+                      placeholder={`Escribe tus reflexiones sobre el ${
+                        activeTab === "audio"
+                          ? "audio guiado"
+                          : activeTab === "video"
+                          ? "video ritual"
+                          : "ritual"
+                      }...`}
+                      className="w-full h-24 p-3 border border-amber-300 rounded-lg bg-white/80 resize-none focus:outline-none focus:ring-2 focus:ring-amber-400"
+                    />
+                    <p className="text-xs text-amber-600/70 mt-2">
+                      Tus notas se guardan automáticamente y son privadas.
+                    </p>
+                  </div>
+                )}
+
                 {/* Audio mejorado */}
                 {activeTab === "audio" && audioUrl && (
                   <div className="space-y-4" role="tabpanel" id="panel-audio">
@@ -275,12 +597,19 @@ export default function RitualViewer({
 
                     <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200/50 shadow-lg">
                       <audio
+                        ref={audioRef}
                         controls
                         className="w-full h-14 rounded-xl shadow-lg [&::-webkit-media-controls-panel]:bg-white/90 [&::-webkit-media-controls-panel]:backdrop-blur-sm [&::-webkit-media-controls-play-button]:bg-blue-500 [&::-webkit-media-controls-play-button]:rounded-lg"
                         style={{
                           filter: "drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1))",
                         }}
                         onError={() => handleMediaError("audio")}
+                        onPlay={() => {
+                          setProgress((prev) => ({
+                            ...prev,
+                            audio: { ...prev.audio, viewed: true },
+                          }));
+                        }}
                         preload="metadata"
                       >
                         <source src={audioUrl} type="audio/mpeg" />
@@ -322,10 +651,17 @@ export default function RitualViewer({
                     <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-2xl p-4 border border-purple-200/50 shadow-lg">
                       <div className="relative">
                         <video
+                          ref={videoRef}
                           controls
                           className="w-full rounded-xl shadow-lg border border-purple-200/30"
                           style={{ maxHeight: "500px" }}
                           onError={() => handleMediaError("video")}
+                          onPlay={() => {
+                            setProgress((prev) => ({
+                              ...prev,
+                              video: { ...prev.video, viewed: true },
+                            }));
+                          }}
                           preload="metadata"
                         >
                           <source src={videoUrl} type="video/mp4" />
@@ -392,6 +728,12 @@ export default function RitualViewer({
                           src={pdfUrl}
                           className="w-full h-[70vh] rounded-xl shadow-lg border border-amber-200/30"
                           style={{ border: "none" }}
+                          onLoad={() => {
+                            setProgress((prev) => ({
+                              ...prev,
+                              pdf: { ...prev.pdf, viewed: true },
+                            }));
+                          }}
                           onError={() => handleMediaError("PDF")}
                           title="Guía del ritual en PDF"
                         />
