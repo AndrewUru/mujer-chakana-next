@@ -11,7 +11,7 @@ import Moonboard from "@/components/Moonboard";
 import RecursosList from "@/components/RecursosList";
 import CicloResumen from "@/components/CicloResumen";
 import NuevoRegistro from "@/components/NuevoRegistro";
-import { Flower, Moon, Leaf, GalleryThumbnails, Loader2 } from "lucide-react";
+import { Flower, Leaf, GalleryThumbnails, Loader2 } from "lucide-react";
 import Link from "next/link";
 import QuickNav from "@/components/QuickNav";
 import { useToast } from "@/components/Toast";
@@ -252,7 +252,6 @@ export default function DashboardPage() {
             </h1>
             <p className="text-base sm:text-lg flex items-center gap-2 text-pink-700">
               Hoy es {fechaActual} — Día {day} de tu ciclo{" "}
-              <Moon className="w-5 h-5 text-pink-500" aria-hidden="true" />
             </p>
           </div>
 
