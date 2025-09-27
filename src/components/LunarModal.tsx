@@ -140,7 +140,10 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
 
             <h2
               className="text-3xl sm:text-4xl font-bold tracking-wide text-white drop-shadow-lg mb-1"
-              style={{ textShadow: "0 4px 32px #1e293b" }}
+              style={{
+                textShadow:
+                  "0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(56, 189, 248, 0.5)",
+              }}
             >
               {fase.nombre_fase}
             </h2>
