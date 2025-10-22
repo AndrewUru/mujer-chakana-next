@@ -1,65 +1,102 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const passwordMinLength = 6;
+
+interface TouchedState {
+  email: boolean;
+  password: boolean;
+}
+
 export default function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [mensaje, setMensaje] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [showPass, setShowPass] = useState(false);
-  const [touched, setTouched] = useState({ email: false, password: false });
   const router = useRouter();
   const passwordRef = useRef<HTMLInputElement>(null);
+
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [touched, setTouched] = useState<TouchedState>({
+    email: false,
+    password: false,
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState("");
 
   useEffect(() => {
     async function checkSession() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (user) {
-        const { data: perfiles } = await supabase
-          .from("perfiles")
-          .select("perfil_completo")
-          .eq("user_id", user.id);
-        if (perfiles && perfiles.length > 0) {
-          const perfil = perfiles[0];
-          router.push(perfil.perfil_completo ? "/bienvenida" : "/setup");
-        }
+
+      if (!user) return;
+
+      const { data: perfiles } = await supabase
+        .from("perfiles")
+        .select("perfil_completo")
+        .eq("user_id", user.id);
+
+      if (perfiles && perfiles.length > 0) {
+        const perfil = perfiles[0];
+        router.push(perfil.perfil_completo ? "/bienvenida" : "/setup");
       }
     }
+
     checkSession();
   }, [router]);
 
-  // Validaciones simples
-  const emailRegex = /\S+@\S+\.\S+/;
-  const passMin = 6;
+  const isEmailInvalid = useMemo(
+    () => touched.email && !emailPattern.test(form.email.trim()),
+    [form.email, touched.email]
+  );
 
-  const isEmailInvalid = touched.email && !emailRegex.test(email);
-  const isPasswordInvalid = touched.password && password.length < passMin;
+  const isPasswordInvalid = useMemo(
+    () => touched.password && form.password.length < passwordMinLength,
+    [form.password, touched.password]
+  );
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMensaje("");
+  const handleChange =
+    (field: "email" | "password") =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setForm((prev) => ({ ...prev, [field]: value }));
+    };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    setTouched((prev) => ({
+      email: true,
+      password: true,
+    }));
+
+    if (
+      !emailPattern.test(form.email.trim()) ||
+      form.password.length < passwordMinLength
+    ) {
+      return;
+    }
+
+    setFeedback("");
     setLoading(true);
 
     const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+      email: form.email.trim(),
+      password: form.password,
     });
 
     if (error) {
-      setMensaje(
+      const message =
         error.message === "Invalid login credentials"
-          ? "⚠️ Correo o contraseña incorrectos. Intenta de nuevo."
-          : `⚠️ Error: ${error.message}`
-      );
+          ? "Correo o contrasena incorrectos. Intenta de nuevo."
+          : `Error: ${error.message}`;
+      setFeedback(message);
       setLoading(false);
-      if (passwordRef.current) passwordRef.current.focus();
+      passwordRef.current?.focus();
       return;
     }
 
@@ -74,7 +111,7 @@ export default function LoginForm() {
         .eq("user_id", user.id);
 
       if (perfilError || !perfiles || perfiles.length === 0) {
-        setMensaje("⚠️ No se encontró un perfil para este usuario.");
+        setFeedback("No encontramos un perfil asociado a este usuario.");
         setLoading(false);
         return;
       }
@@ -88,79 +125,73 @@ export default function LoginForm() {
 
   return (
     <motion.form
-      onSubmit={handleLogin}
-      initial={{ opacity: 0, y: 30, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className="w-full max-w-md flex flex-col gap-2 bg-white/70  p-6 rounded-2xl shadow-xl border border-pink-100"
-      autoComplete="on"
-      aria-label="Formulario de inicio de sesión"
+      onSubmit={handleSubmit}
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="flex flex-col gap-5"
+      aria-label="Formulario de inicio de sesion"
     >
-      {/* Email */}
-      <div className="my-1">
+      <div className="space-y-2 text-left">
         <label
           htmlFor="email"
-          className="block text-xs text-pink-900 font-semibold ml-1 mb-1"
+          className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-500"
         >
-          Correo electrónico
+          Correo electronico
         </label>
         <div className="relative">
           <motion.input
             id="email"
             type="email"
             placeholder="tu@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+            value={form.email}
+            onChange={handleChange("email")}
+            onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
             required
             disabled={loading}
-            whileFocus={{ scale: 1.03, boxShadow: "0 0 0 2px #f472b6" }}
-            className={`w-full border ${
-              isEmailInvalid ? "border-rose-400" : "border-pink-300"
-            } p-3 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all placeholder:text-pink-700 text-pink-900`}
+            whileFocus={{ scale: 1.01 }}
+            className="w-full rounded-xl border border-rose-100 bg-white/70 px-4 py-3 text-sm text-rose-900 shadow-inner placeholder:text-rose-400 focus:border-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-200 transition disabled:opacity-60"
             autoComplete="email"
             aria-invalid={isEmailInvalid}
             aria-describedby={isEmailInvalid ? "email-error" : undefined}
           />
           {loading && (
-            <Loader2 className="animate-spin h-5 w-5 absolute right-3 top-3 text-pink-400" />
+            <Loader2 className="absolute right-3 top-3 h-5 w-5 animate-spin text-rose-400" />
           )}
         </div>
         {isEmailInvalid && (
-          <motion.div
+          <motion.p
             id="email-error"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-xs text-rose-500 mt-1 flex items-center gap-1"
+            className="flex items-center gap-1 text-xs text-rose-500"
           >
-            <AlertCircle className="w-4 h-4" /> Ingresa un correo válido.
-          </motion.div>
+            <AlertCircle className="h-4 w-4" />
+            Ingresa un correo valido.
+          </motion.p>
         )}
       </div>
 
-      {/* Password */}
-      <div className="mb-1">
+      <div className="space-y-2 text-left">
         <label
           htmlFor="password"
-          className="block text-xs text-pink-600 font-semibold ml-1 mb-1"
+          className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-500"
         >
-          Contraseña
+          Contrasena
         </label>
         <div className="relative">
           <motion.input
             id="password"
             ref={passwordRef}
-            type={showPass ? "text" : "password"}
-            placeholder="Tu contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onBlur={() => setTouched((t) => ({ ...t, password: true }))}
+            type={showPassword ? "text" : "password"}
+            placeholder="Tu contrasena"
+            value={form.password}
+            onChange={handleChange("password")}
+            onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
             required
             disabled={loading}
-            whileFocus={{ scale: 1.03, boxShadow: "0 0 0 2px #f472b6" }}
-            className={`w-full border ${
-              isPasswordInvalid ? "border-rose-400" : "border-pink-300"
-            } p-3 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all placeholder:text-pink-700 text-pink-900`}
+            whileFocus={{ scale: 1.01 }}
+            className="w-full rounded-xl border border-rose-100 bg-white/70 px-4 py-3 text-sm text-rose-900 shadow-inner placeholder:text-rose-400 focus:border-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-200 transition disabled:opacity-60"
             autoComplete="current-password"
             aria-invalid={isPasswordInvalid}
             aria-describedby={isPasswordInvalid ? "password-error" : undefined}
@@ -168,83 +199,79 @@ export default function LoginForm() {
           <button
             type="button"
             tabIndex={-1}
-            className="absolute right-3 top-3 text-pink-400 hover:text-pink-600 transition"
-            onClick={() => setShowPass((v) => !v)}
-            aria-label={showPass ? "Ocultar contraseña" : "Mostrar contraseña"}
+            className="absolute right-3 top-3 text-rose-400 transition hover:text-rose-600"
+            onClick={() => setShowPassword((prev) => !prev)}
+            aria-label={showPassword ? "Ocultar contrasena" : "Mostrar contrasena"}
           >
-            {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
         </div>
         {isPasswordInvalid && (
-          <motion.div
+          <motion.p
             id="password-error"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-xs text-rose-500 mt-1 flex items-center gap-1"
+            className="flex items-center gap-1 text-xs text-rose-500"
           >
-            <AlertCircle className="w-4 h-4" /> Mínimo {passMin} caracteres.
-          </motion.div>
+            <AlertCircle className="h-4 w-4" />
+            Minimo {passwordMinLength} caracteres.
+          </motion.p>
         )}
-        {/* Recuperar contraseña */}
-        <div className="flex justify-end mt-1">
+        <div className="flex justify-end text-xs">
           <button
             type="button"
             tabIndex={-1}
-            className="text-xs text-pink-500 hover:underline hover:text-pink-700 transition"
+            className="text-rose-500 underline-offset-2 transition hover:text-rose-700 hover:underline"
             onClick={() => router.push("/auth/recuperar")}
           >
-            ¿Olvidaste tu contraseña?
+            Olvidaste tu contrasena?
           </button>
         </div>
       </div>
 
-      {/* Botón login */}
       <motion.button
         type="submit"
-        disabled={loading || isEmailInvalid || isPasswordInvalid}
-        whileHover={{ scale: !loading ? 1.04 : 1 }}
-        whileTap={{ scale: 0.96 }}
-        className="mt-2 bg-gradient-to-br from-pink-700 to-pink-600 text-white py-3 rounded-lg font-bold flex justify-center items-center gap-2 shadow-lg hover:from-pink-800 hover:to-pink-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={loading}
+        whileHover={{ scale: loading ? 1 : 1.02 }}
+        whileTap={{ scale: loading ? 1 : 0.96 }}
+        className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-rose-600 via-rose-700 to-rose-800 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? (
           <>
-            <Loader2 className="animate-spin h-5 w-5" /> Iniciando sesión...
+            <Loader2 className="h-5 w-5 animate-spin" />
+            Iniciando sesion...
           </>
         ) : (
-          "Iniciar sesión"
+          "Iniciar sesion"
         )}
       </motion.button>
 
-      {/* Mensaje de error */}
       <AnimatePresence>
-        {mensaje && (
+        {feedback && (
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.97 }}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
             transition={{ duration: 0.3 }}
-            className="flex items-center space-x-2 bg-rose-50 border border-rose-200 text-rose-700 p-3 rounded-xl text-sm shadow-md mt-4"
+            className="flex items-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 shadow"
             role="alert"
+            aria-live="assertive"
           >
-            <AlertCircle className="w-5 h-5 flex-shrink-0" />
-            <span>{mensaje}</span>
+            <AlertCircle className="h-5 w-5" />
+            <span>{feedback}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* CTA registro */}
-      <div className="flex flex-col items-center mt-3">
-        <span className="text-xs text-pink-500 mb-1 font-semibold tracking-wide">
-          ¿Aún no tienes cuenta?
-        </span>
-        <motion.button
+      <div className="flex flex-col items-center gap-2 text-xs text-rose-500">
+        <span>No tienes cuenta todavia?</span>
+        <button
           type="button"
-          whileTap={{ scale: 0.97 }}
           onClick={() => router.push("/auth/register")}
-          className="text-pink-700 font-bold bg-pink-50 hover:bg-pink-100 rounded-lg px-4 py-2 mt-1 shadow transition text-base"
+          className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 font-semibold text-rose-700 transition hover:border-rose-300 hover:bg-rose-100"
         >
-          Regístrate gratis aquí
-        </motion.button>
+          Registrate gratis aqui
+        </button>
       </div>
     </motion.form>
   );

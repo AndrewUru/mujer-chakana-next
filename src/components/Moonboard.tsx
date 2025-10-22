@@ -60,7 +60,8 @@ const Moonboard = () => {
     const diferencia = Math.floor(
       (hoy.getTime() - fechaInicio.getTime()) / (1000 * 60 * 60 * 24)
     );
-    const diaCiclo = ((diferencia % TOTAL_DAYS) + TOTAL_DAYS) % TOTAL_DAYS + 1;
+    const diaCiclo =
+      (((diferencia % TOTAL_DAYS) + TOTAL_DAYS) % TOTAL_DAYS) + 1;
     return diaCiclo;
   };
 
@@ -127,8 +128,9 @@ const Moonboard = () => {
                 Ritmo ciclico en 28 dias
               </h2>
               <p className="max-w-lg text-sm text-rose-700 sm:text-base">
-                Registra cada dia para tejer tu mapa lunar. Observa como evoluciona tu
-                energia y vuelve a abrir registros pasados cuando necesites profundizar.
+                Registra cada dia para tejer tu mapa lunar. Observa como
+                evoluciona tu energia y vuelve a abrir registros pasados cuando
+                necesites profundizar.
               </p>
             </div>
             <div className="flex flex-col gap-3 rounded-3xl border border-rose-100 bg-white/70 p-5 text-sm text-rose-700 shadow">
@@ -178,7 +180,11 @@ const Moonboard = () => {
                   : "bg-white/50 text-rose-400 border-white/40 cursor-not-allowed opacity-75";
 
                 const label = `Dia ${day}${
-                  isToday ? " · Hoy" : isPast ? " · Registra o revisa" : " · Proximamente"
+                  isToday
+                    ? " · Hoy"
+                    : isPast
+                    ? " · Registra o revisa"
+                    : " · Proximamente"
                 }`;
 
                 return (
@@ -186,7 +192,9 @@ const Moonboard = () => {
                     type="button"
                     key={day}
                     disabled={!isAvailable}
-                    onClick={(event) => isAvailable && handleClickDay(event, day)}
+                    onClick={(event) =>
+                      isAvailable && handleClickDay(event, day)
+                    }
                     className={`${baseClasses} ${statusClasses}`}
                     aria-label={label}
                     title={label}
@@ -216,8 +224,8 @@ const Moonboard = () => {
 
           {!fechaInicio && !isLoadingInicio && (
             <div className="rounded-3xl border border-rose-200/50 bg-rose-100/50 p-5 text-sm text-rose-700 shadow-inner">
-              Guarda tu fecha de ultima menstruacion desde tu perfil para activar el
-              seguimiento automatico de tu moonboard.
+              Guarda tu fecha de ultima menstruacion desde tu perfil para
+              activar el seguimiento automatico de tu moonboard.
             </div>
           )}
         </div>

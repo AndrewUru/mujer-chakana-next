@@ -46,7 +46,8 @@ const elementMeta: Record<ElementKey, ElementMeta> = {
       "from-sky-200/40 to-blue-200/20 border-sky-100/50 shadow-[0_20px_45px_rgba(125,211,252,0.35)]",
     badge: "bg-sky-100/15 border-sky-100/40 text-sky-100",
     accent: "text-sky-100",
-    affirmation: "Fluye con sensibilidad, hidrata tu cuerpo y escucha tu intuición.",
+    affirmation:
+      "Fluye con sensibilidad, hidrata tu cuerpo y escucha tu intuición.",
   },
   Fuego: {
     texture: "url('/fuego-ui.webp')",
@@ -56,7 +57,8 @@ const elementMeta: Record<ElementKey, ElementMeta> = {
       "from-rose-200/50 to-orange-200/20 border-rose-100/50 shadow-[0_20px_45px_rgba(248,113,113,0.35)]",
     badge: "bg-rose-100/20 border-rose-100/40 text-rose-100",
     accent: "text-rose-100",
-    affirmation: "Prende tu creatividad, expresa tu poder interior y honra tu brillo.",
+    affirmation:
+      "Prende tu creatividad, expresa tu poder interior y honra tu brillo.",
   },
   Tierra: {
     texture: "url('/tierra-ui.webp')",
@@ -76,7 +78,8 @@ const elementMeta: Record<ElementKey, ElementMeta> = {
       "from-indigo-200/40 to-purple-200/20 border-indigo-100/40 shadow-[0_20px_45px_rgba(129,140,248,0.32)]",
     badge: "bg-indigo-100/20 border-indigo-100/40 text-indigo-100",
     accent: "text-indigo-100",
-    affirmation: "Respira profundo, ordena tus pensamientos y comparte tu verdad.",
+    affirmation:
+      "Respira profundo, ordena tus pensamientos y comparte tu verdad.",
   },
   default: {
     texture: "url('/bg-chakana.png')",
@@ -86,7 +89,8 @@ const elementMeta: Record<ElementKey, ElementMeta> = {
       "from-rose-200/40 to-pink-200/20 border-rose-100/40 shadow-[0_20px_45px_rgba(244,114,182,0.30)]",
     badge: "bg-rose-100/20 border-rose-100/40 text-rose-100",
     accent: "text-rose-100",
-    affirmation: "Celebra tu ciclo y permite que cada fase revele un aprendizaje nuevo.",
+    affirmation:
+      "Celebra tu ciclo y permite que cada fase revele un aprendizaje nuevo.",
   },
 };
 
@@ -103,11 +107,11 @@ export default function CicloResumen({
   const [loading, setLoading] = useState(true);
   const [showUpsell, setShowUpsell] = useState(false);
 
-  const elementKey = (["Agua", "Fuego", "Tierra", "Aire"].includes(
-    mujerChakanaData.elemento
-  )
-    ? (mujerChakanaData.elemento as ElementKey)
-    : "default") as ElementKey;
+  const elementKey = (
+    ["Agua", "Fuego", "Tierra", "Aire"].includes(mujerChakanaData.elemento)
+      ? (mujerChakanaData.elemento as ElementKey)
+      : "default"
+  ) as ElementKey;
   const {
     texture,
     overlay,
@@ -146,7 +150,8 @@ export default function CicloResumen({
         {
           id: "audio",
           label: "Audio guía",
-          description: "Conecta con tu voz interior y sincroniza tu respiración.",
+          description:
+            "Conecta con tu voz interior y sincroniza tu respiración.",
           icon: Music2,
           url: mujerChakanaData.audio_url,
         },
@@ -198,7 +203,7 @@ export default function CicloResumen({
 
   return (
     <div
-      className="relative mb-8 flex min-h-[420px] flex-col justify-center overflow-hidden rounded-[32px] border border-white/20 p-8 text-white shadow-2xl shadow-rose-900/25 sm:p-10"
+      className="relative flex min-h-[420px] flex-col justify-center overflow-hidden rounded-[32px] border border-white/20 p-8 text-white shadow-2xl shadow-rose-900/25 sm:p-10"
       style={{
         backgroundImage: texture,
         backgroundSize: "cover",
@@ -229,7 +234,9 @@ export default function CicloResumen({
               <h1 className="text-4xl font-bold leading-tight sm:text-5xl">
                 {mujerChakanaData.elemento}
               </h1>
-              <p className={`mt-3 max-w-xl text-sm leading-relaxed sm:text-base ${accent}`}>
+              <p
+                className={`mt-3 max-w-xl text-sm leading-relaxed sm:text-base ${accent}`}
+              >
                 {affirmation}
               </p>
             </div>
@@ -254,8 +261,9 @@ export default function CicloResumen({
             </div>
 
             <p className="text-sm text-white/70">
-              Honra este momento registrando tus emociones y necesidades; así, la
-              plataforma podrá guiarte con mayor precisión en tus próximos días.
+              Honra este momento registrando tus emociones y necesidades; así,
+              la plataforma podrá guiarte con mayor precisión en tus próximos
+              días.
             </p>
           </div>
 
@@ -317,8 +325,8 @@ export default function CicloResumen({
               )
             ) : (
               <p className="rounded-2xl border border-white/15 bg-white/5 px-6 py-4 text-center text-sm text-white/70 backdrop-blur-md">
-                Estamos preparando nuevos recursos para esta fase. Vuelve pronto o
-                explora el manual para seguir profundizando.
+                Estamos preparando nuevos recursos para esta fase. Vuelve pronto
+                o explora el manual para seguir profundizando.
               </p>
             )}
           </div>
@@ -338,16 +346,18 @@ export default function CicloResumen({
 
           <div className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white/70 backdrop-blur-md">
             <p className="text-sm leading-relaxed">
-              Tu ciclo es un mandala vivo. Registrar lo que sientes hoy abre una puerta
-              a la <span className="font-semibold text-white">sabiduría propia</span>.
-              Permítete descansar, crear o moverte según lo que tu cuerpo exprese.
+              Tu ciclo es un mandala vivo. Registrar lo que sientes hoy abre una
+              puerta a la{" "}
+              <span className="font-semibold text-white">sabiduría propia</span>
+              . Permítete descansar, crear o moverte según lo que tu cuerpo
+              exprese.
             </p>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-white/65 backdrop-blur-md">
             <p>
-              Si necesitas inspiración extra, visita el manual o consulta el calendario
-              lunar. Tu práctica constante es un acto de amor.
+              Si necesitas inspiración extra, visita el manual o consulta el
+              calendario lunar. Tu práctica constante es un acto de amor.
             </p>
             <div className="mt-4 flex flex-col gap-3 text-sm sm:flex-row">
               <Link
@@ -376,8 +386,8 @@ export default function CicloResumen({
 
             <h3 className="text-2xl font-bold">Contenido exclusivo</h3>
             <p className="mt-3 text-sm leading-relaxed text-rose-700">
-              Activa tu suscripción para abrir rituales, audio-guías y videos diseñados
-              especialmente para este día del ciclo.
+              Activa tu suscripción para abrir rituales, audio-guías y videos
+              diseñados especialmente para este día del ciclo.
             </p>
 
             <div className="mt-6 space-y-3">

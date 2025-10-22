@@ -158,7 +158,7 @@ export default function NuevoRegistro({
 
   return (
     <motion.div
-      className="bg-white/90 border border-rose-200 rounded-3xl p-8 shadow-2xl mt-12 mx-auto space-y-8 relative transition-all duration-500"
+      className="bg-white/90 border border-rose-200 rounded-3xl p-8 shadow-2xl mx-auto space-y-8 relative transition-all duration-500"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}

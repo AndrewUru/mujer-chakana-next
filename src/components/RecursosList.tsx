@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
-  Book,
-  Music,
-  FileText,
+  Music2,
+  ScrollText,
+  BookOpen,
   Lock,
-  BadgeCheck,
-  Star,
+  ShieldCheck,
+  Sparkles,
   Gift,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
@@ -22,209 +22,232 @@ type Recurso = {
   tipo_suscripcion: "gratuito" | "mensual" | "anual";
 };
 
+type Tier = "gratuito" | "mensual" | "anual";
+
+const tierMeta: Record<
+  Tier,
+  {
+    title: string;
+    icon: React.ReactNode;
+    accent: string;
+    badgeClass: string;
+    description: string;
+  }
+> = {
+  gratuito: {
+    title: "Recursos gratuitos",
+    icon: <Gift className="h-5 w-5 text-emerald-500" />,
+    accent: "text-emerald-600",
+    badgeClass:
+      "bg-emerald-100/80 text-emerald-700 border border-emerald-200 shadow-sm",
+    description:
+      "Materiales abiertos para iniciar tu recorrido y sostener tu práctica diaria.",
+  },
+  mensual: {
+    title: "Contenido exclusivo mensual",
+    icon: <Sparkles className="h-5 w-5 text-amber-500" />,
+    accent: "text-amber-600",
+    badgeClass:
+      "bg-amber-100/80 text-amber-700 border border-amber-200 shadow-sm",
+    description:
+      "Audio-guías y rituales anticipados disponibles con la suscripción mensual.",
+  },
+  anual: {
+    title: "Recursos para suscripción anual",
+    icon: <ShieldCheck className="h-5 w-5 text-rose-500" />,
+    accent: "text-rose-600",
+    badgeClass:
+      "bg-rose-100/80 text-rose-700 border border-rose-200 shadow-sm",
+    description:
+      "Biblioteca completa de contenidos profundos para acompañar tus 12 lunas.",
+  },
+};
+
+const iconByTipo: Record<string, React.ReactNode> = {
+  audio: <Music2 className="h-5 w-5" />,
+  pdf: <ScrollText className="h-5 w-5" />,
+};
+
+function getTipoIcon(tipo: string) {
+  return iconByTipo[tipo] ?? <BookOpen className="h-5 w-5" />;
+}
+
 export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
   const [suscripcionActiva, setSuscripcionActiva] = useState(false);
 
   useEffect(() => {
     const fetchPerfil = async () => {
-      try {
-        const {
-          data: { user },
-          error: authError,
-        } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
 
-        if (authError || !user) return;
-
-        const { data, error } = await supabase
-          .from("perfiles")
-          .select("suscripcion_activa")
-          .eq("user_id", user.id)
-          .single();
-
-        if (error) {
-          console.error("Error obteniendo perfil:", error.message);
-          return;
-        }
-
-        if (data?.suscripcion_activa) {
-          setSuscripcionActiva(true);
-        }
-      } catch (err) {
-        console.error("Error general en fetchPerfil:", err);
+      if (authError || !user) {
+        return;
       }
+
+      const { data, error } = await supabase
+        .from("perfiles")
+        .select("suscripcion_activa")
+        .eq("user_id", user.id)
+        .single();
+
+      if (error) {
+        console.error("Error obteniendo perfil:", error.message);
+        return;
+      }
+
+      setSuscripcionActiva(Boolean(data?.suscripcion_activa));
     };
 
     fetchPerfil();
   }, []);
 
-  const iconByTipo = (tipo: string, bloqueado = false) => {
-    const baseClass = `w-6 h-6 ${
-      bloqueado ? "text-gray-300" : "text-pink-600"
-    }`;
-    switch (tipo) {
-      case "audio":
-        return <Music className={baseClass} />;
-      case "pdf":
-        return <FileText className={baseClass} />;
-      default:
-        return <Book className={baseClass} />;
+  const groupedResources = useMemo(
+    () => ({
+      gratuito: recursos.filter(
+        (r) => r.tipo_suscripcion?.toLowerCase().trim() === "gratuito"
+      ),
+      mensual: recursos.filter(
+        (r) => r.tipo_suscripcion?.toLowerCase().trim() === "mensual"
+      ),
+      anual: recursos.filter(
+        (r) => r.tipo_suscripcion?.toLowerCase().trim() === "anual"
+      ),
+    }),
+    [recursos]
+  );
+
+  const renderCards = (lista: Recurso[], tier: Tier) => {
+    const isPremiumTier = tier !== "gratuito";
+    const locked = isPremiumTier && !suscripcionActiva;
+
+    if (!lista.length) {
+      return (
+        <div className="col-span-full rounded-3xl border border-white/40 bg-white/40 p-8 text-center text-sm text-rose-700">
+          Estamos preparando nuevos recursos para esta categoría. Vuelve pronto.
+        </div>
+      );
     }
-  };
 
-  const renderCards = (
-    lista: Recurso[],
-    tipo: "gratuito" | "mensual" | "anual"
-  ) => {
-    const badgeStyle = {
-      gratuito:
-        "bg-emerald-100 text-emerald-700 font-semibold px-2 py-1 rounded-full text-xs flex items-center gap-1 shadow",
-      mensual:
-        "bg-yellow-100 text-yellow-700 font-semibold px-2 py-1 rounded-full text-xs flex items-center gap-1 shadow",
-      anual:
-        "bg-rose-100 text-rose-700 font-semibold px-2 py-1 rounded-full text-xs flex items-center gap-1 shadow",
-    };
     return lista.map((recurso) => {
-      // ¿Está bloqueado para el usuario?
-      const isBlocked = tipo !== "gratuito" && !suscripcionActiva;
+      const cardBase =
+        "group relative flex h-full flex-col justify-between rounded-3xl border p-6 shadow transition hover:-translate-y-1 hover:shadow-xl";
 
-      if (!isBlocked) {
-        // Card accesible
-        return (
-          <Link
-            key={recurso.id}
-            href={`/recursos/${recurso.id}`}
-            target="_self"
-            className="bg-white p-5 rounded-2xl shadow-md hover:shadow-xl transition-all border border-pink-100 hover:border-pink-300 group relative"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-3">
-                {iconByTipo(recurso.tipo)}
-                <h3 className="text-lg font-semibold text-rose-800">
-                  {recurso.titulo}
-                </h3>
-              </div>
-              <span className={badgeStyle[tipo]}>
-                {tipo === "gratuito" ? (
-                  <>
-                    🆓 <span>Gratis</span>
-                  </>
-                ) : (
-                  <>
-                    {tipo === "mensual" ? "★" : "💎"}{" "}
-                    <span>{tipo.charAt(0).toUpperCase() + tipo.slice(1)}</span>
-                  </>
-                )}
-              </span>
-            </div>
-            <p className="text-sm text-gray-600">{recurso.descripcion}</p>
-          </Link>
-        );
-      } else {
-        // Card bloqueada: premium sin suscripción
+      if (locked) {
         return (
           <div
             key={recurso.id}
-            className="relative bg-gray-50 p-5 rounded-2xl shadow-inner border border-gray-200 opacity-70 cursor-not-allowed flex flex-col justify-between transition-all hover:shadow-xl group overflow-visible"
+            className={`${cardBase} border-rose-100/60 bg-white/50 text-rose-300`}
           >
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                {iconByTipo(recurso.tipo, true)}
-                <h3 className="text-lg font-semibold text-gray-500 line-through">
-                  {recurso.titulo}
-                </h3>
+                <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/40 bg-white/30 text-rose-200">
+                  {getTipoIcon(recurso.tipo)}
+                </span>
+                <div>
+                  <h3 className="text-base font-semibold line-through">
+                    {recurso.titulo}
+                  </h3>
+                  <p className="text-xs italic text-rose-400">
+                    {recurso.descripcion}
+                  </p>
+                </div>
               </div>
-              <span className={badgeStyle[tipo]}>
-                {tipo === "mensual" ? "★" : "💎"}{" "}
-                <span>{tipo.charAt(0).toUpperCase() + tipo.slice(1)}</span>
+              <span
+                className={`flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${tierMeta[tier].badgeClass}`}
+              >
+                <Lock className="h-3.5 w-3.5" />
+                {tier === "mensual" ? "Mensual" : "Anual"}
               </span>
             </div>
-            <p className="text-sm text-gray-400 italic">
-              {recurso.descripcion}
-            </p>
-            <div className="mt-4 text-center">
-              <Lock className="mx-auto w-5 h-5 text-gray-400 mb-1 group-hover:text-pink-500 transition" />
+
+            <div className="mt-6 flex flex-col items-center gap-2 text-sm text-rose-500">
+              <Lock className="h-4 w-4" />
+              <p className="text-center">
+                Disponible para suscriptoras {tier === "mensual" ? "mensuales" : "anuales"}.
+              </p>
               <Link
                 href="/suscripcion"
-                className="inline-block mt-2 text-xs text-pink-600 font-medium hover:underline group-hover:text-pink-700"
+                className="text-xs font-semibold text-rose-600 underline-offset-2 hover:underline"
                 tabIndex={-1}
                 aria-disabled="true"
               >
-                Desbloquear con suscripción
+                Conocer planes
               </Link>
             </div>
-            {/* Tooltip en hover */}
-            <span className="hidden group-hover:block absolute top-2 right-2 bg-pink-600 text-white text-xs rounded px-3 py-1 shadow-lg animate-fadeIn">
-              💡 ¡Hazte Premium y accede!
-            </span>
           </div>
         );
       }
+
+      return (
+        <Link
+          key={recurso.id}
+          href={`/recursos/${recurso.id}`}
+          className={`${cardBase} border-rose-100/70 bg-white/80 backdrop-blur hover:border-rose-200`}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-rose-100 bg-rose-50 text-rose-500 shadow-inner">
+              {getTipoIcon(recurso.tipo)}
+            </span>
+            <span
+              className={`flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${tierMeta[tier].badgeClass}`}
+            >
+              {tier === "gratuito" ? "Gratis" : tier === "mensual" ? "Mensual" : "Anual"}
+            </span>
+          </div>
+          <div className="mt-5 space-y-2">
+            <h3 className="text-lg font-semibold text-rose-900">
+              {recurso.titulo}
+            </h3>
+            <p className="text-sm text-rose-700">{recurso.descripcion}</p>
+          </div>
+          <span className="mt-6 inline-flex items-center gap-2 text-xs font-semibold text-rose-500 transition group-hover:text-rose-600">
+            Explorar recurso
+            <span aria-hidden="true">→</span>
+          </span>
+        </Link>
+      );
     });
   };
 
-  const recursosGratuitos = recursos.filter(
-    (r) => r.tipo_suscripcion?.toLowerCase().trim() === "gratuito"
-  );
-
-  const recursosMensuales = recursos.filter(
-    (r) => r.tipo_suscripcion?.toLowerCase().trim() === "mensual"
-  );
-
-  const recursosAnuales = recursos.filter(
-    (r) => r.tipo_suscripcion?.toLowerCase().trim() === "anual"
-  );
-
   return (
     <div className="space-y-12">
-      {/* Gratuitos */}
-      <section>
-        <h2 className="text-xl sm:text-2xl font-bold text-emerald-700 mb-4 flex items-center gap-2">
-          <Gift className="w-5 h-5 text-emerald-600" />
-          Recursos Gratuitos
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {renderCards(recursosGratuitos, "gratuito")}
-        </div>
-      </section>
+      {(["gratuito", "mensual", "anual"] as Tier[]).map((tier) => {
+        const section = tierMeta[tier];
 
-      {/* Mensuales */}
-      <section>
-        <h2 className="text-xl sm:text-2xl font-bold text-yellow-600 mb-4 flex items-center gap-2">
-          <Star className="w-5 h-5 text-yellow-500" />
-          Contenido Exclusivo Mensual
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {renderCards(recursosMensuales, "mensual")}
-        </div>
-      </section>
+        return (
+          <section key={tier} className="space-y-4">
+            <div className="flex flex-col gap-2 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
+              <div className="space-y-1">
+                <span
+                  className={`inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] ${section.accent}`}
+                >
+                  {section.icon}
+                  {tier}
+                </span>
+                <h2 className={`text-2xl font-semibold ${section.accent}`}>
+                  {section.title}
+                </h2>
+                <p className="text-sm text-rose-600">{section.description}</p>
+              </div>
+              {tier !== "gratuito" && !suscripcionActiva && (
+                <Link
+                  href="/suscripcion"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-rose-200 bg-white/70 px-4 py-2 text-xs font-semibold text-rose-600 shadow-sm transition hover:border-rose-300 hover:text-rose-700"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Activar suscripcion
+                </Link>
+              )}
+            </div>
 
-      {/* Anuales */}
-      <section>
-        <h2 className="text-xl sm:text-2xl font-bold text-rose-700 mb-4 flex items-center gap-2">
-          <BadgeCheck className="w-5 h-5 text-rose-600" />
-          Recursos para Suscripción Anual
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {renderCards(recursosAnuales, "anual")}
-        </div>
-      </section>
-
-      {/* Animación para el tooltip */}
-      <style jsx>{`
-        @keyframes fadeIn {
-          0% {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.4s ease;
-        }
-      `}</style>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {renderCards(groupedResources[tier], tier)}
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 }

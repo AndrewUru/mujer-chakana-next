@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type MouseEvent,
-} from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { motion, AnimatePresence } from "framer-motion";
@@ -16,10 +10,11 @@ import Moonboard from "@/components/Moonboard";
 import RecursosList from "@/components/RecursosList";
 import CicloResumen from "@/components/CicloResumen";
 import NuevoRegistro from "@/components/NuevoRegistro";
-import { Flower, Leaf, GalleryThumbnails, Loader2 } from "lucide-react";
+import { Flower, Leaf } from "lucide-react";
 import Link from "next/link";
 import QuickNav from "@/components/QuickNav";
 import { useToast } from "@/components/Toast";
+import ArquetiposPanel from "@/components/ArquetiposPanel";
 
 const LoadingState = ({ message }: { message: string }) => (
   <div className="flex h-screen flex-col items-center justify-center bg-gradient-to-br from-rose-50 via-white to-pink-100">
@@ -227,11 +222,6 @@ export default function DashboardPage() {
     recargarEstadoCiclo();
   }, [fechaInicioCiclo]);
 
-  function handleGoToCiclos(event: MouseEvent<HTMLButtonElement>): void {
-    event.preventDefault();
-    router.push("/ciclo");
-  }
-
   const isSubscriber = Boolean(perfil?.suscripcion_activa);
   const diasTranscurridos = fechaInicioCiclo
     ? Math.floor(
@@ -294,14 +284,8 @@ export default function DashboardPage() {
 
   return (
     <>
-      <main
-        className="relative min-h-screen overflow-hidden bg-cover bg-center text-rose-900"
-        style={{
-          backgroundImage:
-            "url('https://elsaltoweb.es/wp-content/uploads/2025/04/mujer-chakana.png')",
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-white/85 via-white/75 to-rose-100/60 backdrop-blur-3xl" />
+      <main className="relative min-h-screen overflow-hidden text-rose-900 bg-gradient-to-br from-white/85 via-white/75 to-rose-100/60 backdrop-blur-3xl ">
+        <div className="absolute inset-0backdrop-blur-3xl" />
         <motion.div
           initial={{ opacity: 0.3, scale: 0.85 }}
           animate={{ opacity: 0.45, scale: 1 }}
@@ -315,7 +299,7 @@ export default function DashboardPage() {
           className="pointer-events-none absolute -bottom-32 left-0 h-96 w-96 rounded-full bg-rose-100/60 blur-3xl"
         />
 
-        <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-14 px-4 py-10 sm:px-6 lg:px-10">
+        <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-14 px-2 py-5 lg:px-5">
           <motion.section
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -399,7 +383,7 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.15 }}
-                className="overflow-hidden rounded-[32px] border border-rose-100 bg-white/80 p-6 shadow-lg backdrop-blur-xl"
+                className="overflow-hidden rounded-[32px] border border-rose-100 bg-white/80 shadow-lg backdrop-blur-xl"
               >
                 <EstadoActualCiclo data={estadoCiclo} />
               </motion.section>
@@ -412,7 +396,7 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.2 }}
-                className="overflow-hidden rounded-[32px] border border-rose-100/80 bg-white/80 p-6 shadow-lg backdrop-blur-xl"
+                className="overflow-hidden rounded-[32px] border border-rose-100/80 bg-white/80 shadow-lg backdrop-blur-xl"
               >
                 <CicloResumen
                   day={day}
@@ -430,7 +414,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.25 }}
-            className="rounded-[32px] border border-rose-100/70 bg-white/75 p-6 shadow-xl backdrop-blur-xl sm:p-10"
+            className="rounded-[32px] border border-rose-100/70 bg-white/75 shadow-xl backdrop-blur-xl"
           >
             <div className="mb-6 space-y-2 text-center">
               <span className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-100/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-rose-600">
@@ -447,52 +431,12 @@ export default function DashboardPage() {
             <Moonboard />
           </motion.section>
 
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="rounded-[32px] border border-rose-100/80 bg-white/80 p-8 text-center shadow-xl backdrop-blur-xl"
-          >
-            <div className="mx-auto flex max-w-2xl flex-col items-center gap-4">
-              <h2 className="flex items-center justify-center gap-2 text-2xl font-semibold text-rose-900 sm:text-3xl">
-                <GalleryThumbnails className="h-6 w-6 text-rose-500" />
-                Galería de arquetipos
-              </h2>
-              <p className="text-base text-rose-700">
-                Accede a los arquetipos visuales y sus enseñanzas para
-                profundizar cada fase. Las suscriptoras activas disfrutan de
-                contenidos anticipados y ceremonias guiadas.
-              </p>
-              {perfil === null ? (
-                <div className="flex items-center gap-2 text-rose-500">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Cargando perfil...</span>
-                </div>
-              ) : isSubscriber ? (
-                <motion.button
-                  onClick={handleGoToCiclos}
-                  className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-pink-700 px-8 py-3 font-semibold text-white shadow-lg transition hover:shadow-xl"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  aria-label="Ver arquetipos de la galería"
-                >
-                  <GalleryThumbnails className="h-5 w-5" />
-                  Ver arquetipos
-                </motion.button>
-              ) : (
-                <motion.button
-                  onClick={() => router.push("/suscripcion")}
-                  className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-8 py-3 font-semibold text-rose-800 shadow-sm transition hover:bg-rose-100"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  aria-label="Suscribirse para acceder a la galería"
-                >
-                  <GalleryThumbnails className="h-5 w-5" />
-                  Suscríbete para acceder
-                </motion.button>
-              )}
-            </div>
-          </motion.section>
+          <ArquetiposPanel
+            isLoadingProfile={perfil === null}
+            isSubscriber={isSubscriber}
+            onNavigateToArquetipos={() => router.push("/ciclo")}
+            onNavigateToSuscripcion={() => router.push("/suscripcion")}
+          />
 
           <AnimatePresence>
             {userId && estadoCiclo && fechaInicioCiclo && (
@@ -500,7 +444,7 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.35 }}
-                className="overflow-hidden rounded-[32px] border border-rose-100/80 bg-white/80 p-6 shadow-xl backdrop-blur-xl"
+                className="overflow-hidden rounded-[32px] border border-rose-100/80 bg-white/80 shadow-xl backdrop-blur-xl"
               >
                 <NuevoRegistro
                   userId={userId}
@@ -522,7 +466,7 @@ export default function DashboardPage() {
             <div className="pointer-events-none absolute -right-12 top-10 h-48 w-48 rounded-full bg-rose-200/40 blur-3xl" />
             <div className="pointer-events-none absolute -bottom-12 left-10 h-56 w-56 rounded-full bg-pink-200/40 blur-3xl" />
 
-            <div className="relative z-10 p-6 sm:p-10 lg:p-12">
+            <div className="relative z-10 sm:p-10 lg:p-12">
               <div className="mb-10 text-center">
                 <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-rose-100/80 px-4 py-2 text-sm font-medium text-rose-700 shadow-sm">
                   <span className="h-2 w-2 animate-pulse rounded-full bg-rose-400"></span>
@@ -575,7 +519,7 @@ export default function DashboardPage() {
                 </motion.div>
               </div>
 
-              <div className="relative rounded-3xl border border-rose-100/80 bg-white/65 p-6 shadow-2xl backdrop-blur-lg sm:p-8">
+              <div className="relative rounded-3xl border border-rose-100/80 bg-white/65 shadow-2xl backdrop-blur-lg sm:p-8">
                 <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-rose-200 to-pink-200 text-2xl shadow-lg">
                     🌗
