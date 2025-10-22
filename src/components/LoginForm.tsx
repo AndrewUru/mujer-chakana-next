@@ -69,10 +69,10 @@ export default function LoginForm() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    setTouched((prev) => ({
+    setTouched({
       email: true,
       password: true,
-    }));
+    });
 
     if (
       !emailPattern.test(form.email.trim()) ||
