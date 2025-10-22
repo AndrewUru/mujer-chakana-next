@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import * as lune from "lune";
 import { createClient } from "@supabase/supabase-js";
+import { X, Sparkles, CalendarDays, MoonStar } from "lucide-react";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -25,18 +26,51 @@ interface LunarModalProps {
   onClose: () => void;
 }
 
+const fallbackPhase: FaseLunarDB = {
+  nombre_fase: "Fase desconocida",
+  simbolo: "·",
+  color: "gray",
+  rango_inicio: 0,
+  rango_fin: 0,
+  imagen_url: "",
+  mensaje: "No encontramos informacion para este dia lunar.",
+};
+
+const colorMap = {
+  gray: {
+    border: "border-slate-400/50",
+    gradient: "from-slate-900/90 via-slate-900/75 to-slate-900/60",
+    badge: "bg-slate-100/10 border border-slate-200/30 text-slate-100",
+  },
+  emerald: {
+    border: "border-emerald-300/40",
+    gradient: "from-emerald-950/90 via-emerald-900/75 to-teal-900/60",
+    badge: "bg-emerald-100/15 border border-emerald-200/40 text-emerald-100",
+  },
+  yellow: {
+    border: "border-amber-300/45",
+    gradient: "from-amber-950/90 via-amber-900/75 to-orange-900/60",
+    badge: "bg-amber-100/15 border border-amber-200/40 text-amber-100",
+  },
+  purple: {
+    border: "border-violet-300/45",
+    gradient: "from-indigo-950/90 via-violet-900/75 to-purple-900/60",
+    badge: "bg-violet-100/15 border border-violet-200/40 text-violet-100",
+  },
+} as const;
+
 export default function LunarModal({ fecha, onClose }: LunarModalProps) {
   const [fase, setFase] = useState<FaseLunarDB | null>(null);
   const [closing, setClosing] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Genera estrellas solo una vez por apertura del modal
   const stars = useMemo(
     () =>
-      [...Array(26)].map(() => ({
+      Array.from({ length: 32 }, () => ({
         top: Math.random() * 100,
         left: Math.random() * 100,
         size: Math.random() * 1.6 + 0.4,
-        opacity: 10 + Math.floor(Math.random() * 30),
+        opacity: 0.5 + Math.random() * 0.5,
         delay: Math.random() * 3,
       })),
     []
@@ -44,28 +78,25 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
 
   useEffect(() => {
     const fetchFase = async () => {
+      setLoading(true);
       const { phase } = lune.phase(fecha);
       const age = phase * 29.53;
 
       const { data, error } = await supabase.from("fases_lunares").select("*");
       if (error || !data) {
         console.error("Error al cargar fases lunares:", error);
+        setFase(fallbackPhase);
+        setLoading(false);
         return;
       }
 
-      const match = data.find(
-        (f: FaseLunarDB) => age >= f.rango_inicio && age <= f.rango_fin
-      );
+      const match =
+        data.find(
+          (f: FaseLunarDB) => age >= f.rango_inicio && age <= f.rango_fin
+        ) ?? fallbackPhase;
 
-      setFase(
-        match || {
-          nombre_fase: "Desconocida",
-          simbolo: "❓",
-          color: "gray",
-          imagen_url: "",
-          mensaje: "No hay datos para esta fase.",
-        }
-      );
+      setFase(match);
+      setLoading(false);
     };
 
     fetchFase();
@@ -73,130 +104,175 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
 
   const handleClose = () => {
     setClosing(true);
-    setTimeout(onClose, 300);
+    setTimeout(onClose, 260);
   };
+
+  const styles = fase ? colorMap[fase.color] ?? colorMap.gray : colorMap.gray;
 
   return (
     <div
-      className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-2xl flex items-center justify-center transition-all duration-300 ${
-        closing
-          ? "opacity-0 scale-95 pointer-events-none"
-          : "opacity-100 scale-100"
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-2xl transition-all duration-300 ${
+        closing ? "opacity-0 scale-95" : "opacity-100 scale-100"
       }`}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="lunar-modal-title"
+      aria-live="polite"
     >
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70" />
+
       {fase && (
         <div
-          className="relative  mx-4 rounded-3xl overflow-hidden shadow-2xl ring-2 ring-blue-400/30 backdrop-blur-md border border-white/10"
-          style={{
-            boxShadow:
-              "0 0 40px 8px rgba(103, 232, 249, 0.3), 0 4px 40px rgba(60, 60, 100, 0.3)",
-          }}
+          className={`relative mx-4 w-full max-w-3xl overflow-hidden rounded-[36px] border ${styles.border} bg-gradient-to-br ${styles.gradient} shadow-[0_25px_80px_rgba(8,47,73,0.45)]`}
         >
-          {/* Fondo Glassmorphism nocturno */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-blue-950/60 to-slate-900/60 backdrop-blur-2xl z-10" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12)_0%,_transparent_65%)]" />
 
-          {/* Estrellas animadas, posición estable */}
-          <div className="absolute inset-0 z-20 pointer-events-none">
-            {stars.map((s, i) => (
+          <button
+            type="button"
+            onClick={handleClose}
+            className="absolute right-5 top-5 z-30 flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white shadow-lg transition hover:scale-105 hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200/70"
+            aria-label="Cerrar modal lunar"
+          >
+            <X className="h-5 w-5" />
+          </button>
+
+          <div className="absolute inset-0 z-10 pointer-events-none">
+            {stars.map((star, index) => (
               <span
-                key={i}
-                className="absolute rounded-full bg-white animate-twinkle"
+                key={index}
+                className="absolute rounded-full bg-white/90 animate-lunar-twinkle"
                 style={{
-                  top: `${s.top}%`,
-                  left: `${s.left}%`,
-                  width: `${s.size}px`,
-                  height: `${s.size}px`,
-                  opacity: s.opacity,
-                  animationDelay: `${s.delay}s`,
+                  top: `${star.top}%`,
+                  left: `${star.left}%`,
+                  width: `${star.size}px`,
+                  height: `${star.size}px`,
+                  opacity: star.opacity,
+                  animationDelay: `${star.delay}s`,
                 }}
               />
             ))}
           </div>
 
-          {/* Contenido lunar */}
-          <div className="relative z-30 flex flex-col justify-center items-center not-[]:h-auto px-4 py-2 space-y-5 text-center overflow-y-auto">
-            {/* Animación luna con imagen, responsive */}
-            <div className="animate-slide flex items-center justify-center">
-              {fase.imagen_url ? (
-                <Image
-                  src={fase.imagen_url}
-                  alt={fase.nombre_fase}
-                  width={140}
-                  height={140}
-                  className="w-25 h-25 sm:w-50 sm:h-50 object-contain drop-shadow-[0_0_22px_#f9fafbcc] shadow-lg"
-                  style={{
-                    filter:
-                      "drop-shadow(0 0 22px #f9fafb99) drop-shadow(0 0 16px #38bdf8cc)",
-                  }}
-                  loading="lazy"
-                  unoptimized
-                />
-              ) : (
-                <div className="w-32 h-32 flex items-center justify-center bg-slate-700/30 rounded-full">
-                  <span className="text-4xl">🌑</span>
+          <div className="relative z-20 grid gap-10 p-8 text-white sm:p-12 lg:grid-cols-[0.9fr_1.1fr]">
+            <div className="space-y-6 text-center lg:text-left">
+              <div className="mx-auto flex h-44 w-44 items-center justify-center rounded-full border border-white/15 bg-white/10 shadow-inner shadow-sky-300/20 backdrop-blur">
+                {loading ? (
+                  <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-white/60" />
+                ) : fase.imagen_url ? (
+                  <Image
+                    src={fase.imagen_url}
+                    alt={fase.nombre_fase}
+                    width={176}
+                    height={176}
+                    className="h-44 w-44 rounded-full object-contain"
+                    priority
+                  />
+                ) : (
+                  <MoonStar className="h-12 w-12 text-white/70" />
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <span
+                  className={`mx-auto flex w-max items-center gap-2 rounded-full px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${styles.badge}`}
+                >
+                  Fase lunar
+                </span>
+                <h1
+                  id="lunar-modal-title"
+                  className="text-3xl font-bold leading-tight sm:text-4xl"
+                >
+                  {fase.nombre_fase}
+                </h1>
+                <p className="text-sm text-white/70 sm:text-base">
+                  Dia seleccionado:{" "}
+                  {fecha.toLocaleDateString("es-ES", {
+                    weekday: "long",
+                    day: "2-digit",
+                    month: "long",
+                  })}
+                </p>
+              </div>
+
+              {fase.mensaje && (
+                <div className="rounded-3xl border border-white/15 bg-white/5 p-5 text-sm text-white/80 backdrop-blur sm:text-base">
+                  <Sparkles className="mb-3 h-5 w-5 text-white/70" />
+                  <p className="whitespace-pre-line leading-relaxed">
+                    {fase.mensaje}
+                  </p>
                 </div>
               )}
             </div>
 
-            <h2
-              className="text-3xl sm:text-4xl font-bold tracking-wide text-white drop-shadow-lg mb-1"
-              style={{
-                textShadow:
-                  "0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(56, 189, 248, 0.5)",
-              }}
-            >
-              {fase.nombre_fase}
-            </h2>
+            <div className="space-y-6">
+              <div className="grid gap-4 rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-white/75 backdrop-blur">
+                <div className="flex items-center gap-3">
+                  <CalendarDays className="h-5 w-5 text-white/70" />
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.3em] text-white/60">
+                      Rango de edad lunar
+                    </p>
+                    <p className="text-base font-semibold text-white">
+                      Dia {Math.floor(fase.rango_inicio)} a dia{" "}
+                      {Math.ceil(fase.rango_fin)}
+                    </p>
+                  </div>
+                </div>
+                <p className="text-sm leading-relaxed">
+                  Esta fase despierta cualidades asociadas al arquetipo de la luna
+                  en tu mandala ciclico. Escucha que sensaciones emergen y como dialogan
+                  con tu ciclo actual.
+                </p>
+              </div>
 
-            {fase.mensaje && (
-              <p className="text-lg sm:text-xl font-medium italic text-sky-100/90 max-w-xl mx-auto drop-shadow">
-                {fase.mensaje}
-              </p>
-            )}
+              <div className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+                <h2 className="text-base font-semibold text-white">
+                  Como integrar esta fase?
+                </h2>
+                <ul className="space-y-3 text-sm text-white/75">
+                  <li className="flex gap-3">
+                    <Sparkles className="mt-1 h-4 w-4 text-white/60" />
+                    Permite que tus emociones tengan un cauce creativo: escribir,
+                    dibujar o grabar una nota de voz puede ayudarte a escuchar lo
+                    que sientes.
+                  </li>
+                  <li className="flex gap-3">
+                    <Sparkles className="mt-1 h-4 w-4 text-white/60" />
+                    Observa como tu energia fisica responde a esta fase lunar y toma
+                    decisiones suaves sobre descanso o movimiento.
+                  </li>
+                  <li className="flex gap-3">
+                    <Sparkles className="mt-1 h-4 w-4 text-white/60" />
+                    Registra en el moonboard lo que descubras para reconocer patrones
+                    en futuras vueltas.
+                  </li>
+                </ul>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleClose}
+                className="w-full rounded-2xl border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:border-white/40 hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+              >
+                Volver al moonboard
+              </button>
+            </div>
           </div>
-
-          {/* Botón cerrar */}
-          <button
-            onClick={handleClose}
-            className="absolute top-5 right-5 z-50 flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600/80 via-sky-400/60 to-blue-500/80 hover:scale-105 shadow-xl border border-white/10 transition-all hover:from-rose-600 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-sky-200/60"
-            aria-label="Cerrar modal"
-            style={{
-              boxShadow: "0 0 16px 2px #7dd3fc, 0 0 6px 1px #fff2",
-              color: "#fff",
-            }}
-          >
-            <span className="text-2xl font-bold">×</span>
-          </button>
         </div>
       )}
 
-      {/* Animaciones CSS extra */}
       <style jsx global>{`
-        @keyframes slide {
-          0% {
-            transform: translateX(-10vw);
-          }
-          50% {
-            transform: translateX(10vw);
-          }
-          100% {
-            transform: translateX(-10vw);
-          }
-        }
-        .animate-slide {
-          animation: slide 65s ease-in-out infinite;
-        }
-        @keyframes twinkle {
+        @keyframes lunar-twinkle {
           0%,
           100% {
-            opacity: 0.8;
+            opacity: 0.9;
           }
           50% {
             opacity: 0.2;
           }
         }
-        .animate-twinkle {
-          animation: twinkle 2.7s infinite;
+        .animate-lunar-twinkle {
+          animation: lunar-twinkle 3.2s ease-in-out infinite alternate;
         }
       `}</style>
     </div>
