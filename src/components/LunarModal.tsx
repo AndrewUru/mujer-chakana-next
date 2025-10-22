@@ -111,7 +111,7 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-2xl transition-all duration-300 ${
+      className={`fixed inset-0 z-90 flex items-center justify-center bg-black/70 backdrop-blur-2xl transition-all duration-300 ${
         closing ? "opacity-0 scale-95" : "opacity-100 scale-100"
       }`}
       role="dialog"
@@ -219,9 +219,9 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
                   </div>
                 </div>
                 <p className="text-sm leading-relaxed">
-                  Esta fase despierta cualidades asociadas al arquetipo de la luna
-                  en tu mandala ciclico. Escucha que sensaciones emergen y como dialogan
-                  con tu ciclo actual.
+                  Esta fase despierta cualidades asociadas al arquetipo de la
+                  luna en tu mandala ciclico. Escucha que sensaciones emergen y
+                  como dialogan con tu ciclo actual.
                 </p>
               </div>
 
@@ -232,19 +232,19 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
                 <ul className="space-y-3 text-sm text-white/75">
                   <li className="flex gap-3">
                     <Sparkles className="mt-1 h-4 w-4 text-white/60" />
-                    Permite que tus emociones tengan un cauce creativo: escribir,
-                    dibujar o grabar una nota de voz puede ayudarte a escuchar lo
-                    que sientes.
+                    Permite que tus emociones tengan un cauce creativo:
+                    escribir, dibujar o grabar una nota de voz puede ayudarte a
+                    escuchar lo que sientes.
                   </li>
                   <li className="flex gap-3">
                     <Sparkles className="mt-1 h-4 w-4 text-white/60" />
-                    Observa como tu energia fisica responde a esta fase lunar y toma
-                    decisiones suaves sobre descanso o movimiento.
+                    Observa como tu energia fisica responde a esta fase lunar y
+                    toma decisiones suaves sobre descanso o movimiento.
                   </li>
                   <li className="flex gap-3">
                     <Sparkles className="mt-1 h-4 w-4 text-white/60" />
-                    Registra en el moonboard lo que descubras para reconocer patrones
-                    en futuras vueltas.
+                    Registra en el moonboard lo que descubras para reconocer
+                    patrones en futuras vueltas.
                   </li>
                 </ul>
               </div>
