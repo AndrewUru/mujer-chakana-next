@@ -107,7 +107,7 @@ export default function HomePage() {
   }, [router, supabase]);
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[url('/bg-chakana.png')] bg-cover bg-center text-pink-900">
+    <main className="relative min-h-screen overflow-hidden bg-[url('/mujer-chakana.webp')] bg-cover bg-center text-pink-900">
       <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/70 to-rose-100/60 backdrop-blur-3xl" />
       <motion.div
         initial={{ opacity: 0.3, scale: 0.9 }}
@@ -197,15 +197,16 @@ export default function HomePage() {
               transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
               className="relative flex items-center justify-center"
             >
-              <div className="relative h-64 w-full max-w-sm overflow-hidden rounded-[28px] border border-rose-100 bg-gradient-to-br from-white/80 via-rose-50/70 to-rose-100/60 shadow-xl backdrop-blur-xl sm:h-72">
+              <div className="relative h-94 w-full max-w-sm overflow-hidden rounded-[28px] border border-rose-100 bg-gradient-to-br from-white/80 via-rose-50/70 to-rose-100/60 shadow-xl backdrop-blur-xl sm:h-72">
                 <Image
-                  src="/logo_chakana.png"
+                  src="/mujer-chakana.webp"
                   alt="Logo Mujer Chakana"
                   fill
                   priority
-                  className="object-contain p-8 transition duration-500 hover:scale-105"
+                  className="object-cover object-top scale-110 transition-transform duration-500 hover:scale-115"
                 />
               </div>
+
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 0.6, scale: 1 }}
@@ -241,8 +242,8 @@ export default function HomePage() {
               </p>
               <p className="text-base leading-relaxed text-rose-800">
                 Digitalizamos este recorrido sagrado para que habites cada fase
-                a tu ritmo, con amor y conciencia, integrando saberes ancestrales
-                a tu día a día.
+                a tu ritmo, con amor y conciencia, integrando saberes
+                ancestrales a tu día a día.
               </p>
               <motion.blockquote
                 initial={{ opacity: 0, y: 20 }}
@@ -333,16 +334,16 @@ export default function HomePage() {
                 ¿Por qué ofrecemos una suscripción?
               </h2>
               <p className="text-base leading-relaxed text-rose-800">
-                Ginergética es un espacio de conexión con la sabiduría cíclica
-                y ancestral. Mantenemos funciones esenciales como el{" "}
+                Ginergética es un espacio de conexión con la sabiduría cíclica y
+                ancestral. Mantenemos funciones esenciales como el{" "}
                 <strong>moonboard</strong> y los{" "}
                 <strong>registros personales</strong> totalmente gratuitos, para
                 que cualquier mujer pueda iniciar su camino de autoconocimiento
                 sin barreras.
               </p>
               <p className="text-base leading-relaxed text-rose-800">
-                Sostener y hacer crecer esta plataforma implica dedicación,
-                amor y recursos. Por eso, creamos una suscripción accesible de{" "}
+                Sostener y hacer crecer esta plataforma implica dedicación, amor
+                y recursos. Por eso, creamos una suscripción accesible de{" "}
                 <strong>2,99 €/mes</strong> que permite cubrir los costos
                 técnicos y continuar tejiendo nuevas herramientas, contenidos y
                 mejoras.
