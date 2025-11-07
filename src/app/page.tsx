@@ -132,7 +132,7 @@ export default function HomePage() {
           >
             <div>
               <span className="text-xs font-semibold uppercase tracking-[0.35em] text-rose-500">
-                Mujer Chakana
+                Ginergética
               </span>
               <p className="text-lg font-semibold text-rose-900 sm:text-xl">
                 Sabiduría en cada fase de tu ciclo

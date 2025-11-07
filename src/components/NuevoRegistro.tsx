@@ -1,10 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { AnimatePresence, motion } from "framer-motion";
 import { useToast } from "./Toast";
-import { Heart, Sparkles, Palette, Zap, Send, CheckCircle } from "lucide-react";
+import {
+  Heart,
+  Sparkles,
+  Palette,
+  Zap,
+  Send,
+  CheckCircle,
+  CalendarDays,
+  Moon,
+  Feather,
+  Star,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 interface SliderConfig {
   id: string;
@@ -12,8 +24,19 @@ interface SliderConfig {
   label: string;
   value: number;
   setter: (value: number) => void;
-  icon: React.ReactNode;
+  icon: LucideIcon;
 }
+
+const FEELING_SUGGESTIONS = [
+  { label: "Serena", emoji: "🌿" },
+  { label: "Agradecida", emoji: "🤍" },
+  { label: "Creativa", emoji: "🎨" },
+  { label: "Intensa", emoji: "🔥" },
+  { label: "Introspectiva", emoji: "🌙" },
+  { label: "Radiante", emoji: "✨" },
+] as const;
+
+const NOTES_LIMIT = 320;
 
 export default function NuevoRegistro({
   userId,
@@ -38,6 +61,73 @@ export default function NuevoRegistro({
   const [success, setSuccess] = useState(false);
   const { addToast } = useToast();
 
+  const todayInfo = useMemo(() => {
+    const now = new Date();
+    return {
+      date: now.toLocaleDateString("es-ES", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+      }),
+      time: now.toLocaleTimeString("es-ES", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
+  }, []);
+
+  const handleSuggestionClick = (feeling: string) => {
+    setEmociones((prev) => {
+      if (!prev.trim()) {
+        return feeling;
+      }
+
+      if (prev.toLowerCase().includes(feeling.toLowerCase())) {
+        return prev;
+      }
+
+      return `${prev.trim()} · ${feeling}`;
+    });
+  };
+
+  const describeSlider = (label: string, value: number) => {
+    if (value <= 2) {
+      return `${label} en modo semilla, escucha tu descanso.`;
+    }
+    if (value === 3) {
+      return `${label} equilibrada, sostén el ritmo con suavidad.`;
+    }
+    if (value === 4) {
+      return `${label} despierta y creativa hoy.`;
+    }
+    return `${label} expansiva, aprovéchala con intención.`;
+  };
+
+  const promedioVital = Math.round(
+    (energia + creatividad + espiritualidad) / 3
+  );
+
+  const vitalStatus = useMemo(() => {
+    if (promedioVital <= 2) {
+      return {
+        title: "Modo semilla",
+        description: "Invita el silencio y prioriza el autocuidado suave.",
+      };
+    }
+    if (promedioVital === 3) {
+      return {
+        title: "Punto de equilibrio",
+        description: "Escucha tu cuerpo y sostén un ritmo amable.",
+      };
+    }
+    return {
+      title: "Expansión creativa",
+      description: "Tu energía está disponible. Canalízala con presencia.",
+    };
+  }, [promedioVital]);
+
+  const remainingNotes = Math.max(0, NOTES_LIMIT - notas.length);
+
   const sliderConfigs: SliderConfig[] = [
     {
       id: "energia",
@@ -45,7 +135,7 @@ export default function NuevoRegistro({
       label: "Energía",
       value: energia,
       setter: setEnergia,
-      icon: <Zap className="w-5 h-5" />,
+      icon: Zap,
     },
     {
       id: "creatividad",
@@ -53,7 +143,7 @@ export default function NuevoRegistro({
       label: "Creatividad",
       value: creatividad,
       setter: setCreatividad,
-      icon: <Palette className="w-5 h-5" />,
+      icon: Palette,
     },
     {
       id: "espiritualidad",
@@ -61,7 +151,7 @@ export default function NuevoRegistro({
       label: "Espiritualidad",
       value: espiritualidad,
       setter: setEspiritualidad,
-      icon: <Sparkles className="w-5 h-5" />,
+      icon: Sparkles,
     },
   ];
 
@@ -150,115 +240,281 @@ export default function NuevoRegistro({
   };
 
   const getSliderColor = (value: number) => {
-    if (value <= 2) return "from-red-400 to-red-600";
-    if (value <= 3) return "from-yellow-400 to-yellow-600";
-    if (value <= 4) return "from-blue-400 to-blue-600";
-    return "from-green-400 to-green-600";
+    if (value <= 2)
+      return "linear-gradient(90deg,#fecdd3 0%,#fb7185 100%)";
+    if (value <= 3)
+      return "linear-gradient(90deg,#fde68a 0%,#fbbf24 100%)";
+    if (value <= 4)
+      return "linear-gradient(90deg,#bae6fd 0%,#38bdf8 100%)";
+    return "linear-gradient(90deg,#bbf7d0 0%,#34d399 100%)";
   };
 
   return (
     <motion.div
-      className="bg-white/90 border border-rose-200 rounded-3xl p-8 shadow-2xl mx-auto space-y-8 relative transition-all duration-500"
+      className="relative overflow-hidden bg-white/95 border border-rose-200 rounded-3xl p-6 sm:p-8 shadow-2xl mx-auto transition-all duration-500"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      {/* Header con animación */}
+      <div
+        className="pointer-events-none absolute -top-16 -right-10 h-48 w-48 rounded-full bg-pink-200/60 blur-3xl"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -bottom-12 -left-12 h-40 w-40 rounded-full bg-rose-100/70 blur-3xl"
+        aria-hidden="true"
+      />
+      <div className="relative z-10 space-y-8">
+        {/* Header con animación */}
       <motion.div
-        className="text-center"
+        className="text-center space-y-2"
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-rose-700 drop-shadow-sm mb-2">
-          🌸 Registra tu día y recibe una reflexión GRATIS!
+        <p className="text-xs uppercase tracking-[0.3em] text-rose-500">
+          Hola, {nombre}
+        </p>
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-rose-700 drop-shadow-sm">
+          🌸 Registra tu día y recibe una reflexión gratis
         </h2>
         <p className="text-rose-600 text-sm">
-          Día {dia_ciclo} del ciclo • Arquetipo: {arquetipo}
+          Día {dia_ciclo} del ciclo · Hoy es {todayInfo.date}
         </p>
+      </motion.div>
+
+      {/* Contexto del día */}
+      <motion.div
+        className="grid gap-4 md:grid-cols-2"
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25, duration: 0.5 }}
+      >
+        <div className="rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 p-5 text-white shadow-lg">
+          <div className="flex items-center gap-3">
+            <CalendarDays className="h-9 w-9 rounded-2xl bg-white/20 p-2" />
+            <div>
+              <p className="text-sm uppercase tracking-[0.2em] opacity-80">
+                Ritmo presente
+              </p>
+              <p className="text-lg font-semibold capitalize">{todayInfo.date}</p>
+              <span className="text-sm opacity-80">{todayInfo.time} h</span>
+            </div>
+          </div>
+          <p className="mt-4 text-sm leading-relaxed">
+            Observa las señales del arquetipo <strong>{arquetipo}</strong> y deja
+            que tu registro guíe el siguiente paso.
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-rose-100 bg-white/80 p-5 shadow-inner">
+          <div className="flex flex-wrap gap-2 text-xs font-semibold text-rose-600">
+            <span className="rounded-full bg-rose-50 px-3 py-1">
+              Día #{dia_ciclo} del ciclo
+            </span>
+            <span className="rounded-full bg-rose-50 px-3 py-1">
+              Vuelta #{ciclo_actual}
+            </span>
+            <span className="rounded-full bg-rose-50 px-3 py-1 flex items-center gap-1">
+              <Moon className="h-3.5 w-3.5" />
+              {arquetipo}
+            </span>
+          </div>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-rose-400">
+                Clima vital
+              </p>
+              <p className="text-3xl font-black text-rose-700">
+                {promedioVital}/5
+              </p>
+              <p className="text-sm text-rose-500">{vitalStatus.title}</p>
+            </div>
+            <div className="flex items-center gap-3 rounded-2xl border border-rose-100 bg-rose-50/80 px-4 py-3 text-rose-600">
+              <Feather className="h-5 w-5" />
+              <div>
+                <p className="text-xs uppercase tracking-[0.25em] text-rose-400">
+                  Intención
+                </p>
+                <p className="font-semibold text-rose-700">
+                  Manténte presente y gentil
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </motion.div>
 
       {/* Campo emociones mejorado */}
       <motion.div
-        className="space-y-3"
+        className="space-y-4"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.3, duration: 0.5 }}
       >
         <label
           htmlFor="emociones"
-          className="block text-rose-700 font-semibold items-center gap-2"
+          className="flex flex-col gap-1 text-rose-700 font-semibold"
         >
-          <Heart className="w-5 h-5 text-pink-500" />
-          ¿Qué emociones florecen hoy?
+          <span className="flex items-center gap-2">
+            <Heart className="w-5 h-5 text-pink-500" />
+            ¿Qué emociones florecen hoy?
+          </span>
+          <span className="text-sm font-normal text-rose-500">
+            Escribe un par de líneas o combina las sugerencias rápidas.
+          </span>
         </label>
-        <input
+        <textarea
           id="emociones"
-          type="text"
-          placeholder="Escribe tus emociones..."
+          placeholder="Ej. Me siento expansiva pero un poco cansada..."
           value={emociones}
           onChange={(e) => setEmociones(e.target.value)}
-          className="w-full p-4 rounded-xl border border-rose-300 focus:ring-2 focus:ring-rose-400 focus:outline-none placeholder:text-gray-500 bg-white shadow-inner transition duration-300 hover:border-rose-400"
+          className="w-full min-h-[120px] p-4 rounded-xl border border-rose-300 focus:ring-2 focus:ring-rose-400 focus:outline-none placeholder:text-gray-500 bg-white shadow-inner transition duration-300 hover:border-rose-400 resize-none"
           aria-describedby="emociones-help"
           required
         />
+        <div className="flex flex-wrap gap-2" role="list">
+          {FEELING_SUGGESTIONS.map((feeling) => {
+            const isActive = emociones
+              .toLowerCase()
+              .includes(feeling.label.toLowerCase());
+            return (
+              <button
+                key={feeling.label}
+                type="button"
+                onClick={() => handleSuggestionClick(feeling.label)}
+                className={`rounded-full border px-3 py-1.5 text-sm transition-all ${
+                  isActive
+                    ? "border-rose-400 bg-rose-100 text-rose-700"
+                    : "border-rose-200 bg-white text-rose-500 hover:border-rose-400"
+                }`}
+                aria-pressed={isActive}
+              >
+                <span className="mr-1">{feeling.emoji}</span>
+                {feeling.label}
+              </button>
+            );
+          })}
+        </div>
         <p id="emociones-help" className="text-sm text-rose-600">
-          Describe cómo te sientes emocionalmente hoy
+          Describe cómo te sientes emocionalmente hoy y suma palabras clave con
+          los chips.
         </p>
       </motion.div>
 
       {/* Sliders mejorados */}
       <motion.div
-        className="flex flex-col gap-6"
+        className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.4, duration: 0.5 }}
       >
-        {sliderConfigs.map((item, index) => (
-          <motion.div
-            key={item.id}
-            className="space-y-3"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
-          >
-            <label
-              htmlFor={`slider-${item.id}`}
-              className="text-lg font-semibold flex gap-2 items-center text-rose-700"
-            >
-              <span className="text-2xl">{item.emoji}</span>
-              {item.icon}
-              {item.label}:{" "}
-              <span className="ml-2 font-bold text-lg">{item.value}</span>
-            </label>
+        <div className="flex flex-col gap-6">
+          {sliderConfigs.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <motion.div
+                key={item.id}
+                className="space-y-3 rounded-2xl border border-rose-100 bg-white/70 p-4 shadow-sm"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
+              >
+                <label
+                  id={`label-${item.id}`}
+                  htmlFor={`slider-${item.id}`}
+                  className="text-lg font-semibold flex flex-wrap gap-2 items-center text-rose-700"
+                >
+                  <span className="text-2xl">{item.emoji}</span>
+                  <span className="rounded-xl bg-rose-50 p-2 text-rose-500">
+                    <Icon className="w-5 h-5" />
+                  </span>
+                  {item.label}
+                  <span className="ml-auto text-base font-bold">
+                    {item.value}/5
+                  </span>
+                </label>
 
-            <div className="relative">
-              <input
-                id={`slider-${item.id}`}
-                type="range"
-                min="1"
-                max="5"
-                value={item.value}
-                onChange={(e) => item.setter(Number(e.target.value))}
-                className="w-full h-3 rounded-full bg-rose-200 cursor-pointer transition-all duration-200 appearance-none"
-                style={{
-                  background: `linear-gradient(to right, ${getSliderColor(
-                    item.value
-                  )})`,
-                }}
-                aria-describedby={`${item.id}-help`}
-              />
-              <div className="flex justify-between text-xs text-rose-600 mt-1">
-                <span>Bajo</span>
-                <span>Alto</span>
-              </div>
+                <div className="relative">
+                  <input
+                    id={`slider-${item.id}`}
+                    type="range"
+                    min="1"
+                    max="5"
+                    value={item.value}
+                    onChange={(e) => item.setter(Number(e.target.value))}
+                    className="w-full h-3 rounded-full bg-rose-100 cursor-pointer transition-all duration-200 appearance-none"
+                    style={{
+                      background: getSliderColor(item.value),
+                    }}
+                    aria-labelledby={`label-${item.id}`}
+                    aria-describedby={`${item.id}-help`}
+                    aria-valuemin={1}
+                    aria-valuemax={5}
+                    aria-valuenow={item.value}
+                  />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/90 px-2 py-0.5 text-xs text-rose-600 shadow">
+                    Nivel {item.value}
+                  </div>
+                  <div className="flex justify-between text-xs text-rose-600 mt-2">
+                    <span>Bajo</span>
+                    <span>Alto</span>
+                  </div>
+                </div>
+
+                <p id={`${item.id}-help`} className="text-sm text-rose-500">
+                  {describeSlider(item.label, item.value)}
+                </p>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        <motion.div
+          className="rounded-3xl border border-rose-100 bg-gradient-to-br from-rose-50 to-pink-50 p-5 shadow-xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+        >
+          <div className="flex items-center gap-3">
+            <Star className="h-10 w-10 rounded-2xl bg-white text-rose-500 p-2 shadow" />
+            <div>
+              <p className="text-xs uppercase tracking-[0.4em] text-rose-400">
+                Clima interno
+              </p>
+              <p className="text-3xl font-black text-rose-700">
+                {promedioVital}/5
+              </p>
             </div>
-
-            <p id={`${item.id}-help`} className="text-sm text-rose-600">
-              Evalúa tu nivel de {item.label.toLowerCase()} hoy
-            </p>
-          </motion.div>
-        ))}
+          </div>
+          <p className="mt-3 text-sm text-rose-600">{vitalStatus.description}</p>
+          <div className="mt-4 space-y-3">
+            {sliderConfigs.map((item) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={`insight-${item.id}`}
+                  className="flex items-start gap-3 rounded-2xl bg-white/80 p-3"
+                >
+                  <span className="rounded-xl bg-rose-100 p-2 text-rose-500">
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-rose-700">
+                      {item.label}
+                    </p>
+                    <p className="text-xs text-rose-500">
+                      {describeSlider(item.label, item.value)}
+                    </p>
+                  </div>
+                  <span className="text-sm font-semibold text-rose-600">
+                    {item.value}/5
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </motion.div>
       </motion.div>
 
       {/* Notas mejoradas */}
@@ -270,23 +526,35 @@ export default function NuevoRegistro({
       >
         <label
           htmlFor="notas"
-          className="block text-rose-700 font-semibold items-center gap-2"
+          className="flex flex-col gap-1 text-rose-700 font-semibold"
         >
-          <Sparkles className="w-5 h-5 text-pink-500" />
-          Intuiciones, palabras clave, sueños, señales...
+          <span className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-pink-500" />
+            Intuiciones, palabras clave, sueños, señales...
+          </span>
+          <span className="text-sm font-normal text-rose-500">
+            Describe símbolos, mensajes del cuerpo o detalles que quieras
+            recordar.
+          </span>
         </label>
         <textarea
           id="notas"
-          placeholder="Escribe tus notas..."
+          placeholder="Ej. Soñé con agua, sentí el cuerpo pesado pero creativo..."
           value={notas}
           onChange={(e) => setNotas(e.target.value)}
           className="w-full p-4 rounded-xl border border-rose-300 focus:ring-2 focus:ring-rose-400 focus:outline-none resize-none placeholder:text-gray-500 bg-white shadow-inner transition duration-300 hover:border-rose-400"
           rows={4}
           aria-describedby="notas-help"
+          maxLength={NOTES_LIMIT}
         />
-        <p id="notas-help" className="text-sm text-rose-600">
-          Opcional: Registra cualquier intuición o señal especial
-        </p>
+        <div className="flex items-center justify-between text-xs text-rose-500">
+          <p id="notas-help">
+            Opcional: Registra cualquier intuición o señal especial
+          </p>
+          <span>
+            {remainingNotes}/{NOTES_LIMIT} caracteres
+          </span>
+        </div>
       </motion.div>
 
       {/* Botón mejorado */}
@@ -373,6 +641,7 @@ export default function NuevoRegistro({
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
       `}</style>
+      </div>
     </motion.div>
   );
 }
