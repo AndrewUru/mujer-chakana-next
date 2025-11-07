@@ -15,26 +15,32 @@ import {
   Moon,
   Feather,
   Star,
+  Flower2,
+  MoonStar,
+  Leaf,
+  HeartHandshake,
+  Flame,
+  Sun,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 interface SliderConfig {
   id: string;
-  emoji: string;
   label: string;
   value: number;
   setter: (value: number) => void;
   icon: LucideIcon;
 }
 
-const FEELING_SUGGESTIONS = [
-  { label: "Serena", emoji: "🌿" },
-  { label: "Agradecida", emoji: "🤍" },
-  { label: "Creativa", emoji: "🎨" },
-  { label: "Intensa", emoji: "🔥" },
-  { label: "Introspectiva", emoji: "🌙" },
-  { label: "Radiante", emoji: "✨" },
-] as const;
+const FEELING_SUGGESTIONS: ReadonlyArray<{ label: string; Icon: LucideIcon }> =
+  [
+    { label: "Serena", Icon: Leaf },
+    { label: "Agradecida", Icon: HeartHandshake },
+    { label: "Creativa", Icon: Palette },
+    { label: "Intensa", Icon: Flame },
+    { label: "Introspectiva", Icon: MoonStar },
+    { label: "Radiante", Icon: Sun },
+  ];
 
 const NOTES_LIMIT = 320;
 
@@ -86,7 +92,7 @@ export default function NuevoRegistro({
         return prev;
       }
 
-      return `${prev.trim()} · ${feeling}`;
+      return `${prev.trim()} - ${feeling}`;
     });
   };
 
@@ -131,7 +137,6 @@ export default function NuevoRegistro({
   const sliderConfigs: SliderConfig[] = [
     {
       id: "energia",
-      emoji: "🔥",
       label: "Energía",
       value: energia,
       setter: setEnergia,
@@ -139,7 +144,6 @@ export default function NuevoRegistro({
     },
     {
       id: "creatividad",
-      emoji: "🎨",
       label: "Creatividad",
       value: creatividad,
       setter: setCreatividad,
@@ -147,7 +151,6 @@ export default function NuevoRegistro({
     },
     {
       id: "espiritualidad",
-      emoji: "✨",
       label: "Espiritualidad",
       value: espiritualidad,
       setter: setEspiritualidad,
@@ -214,7 +217,7 @@ export default function NuevoRegistro({
       const data = await response.json();
 
       // Mostrar mensaje de éxito
-      const mensajeFinal = data.mensaje || "🌕 Registro guardado exitosamente!";
+      const mensajeFinal = data.mensaje || "Registro guardado exitosamente!";
       setMensaje(mensajeFinal);
       addToast("success", "¡Registro guardado y reflexión generada!");
 
@@ -275,11 +278,12 @@ export default function NuevoRegistro({
         <p className="text-xs uppercase tracking-[0.3em] text-rose-500">
           Hola, {nombre}
         </p>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-rose-700 drop-shadow-sm">
-          🌸 Registra tu día y recibe una reflexión gratis
+        <h2 className="flex items-center justify-center gap-3 text-3xl sm:text-4xl font-extrabold text-rose-700 drop-shadow-sm">
+          <Flower2 className="h-10 w-10 text-rose-500" aria-hidden="true" />
+          <span>Registra tu día y recibe una reflexión gratis</span>
         </h2>
         <p className="text-rose-600 text-sm">
-          Día {dia_ciclo} del ciclo · Hoy es {todayInfo.date}
+          Día {dia_ciclo} del ciclo | Hoy es {todayInfo.date}
         </p>
       </motion.div>
 
@@ -375,6 +379,7 @@ export default function NuevoRegistro({
         />
         <div className="flex flex-wrap gap-2" role="list">
           {FEELING_SUGGESTIONS.map((feeling) => {
+            const SuggestionIcon = feeling.Icon;
             const isActive = emociones
               .toLowerCase()
               .includes(feeling.label.toLowerCase());
@@ -390,7 +395,7 @@ export default function NuevoRegistro({
                 }`}
                 aria-pressed={isActive}
               >
-                <span className="mr-1">{feeling.emoji}</span>
+                <SuggestionIcon className="mr-1 h-4 w-4" aria-hidden="true" />
                 {feeling.label}
               </button>
             );
@@ -425,7 +430,6 @@ export default function NuevoRegistro({
                   htmlFor={`slider-${item.id}`}
                   className="text-lg font-semibold flex flex-wrap gap-2 items-center text-rose-700"
                 >
-                  <span className="text-2xl">{item.emoji}</span>
                   <span className="rounded-xl bg-rose-50 p-2 text-rose-500">
                     <Icon className="w-5 h-5" />
                   </span>
@@ -588,7 +592,7 @@ export default function NuevoRegistro({
         ) : (
           <>
             <Send className="w-5 h-5" />
-            Genera mi reflexión de hoy 🌙
+            Genera mi reflexión de hoy
           </>
         )}
       </motion.button>
@@ -605,8 +609,9 @@ export default function NuevoRegistro({
             role="status"
             aria-live="polite"
           >
-            <p className="text-rose-700 font-medium text-center leading-relaxed">
-              ✨ {mensaje}
+            <p className="text-rose-700 font-medium text-center leading-relaxed flex items-center justify-center gap-2">
+              <Sparkles className="h-4 w-4 text-rose-500" aria-hidden="true" />
+              <span>{mensaje}</span>
             </p>
           </motion.div>
         )}
