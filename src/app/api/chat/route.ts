@@ -5,8 +5,38 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+type ChatCompletionMessageParam =
+  OpenAI.Chat.Completions.ChatCompletionMessageParam;
+
+type AllowedCompletionRole = Extract<
+  ChatCompletionMessageParam["role"],
+  "assistant" | "user"
+>;
+
+type RelayableMessage = {
+  role: AllowedCompletionRole;
+  content: string;
+};
+
+const isRelayableMessage = (message: unknown): message is RelayableMessage => {
+  if (!message || typeof message !== "object") {
+    return false;
+  }
+
+  const { role, content } = message as {
+    role?: unknown;
+    content?: unknown;
+  };
+
+  return (
+    typeof role === "string" &&
+    typeof content === "string" &&
+    (role === "assistant" || role === "user")
+  );
+};
+
 const systemPrompt =
-  "Eres Samari Luz, guia ciclica de Mujer Chakana. Responde en espanol neutro, con tono amoroso y practico. Ofrece pasos concretos cuando sea util, invita a la respiracion consciente y cuida que las respuestas no superen tres parrafos cortos.";
+  "Eres Samari Luz, guia ciclica de Ginergética. Responde en espanol neutro, con tono amoroso y practico. Ofrece pasos concretos cuando sea util, invita a la respiracion consciente y cuida que las respuestas no superen tres parrafos cortos.";
 
 export async function POST(req: Request) {
   try {
@@ -19,17 +49,16 @@ export async function POST(req: Request) {
       );
     }
 
-    const sanitized = messages
-      .filter(
-        (message: { role: string; content: string }) =>
-          message &&
-          typeof message.content === "string" &&
-          (message.role === "assistant" || message.role === "user")
-      )
-      .map((message: { role: string; content: string }) => ({
-        role: message.role,
-        content: message.content.slice(0, 1000),
-      }));
+    const normalizedMessages = messages as unknown[];
+
+    const sanitized: ChatCompletionMessageParam[] = normalizedMessages
+      .filter(isRelayableMessage)
+      .map(
+        (message): ChatCompletionMessageParam => ({
+          role: message.role,
+          content: message.content.slice(0, 1000),
+        })
+      );
 
     const contextNote =
       context && context.currentDay
