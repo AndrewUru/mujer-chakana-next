@@ -108,18 +108,12 @@ export default function HomePage() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[url('/mujer-chakana.webp')] bg-cover bg-center text-pink-900">
-      <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/70 to-rose-100/60 backdrop-blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-br from-white/72 via-white/58 to-rose-100/38 backdrop-blur-2xl" />
       <motion.div
-        initial={{ opacity: 0.3, scale: 0.9 }}
-        animate={{ opacity: 0.45, scale: 1 }}
-        transition={{ duration: 2, ease: "easeOut" }}
-        className="pointer-events-none absolute -top-28 right-0 h-80 w-80 rounded-full bg-rose-200/40 blur-3xl"
-      />
-      <motion.div
-        initial={{ opacity: 0.3, scale: 0.9 }}
-        animate={{ opacity: 0.5, scale: 1 }}
-        transition={{ duration: 2.4, ease: "easeOut" }}
-        className="pointer-events-none absolute -bottom-32 left-0 h-96 w-96 rounded-full bg-rose-100/60 blur-3xl"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.7 }}
+        transition={{ duration: 1.4, ease: "easeOut" }}
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.32),rgba(255,255,255,0.04))]"
       />
 
       <div className="relative z-10 px-4 py-6 sm:px-6 lg:px-10">
@@ -128,7 +122,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="flex flex-col items-center gap-4 rounded-2xl border border-rose-100/60 bg-white/60 px-5 py-4 text-center shadow-md backdrop-blur-lg sm:flex-row sm:justify-between sm:text-left"
+            className="glass flex flex-col items-center gap-4 rounded-2xl px-5 py-4 text-center sm:flex-row sm:justify-between sm:text-left"
           >
             <div>
               <span className="text-xs font-semibold uppercase tracking-[0.35em] text-rose-500">
@@ -148,8 +142,9 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: "easeOut" }}
-            className="relative grid gap-10 rounded-[32px] border border-rose-100/70 bg-white/70 p-8 shadow-2xl backdrop-blur-xl sm:p-12 lg:grid-cols-[1.05fr_0.95fr]"
+            className="glass-shell relative grid gap-10 overflow-hidden rounded-[32px] p-8 sm:p-12 lg:grid-cols-[1.05fr_0.95fr]"
           >
+            <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent" />
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -183,7 +178,7 @@ export default function HomePage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => router.push("/auth/login")}
-                  className="group inline-flex items-center justify-center gap-2 rounded-2xl border border-rose-200 bg-white/70 px-8 py-4 text-base font-semibold text-rose-700 shadow-sm transition hover:bg-white"
+                  className="glass-soft group inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-base font-semibold text-rose-700 transition hover:bg-white/70"
                 >
                   <StarIcon className="h-6 w-6 text-rose-500 transition group-hover:text-rose-600" />
                   <span>Ya tengo cuenta</span>
@@ -197,7 +192,7 @@ export default function HomePage() {
               transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
               className="relative flex items-center justify-center"
             >
-              <div className="relative h-94 w-full max-w-sm overflow-hidden rounded-[28px] border border-rose-100 bg-gradient-to-br from-white/80 via-rose-50/70 to-rose-100/60 shadow-xl backdrop-blur-xl sm:h-72">
+              <div className="glass-panel relative h-94 w-full max-w-sm overflow-hidden rounded-[28px] sm:h-72">
                 <Image
                   src="/mujer-chakana.webp"
                   alt="Logo Mujer Chakana"
@@ -211,13 +206,13 @@ export default function HomePage() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 0.6, scale: 1 }}
                 transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
-                className="absolute -bottom-6 left-8 h-24 w-24 rounded-full bg-rose-200/50 blur-2xl"
+                className="glass-soft absolute -bottom-5 left-8 h-16 w-28 rounded-full"
               />
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 0.6, scale: 1 }}
                 transition={{ delay: 0.5, duration: 0.7, ease: "easeOut" }}
-                className="absolute -top-8 right-6 h-28 w-28 rounded-full bg-rose-100/70 blur-2xl"
+                className="glass-soft absolute -top-5 right-6 h-16 w-28 rounded-full"
               />
             </motion.div>
           </motion.section>
@@ -229,7 +224,7 @@ export default function HomePage() {
             transition={{ delay: 0.1, duration: 0.8, ease: "easeOut" }}
             className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]"
           >
-            <div className="space-y-4 rounded-3xl border border-rose-100 bg-white/70 p-8 shadow-lg backdrop-blur-lg">
+            <div className="glass-panel space-y-4 rounded-3xl p-8">
               <h2 className="text-2xl font-semibold text-rose-900 sm:text-3xl">
                 ¿Qué es esta app?
               </h2>
@@ -250,7 +245,7 @@ export default function HomePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2, duration: 0.6 }}
-                className="rounded-2xl border border-rose-100 bg-rose-50/70 px-6 py-5 text-sm italic text-rose-700"
+                className="glass-soft rounded-2xl px-6 py-5 text-sm italic text-rose-700"
               >
                 “Tu sabiduría es cíclica: cada vuelta te muestra un rostro nuevo
                 de ti. Aquí encuentras un espejo para abrazarlo.”
@@ -265,10 +260,10 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, ease: "easeOut" }}
-                  className="flex flex-col gap-3 rounded-3xl border border-rose-100 bg-white/60 p-6 shadow-md backdrop-blur-lg"
+                  className="glass-soft flex flex-col gap-3 rounded-3xl p-6"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-100">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/60 bg-rose-100/55 shadow-inner">
                       <Icon className="h-6 w-6 text-rose-500" />
                     </span>
                     <h3 className="text-lg font-semibold text-rose-900">
@@ -288,7 +283,7 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ delay: 0.15, duration: 0.7, ease: "easeOut" }}
-            className="rounded-3xl border border-rose-100 bg-white/70 p-8 shadow-lg backdrop-blur-lg"
+            className="glass-panel rounded-3xl p-8"
           >
             <div className="mb-8 space-y-2 text-center">
               <h2 className="text-2xl font-semibold text-rose-900 sm:text-3xl">
@@ -306,9 +301,9 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="flex flex-col gap-3 rounded-3xl border border-rose-100 bg-white/80 p-6 text-center shadow-md"
+                  className="glass-soft flex flex-col gap-3 rounded-3xl p-6 text-center"
                 >
-                  <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-sm font-semibold text-rose-600">
+                  <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border border-white/60 bg-rose-100/60 text-sm font-semibold text-rose-600 shadow-inner">
                     {index + 1}
                   </span>
                   <h3 className="text-lg font-semibold text-rose-900">
@@ -329,7 +324,7 @@ export default function HomePage() {
             transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
             className="grid gap-8 lg:grid-cols-[1fr_1fr]"
           >
-            <div className="space-y-4 rounded-3xl border border-rose-100 bg-white/70 p-8 shadow-lg backdrop-blur-lg">
+            <div className="glass-panel space-y-4 rounded-3xl p-8">
               <h2 className="text-2xl font-semibold text-rose-900 sm:text-3xl">
                 ¿Por qué ofrecemos una suscripción?
               </h2>
@@ -363,9 +358,9 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, ease: "easeOut" }}
-                  className="flex gap-4 rounded-3xl border border-rose-100 bg-white/60 p-6 shadow-md backdrop-blur-lg"
+                  className="glass-soft flex gap-4 rounded-3xl p-6"
                 >
-                  <span className="mt-1 flex h-11 w-11 items-center justify-center rounded-2xl bg-rose-100">
+                  <span className="mt-1 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/60 bg-rose-100/55 shadow-inner">
                     <Icon className="h-6 w-6 text-rose-500" />
                   </span>
                   <div className="space-y-1.5">
@@ -386,7 +381,7 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-20px" }}
             transition={{ delay: 0.25, duration: 0.7, ease: "easeOut" }}
-            className="mx-auto w-full max-w-2xl rounded-3xl border border-rose-100 bg-white/80 px-6 py-6 text-center shadow-lg backdrop-blur-lg"
+            className="glass-panel mx-auto w-full max-w-2xl rounded-3xl px-6 py-6 text-center"
           >
             <div className="flex flex-col items-center justify-center gap-3">
               <svg
@@ -410,7 +405,7 @@ export default function HomePage() {
                   href="https://www.samariluz.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block rounded-xl bg-rose-100/80 px-4 py-1.5 text-sm font-semibold text-rose-800 transition hover:bg-rose-200"
+                  className="inline-block rounded-xl border border-white/60 bg-rose-100/60 px-4 py-1.5 text-sm font-semibold text-rose-800 transition hover:bg-white/70"
                 >
                   Samari Luz
                 </a>
