@@ -10,7 +10,7 @@ export default function EstadoActualCiclo({
   };
 }) {
   return (
-    <section className="relative w-full h-[420px] sm:h-[420px] md:h-[480px] lg:h-[520px] xl:h-[580px] 2xl:h-[580px] max-h-[600px] rounded-3xl overflow-hidden shadow-2xl bg-pink-100 mx-auto">
+    <section className="glass-panel relative mx-auto h-[420px] max-h-[600px] w-full overflow-hidden rounded-3xl sm:h-[420px] md:h-[480px] lg:h-[520px] xl:h-[580px] 2xl:h-[580px]">
       <div className="absolute inset-0 z-0">
         {data.imagen_url && (
           <Image
@@ -33,13 +33,13 @@ export default function EstadoActualCiclo({
           />
         )}
         {/* Gradiente ajustado para mejor legibilidad */}
-        <div className="absolute inset-0 bg-gradient-to-br from-rose-100/60 via-rose-100/30 to-transparent pointer-events-none" />
-        <div className="absolute bottom-0 left-0 right-0 h-32 md:h-40 bg-gradient-to-t from-white/85 via-white/50 to-transparent z-10 pointer-events-none" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/45 via-rose-100/24 to-transparent" />
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 h-32 bg-gradient-to-t from-white/78 via-white/42 to-transparent md:h-40" />
       </div>
 
       {/* Contenido con mejor posicionamiento */}
-      <div className="relative z-20 flex flex-col justify-end md:justify-center md:items-start items-center h-full p-4 md:p-6 lg:p-8 text-pink-900">
-        <div className="bg-white/75 backdrop-blur-md rounded-xl p-3 md:p-4 lg:p-5 shadow-lg max-w-[90%] md:max-w-[65%] lg:max-w-[55%] xl:max-w-[50%]">
+      <div className="relative z-20 flex h-full flex-col items-center justify-end p-4 text-pink-900 md:items-start md:justify-center md:p-6 lg:p-8">
+        <div className="glass max-w-[90%] rounded-3xl p-4 md:max-w-[65%] md:p-5 lg:max-w-[55%] xl:max-w-[50%]">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-1 text-center md:text-left drop-shadow-sm">
             🌺 {data.arquetipo}
           </h2>

@@ -153,7 +153,7 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
     >
       <motion.button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex items-center gap-2 rounded-full bg-white/95 px-4 py-3 text-rose-600 shadow-lg ring-1 ring-rose-100 backdrop-blur focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
+        className="glass flex items-center gap-2 rounded-full px-4 py-3 text-rose-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.96 }}
         aria-expanded={isOpen}
@@ -167,13 +167,13 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
         {isOpen && (
           <motion.div
             id="samari-chat-panel"
-            className="absolute bottom-16 right-0 w-[320px] sm:w-[360px] rounded-3xl border border-rose-100 bg-white/95 p-4 shadow-2xl backdrop-blur"
+            className="glass-shell absolute bottom-16 right-0 w-[320px] rounded-3xl p-4 sm:w-[360px]"
             initial={{ opacity: 0, scale: 0.9, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 12 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="mb-3 flex items-start justify-between gap-4 border-b border-rose-100 pb-3">
+            <div className="mb-3 flex items-start justify-between gap-4 border-b border-white/50 pb-3">
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-rose-400">
                   Chat sagrado
@@ -192,7 +192,7 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
                 <button
                   type="button"
                   onClick={resetChat}
-                  className="rounded-full border border-rose-200 p-1 text-rose-500 hover:bg-rose-50"
+                  className="rounded-full border border-white/60 bg-white/35 p-1 text-rose-500 hover:bg-white/70"
                   aria-label="Reiniciar chat"
                 >
                   <RefreshCcw className="h-4 w-4" />
@@ -200,7 +200,7 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="rounded-full border border-rose-200 p-1 text-rose-500 hover:bg-rose-50"
+                  className="rounded-full border border-white/60 bg-white/35 p-1 text-rose-500 hover:bg-white/70"
                   aria-label="Cerrar chat"
                 >
                   <X className="h-4 w-4" />
@@ -217,8 +217,8 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
                   key={message.id}
                   className={`rounded-2xl border px-3 py-2 text-sm leading-relaxed ${
                     message.role === "assistant"
-                      ? "self-start border-rose-100 bg-rose-50/80 text-rose-900"
-                      : "self-end border-rose-200 bg-white text-rose-700"
+                      ? "self-start border-white/60 bg-rose-50/62 text-rose-900 shadow-inner backdrop-blur"
+                      : "self-end border-white/70 bg-white/62 text-rose-700 shadow-inner backdrop-blur"
                   }`}
                 >
                   {message.content}
@@ -233,7 +233,7 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
               )}
 
               {error && (
-                <p className="rounded-xl border border-rose-200 bg-white px-3 py-2 text-xs text-rose-600">
+                <p className="glass-soft rounded-xl px-3 py-2 text-xs text-rose-600">
                   {error}
                 </p>
               )}
@@ -246,7 +246,7 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
                   <button
                     key={suggestion}
                     type="button"
-                    className="flex items-center gap-1 rounded-full border border-rose-100 px-3 py-1 text-xs text-rose-600 transition hover:bg-rose-50"
+                    className="flex items-center gap-1 rounded-full border border-white/60 bg-white/34 px-3 py-1 text-xs text-rose-600 transition hover:bg-white/70"
                     onClick={() => handleSuggestion(suggestion)}
                   >
                     <Lightbulb className="h-3.5 w-3.5" />
@@ -265,7 +265,7 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
                 placeholder="Comparte lo que sientes..."
-                className="flex-1 rounded-2xl border border-rose-200 px-3 py-2 text-sm text-rose-700 focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
+                className="flex-1 rounded-2xl border border-white/60 bg-white/62 px-3 py-2 text-sm text-rose-700 focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
                 disabled={loading}
               />
               <button

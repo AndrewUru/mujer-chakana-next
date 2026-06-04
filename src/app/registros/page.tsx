@@ -19,13 +19,13 @@ function ConfirmModal({
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-md"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
         <motion.div
-          className="bg-white rounded-3xl p-8 max-w-md text-center shadow-xl border border-pink-200"
+          className="glass-panel max-w-md rounded-3xl p-8 text-center"
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
           exit={{ scale: 0.8 }}
@@ -34,7 +34,7 @@ function ConfirmModal({
           <div className="flex justify-center gap-4">
             <button
               onClick={onCancelar}
-              className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+              className="glass-soft px-4 py-2 rounded-lg text-rose-700 hover:bg-white/70"
             >
               Cancelar
             </button>
@@ -162,8 +162,8 @@ export default function RegistroPage() {
 
   // ----- Render -----
   return (
-    <main className="mx-auto px-4 py-8 text-rose-900 max-w-7xl pb-24">
-      <section className="text-center bg-pink-100/60 backdrop-blur-md rounded-3xl p-8 shadow-xl mb-10">
+    <main className="mx-auto max-w-7xl px-4 py-8 pb-24 text-rose-900">
+      <section className="glass-shell mb-10 rounded-3xl p-8 text-center">
         <h1 className="text-4xl font-extrabold text-pink-800 mb-4">
           🌸 Mis Registros Diarios
         </h1>
@@ -182,7 +182,7 @@ export default function RegistroPage() {
 
       <div className="mb-6 flex justify-center">
         <select
-          className="p-2 border border-rose-300 rounded-xl text-rose-800 bg-white shadow"
+          className="rounded-xl border border-rose-300 bg-white/70 p-2 text-rose-800 shadow-inner"
           onChange={(e) => setMesSeleccionado(e.target.value)}
           value={mesSeleccionado}
         >
@@ -196,7 +196,7 @@ export default function RegistroPage() {
       </div>
 
       {registrosFiltrados.length === 0 ? (
-        <div className="bg-pink-50 border border-pink-100 p-4 rounded-xl shadow-sm max-w-md mx-auto">
+        <div className="glass-soft mx-auto max-w-md rounded-xl p-4">
           <p className="text-center text-pink-500 italic text-lg">
             No hay registros para este mes. 🌸
           </p>
@@ -211,11 +211,11 @@ export default function RegistroPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.4 }}
-                className={`rounded-3xl p-6 shadow-xl border transition-all hover:scale-[1.02] hover:shadow-2xl bg-white/90
+                className={`glass-panel rounded-3xl p-6 transition-all hover:scale-[1.02]
               ${
                 registro.energia && registro.energia >= 4
-                  ? "border-pink-400"
-                  : "border-rose-200"
+                  ? "border-pink-300/70"
+                  : "border-rose-100/70"
               }`}
               >
                 <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-pink-700">
@@ -248,7 +248,7 @@ export default function RegistroPage() {
                 )}
 
                 {registro.mensaje && (
-                  <div className="mt-4 p-4 rounded-xl bg-pink-50 border-l-4 border-pink-300 text-rose-800 text-sm shadow-sm">
+                  <div className="glass-soft mt-4 rounded-xl border-l-4 border-pink-300 p-4 text-sm text-rose-800">
                     🌸 <strong>Reflexión del día:</strong>
                     <br />
                     {registro.mensaje}
@@ -257,7 +257,7 @@ export default function RegistroPage() {
 
                 <button
                   onClick={() => pedirConfirmacion(registro.id)}
-                  className="mt-4 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition"
+                  className="mt-4 rounded-lg border border-red-200/70 bg-red-100/70 px-4 py-2 text-red-700 transition hover:bg-red-100"
                 >
                   🗑 Eliminar
                 </button>

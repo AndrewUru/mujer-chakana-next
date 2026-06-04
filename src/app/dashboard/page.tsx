@@ -17,7 +17,7 @@ import { useToast } from "@/components/Toast";
 import ArquetiposPanel from "@/components/ArquetiposPanel";
 
 const LoadingState = ({ message }: { message: string }) => (
-  <div className="flex h-screen flex-col items-center justify-center bg-gradient-to-br from-rose-50 via-white to-pink-100">
+  <div className="flex h-screen flex-col items-center justify-center bg-gradient-to-br from-rose-50/80 via-white/70 to-pink-100/65">
     <motion.div
       className="relative"
       initial={{ scale: 0.85, opacity: 0 }}
@@ -73,7 +73,7 @@ const CicloProgress = ({
       : "Lútea";
 
   return (
-    <div className="rounded-2xl border border-pink-200 bg-white/85 p-4 shadow-lg backdrop-blur">
+    <div className="glass-soft rounded-2xl p-4">
       <div className="mb-3 flex items-center justify-between">
         <span className="text-sm font-medium text-pink-700">
           Progreso del ciclo
@@ -82,7 +82,7 @@ const CicloProgress = ({
           {Math.round(percentage)}%
         </span>
       </div>
-      <div className="mb-3 h-2 w-full rounded-full bg-pink-200">
+      <div className="mb-3 h-2 w-full overflow-hidden rounded-full border border-white/60 bg-white/40 shadow-inner">
         <motion.div
           className="h-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-500"
           initial={{ width: 0 }}
@@ -284,19 +284,19 @@ export default function DashboardPage() {
 
   return (
     <>
-      <main className="relative min-h-screen overflow-hidden text-rose-900 bg-gradient-to-br from-white/85 via-white/75 to-rose-100/60 backdrop-blur-3xl ">
-        <div className="absolute inset-0backdrop-blur-3xl" />
+      <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white/78 via-white/62 to-rose-100/42 text-rose-900 backdrop-blur-2xl">
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.34),rgba(255,255,255,0.05))]" />
         <motion.div
           initial={{ opacity: 0.3, scale: 0.85 }}
           animate={{ opacity: 0.45, scale: 1 }}
           transition={{ duration: 2, ease: "easeOut" }}
-          className="pointer-events-none absolute -top-28 right-0 h-80 w-80 rounded-full bg-rose-200/40 blur-3xl"
+          className="glass-soft pointer-events-none absolute -top-12 right-8 h-28 w-48 rounded-full"
         />
         <motion.div
           initial={{ opacity: 0.3, scale: 0.9 }}
           animate={{ opacity: 0.5, scale: 1 }}
           transition={{ duration: 2.4, ease: "easeOut" }}
-          className="pointer-events-none absolute -bottom-32 left-0 h-96 w-96 rounded-full bg-rose-100/60 blur-3xl"
+          className="glass-soft pointer-events-none absolute -bottom-10 left-8 h-28 w-56 rounded-full"
         />
 
         <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-14 px-2 py-5 lg:px-5">
@@ -304,10 +304,9 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
-            className="relative overflow-hidden rounded-[32px] border border-rose-100/70 bg-white/80 p-8 shadow-xl backdrop-blur-xl sm:p-10"
+            className="glass-shell relative overflow-hidden rounded-[32px] p-8 sm:p-10"
           >
-            <div className="pointer-events-none absolute -right-10 top-1/2 h-52 w-52 -translate-y-1/2 rounded-full bg-rose-100/60 blur-3xl" />
-            <div className="pointer-events-none absolute -left-16 -top-12 h-40 w-40 rounded-full bg-pink-100/60 blur-3xl" />
+            <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent" />
 
             <div className="relative flex flex-col gap-10 lg:flex-row lg:items-center">
               <div className="space-y-6 lg:flex-1">
@@ -334,16 +333,16 @@ export default function DashboardPage() {
                   </motion.button>
                   <Link
                     href="#moonboard"
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-rose-200 bg-white/70 px-7 py-3 text-sm font-semibold text-rose-700 shadow-sm transition hover:bg-white"
+                    className="glass-soft inline-flex items-center justify-center gap-2 rounded-2xl px-7 py-3 text-sm font-semibold text-rose-700 transition hover:bg-white/70"
                   >
                     Actualizar moonboard
                   </Link>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-4 rounded-3xl border border-rose-100/60 bg-white/85 p-6 shadow-lg backdrop-blur lg:w-72">
+              <div className="glass-panel flex flex-col gap-4 rounded-3xl p-6 lg:w-72">
                 <CicloProgress day={day} />
-                <div className="flex items-center justify-between rounded-2xl border border-rose-100 bg-rose-50/80 px-4 py-2 text-sm font-medium text-rose-700">
+                <div className="glass-soft flex items-center justify-between rounded-2xl px-4 py-2 text-sm font-medium text-rose-700">
                   <span>
                     {isSubscriber ? "Suscripción activa" : "Plan gratuito"}
                   </span>
@@ -362,7 +361,7 @@ export default function DashboardPage() {
             {cycleHighlights.map(({ title, badge, caption }) => (
               <div
                 key={title}
-                className="rounded-3xl border border-rose-100/80 bg-white/75 p-6 shadow-lg backdrop-blur"
+                className="glass-panel rounded-3xl p-6"
               >
                 <span className="text-xs font-semibold uppercase tracking-[0.18em] text-rose-500">
                   {title}
@@ -383,7 +382,7 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.15 }}
-                className="overflow-hidden rounded-[32px] border border-rose-100 bg-white/80 shadow-lg backdrop-blur-xl"
+                className="glass-panel overflow-hidden rounded-[32px]"
               >
                 <EstadoActualCiclo data={estadoCiclo} />
               </motion.section>
@@ -396,7 +395,7 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.2 }}
-                className="overflow-hidden rounded-[32px] border border-rose-100/80 bg-white/80 shadow-lg backdrop-blur-xl"
+                className="glass-panel overflow-hidden rounded-[32px]"
               >
                 <CicloResumen
                   day={day}
@@ -414,7 +413,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.25 }}
-            className="rounded-[32px] border border-rose-100/70 bg-white/75 shadow-xl backdrop-blur-xl"
+            className="glass-panel rounded-[32px] px-4 py-8 sm:px-8"
           >
             <div className="mb-6 space-y-2 text-center">
               <span className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-100/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-rose-600">
@@ -444,7 +443,7 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.35 }}
-                className="overflow-hidden rounded-[32px] border border-rose-100/80 bg-white/80 shadow-xl backdrop-blur-xl"
+                className="glass-panel overflow-hidden rounded-[32px]"
               >
                 <NuevoRegistro
                   userId={userId}
@@ -461,14 +460,13 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.4 }}
-            className="relative overflow-hidden rounded-[36px] border border-rose-100/70 bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 shadow-2xl"
+            className="glass-shell relative overflow-hidden rounded-[36px]"
           >
-            <div className="pointer-events-none absolute -right-12 top-10 h-48 w-48 rounded-full bg-rose-200/40 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-12 left-10 h-56 w-56 rounded-full bg-pink-200/40 blur-3xl" />
+            <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent" />
 
             <div className="relative z-10 sm:p-10 lg:p-12">
               <div className="mb-10 text-center">
-                <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-rose-100/80 px-4 py-2 text-sm font-medium text-rose-700 shadow-sm">
+                <div className="glass-soft mb-5 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-rose-700">
                   <span className="h-2 w-2 animate-pulse rounded-full bg-rose-400"></span>
                   Recursos espirituales
                 </div>
@@ -488,12 +486,12 @@ export default function DashboardPage() {
                 >
                   <Link
                     href="/recursos"
-                    className="group relative inline-flex items-center gap-3 overflow-hidden rounded-2xl border border-rose-200/80 bg-white/90 px-8 py-4 font-semibold text-rose-700 shadow-lg transition hover:-translate-y-1 hover:bg-white hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-offset-2"
+                    className="glass-soft group relative inline-flex items-center gap-3 overflow-hidden rounded-2xl px-8 py-4 font-semibold text-rose-700 transition hover:-translate-y-1 hover:bg-white/75 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-offset-2"
                     aria-label="Explorar todos los recursos espirituales"
                   >
                     <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-700 group-hover:translate-x-full"></div>
 
-                    <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-rose-100 to-pink-100 shadow-inner transition duration-300 group-hover:scale-110 group-hover:rotate-12">
+                    <div className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/70 bg-rose-100/65 shadow-inner transition duration-300 group-hover:scale-110 group-hover:rotate-12">
                       <span className="text-lg" aria-hidden="true">
                         ✨
                       </span>
@@ -519,9 +517,9 @@ export default function DashboardPage() {
                 </motion.div>
               </div>
 
-              <div className="relative rounded-3xl border border-rose-100/80 bg-white/65 shadow-2xl backdrop-blur-lg sm:p-8">
+              <div className="glass-panel relative rounded-3xl sm:p-8">
                 <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-rose-200 to-pink-200 text-2xl shadow-lg">
+                  <div className="glass-soft flex h-12 w-12 items-center justify-center rounded-full text-2xl">
                     🌗
                   </div>
                 </div>

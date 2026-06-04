@@ -47,7 +47,7 @@ export default function RecursosPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-white via-rose-25 to-pink-25 pb-20 px-4 py-12">
+    <main className="min-h-screen bg-gradient-to-br from-white/78 via-rose-50/52 to-pink-50/46 px-4 py-12 pb-20">
       <div className="max-w-7xl mx-auto">
         {/* Header mejorado */}
         <div className="text-center mb-12">
@@ -60,8 +60,8 @@ export default function RecursosPage() {
         </div>
 
         {recursos.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-6">
+          <div className="glass-panel py-20 text-center rounded-3xl">
+            <div className="glass-soft mb-6 inline-flex h-20 w-20 items-center justify-center rounded-full">
               <span className="text-3xl">📭</span>
             </div>
             <h3 className="text-xl font-semibold text-rose-700 mb-2">
@@ -89,7 +89,7 @@ export default function RecursosPage() {
                   href={`/recursos/${recurso.id}`}
                   className="group block"
                 >
-                  <article className="bg-white/80 backdrop-blur-sm border border-rose-100 rounded-3xl shadow-sm hover:shadow-xl hover:shadow-rose-100/50 p-6 flex flex-col h-full transition-all duration-300 hover:-translate-y-1">
+                  <article className="glass-panel flex h-full flex-col rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-white/70">
                     {/* Imagen o icono mejorado */}
                     <div className="relative mb-4 overflow-hidden rounded-2xl">
                       {recurso.imagen_url ? (
@@ -101,7 +101,7 @@ export default function RecursosPage() {
                           className="h-48 w-full object-cover group-hover:scale-110 transition-transform duration-500"
                         />
                       ) : (
-                        <div className="h-48 flex items-center justify-center bg-gradient-to-br from-rose-50 to-pink-50 text-6xl group-hover:scale-110 transition-transform duration-300">
+                        <div className="flex h-48 items-center justify-center rounded-2xl border border-white/60 bg-gradient-to-br from-rose-50/70 to-pink-50/58 text-6xl transition-transform duration-300 group-hover:scale-110">
                           {recurso.tipo === "audio"
                             ? "🎧"
                             : recurso.tipo === "pdf"
@@ -114,7 +114,7 @@ export default function RecursosPage() {
 
                       {/* Badge de tipo superpuesto */}
                       <div className="absolute top-3 right-3">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/90 backdrop-blur-sm text-rose-700 border border-rose-200">
+                        <span className="inline-flex items-center rounded-full border border-white/70 bg-white/70 px-3 py-1 text-xs font-medium text-rose-700 shadow-inner backdrop-blur">
                           {recurso.tipo}
                         </span>
                       </div>
@@ -132,18 +132,18 @@ export default function RecursosPage() {
 
                       {/* Tags mejorados */}
                       <div className="flex flex-wrap gap-2 text-xs mt-auto">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-rose-100 to-pink-100 text-rose-700 font-medium">
+                        <span className="inline-flex items-center rounded-full border border-white/60 bg-rose-100/60 px-3 py-1 font-medium text-rose-700 shadow-inner">
                           {recurso.tipo_suscripcion}
                         </span>
 
                         {recurso.fase && (
-                          <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 font-medium">
+                          <span className="inline-flex items-center rounded-full border border-white/60 bg-blue-50/70 px-3 py-1 font-medium text-blue-700 shadow-inner">
                             {recurso.fase}
                           </span>
                         )}
 
                         {recurso.elemento && (
-                          <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-50 text-green-700 font-medium">
+                          <span className="inline-flex items-center rounded-full border border-white/60 bg-green-50/70 px-3 py-1 font-medium text-green-700 shadow-inner">
                             {recurso.elemento}
                           </span>
                         )}

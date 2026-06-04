@@ -4,8 +4,8 @@ import "@/app/globals.css";
 
 export default function ManualPage() {
   return (
-    <main className="p-4 md:p-10 max-w-5xl mx-auto flex flex-col gap-6 pb-20">
-      <header className="relative text-center bg-pink-100/60 backdrop-blur-md rounded-3xl p-8 shadow-xl overflow-hidden">
+    <main className="mx-auto flex max-w-5xl flex-col gap-6 p-4 pb-20 md:p-10">
+      <header className="glass-shell relative overflow-hidden rounded-3xl p-8 text-center">
         <h1 className="text-4xl md:text-5xl font-extrabold text-pink-800 mb-4 leading-tight">
           🌸 Manual de Usuario <br /> GINERGETICA
         </h1>
@@ -25,7 +25,7 @@ export default function ManualPage() {
         </div>
       </header>
 
-      <section className="bg-white/70 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-pink-200">
+      <section className="glass-panel rounded-2xl p-6">
         <h2 className="text-2xl font-semibold text-pink-700 mb-2">
           🌱 Cómo comenzar
         </h2>
@@ -38,7 +38,7 @@ export default function ManualPage() {
         </ul>
       </section>
 
-      <section className="bg-white/70 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-pink-200">
+      <section className="glass-panel rounded-2xl p-6">
         <h2 className="text-2xl font-semibold text-pink-700 mb-2">
           📂 Recursos descargables
         </h2>
@@ -64,7 +64,7 @@ export default function ManualPage() {
         </ul>
       </section>
 
-      <section className="bg-white/70 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-pink-200">
+      <section className="glass-panel rounded-2xl p-6">
         <h2 className="text-2xl font-semibold text-pink-700 mb-2">
           🎥 Videos recomendados
         </h2>
@@ -90,7 +90,7 @@ export default function ManualPage() {
         </ul>
       </section>
 
-      <section className="bg-white/70 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-pink-200 space-y-4">
+      <section className="glass-panel space-y-4 rounded-2xl p-6">
         <h2 className="text-2xl font-semibold text-pink-700 mb-2">
           💎 Contenido Premium
         </h2>

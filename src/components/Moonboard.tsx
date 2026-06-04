@@ -115,8 +115,9 @@ const Moonboard = () => {
 
   return (
     <>
-      <section className="relative overflow-hidden rounded-[32px] border border-rose-100/70 bg-white/75 p-6 text-rose-900 shadow-xl shadow-rose-900/10 backdrop-blur-xl sm:p-10">
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-rose-100/20 via-white/10 to-pink-100/30" />
+      <section className="glass-shell relative overflow-hidden rounded-[32px] p-6 text-rose-900 sm:p-10">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-rose-100/18 via-white/8 to-pink-100/24" />
+        <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent" />
 
         <div className="relative z-10 space-y-8">
           <div className="flex flex-col gap-5 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
@@ -133,7 +134,7 @@ const Moonboard = () => {
                 necesites profundizar.
               </p>
             </div>
-            <div className="flex flex-col gap-3 rounded-3xl border border-rose-100 bg-white/70 p-5 text-sm text-rose-700 shadow">
+            <div className="glass-panel flex flex-col gap-3 rounded-3xl p-5 text-sm text-rose-700">
               <div className="flex items-center gap-3">
                 <Moon className="h-5 w-5 text-rose-500" />
                 <span>
@@ -174,10 +175,10 @@ const Moonboard = () => {
                   "relative flex h-12 w-12 items-center justify-center rounded-full border font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 sm:h-14 sm:w-14";
 
                 const statusClasses = isToday
-                  ? "bg-gradient-to-br from-rose-600 to-rose-500 text-white shadow-lg shadow-rose-600/40 ring-4 ring-rose-200"
+                  ? "bg-gradient-to-br from-rose-600 to-rose-500 text-white shadow-lg shadow-rose-600/40 ring-4 ring-white/70"
                   : isAvailable
-                  ? "bg-rose-200/80 text-rose-900 border-rose-400/60 hover:bg-rose-200"
-                  : "bg-white/50 text-rose-400 border-white/40 cursor-not-allowed opacity-75";
+                  ? "bg-white/54 text-rose-900 border-rose-200/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_10px_24px_rgba(143,21,85,0.08)] backdrop-blur hover:bg-rose-100/65"
+                  : "bg-white/30 text-rose-400 border-white/36 cursor-not-allowed opacity-75 backdrop-blur";
 
                 const label = `Dia ${day}${
                   isToday
@@ -223,7 +224,7 @@ const Moonboard = () => {
           </div>
 
           {!fechaInicio && !isLoadingInicio && (
-            <div className="rounded-3xl border border-rose-200/50 bg-rose-100/50 p-5 text-sm text-rose-700 shadow-inner">
+            <div className="glass-soft rounded-3xl p-5 text-sm text-rose-700">
               Guarda tu fecha de ultima menstruacion desde tu perfil para
               activar el seguimiento automatico de tu moonboard.
             </div>

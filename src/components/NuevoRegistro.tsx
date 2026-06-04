@@ -254,17 +254,17 @@ export default function NuevoRegistro({
 
   return (
     <motion.div
-      className="relative overflow-hidden bg-white/95 border border-rose-200 rounded-3xl p-6 sm:p-8 shadow-2xl mx-auto transition-all duration-500"
+      className="glass-shell relative mx-auto overflow-hidden rounded-3xl p-6 transition-all duration-500 sm:p-8"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
       <div
-        className="pointer-events-none absolute -top-16 -right-10 h-48 w-48 rounded-full bg-pink-200/60 blur-3xl"
+        className="glass-soft pointer-events-none absolute -right-8 -top-8 h-24 w-44 rounded-full"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute -bottom-12 -left-12 h-40 w-40 rounded-full bg-rose-100/70 blur-3xl"
+        className="glass-soft pointer-events-none absolute -bottom-8 -left-8 h-24 w-44 rounded-full"
         aria-hidden="true"
       />
       <div className="relative z-10 space-y-8">
@@ -294,7 +294,7 @@ export default function NuevoRegistro({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25, duration: 0.5 }}
       >
-        <div className="rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 p-5 text-white shadow-lg">
+        <div className="rounded-2xl border border-white/20 bg-gradient-to-br from-pink-500/90 to-rose-500/90 p-5 text-white shadow-lg backdrop-blur-xl">
           <div className="flex items-center gap-3">
             <CalendarDays className="h-9 w-9 rounded-2xl bg-white/20 p-2" />
             <div>
@@ -311,15 +311,15 @@ export default function NuevoRegistro({
           </p>
         </div>
 
-        <div className="rounded-2xl border border-rose-100 bg-white/80 p-5 shadow-inner">
+        <div className="glass-panel rounded-2xl p-5">
           <div className="flex flex-wrap gap-2 text-xs font-semibold text-rose-600">
-            <span className="rounded-full bg-rose-50 px-3 py-1">
+            <span className="rounded-full border border-white/60 bg-rose-50/70 px-3 py-1 shadow-inner">
               Día #{dia_ciclo} del ciclo
             </span>
-            <span className="rounded-full bg-rose-50 px-3 py-1">
+            <span className="rounded-full border border-white/60 bg-rose-50/70 px-3 py-1 shadow-inner">
               Vuelta #{ciclo_actual}
             </span>
-            <span className="rounded-full bg-rose-50 px-3 py-1 flex items-center gap-1">
+            <span className="flex items-center gap-1 rounded-full border border-white/60 bg-rose-50/70 px-3 py-1 shadow-inner">
               <Moon className="h-3.5 w-3.5" />
               {arquetipo}
             </span>
@@ -334,7 +334,7 @@ export default function NuevoRegistro({
               </p>
               <p className="text-sm text-rose-500">{vitalStatus.title}</p>
             </div>
-            <div className="flex items-center gap-3 rounded-2xl border border-rose-100 bg-rose-50/80 px-4 py-3 text-rose-600">
+            <div className="glass-soft flex items-center gap-3 rounded-2xl px-4 py-3 text-rose-600">
               <Feather className="h-5 w-5" />
               <div>
                 <p className="text-xs uppercase tracking-[0.25em] text-rose-400">
@@ -373,7 +373,7 @@ export default function NuevoRegistro({
           placeholder="Ej. Me siento expansiva pero un poco cansada..."
           value={emociones}
           onChange={(e) => setEmociones(e.target.value)}
-          className="w-full min-h-[120px] p-4 rounded-xl border border-rose-300 focus:ring-2 focus:ring-rose-400 focus:outline-none placeholder:text-gray-500 bg-white shadow-inner transition duration-300 hover:border-rose-400 resize-none"
+          className="min-h-[120px] w-full resize-none rounded-xl border border-rose-300 bg-white/70 p-4 shadow-inner transition duration-300 placeholder:text-gray-500 hover:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-400"
           aria-describedby="emociones-help"
           required
         />
@@ -390,8 +390,8 @@ export default function NuevoRegistro({
                 onClick={() => handleSuggestionClick(feeling.label)}
                 className={`rounded-full border px-3 py-1.5 text-sm transition-all ${
                   isActive
-                    ? "border-rose-400 bg-rose-100 text-rose-700"
-                    : "border-rose-200 bg-white text-rose-500 hover:border-rose-400"
+                    ? "border-rose-300 bg-rose-100/70 text-rose-700 shadow-inner"
+                    : "border-white/60 bg-white/46 text-rose-500 backdrop-blur hover:border-rose-300 hover:bg-white/70"
                 }`}
                 aria-pressed={isActive}
               >
@@ -420,7 +420,7 @@ export default function NuevoRegistro({
             return (
               <motion.div
                 key={item.id}
-                className="space-y-3 rounded-2xl border border-rose-100 bg-white/70 p-4 shadow-sm"
+                className="glass-soft space-y-3 rounded-2xl p-4"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
@@ -430,7 +430,7 @@ export default function NuevoRegistro({
                   htmlFor={`slider-${item.id}`}
                   className="text-lg font-semibold flex flex-wrap gap-2 items-center text-rose-700"
                 >
-                  <span className="rounded-xl bg-rose-50 p-2 text-rose-500">
+                  <span className="rounded-xl border border-white/60 bg-rose-50/70 p-2 text-rose-500 shadow-inner">
                     <Icon className="w-5 h-5" />
                   </span>
                   {item.label}
@@ -447,7 +447,7 @@ export default function NuevoRegistro({
                     max="5"
                     value={item.value}
                     onChange={(e) => item.setter(Number(e.target.value))}
-                    className="w-full h-3 rounded-full bg-rose-100 cursor-pointer transition-all duration-200 appearance-none"
+                    className="h-3 w-full cursor-pointer appearance-none rounded-full bg-rose-100 transition-all duration-200"
                     style={{
                       background: getSliderColor(item.value),
                     }}
@@ -475,13 +475,13 @@ export default function NuevoRegistro({
         </div>
 
         <motion.div
-          className="rounded-3xl border border-rose-100 bg-gradient-to-br from-rose-50 to-pink-50 p-5 shadow-xl"
+          className="glass-panel rounded-3xl p-5"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.5 }}
         >
           <div className="flex items-center gap-3">
-            <Star className="h-10 w-10 rounded-2xl bg-white text-rose-500 p-2 shadow" />
+            <Star className="h-10 w-10 rounded-2xl border border-white/60 bg-white/65 p-2 text-rose-500 shadow-inner" />
             <div>
               <p className="text-xs uppercase tracking-[0.4em] text-rose-400">
                 Clima interno
@@ -498,9 +498,9 @@ export default function NuevoRegistro({
               return (
                 <div
                   key={`insight-${item.id}`}
-                  className="flex items-start gap-3 rounded-2xl bg-white/80 p-3"
+                  className="glass-soft flex items-start gap-3 rounded-2xl p-3"
                 >
-                  <span className="rounded-xl bg-rose-100 p-2 text-rose-500">
+                  <span className="rounded-xl border border-white/60 bg-rose-100/60 p-2 text-rose-500 shadow-inner">
                     <Icon className="h-4 w-4" />
                   </span>
                   <div className="flex-1">
@@ -546,7 +546,7 @@ export default function NuevoRegistro({
           placeholder="Ej. Soñé con agua, sentí el cuerpo pesado pero creativo..."
           value={notas}
           onChange={(e) => setNotas(e.target.value)}
-          className="w-full p-4 rounded-xl border border-rose-300 focus:ring-2 focus:ring-rose-400 focus:outline-none resize-none placeholder:text-gray-500 bg-white shadow-inner transition duration-300 hover:border-rose-400"
+          className="w-full resize-none rounded-xl border border-rose-300 bg-white/70 p-4 shadow-inner transition duration-300 placeholder:text-gray-500 hover:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-400"
           rows={4}
           aria-describedby="notas-help"
           maxLength={NOTES_LIMIT}
@@ -601,7 +601,7 @@ export default function NuevoRegistro({
       <AnimatePresence>
         {mensaje && (
           <motion.div
-            className="mt-6 p-4 bg-gradient-to-r from-pink-50 to-rose-50 border border-pink-200 rounded-xl"
+            className="glass-soft mt-6 rounded-xl p-4"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
