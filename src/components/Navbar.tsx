@@ -16,8 +16,6 @@ const navIconBase =
 export default function Navbar() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [avatar, setAvatar] = useState<string | null>(null);
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -37,37 +35,13 @@ export default function Navbar() {
     });
   }, [pathname]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      // Mostrar navbar cuando se hace scroll hacia arriba o está en la parte superior
-      if (currentScrollY < lastScrollY || currentScrollY < 100) {
-        setIsVisible(true);
-      } else {
-        // Ocultar navbar cuando se hace scroll hacia abajo
-        setIsVisible(false);
-      }
-
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/auth/login");
   };
 
   return (
-    <nav
-      className={`glass fixed bottom-3 left-3 right-3 z-50 rounded-[26px] border-rose-100/60 px-2 py-1.5 transition-transform duration-300 sm:bottom-5 sm:left-1/2 sm:right-auto sm:w-[min(720px,calc(100%-40px))] sm:-translate-x-1/2 ${
-        isVisible ? "translate-y-0" : "translate-y-full"
-      }`}
-    >
+    <nav className="glass fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] left-3 right-3 z-50 rounded-[26px] border-rose-100/60 px-2 py-1.5 sm:bottom-[calc(1.25rem+env(safe-area-inset-bottom))] sm:left-1/2 sm:right-auto sm:w-[min(720px,calc(100%-40px))] sm:-translate-x-1/2">
       <div className="mx-auto flex max-w-md items-center justify-around gap-1 text-pink-700 sm:max-w-none sm:gap-2">
         <NavItem
           href={loggedIn ? "/dashboard" : "/"}

@@ -123,7 +123,7 @@ export default function RootLayout({
         {/* DNS Prefetch para recursos externos */}
         <link rel="dns-prefetch" href="//elsaltoweb.es" />
       </head>
-      <body className="min-h-screen bg-pink-50/25 font-sans text-pink-900 relative antialiased">
+      <body className="min-h-screen font-sans text-pink-900 relative antialiased">
         {/* Capa de la imagen de fondo optimizada */}
         <div
           className="fixed inset-0 bg-center bg-no-repeat bg-cover z-0"
