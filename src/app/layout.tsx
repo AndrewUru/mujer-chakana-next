@@ -126,7 +126,7 @@ export default function RootLayout({
       <body className="min-h-screen font-sans text-pink-900 relative antialiased">
         {/* Capa de la imagen de fondo optimizada */}
         <div
-          className="fixed inset-0 bg-center bg-no-repeat bg-cover z-0"
+          className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-[0.18] mix-blend-multiply blur-[0.2px] saturate-[0.72]"
           style={{
             backgroundImage:
               "url('https://elsaltoweb.es/wp-content/uploads/2025/04/mujer-chakana.png')",
@@ -135,8 +135,11 @@ export default function RootLayout({
           aria-hidden="true"
         />
 
-        {/* Capa rosa con opacidad */}
-        <div className="fixed inset-0 bg-pink-50/25 z-10" aria-hidden="true" />
+        {/* Capa luminosa para suavizar la ilustraciÃ³n de fondo */}
+        <div
+          className="fixed inset-0 z-10 bg-[radial-gradient(circle_at_18%_12%,rgba(255,255,255,0.86),transparent_34rem),radial-gradient(circle_at_88%_16%,rgba(255,249,237,0.88),transparent_32rem),linear-gradient(135deg,rgba(255,250,253,0.9),rgba(255,243,248,0.78)_48%,rgba(255,250,239,0.84))]"
+          aria-hidden="true"
+        />
 
         {/* Contenido principal */}
         <div className="relative z-20 flex flex-col min-h-screen">

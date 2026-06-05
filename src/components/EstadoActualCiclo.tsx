@@ -39,8 +39,8 @@ export default function EstadoActualCiclo({
 
       {/* Contenido con mejor posicionamiento */}
       <div className="relative z-20 flex h-full flex-col items-center justify-end p-4 text-pink-900 md:items-start md:justify-center md:p-6 lg:p-8">
-        <div className="glass max-w-[90%] rounded-3xl p-4 md:max-w-[65%] md:p-5 lg:max-w-[55%] xl:max-w-[50%]">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-1 text-center md:text-left drop-shadow-sm">
+        <div className="glass w-[min(92%,24rem)] rounded-3xl p-4 md:w-[min(68%,26rem)] md:p-5 lg:w-[min(58%,28rem)] 2xl:w-[min(52%,30rem)]">
+          <h2 className="mb-1 max-w-full text-balance text-center text-[clamp(1.8rem,7vw,3rem)] font-extrabold leading-[0.98] drop-shadow-sm [overflow-wrap:anywhere] md:text-left lg:text-[clamp(2.1rem,3.2vw,3.5rem)]">
             🌺 {data.arquetipo}
           </h2>
           <p className="text-center md:text-left font-medium text-sm md:text-base">

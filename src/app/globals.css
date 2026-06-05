@@ -9,15 +9,15 @@
   --chakra-water: #264653;
   --chakra-fire: #b02e0c;
   --chakra-air: #3a506b;
-  --glass-surface: rgba(255, 255, 255, 0.58);
-  --glass-surface-strong: rgba(255, 255, 255, 0.74);
-  --glass-surface-soft: rgba(255, 255, 255, 0.36);
-  --glass-tint-rose: rgba(255, 228, 240, 0.42);
-  --glass-border: rgba(255, 255, 255, 0.52);
-  --glass-border-rose: rgba(244, 139, 177, 0.34);
-  --glass-shadow: 0 24px 70px rgba(91, 33, 182, 0.14),
-    0 10px 28px rgba(143, 21, 85, 0.1);
-  --glass-shadow-soft: 0 14px 36px rgba(143, 21, 85, 0.1);
+  --glass-surface: rgba(255, 255, 255, 0.7);
+  --glass-surface-strong: rgba(255, 255, 255, 0.82);
+  --glass-surface-soft: rgba(255, 255, 255, 0.5);
+  --glass-tint-rose: rgba(255, 238, 244, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.68);
+  --glass-border-rose: rgba(244, 139, 177, 0.24);
+  --glass-shadow: 0 24px 60px rgba(143, 21, 85, 0.1),
+    0 8px 24px rgba(91, 33, 182, 0.06);
+  --glass-shadow-soft: 0 12px 30px rgba(143, 21, 85, 0.08);
   --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.74),
     inset 0 -1px 0 rgba(255, 255, 255, 0.24);
   --glass-blur: blur(22px) saturate(145%);
@@ -39,10 +39,10 @@ body {
   min-height: 100vh;
   color: var(--app-ink);
   background:
-    radial-gradient(circle at 12% 8%, rgba(251, 182, 206, 0.38), transparent 32rem),
-    radial-gradient(circle at 86% 12%, rgba(91, 33, 182, 0.14), transparent 30rem),
-    radial-gradient(circle at 18% 86%, rgba(38, 70, 83, 0.12), transparent 26rem),
-    linear-gradient(135deg, #fff9fc 0%, #fff1f7 38%, #f7fbff 100%);
+    radial-gradient(circle at 12% 8%, rgba(255, 227, 237, 0.72), transparent 30rem),
+    radial-gradient(circle at 86% 12%, rgba(255, 246, 226, 0.78), transparent 32rem),
+    radial-gradient(circle at 18% 86%, rgba(232, 246, 255, 0.58), transparent 28rem),
+    linear-gradient(135deg, #fffafd 0%, #fff5f8 42%, #fffaf0 100%);
   background-attachment: fixed;
 }
 
@@ -58,10 +58,10 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.42) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.3) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.72), transparent 78%);
+    linear-gradient(rgba(255, 255, 255, 0.32) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.24) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.48), transparent 72%);
 }
 
 /* Textos */
@@ -117,7 +117,7 @@ body::before {
 }
 
 .app-container {
-  width: min(100% - 2rem, 72rem);
+  width: min(100% - 2rem, 82rem);
   margin-inline: auto;
 }
 
