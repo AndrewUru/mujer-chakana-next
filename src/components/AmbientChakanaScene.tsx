@@ -22,6 +22,7 @@ export default function AmbientChakanaScene() {
       alpha: true,
       antialias: true,
       canvas,
+      preserveDrawingBuffer: true,
       powerPreference: "low-power",
     });
 
