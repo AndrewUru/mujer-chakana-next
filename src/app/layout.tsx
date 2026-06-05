@@ -3,6 +3,8 @@ import Navbar from "@/components/Navbar";
 import Script from "next/script";
 import CookieConsent from "@/components/CookieConsent";
 import { Metadata } from "next";
+import AmbientChakanaScene from "@/components/AmbientChakanaScene";
+import PageTransition from "@/components/PageTransition";
 
 // Metadatos optimizados usando la nueva API de Next.js 13+
 export const metadata: Metadata = {
@@ -140,10 +142,13 @@ export default function RootLayout({
           className="fixed inset-0 z-10 bg-[radial-gradient(circle_at_18%_12%,rgba(255,255,255,0.86),transparent_34rem),radial-gradient(circle_at_88%_16%,rgba(255,249,237,0.88),transparent_32rem),linear-gradient(135deg,rgba(255,250,253,0.9),rgba(255,243,248,0.78)_48%,rgba(255,250,239,0.84))]"
           aria-hidden="true"
         />
+        <AmbientChakanaScene />
 
         {/* Contenido principal */}
         <div className="relative z-20 flex flex-col min-h-screen">
-          <main className="app-main flex-1">{children}</main>
+          <main className="app-main flex-1">
+            <PageTransition>{children}</PageTransition>
+          </main>
           <Navbar />
         </div>
 

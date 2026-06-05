@@ -27,6 +27,7 @@
     "react-circular-progressbar": "^2.2.0",
     "react-dom": "^19.0.0",
     "react-tsparticles": "^2.12.2",
+    "three": "^0.184.0",
     "tsparticles": "^3.8.1"
   },
   "devDependencies": {
@@ -35,9 +36,11 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.184.1",
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "^15.3.8",
+    "playwright": "^1.60.0",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.4",
     "typescript": "^5"
