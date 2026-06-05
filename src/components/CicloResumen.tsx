@@ -216,7 +216,7 @@ export default function CicloResumen({
       />
       <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent" />
 
-      <div className="relative z-10 grid gap-10 lg:grid-cols-[1.15fr_0.85fr]">
+      <div className="relative z-10 grid gap-8 2xl:grid-cols-[minmax(0,1.1fr)_minmax(22rem,0.72fr)]">
         <div className="space-y-8">
           <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left">
             <div className="flex flex-col items-center gap-4 sm:items-start">
@@ -333,19 +333,19 @@ export default function CicloResumen({
           </div>
         </div>
 
-        <div className="flex flex-col gap-6 rounded-3xl border border-white/18 bg-white/10 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_18px_42px_rgba(0,0,0,0.18)] backdrop-blur-xl">
+        <div className="grid gap-4 rounded-3xl border border-white/18 bg-white/10 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_18px_42px_rgba(0,0,0,0.18)] backdrop-blur-xl md:grid-cols-3 2xl:flex 2xl:flex-col 2xl:gap-6 2xl:p-6">
           {mujerChakanaData.tip_extra && (
-            <div className="rounded-2xl border border-amber-200/30 bg-amber-100/15 p-5 text-amber-100 shadow-inner shadow-amber-900/20">
+            <div className="rounded-2xl border border-amber-200/30 bg-amber-100/15 p-5 text-amber-100 shadow-inner shadow-amber-900/20 md:col-span-3 2xl:col-span-1">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-200">
                 Consejo del día
               </p>
-              <p className="mt-3 text-sm leading-relaxed text-amber-50">
+              <p className="mt-3 max-w-3xl text-sm leading-relaxed text-amber-50 2xl:max-w-none">
                 {mujerChakanaData.tip_extra}
               </p>
             </div>
           )}
 
-          <div className="rounded-2xl border border-white/18 bg-white/10 p-5 text-white/74 backdrop-blur-xl">
+          <div className="rounded-2xl border border-white/18 bg-white/10 p-5 text-white/74 backdrop-blur-xl md:col-span-1">
             <p className="text-sm leading-relaxed">
               Tu ciclo es un mandala vivo. Registrar lo que sientes hoy abre una
               puerta a la{" "}
@@ -355,7 +355,7 @@ export default function CicloResumen({
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/16 bg-white/10 p-5 text-sm text-white/68 backdrop-blur-xl">
+          <div className="rounded-2xl border border-white/16 bg-white/10 p-5 text-sm text-white/68 backdrop-blur-xl md:col-span-2 2xl:col-span-1">
             <p>
               Si necesitas inspiración extra, visita el manual o consulta el
               calendario lunar. Tu práctica constante es un acto de amor.

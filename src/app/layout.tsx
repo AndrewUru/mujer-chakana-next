@@ -140,7 +140,7 @@ export default function RootLayout({
 
         {/* Contenido principal */}
         <div className="relative z-20 flex flex-col min-h-screen">
-          <main className="flex-1">{children}</main>
+          <main className="app-main flex-1">{children}</main>
           <Navbar />
         </div>
 

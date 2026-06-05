@@ -2,131 +2,132 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import {
+  BookOpen,
+  CalendarDays,
+  Flower2,
+  Leaf,
+  Moon,
+  PenLine,
+  Sparkles,
+} from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
-import { motion, AnimatePresence } from "framer-motion";
 import EstadoActualCiclo from "@/components/EstadoActualCiclo";
-import { EstadoCiclo, Recurso } from "@/types/index";
 import Moonboard from "@/components/Moonboard";
 import RecursosList from "@/components/RecursosList";
 import CicloResumen from "@/components/CicloResumen";
 import NuevoRegistro from "@/components/NuevoRegistro";
-import { Flower, Leaf } from "lucide-react";
-import Link from "next/link";
 import QuickNav from "@/components/QuickNav";
 import { useToast } from "@/components/Toast";
 import ArquetiposPanel from "@/components/ArquetiposPanel";
+import { GlassCard, PageShell, PrimaryAction } from "@/components/ui/AppPrimitives";
+import { EstadoCiclo, Recurso } from "@/types/index";
+
+const TOTAL_CYCLE_DAYS = 28;
+
+interface Perfil {
+  display_name: string;
+  avatar_url: string | null;
+  fecha_inicio: string | null;
+  suscripcion_activa?: boolean;
+}
 
 const LoadingState = ({ message }: { message: string }) => (
-  <div className="flex h-screen flex-col items-center justify-center bg-gradient-to-br from-rose-50/80 via-white/70 to-pink-100/65">
-    <motion.div
-      className="relative"
-      initial={{ scale: 0.85, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="relative h-20 w-20 animate-spin rounded-full border-4 border-rose-400 border-t-transparent">
-        <div className="absolute inset-0 rounded-full border-4 border-pink-300 border-t-transparent opacity-20"></div>
-      </div>
-    </motion.div>
-    <motion.p
-      className="mt-6 max-w-md text-center text-lg font-medium text-pink-700"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3, duration: 0.5 }}
-    >
+  <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
+    <div className="relative h-16 w-16">
+      <div className="absolute inset-0 rounded-full border-4 border-rose-200" />
+      <div className="absolute inset-0 animate-spin rounded-full border-4 border-rose-500 border-t-transparent" />
+      <Moon className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 text-rose-600" />
+    </div>
+    <p className="mt-6 max-w-sm text-base font-semibold text-rose-800">
       {message}
-    </motion.p>
-    <motion.div
-      className="mt-4 flex space-x-2"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 0.6, duration: 0.5 }}
-    >
-      <div className="h-2 w-2 animate-bounce rounded-full bg-pink-400"></div>
-      <div
-        className="h-2 w-2 animate-bounce rounded-full bg-pink-400"
-        style={{ animationDelay: "0.1s" }}
-      ></div>
-      <div
-        className="h-2 w-2 animate-bounce rounded-full bg-pink-400"
-        style={{ animationDelay: "0.2s" }}
-      ></div>
-    </motion.div>
+    </p>
   </div>
 );
 
-const CicloProgress = ({
-  day,
-  totalDays = 28,
-}: {
-  day: number;
-  totalDays?: number;
-}) => {
-  const percentage = Math.min(100, (day / totalDays) * 100);
-  const phase =
-    day <= 7
-      ? "Menstrual"
-      : day <= 14
-      ? "Folicular"
-      : day <= 21
-      ? "Ovulatoria"
-      : "Lútea";
+const getCycleDay = (startDate: Date) => {
+  const today = new Date();
+  const elapsedDays = Math.floor(
+    (today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  return (((elapsedDays % TOTAL_CYCLE_DAYS) + TOTAL_CYCLE_DAYS) % TOTAL_CYCLE_DAYS) + 1;
+};
+
+const getCyclePhase = (day: number) => {
+  if (day <= 7) return "Menstrual";
+  if (day <= 14) return "Folicular";
+  if (day <= 21) return "Ovulatoria";
+  return "Lutea";
+};
+
+function CycleProgress({ day }: { day: number }) {
+  const percentage = Math.min(100, (day / TOTAL_CYCLE_DAYS) * 100);
+  const phase = getCyclePhase(day);
 
   return (
-    <div className="glass-soft rounded-2xl p-4">
-      <div className="mb-3 flex items-center justify-between">
-        <span className="text-sm font-medium text-pink-700">
-          Progreso del ciclo
-        </span>
-        <span className="text-sm font-semibold text-pink-800">
-          {Math.round(percentage)}%
-        </span>
+    <div className="rounded-2xl border border-white/60 bg-white/42 p-4 shadow-inner">
+      <div className="flex items-center justify-between gap-4 text-sm">
+        <span className="font-semibold text-rose-800">Progreso del ciclo</span>
+        <span className="font-bold text-rose-900">{Math.round(percentage)}%</span>
       </div>
-      <div className="mb-3 h-2 w-full overflow-hidden rounded-full border border-white/60 bg-white/40 shadow-inner">
+      <div className="mt-3 h-2 overflow-hidden rounded-full bg-rose-100 shadow-inner">
         <motion.div
-          className="h-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-500"
+          className="h-full rounded-full bg-gradient-to-r from-rose-500 to-pink-500"
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
-          transition={{ duration: 1, ease: "easeOut" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
         />
       </div>
-      <div className="flex justify-between text-xs text-pink-600">
-        <span>Día {day}</span>
-        <span className="font-medium">{phase}</span>
-        <span>Día {totalDays}</span>
+      <div className="mt-3 flex items-center justify-between text-xs font-medium text-rose-600">
+        <span>Dia {day}</span>
+        <span>{phase}</span>
+        <span>Dia {TOTAL_CYCLE_DAYS}</span>
       </div>
     </div>
   );
-};
+}
+
+function InsightCard({
+  label,
+  value,
+  description,
+}: {
+  label: string;
+  value: string;
+  description: string;
+}) {
+  return (
+    <GlassCard className="p-5">
+      <p className="app-kicker">{label}</p>
+      <p className="mt-3 text-xl font-semibold text-rose-950">{value}</p>
+      <p className="mt-2 text-sm leading-6 text-rose-800/72">{description}</p>
+    </GlassCard>
+  );
+}
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { ToastContainer } = useToast();
   const [userName, setUserName] = useState<string | null>(null);
-  const [fechaActual, setFechaActual] = useState<string>("");
-  const [day, setDay] = useState<number>(1);
+  const [fechaActual, setFechaActual] = useState("");
+  const [day, setDay] = useState(1);
   const [estadoCiclo, setEstadoCiclo] = useState<EstadoCiclo | null>(null);
   const [recursosData, setRecursosData] = useState<Recurso[]>([]);
   const [fechaInicioCiclo, setFechaInicioCiclo] = useState<Date | null>(null);
   const [fechaFinCiclo, setFechaFinCiclo] = useState<Date | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [perfil, setPerfil] = useState<Perfil | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingMessage, setLoadingMessage] = useState(
-    "Cargando tu espacio sagrado..."
+    "Cargando tu espacio personal..."
   );
-  const { ToastContainer } = useToast();
-
-  interface Perfil {
-    display_name: string;
-    avatar_url: string;
-    fecha_inicio: string;
-    suscripcion_activa?: boolean;
-  }
-
-  const [perfil, setPerfil] = useState<Perfil | null>(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    setLoadingMessage("Conectando con tu energía...");
+    setLoadingMessage("Conectando con tu perfil...");
 
     const {
       data: { user },
@@ -138,89 +139,66 @@ export default function DashboardPage() {
     }
 
     setUserId(user.id);
-    setLoadingMessage("Cargando tu perfil...");
 
-    const { data: perfilData } = await supabase
+    const perfilPromise = supabase
       .from("perfiles")
       .select("display_name, avatar_url, fecha_inicio, suscripcion_activa")
       .eq("user_id", user.id)
       .single();
 
-    setUserName(perfilData?.display_name || "");
-    setPerfil(perfilData ?? null);
-    setFechaActual(new Date().toLocaleDateString());
-
-    if (perfilData?.fecha_inicio) {
-      setLoadingMessage("Calculando tu ciclo...");
-      const inicio = new Date(perfilData.fecha_inicio);
-      setFechaInicioCiclo(inicio);
-
-      const hoy = new Date();
-      const diferencia = Math.floor(
-        (hoy.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24)
-      );
-      const diaCiclo = (((diferencia % 28) + 28) % 28) + 1;
-
-      setDay(diaCiclo);
-
-      const fin = new Date(inicio);
-      fin.setDate(fin.getDate() + 27);
-      setFechaFinCiclo(fin);
-
-      const { data: mujerChakanaData } = await supabase
-        .from("mujer_chakana")
-        .select("*")
-        .eq("dia_ciclo", diaCiclo)
-        .single();
-
-      setEstadoCiclo(mujerChakanaData || null);
-    } else {
-      setEstadoCiclo(null);
-      setDay(1);
-      setFechaInicioCiclo(null);
-      setFechaFinCiclo(null);
-    }
-
-    setLoadingMessage("Preparando tus recursos...");
-    const { data: recursos } = await supabase
+    const recursosPromise = supabase
       .from("recursos")
       .select("*")
       .eq("activo", true);
 
+    const [{ data: perfilData }, { data: recursos }] = await Promise.all([
+      perfilPromise,
+      recursosPromise,
+    ]);
+
+    setUserName(perfilData?.display_name || "");
+    setPerfil(perfilData ?? null);
     setRecursosData(recursos || []);
+    setFechaActual(
+      new Date().toLocaleDateString("es-ES", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+      })
+    );
+
+    if (!perfilData?.fecha_inicio) {
+      setEstadoCiclo(null);
+      setDay(1);
+      setFechaInicioCiclo(null);
+      setFechaFinCiclo(null);
+      setLoading(false);
+      return;
+    }
+
+    setLoadingMessage("Calculando tu ciclo...");
+    const startDate = new Date(perfilData.fecha_inicio);
+    const cycleDay = getCycleDay(startDate);
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + TOTAL_CYCLE_DAYS - 1);
+
+    setDay(cycleDay);
+    setFechaInicioCiclo(startDate);
+    setFechaFinCiclo(endDate);
+
+    const { data: mujerChakanaData } = await supabase
+      .from("mujer_chakana")
+      .select("*")
+      .eq("dia_ciclo", cycleDay)
+      .single();
+
+    setEstadoCiclo(mujerChakanaData || null);
     setLoading(false);
   }, [router]);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
-
-  useEffect(() => {
-    async function recargarEstadoCiclo() {
-      if (!fechaInicioCiclo) return;
-
-      const hoy = new Date();
-      const diferencia = Math.floor(
-        (hoy.getTime() - fechaInicioCiclo.getTime()) / (1000 * 60 * 60 * 24)
-      );
-      const diaCiclo = (((diferencia % 28) + 28) % 28) + 1;
-
-      const { data: mujerChakanaData, error } = await supabase
-        .from("mujer_chakana")
-        .select("*")
-        .eq("dia_ciclo", diaCiclo)
-        .single();
-
-      if (error) {
-        console.error("Error recargando estado del ciclo", error.message);
-      }
-
-      setEstadoCiclo(mujerChakanaData || null);
-      setDay(diaCiclo);
-    }
-
-    recargarEstadoCiclo();
-  }, [fechaInicioCiclo]);
 
   const isSubscriber = Boolean(perfil?.suscripcion_activa);
   const diasTranscurridos = fechaInicioCiclo
@@ -229,53 +207,51 @@ export default function DashboardPage() {
       )
     : 0;
   const cicloActual = fechaInicioCiclo
-    ? Math.floor(diasTranscurridos / 28) + 1
+    ? Math.floor(diasTranscurridos / TOTAL_CYCLE_DAYS) + 1
     : 1;
 
   const descripcionCorta = estadoCiclo?.descripcion
     ? `${estadoCiclo.descripcion.split(".")[0]}.`
-    : "Añade tus sensaciones para activar recomendaciones personalizadas.";
+    : "Registra tus sensaciones para activar una lectura mas personal.";
 
   const cycleHighlights = useMemo(
     () =>
       estadoCiclo
         ? [
             {
-              title: "Arquetipo guía",
-              badge: estadoCiclo.arquetipo,
-              caption: descripcionCorta,
+              label: "Arquetipo guia",
+              value: estadoCiclo.arquetipo,
+              description: descripcionCorta,
             },
             {
-              title: "Elemento del día",
-              badge: estadoCiclo.elemento,
-              caption: "Integra este elemento en tu ritual cotidiano.",
+              label: "Elemento del dia",
+              value: estadoCiclo.elemento,
+              description: "Usalo como simbolo para ordenar tu energia de hoy.",
             },
             {
-              title: "Ritmo actual",
-              badge: `Día ${day} · Ciclo ${cicloActual}`,
-              caption:
-                "Observa tu energía y registra lo que viaje por tu cuerpo.",
+              label: "Ritmo actual",
+              value: `Dia ${day} · Ciclo ${cicloActual}`,
+              description: "Observa tu energia y registra lo que aparece.",
             },
           ]
         : [
             {
-              title: "Registra tu día",
-              badge: "Comienza ahora",
-              caption:
-                "Añade tu primer registro para recibir orientación del ciclo.",
+              label: "Primer paso",
+              value: "Configura tu ciclo",
+              description: "Guarda tu fecha de inicio para desbloquear tu lectura diaria.",
             },
             {
-              title: "Explora recursos",
-              badge: "Sagrario digital",
-              caption: "Descubre audios, rituales y guías que te inspiran.",
+              label: "Recursos",
+              value: "Biblioteca viva",
+              description: "Explora audios, rituales y guias para acompanar el proceso.",
             },
             {
-              title: "Suscripción amorosa",
-              badge: "2,99 €/mes",
-              caption: "Desbloquea la galería y audio-guías cuando lo sientas.",
+              label: "Comunidad",
+              value: isSubscriber ? "Activa" : "Plan gratuito",
+              description: "Tu estado define que contenidos aparecen disponibles.",
             },
           ],
-    [estadoCiclo, descripcionCorta, day, cicloActual]
+    [estadoCiclo, descripcionCorta, day, cicloActual, isSubscriber]
   );
 
   if (loading) {
@@ -284,119 +260,80 @@ export default function DashboardPage() {
 
   return (
     <>
-      <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white/78 via-white/62 to-rose-100/42 text-rose-900 backdrop-blur-2xl">
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.34),rgba(255,255,255,0.05))]" />
-        <motion.div
-          initial={{ opacity: 0.3, scale: 0.85 }}
-          animate={{ opacity: 0.45, scale: 1 }}
-          transition={{ duration: 2, ease: "easeOut" }}
-          className="glass-soft pointer-events-none absolute -top-12 right-8 h-28 w-48 rounded-full"
-        />
-        <motion.div
-          initial={{ opacity: 0.3, scale: 0.9 }}
-          animate={{ opacity: 0.5, scale: 1 }}
-          transition={{ duration: 2.4, ease: "easeOut" }}
-          className="glass-soft pointer-events-none absolute -bottom-10 left-8 h-28 w-56 rounded-full"
-        />
-
-        <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-14 px-2 py-5 lg:px-5">
+      <PageShell className="relative text-rose-950">
+        <div className="space-y-10">
           <motion.section
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            className="glass-shell relative overflow-hidden rounded-[32px] p-8 sm:p-10"
+            transition={{ duration: 0.55 }}
+            className="glass-shell overflow-hidden rounded-[32px] p-6 sm:p-8 lg:p-10"
           >
-            <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent" />
-
-            <div className="relative flex flex-col gap-10 lg:flex-row lg:items-center">
-              <div className="space-y-6 lg:flex-1">
-                <span className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-100/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-rose-600">
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center">
+              <div className="space-y-6">
+                <div className="inline-flex items-center gap-2 rounded-full border border-rose-200/80 bg-rose-50/72 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-rose-600">
+                  <Flower2 className="h-4 w-4" />
                   Santuario personal
-                </span>
-                <h1 className="text-3xl font-bold leading-tight text-rose-950 sm:text-4xl lg:text-5xl">
-                  Bienvenida, {userName || "exploradora"}
-                </h1>
-                <p className="text-base leading-relaxed text-rose-800 sm:text-lg">
-                  Hoy es {fechaActual || "hoy"} · Día {day} de tu ciclo. Este
-                  espacio te acompaña a escuchar tu energía y habitar cada fase
-                  con presencia.
-                </p>
+                </div>
+                <div className="space-y-3">
+                  <h1 className="max-w-3xl text-3xl font-semibold leading-tight sm:text-5xl">
+                    Hola, {userName || "exploradora"}. Este es tu mapa de hoy.
+                  </h1>
+                  <p className="max-w-2xl text-base leading-7 text-rose-800/76 sm:text-lg">
+                    {fechaActual || "Hoy"} · Dia {day} de tu ciclo. Escucha,
+                    registra y vuelve a lo esencial sin perderte entre pantallas.
+                  </p>
+                </div>
                 <div className="flex flex-wrap gap-3">
-                  <motion.button
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => router.push("/manual")}
-                    className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-rose-600 via-rose-700 to-rose-800 px-8 py-3 text-sm font-semibold text-white shadow-lg transition"
-                  >
-                    <Flower className="h-5 w-5 transition group-hover:rotate-12" />
-                    Ver guía práctica
-                  </motion.button>
+                  <PrimaryAction href="#registro">
+                    <PenLine className="h-4 w-4" />
+                    Registrar hoy
+                  </PrimaryAction>
                   <Link
-                    href="#moonboard"
-                    className="glass-soft inline-flex items-center justify-center gap-2 rounded-2xl px-7 py-3 text-sm font-semibold text-rose-700 transition hover:bg-white/70"
+                    href="/manual"
+                    className="app-focus-ring inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-white/70 bg-white/46 px-5 py-2.5 text-sm font-semibold text-rose-800 shadow-inner transition hover:bg-white/72"
                   >
-                    Actualizar moonboard
+                    <BookOpen className="h-4 w-4" />
+                    Guia practica
                   </Link>
                 </div>
               </div>
 
-              <div className="glass-panel flex flex-col gap-4 rounded-3xl p-6 lg:w-72">
-                <CicloProgress day={day} />
-                <div className="glass-soft flex items-center justify-between rounded-2xl px-4 py-2 text-sm font-medium text-rose-700">
-                  <span>
-                    {isSubscriber ? "Suscripción activa" : "Plan gratuito"}
-                  </span>
-                  <Leaf className="h-4 w-4 text-rose-500" />
+              <div className="space-y-4">
+                <CycleProgress day={day} />
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-2xl border border-white/60 bg-white/42 p-4">
+                    <CalendarDays className="mb-3 h-5 w-5 text-rose-500" />
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-rose-500">
+                      Vuelta
+                    </p>
+                    <p className="mt-1 text-2xl font-semibold text-rose-950">
+                      {cicloActual}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-white/60 bg-white/42 p-4">
+                    <Leaf className="mb-3 h-5 w-5 text-rose-500" />
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-rose-500">
+                      Plan
+                    </p>
+                    <p className="mt-1 text-base font-semibold text-rose-950">
+                      {isSubscriber ? "Activo" : "Gratuito"}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </motion.section>
 
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.7 }}
-            className="grid gap-6 md:grid-cols-3"
-          >
-            {cycleHighlights.map(({ title, badge, caption }) => (
-              <div
-                key={title}
-                className="glass-panel rounded-3xl p-6"
-              >
-                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-rose-500">
-                  {title}
-                </span>
-                <p className="mt-3 text-lg font-semibold text-rose-900">
-                  {badge}
-                </p>
-                <p className="mt-2 text-sm leading-relaxed text-rose-700">
-                  {caption}
-                </p>
-              </div>
+          <section className="grid gap-4 md:grid-cols-3">
+            {cycleHighlights.map((item) => (
+              <InsightCard key={item.label} {...item} />
             ))}
-          </motion.section>
+          </section>
 
-          <AnimatePresence>
-            {estadoCiclo && (
-              <motion.section
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.15 }}
-                className="glass-panel overflow-hidden rounded-[32px]"
-              >
-                <EstadoActualCiclo data={estadoCiclo} />
-              </motion.section>
-            )}
-          </AnimatePresence>
-
-          <AnimatePresence>
-            {day && fechaInicioCiclo && fechaFinCiclo && estadoCiclo && (
-              <motion.section
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.2 }}
-                className="glass-panel overflow-hidden rounded-[32px]"
-              >
+          {estadoCiclo ? (
+            <section className="grid gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+              <EstadoActualCiclo data={estadoCiclo} />
+              {fechaInicioCiclo && fechaFinCiclo ? (
                 <CicloResumen
                   day={day}
                   fechaInicioCiclo={fechaInicioCiclo}
@@ -404,31 +341,27 @@ export default function DashboardPage() {
                   userName={userName ?? undefined}
                   mujerChakanaData={estadoCiclo}
                 />
-              </motion.section>
-            )}
-          </AnimatePresence>
-
-          <motion.section
-            id="moonboard"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.25 }}
-            className="glass-panel rounded-[32px] px-4 py-8 sm:px-8"
-          >
-            <div className="mb-6 space-y-2 text-center">
-              <span className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-100/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-rose-600">
-                Moonboard consciente
-              </span>
-              <h2 className="text-3xl font-bold text-rose-950 sm:text-4xl">
-                Mi moonboard diario
+              ) : null}
+            </section>
+          ) : (
+            <GlassCard className="text-center">
+              <Sparkles className="mx-auto h-10 w-10 text-rose-500" />
+              <h2 className="mt-4 text-2xl font-semibold text-rose-950">
+                Configura tu fecha de inicio
               </h2>
-              <p className="text-base text-rose-700 sm:text-lg">
-                Registra emociones, energía y corporalidad para honrar tu ritmo
-                interior.
+              <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-rose-800/72">
+                Necesitamos tu fecha de inicio para calcular el dia del ciclo y
+                activar la guia diaria.
               </p>
-            </div>
+              <PrimaryAction href="/setup" className="mt-6">
+                Ir a configuracion
+              </PrimaryAction>
+            </GlassCard>
+          )}
+
+          <section id="moonboard" className="scroll-mt-8">
             <Moonboard />
-          </motion.section>
+          </section>
 
           <ArquetiposPanel
             isLoadingProfile={perfil === null}
@@ -437,123 +370,41 @@ export default function DashboardPage() {
             onNavigateToSuscripcion={() => router.push("/suscripcion")}
           />
 
-          <AnimatePresence>
-            {userId && estadoCiclo && fechaInicioCiclo && (
-              <motion.section
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.35 }}
-                className="glass-panel overflow-hidden rounded-[32px]"
-              >
-                <NuevoRegistro
-                  userId={userId}
-                  nombre={userName ?? "Exploradora"}
-                  dia_ciclo={day}
-                  ciclo_actual={cicloActual}
-                  arquetipo={estadoCiclo.arquetipo ?? "Guía"}
-                />
-              </motion.section>
-            )}
-          </AnimatePresence>
+          {userId && estadoCiclo && fechaInicioCiclo ? (
+            <section id="registro" className="scroll-mt-8">
+              <NuevoRegistro
+                userId={userId}
+                nombre={userName ?? "Exploradora"}
+                dia_ciclo={day}
+                ciclo_actual={cicloActual}
+                arquetipo={estadoCiclo.arquetipo ?? "Guia"}
+              />
+            </section>
+          ) : null}
 
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.4 }}
-            className="glass-shell relative overflow-hidden rounded-[36px]"
-          >
-            <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent" />
-
-            <div className="relative z-10 sm:p-10 lg:p-12">
-              <div className="mb-10 text-center">
-                <div className="glass-soft mb-5 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-rose-700">
-                  <span className="h-2 w-2 animate-pulse rounded-full bg-rose-400"></span>
-                  Recursos espirituales
-                </div>
-                <h2 className="text-3xl font-bold text-rose-950 sm:text-4xl">
-                  Recursos sagrados para tu proceso
+          <GlassCard className="overflow-hidden p-5 sm:p-8">
+            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="app-kicker">Recursos</p>
+                <h2 className="mt-2 text-2xl font-semibold text-rose-950 sm:text-3xl">
+                  Biblioteca para tu proceso
                 </h2>
-                <p className="mt-3 text-base text-rose-700 sm:text-lg">
-                  Rituales, audio-guías y registros que puedes integrar según tu
-                  momento.
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-rose-800/72">
+                  Rituales, audios y guias para acompanar el momento del ciclo
+                  que estas transitando.
                 </p>
               </div>
-
-              <div className="flex justify-center pb-10">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <Link
-                    href="/recursos"
-                    className="glass-soft group relative inline-flex items-center gap-3 overflow-hidden rounded-2xl px-8 py-4 font-semibold text-rose-700 transition hover:-translate-y-1 hover:bg-white/75 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-offset-2"
-                    aria-label="Explorar todos los recursos espirituales"
-                  >
-                    <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-700 group-hover:translate-x-full"></div>
-
-                    <div className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/70 bg-rose-100/65 shadow-inner transition duration-300 group-hover:scale-110 group-hover:rotate-12">
-                      <span className="text-lg" aria-hidden="true">
-                        ✨
-                      </span>
-                    </div>
-
-                    <span className="relative text-lg">Explorar recursos</span>
-
-                    <svg
-                      className="relative h-5 w-5 transition-transform duration-300 group-hover:translate-x-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </Link>
-                </motion.div>
-              </div>
-
-              <div className="glass-panel relative rounded-3xl sm:p-8">
-                <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2">
-                  <div className="glass-soft flex h-12 w-12 items-center justify-center rounded-full text-2xl">
-                    🌗
-                  </div>
-                </div>
-                <div className="pt-4">
-                  <RecursosList recursos={recursosData} />
-                </div>
-              </div>
-
-              <div className="mt-10 flex flex-col items-center justify-center gap-6 border-t border-rose-200/40 pt-8 text-center">
-                <div className="flex items-center gap-1">
-                  <span className="h-2 w-2 animate-pulse rounded-full bg-rose-400"></span>
-                  <span
-                    className="h-2 w-2 animate-pulse rounded-full bg-pink-400"
-                    style={{ animationDelay: "0.1s" }}
-                  ></span>
-                  <span
-                    className="h-2 w-2 animate-pulse rounded-full bg-orange-400"
-                    style={{ animationDelay: "0.2s" }}
-                  ></span>
-                </div>
-                <div className="text-rose-600/70">
-                  <p className="text-lg font-medium italic">
-                    Conecta con tu esencia interior
-                  </p>
-                  <p className="mt-1 text-sm text-rose-500/70">
-                    Tu viaje de autodescubrimiento se nutre de cada registro
-                    consciente.
-                  </p>
-                </div>
-              </div>
+              <Link
+                href="/recursos"
+                className="app-focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-2xl border border-white/70 bg-white/46 px-4 py-2 text-sm font-semibold text-rose-800 transition hover:bg-white/72"
+              >
+                Ver todos
+              </Link>
             </div>
-          </motion.section>
+            <RecursosList recursos={recursosData} />
+          </GlassCard>
         </div>
-      </main>
+      </PageShell>
 
       <QuickNav currentDay={day} userName={userName || ""} />
       <ToastContainer />
