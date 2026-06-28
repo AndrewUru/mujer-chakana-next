@@ -142,7 +142,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: "easeOut" }}
-            className="glass-shell relative grid gap-10 overflow-hidden rounded-[32px] p-8 sm:p-12 lg:grid-cols-[1.05fr_0.95fr]"
+            className="glass-shell relative grid gap-6 overflow-hidden rounded-[24px] p-5 sm:gap-10 sm:rounded-[32px] sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:p-12"
           >
             <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent" />
             <motion.div
@@ -222,9 +222,9 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ delay: 0.1, duration: 0.8, ease: "easeOut" }}
-            className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]"
+            className="grid gap-6 sm:gap-10 lg:grid-cols-[1.1fr_0.9fr]"
           >
-            <div className="glass-panel space-y-4 rounded-3xl p-8">
+            <div className="glass-panel space-y-4 rounded-[22px] p-5 sm:rounded-3xl sm:p-8">
               <h2 className="text-2xl font-semibold text-rose-900 sm:text-3xl">
                 ¿Qué es esta app?
               </h2>
@@ -260,7 +260,7 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, ease: "easeOut" }}
-                  className="glass-soft flex flex-col gap-3 rounded-3xl p-6"
+                  className="glass-soft flex flex-col gap-3 rounded-[20px] p-4 sm:rounded-3xl sm:p-6"
                 >
                   <div className="flex items-center gap-3">
                     <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/60 bg-rose-100/55 shadow-inner">
@@ -283,9 +283,9 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ delay: 0.15, duration: 0.7, ease: "easeOut" }}
-            className="glass-panel rounded-3xl p-8"
+            className="glass-panel rounded-[22px] p-5 sm:rounded-3xl sm:p-8"
           >
-            <div className="mb-8 space-y-2 text-center">
+            <div className="mb-5 space-y-2 text-center sm:mb-8">
               <h2 className="text-2xl font-semibold text-rose-900 sm:text-3xl">
                 Tu recorrido cíclico dentro de Ginergética
               </h2>
@@ -293,7 +293,7 @@ export default function HomePage() {
                 Un proceso simple para volver a habitarte con presencia.
               </p>
             </div>
-            <div className="grid gap-6 sm:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-3 sm:gap-6">
               {journeySteps.map((step, index) => (
                 <motion.div
                   key={step.title}
@@ -301,7 +301,7 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="glass-soft flex flex-col gap-3 rounded-3xl p-6 text-center"
+                  className="glass-soft flex flex-col gap-3 rounded-[20px] p-4 text-center sm:rounded-3xl sm:p-6"
                 >
                   <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border border-white/60 bg-rose-100/60 text-sm font-semibold text-rose-600 shadow-inner">
                     {index + 1}
@@ -322,9 +322,9 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
-            className="grid gap-8 lg:grid-cols-[1fr_1fr]"
+            className="grid gap-6 sm:gap-8 lg:grid-cols-[1fr_1fr]"
           >
-            <div className="glass-panel space-y-4 rounded-3xl p-8">
+            <div className="glass-panel space-y-4 rounded-[22px] p-5 sm:rounded-3xl sm:p-8">
               <h2 className="text-2xl font-semibold text-rose-900 sm:text-3xl">
                 ¿Por qué ofrecemos una suscripción?
               </h2>
@@ -358,7 +358,7 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, ease: "easeOut" }}
-                  className="glass-soft flex gap-4 rounded-3xl p-6"
+                  className="glass-soft flex gap-3 rounded-[20px] p-4 sm:gap-4 sm:rounded-3xl sm:p-6"
                 >
                   <span className="mt-1 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/60 bg-rose-100/55 shadow-inner">
                     <Icon className="h-6 w-6 text-rose-500" />
@@ -381,7 +381,7 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-20px" }}
             transition={{ delay: 0.25, duration: 0.7, ease: "easeOut" }}
-            className="glass-panel mx-auto w-full max-w-2xl rounded-3xl px-6 py-6 text-center"
+            className="glass-panel mx-auto w-full max-w-2xl rounded-[20px] px-4 py-5 text-center sm:rounded-3xl sm:px-6 sm:py-6"
           >
             <div className="flex flex-col items-center justify-center gap-3">
               <svg

@@ -328,8 +328,8 @@ export default function DashboardPage() {
     switch (activePanel) {
       case "ciclo":
         return estadoCiclo ? (
-          <div className="space-y-6">
-            <section className="grid gap-4 md:grid-cols-3">
+          <div className="space-y-4 sm:space-y-6">
+            <section className="hidden gap-4 md:grid md:grid-cols-3">
               {cycleHighlights.map((item) => (
                 <InsightCard key={item.label} {...item} />
               ))}

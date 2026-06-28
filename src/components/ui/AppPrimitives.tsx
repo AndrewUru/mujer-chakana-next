@@ -19,7 +19,7 @@ export function PageShell({
   children: ReactNode;
 }) {
   return (
-    <div className={cx("app-page px-4 py-8 sm:px-6 sm:py-10", className)}>
+    <div className={cx("app-page px-3 py-5 sm:px-6 sm:py-10", className)}>
       <div className="app-container">{children}</div>
     </div>
   );
@@ -35,7 +35,10 @@ export function GlassCard<T extends ElementType = "section">({
 
   return (
     <Component
-      className={cx("glass-panel rounded-3xl p-6 sm:p-8", className)}
+      className={cx(
+        "glass-panel rounded-[22px] p-4 sm:rounded-3xl sm:p-6 lg:p-8",
+        className
+      )}
       {...props}
     >
       {children}
@@ -59,13 +62,13 @@ export function SectionHeader({
   return (
     <header
       className={cx(
-        "flex flex-col gap-4 text-rose-950 sm:flex-row sm:items-end sm:justify-between",
+        "flex flex-col gap-3 text-rose-950 sm:flex-row sm:items-end sm:justify-between sm:gap-4",
         className
       )}
     >
       <div className="max-w-2xl space-y-2">
         {eyebrow ? <p className="app-kicker">{eyebrow}</p> : null}
-        <h1 className="text-3xl font-semibold leading-tight sm:text-4xl">
+        <h1 className="text-2xl font-semibold leading-tight sm:text-4xl">
           {title}
         </h1>
         {description ? (

@@ -47,11 +47,11 @@ export default function RecursosPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-white/78 via-rose-50/52 to-pink-50/46 px-4 py-12 pb-20">
+    <main className="min-h-screen bg-gradient-to-br from-white/78 via-rose-50/52 to-pink-50/46 px-3 py-6 pb-20 sm:px-6 sm:py-12">
       <div className="max-w-7xl mx-auto">
         {/* Header mejorado */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-4">
+        <div className="mb-7 text-center sm:mb-12">
+          <h1 className="mb-3 bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-3xl font-bold text-transparent sm:mb-4 md:text-5xl">
             Recursos Disponibles
           </h1>
           <p className="text-gray-700 text-lg max-w-2xl mx-auto">
@@ -82,14 +82,14 @@ export default function RecursosPage() {
             </div>
 
             {/* Grid de recursos mejorado */}
-            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
               {recursos.map((recurso) => (
                 <Link
                   key={recurso.id}
                   href={`/recursos/${recurso.id}`}
                   className="group block"
                 >
-                  <article className="glass-panel flex h-full flex-col rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-white/70">
+                  <article className="glass-panel flex h-full flex-col rounded-[20px] p-4 transition-all duration-300 hover:-translate-y-1 hover:bg-white/70 sm:rounded-3xl sm:p-6">
                     {/* Imagen o icono mejorado */}
                     <div className="relative mb-4 overflow-hidden rounded-2xl">
                       {recurso.imagen_url ? (

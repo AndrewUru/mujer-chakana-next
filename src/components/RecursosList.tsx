@@ -124,7 +124,7 @@ export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
 
     if (!lista.length) {
       return (
-        <div className="glass-soft col-span-full rounded-3xl p-8 text-center text-sm text-rose-700">
+        <div className="glass-soft col-span-full rounded-[20px] p-5 text-center text-sm text-rose-700 sm:rounded-3xl sm:p-8">
           Estamos preparando nuevos recursos para esta categoría. Vuelve pronto.
         </div>
       );
@@ -132,7 +132,7 @@ export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
 
     return lista.map((recurso) => {
       const cardBase =
-        "group relative flex h-full flex-col justify-between rounded-3xl p-6 transition hover:-translate-y-1";
+        "group relative flex h-full flex-col justify-between rounded-[20px] p-4 transition hover:-translate-y-1 sm:rounded-3xl sm:p-6";
 
       if (locked) {
         return (
@@ -212,7 +212,7 @@ export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
   };
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 sm:space-y-12">
       {(["gratuito", "mensual", "anual"] as Tier[]).map((tier) => {
         const section = tierMeta[tier];
 
@@ -242,7 +242,7 @@ export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
               )}
             </div>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
               {renderCards(groupedResources[tier], tier)}
             </div>
           </section>

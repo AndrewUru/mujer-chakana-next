@@ -28,7 +28,7 @@ export default function ArquetiposPanel({
     <motion.section
       {...motionDefaults}
       {...motionOverrides}
-      className="rounded-[32px] border border-rose-100/80 bg-white/80 p-8 text-center shadow-xl backdrop-blur-xl"
+      className="rounded-[24px] border border-rose-100/80 bg-white/80 p-5 text-center shadow-xl backdrop-blur-xl sm:rounded-[32px] sm:p-8"
     >
       <div className="mx-auto flex max-w-2xl flex-col items-center gap-4">
         <h2 className="flex items-center justify-center gap-2 text-2xl font-semibold text-rose-900 sm:text-3xl">

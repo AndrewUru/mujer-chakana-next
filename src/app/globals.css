@@ -117,7 +117,8 @@ body::before {
 }
 
 .app-container {
-  width: min(100% - 2rem, 82rem);
+  width: 100%;
+  max-width: 82rem;
   margin-inline: auto;
 }
 

@@ -115,12 +115,12 @@ const Moonboard = () => {
 
   return (
     <>
-      <section className="glass-shell relative overflow-hidden rounded-[32px] p-6 text-rose-900 sm:p-10">
+      <section className="glass-shell relative overflow-hidden rounded-[24px] p-4 text-rose-900 sm:rounded-[32px] sm:p-6 lg:p-10">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-rose-100/18 via-white/8 to-pink-100/24" />
         <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent" />
 
-        <div className="relative z-10 space-y-8">
-          <div className="flex flex-col gap-5 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
+        <div className="relative z-10 space-y-5 sm:space-y-8">
+          <div className="flex flex-col gap-4 text-center sm:flex-row sm:items-center sm:justify-between sm:gap-5 sm:text-left">
             <div className="space-y-3">
               <span className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-100/60 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-rose-600">
                 Moonboard consciente
@@ -134,7 +134,7 @@ const Moonboard = () => {
                 necesites profundizar.
               </p>
             </div>
-            <div className="glass-panel flex flex-col gap-3 rounded-3xl p-5 text-sm text-rose-700">
+            <div className="glass-panel flex flex-col gap-3 rounded-[20px] p-4 text-sm text-rose-700 sm:rounded-3xl sm:p-5">
               <div className="flex items-center gap-3">
                 <Moon className="h-5 w-5 text-rose-500" />
                 <span>
@@ -168,7 +168,7 @@ const Moonboard = () => {
           </div>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-7 gap-3 sm:gap-4">
+            <div className="grid grid-cols-7 gap-2 sm:gap-4">
               {dayStatuses.map(({ day, isPast, isToday, isFuture }) => {
                 const isAvailable = !isFuture;
                 const baseClasses =
@@ -224,7 +224,7 @@ const Moonboard = () => {
           </div>
 
           {!fechaInicio && !isLoadingInicio && (
-            <div className="glass-soft rounded-3xl p-5 text-sm text-rose-700">
+            <div className="glass-soft rounded-[20px] p-4 text-sm text-rose-700 sm:rounded-3xl sm:p-5">
               Guarda tu fecha de ultima menstruacion desde tu perfil para
               activar el seguimiento automatico de tu moonboard.
             </div>

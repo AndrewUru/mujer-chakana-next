@@ -25,7 +25,7 @@ function ConfirmModal({
         exit={{ opacity: 0 }}
       >
         <motion.div
-          className="glass-panel max-w-md rounded-3xl p-8 text-center"
+          className="glass-panel max-w-md rounded-[22px] p-5 text-center sm:rounded-3xl sm:p-8"
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
           exit={{ scale: 0.8 }}
@@ -162,9 +162,9 @@ export default function RegistroPage() {
 
   // ----- Render -----
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8 pb-24 text-rose-900">
-      <section className="glass-shell mb-10 rounded-3xl p-8 text-center">
-        <h1 className="text-4xl font-extrabold text-pink-800 mb-4">
+    <main className="mx-auto max-w-7xl px-3 py-5 pb-24 text-rose-900 sm:px-6 sm:py-8">
+      <section className="glass-shell mb-6 rounded-[24px] p-5 text-center sm:mb-10 sm:rounded-3xl sm:p-8">
+        <h1 className="mb-3 text-3xl font-extrabold text-pink-800 sm:mb-4 sm:text-4xl">
           🌸 Mis Registros Diarios
         </h1>
         <p className="text-lg text-rose-700 max-w-2xl mx-auto">
@@ -202,7 +202,7 @@ export default function RegistroPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
           <AnimatePresence>
             {registrosFiltrados.map((registro) => (
               <motion.div
@@ -211,7 +211,7 @@ export default function RegistroPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.4 }}
-                className={`glass-panel rounded-3xl p-6 transition-all hover:scale-[1.02]
+                className={`glass-panel rounded-[20px] p-4 transition-all hover:scale-[1.02] sm:rounded-3xl sm:p-6
               ${
                 registro.energia && registro.energia >= 4
                   ? "border-pink-300/70"

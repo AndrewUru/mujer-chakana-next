@@ -254,7 +254,7 @@ export default function NuevoRegistro({
 
   return (
     <motion.div
-      className="glass-shell relative mx-auto overflow-hidden rounded-3xl p-6 transition-all duration-500 sm:p-8"
+      className="glass-shell relative mx-auto overflow-hidden rounded-[24px] p-4 transition-all duration-500 sm:rounded-3xl sm:p-6 lg:p-8"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
@@ -267,7 +267,7 @@ export default function NuevoRegistro({
         className="glass-soft pointer-events-none absolute -bottom-8 -left-8 h-24 w-44 rounded-full"
         aria-hidden="true"
       />
-      <div className="relative z-10 space-y-8">
+      <div className="relative z-10 space-y-5 sm:space-y-8">
         {/* Header con animación */}
       <motion.div
         className="text-center space-y-2"
@@ -294,7 +294,7 @@ export default function NuevoRegistro({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25, duration: 0.5 }}
       >
-        <div className="rounded-2xl border border-white/20 bg-gradient-to-br from-pink-500/90 to-rose-500/90 p-5 text-white shadow-lg backdrop-blur-xl">
+        <div className="rounded-2xl border border-white/20 bg-gradient-to-br from-pink-500/90 to-rose-500/90 p-4 text-white shadow-lg backdrop-blur-xl sm:p-5">
           <div className="flex items-center gap-3">
             <CalendarDays className="h-9 w-9 rounded-2xl bg-white/20 p-2" />
             <div>
@@ -311,7 +311,7 @@ export default function NuevoRegistro({
           </p>
         </div>
 
-        <div className="glass-panel rounded-2xl p-5">
+        <div className="glass-panel rounded-2xl p-4 sm:p-5">
           <div className="flex flex-wrap gap-2 text-xs font-semibold text-rose-600">
             <span className="rounded-full border border-white/60 bg-rose-50/70 px-3 py-1 shadow-inner">
               Día #{dia_ciclo} del ciclo
@@ -409,12 +409,12 @@ export default function NuevoRegistro({
 
       {/* Sliders mejorados */}
       <motion.div
-        className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]"
+        className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.4, duration: 0.5 }}
       >
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4 sm:gap-6">
           {sliderConfigs.map((item, index) => {
             const Icon = item.icon;
             return (
@@ -475,7 +475,7 @@ export default function NuevoRegistro({
         </div>
 
         <motion.div
-          className="glass-panel rounded-3xl p-5"
+          className="glass-panel rounded-[20px] p-4 sm:rounded-3xl sm:p-5"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.5 }}

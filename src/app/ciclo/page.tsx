@@ -105,7 +105,7 @@ export default function CicloPage() {
   if (ciclo.length === 0) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-rose-50 via-white to-amber-50">
-        <div className="flex max-w-md flex-col items-center gap-3 rounded-3xl border border-rose-200 bg-white/80 p-8 text-center text-rose-600 shadow-xl">
+        <div className="flex max-w-md flex-col items-center gap-3 rounded-[22px] border border-rose-200 bg-white/80 p-5 text-center text-rose-600 shadow-xl sm:rounded-3xl sm:p-8">
           <AlertTriangle className="h-10 w-10 text-rose-500" />
           <p className="text-sm">
             No pudimos encontrar arquetipos disponibles. Revisa tu suscripcion o vuelve
@@ -149,12 +149,12 @@ export default function CicloPage() {
         className="pointer-events-none absolute -bottom-32 left-0 h-96 w-96 rounded-full bg-rose-100/60 blur-3xl"
       />
 
-      <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-12 px-4 py-12 sm:px-6 lg:px-10">
+      <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-8 px-3 py-6 sm:gap-12 sm:px-6 sm:py-12 lg:px-10">
         <motion.section
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="rounded-[36px] border border-rose-100/70 bg-white/80 p-8 text-center shadow-2xl backdrop-blur-xl sm:p-12"
+          className="rounded-[24px] border border-rose-100/70 bg-white/80 p-5 text-center shadow-2xl backdrop-blur-xl sm:rounded-[36px] sm:p-8 lg:p-12"
         >
           <div className="mx-auto flex max-w-3xl flex-col items-center gap-5">
             <span className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-100/70 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-rose-600">
@@ -192,7 +192,7 @@ export default function CicloPage() {
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
               {items.map((dia) => {
                 const badgeClass =
                   badgesByElemento[dia.elemento] ?? "bg-rose-100/80 text-rose-700 border-rose-200";
@@ -224,7 +224,7 @@ export default function CicloPage() {
                       </span>
                     </div>
 
-                    <div className="space-y-3 px-6 py-5">
+                    <div className="space-y-3 p-4 sm:px-6 sm:py-5">
                       <div className="flex items-center justify-between text-sm text-rose-500">
                         <span className="rounded-full border border-rose-100 bg-rose-50 px-3 py-1 text-xs font-semibold">
                           Dia {dia.dia_ciclo}

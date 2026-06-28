@@ -4,9 +4,9 @@ import "@/app/globals.css";
 
 export default function ManualPage() {
   return (
-    <main className="mx-auto flex max-w-5xl flex-col gap-6 p-4 pb-20 md:p-10">
-      <header className="glass-shell relative overflow-hidden rounded-3xl p-8 text-center">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-pink-800 mb-4 leading-tight">
+    <main className="mx-auto flex max-w-5xl flex-col gap-4 p-3 pb-20 sm:gap-6 sm:p-6 md:p-10">
+      <header className="glass-shell relative overflow-hidden rounded-[24px] p-5 text-center sm:rounded-3xl sm:p-8">
+        <h1 className="mb-3 text-3xl font-extrabold leading-tight text-pink-800 sm:mb-4 md:text-5xl">
           🌸 Manual de Usuario <br /> GINERGETICA
         </h1>
         <p className="text-lg md:text-xl text-rose-700 max-w-3xl mx-auto mb-4">
@@ -25,7 +25,7 @@ export default function ManualPage() {
         </div>
       </header>
 
-      <section className="glass-panel rounded-2xl p-6">
+      <section className="glass-panel rounded-[20px] p-4 sm:rounded-2xl sm:p-6">
         <h2 className="text-2xl font-semibold text-pink-700 mb-2">
           🌱 Cómo comenzar
         </h2>
@@ -38,7 +38,7 @@ export default function ManualPage() {
         </ul>
       </section>
 
-      <section className="glass-panel rounded-2xl p-6">
+      <section className="glass-panel rounded-[20px] p-4 sm:rounded-2xl sm:p-6">
         <h2 className="text-2xl font-semibold text-pink-700 mb-2">
           📂 Recursos descargables
         </h2>
@@ -64,7 +64,7 @@ export default function ManualPage() {
         </ul>
       </section>
 
-      <section className="glass-panel rounded-2xl p-6">
+      <section className="glass-panel rounded-[20px] p-4 sm:rounded-2xl sm:p-6">
         <h2 className="text-2xl font-semibold text-pink-700 mb-2">
           🎥 Videos recomendados
         </h2>
@@ -90,7 +90,7 @@ export default function ManualPage() {
         </ul>
       </section>
 
-      <section className="glass-panel space-y-4 rounded-2xl p-6">
+      <section className="glass-panel space-y-4 rounded-[20px] p-4 sm:rounded-2xl sm:p-6">
         <h2 className="text-2xl font-semibold text-pink-700 mb-2">
           💎 Contenido Premium
         </h2>

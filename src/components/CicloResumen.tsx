@@ -192,7 +192,7 @@ export default function CicloResumen({
 
   if (loading) {
     return (
-      <div className="mb-6 rounded-3xl border border-pink-200/40 bg-gradient-to-br from-pink-900/70 via-rose-900/70 to-purple-900/70 p-8 text-white shadow-xl backdrop-blur-md">
+      <div className="mb-4 rounded-[22px] border border-pink-200/40 bg-gradient-to-br from-pink-900/70 via-rose-900/70 to-purple-900/70 p-5 text-white shadow-xl backdrop-blur-md sm:mb-6 sm:rounded-3xl sm:p-8">
         <div className="flex items-center justify-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/60 border-t-transparent" />
           <span className="text-lg font-medium">Cargando tu ciclo...</span>
@@ -203,7 +203,7 @@ export default function CicloResumen({
 
   return (
     <div
-      className="relative flex min-h-[420px] flex-col justify-center overflow-hidden rounded-[32px] border border-white/20 p-8 text-white shadow-2xl shadow-rose-900/25 sm:p-10"
+      className="relative flex min-h-[420px] flex-col justify-center overflow-hidden rounded-[24px] border border-white/20 p-4 text-white shadow-2xl shadow-rose-900/25 sm:rounded-[32px] sm:p-6 lg:p-8"
       style={{
         backgroundImage: texture,
         backgroundSize: "cover",
@@ -212,51 +212,51 @@ export default function CicloResumen({
       }}
     >
       <div
-        className={`pointer-events-none absolute inset-0 rounded-[32px] bg-gradient-to-br ${overlay}`}
+        className={`pointer-events-none absolute inset-0 rounded-[24px] bg-gradient-to-br sm:rounded-[32px] ${overlay}`}
       />
-      <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent sm:inset-x-8" />
 
-      <div className="relative z-10 grid gap-8 2xl:grid-cols-[minmax(0,1.1fr)_minmax(22rem,0.72fr)]">
-        <div className="space-y-8">
+      <div className="relative z-10 grid gap-6 lg:gap-8 2xl:grid-cols-[minmax(0,1.1fr)_minmax(22rem,0.72fr)]">
+        <div className="space-y-6 sm:space-y-8">
           <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left">
-            <div className="flex flex-col items-center gap-4 sm:items-start">
+            <div className="flex flex-col items-center gap-3 sm:items-start sm:gap-4">
               <span
-                className={`flex h-24 w-24 items-center justify-center rounded-full border backdrop-blur-md bg-gradient-to-br ${iconRing}`}
+                className={`flex h-20 w-20 items-center justify-center rounded-full border backdrop-blur-md bg-gradient-to-br sm:h-24 sm:w-24 ${iconRing}`}
               >
-                <ElementIcon className="h-12 w-12 text-white/90" />
+                <ElementIcon className="h-10 w-10 text-white/90 sm:h-12 sm:w-12" />
               </span>
               <span
-                className={`inline-flex items-center gap-2 rounded-full border px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${badge}`}
+                className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.18em] sm:px-4 sm:text-xs sm:tracking-[0.2em] ${badge}`}
               >
                 Ritmo elemental
               </span>
             </div>
-            <div className="mt-6 sm:ml-8 sm:mt-0">
-              <h1 className="text-4xl font-bold leading-tight sm:text-5xl">
+            <div className="mt-4 sm:ml-8 sm:mt-0">
+              <h1 className="text-3xl font-bold leading-tight sm:text-5xl">
                 {mujerChakanaData.elemento}
               </h1>
               <p
-                className={`mt-3 max-w-xl text-sm leading-relaxed sm:text-base ${accent}`}
+                className={`mt-2 max-w-xl text-sm leading-relaxed sm:mt-3 sm:text-base ${accent}`}
               >
                 {affirmation}
               </p>
             </div>
           </div>
 
-          <div className="rounded-3xl border border-white/20 bg-white/10 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_18px_42px_rgba(0,0,0,0.18)] backdrop-blur-xl">
-            <h2 className="text-lg font-semibold text-white">
+          <div className="space-y-3 rounded-[20px] border border-white/20 bg-white/10 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_18px_42px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:rounded-3xl sm:p-6">
+            <h2 className="text-base font-semibold text-white sm:text-lg">
               Panorama del ciclo presente
             </h2>
-            <div className="flex flex-wrap items-center gap-3 text-sm text-white/80">
-              <span className="rounded-full border border-white/24 bg-white/14 px-4 py-1 font-medium shadow-inner">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-white/80 sm:gap-3 sm:text-sm">
+              <span className="rounded-full border border-white/24 bg-white/14 px-3 py-1 font-medium shadow-inner sm:px-4">
                 Elemento guía: {mujerChakanaData.elemento}
               </span>
               {mujerChakanaData.semana && (
-                <span className="rounded-full border border-white/24 bg-white/14 px-4 py-1 font-medium shadow-inner">
+                <span className="rounded-full border border-white/24 bg-white/14 px-3 py-1 font-medium shadow-inner sm:px-4">
                   Semana lunar: {mujerChakanaData.semana}
                 </span>
               )}
-              <span className="rounded-full border border-white/24 bg-white/14 px-4 py-1 font-medium shadow-inner">
+              <span className="rounded-full border border-white/24 bg-white/14 px-3 py-1 font-medium shadow-inner sm:px-4">
                 Recursos sugeridos: {resourceItems.length || "Próximamente"}
               </span>
             </div>
@@ -269,7 +269,7 @@ export default function CicloResumen({
           </div>
 
           {hasPremiumContent && (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <h3 className="text-base font-semibold text-white/90">
                 Herramientas disponibles hoy
               </h3>
@@ -277,7 +277,7 @@ export default function CicloResumen({
                 {resourceItems.map(({ id, label, description, icon: Icon }) => (
                   <div
                     key={id}
-                    className="group flex flex-col gap-2 rounded-2xl border border-white/18 bg-white/10 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] backdrop-blur-xl transition duration-300 hover:border-white/35 hover:bg-white/16"
+                    className="group flex flex-col gap-2 rounded-[18px] border border-white/18 bg-white/10 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] backdrop-blur-xl transition duration-300 hover:border-white/35 hover:bg-white/16 sm:rounded-2xl sm:p-4"
                   >
                     <div className="flex items-center gap-3">
                       <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/10">
@@ -304,12 +304,12 @@ export default function CicloResumen({
             </div>
           )}
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {hasPremiumContent ? (
               suscripcionActiva ? (
                 <Link
                   href={dailyContentHref}
-                  className="group inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-rose-500 via-rose-600 to-rose-700 px-6 py-4 text-base font-semibold text-white shadow-xl transition duration-300 hover:from-rose-600 hover:via-rose-700 hover:to-rose-800 hover:shadow-rose-900/40"
+                  className="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-rose-500 via-rose-600 to-rose-700 px-4 py-3 text-sm font-semibold text-white shadow-xl transition duration-300 hover:from-rose-600 hover:via-rose-700 hover:to-rose-800 hover:shadow-rose-900/40 sm:gap-3 sm:px-6 sm:py-4 sm:text-base"
                 >
                   <Sparkles className="h-5 w-5 transition group-hover:scale-110" />
                   Acceder al portal del día
@@ -318,14 +318,14 @@ export default function CicloResumen({
                 <button
                   type="button"
                   onClick={handleNoAccess}
-                  className="inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-6 py-4 text-base font-semibold text-white/80 backdrop-blur-md transition duration-300 hover:border-white/40 hover:text-white"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-semibold text-white/80 backdrop-blur-md transition duration-300 hover:border-white/40 hover:text-white sm:gap-3 sm:px-6 sm:py-4 sm:text-base"
                 >
                   <Lock className="h-5 w-5" />
                   Contenido exclusivo · suscríbete para acceder
                 </button>
               )
             ) : (
-              <p className="rounded-2xl border border-white/15 bg-white/5 px-6 py-4 text-center text-sm text-white/70 backdrop-blur-md">
+              <p className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-center text-sm text-white/70 backdrop-blur-md sm:px-6 sm:py-4">
                 Estamos preparando nuevos recursos para esta fase. Vuelve pronto
                 o explora el manual para seguir profundizando.
               </p>
@@ -333,19 +333,19 @@ export default function CicloResumen({
           </div>
         </div>
 
-        <div className="grid gap-4 rounded-3xl border border-white/18 bg-white/10 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_18px_42px_rgba(0,0,0,0.18)] backdrop-blur-xl md:grid-cols-3 2xl:flex 2xl:flex-col 2xl:gap-6 2xl:p-6">
+        <div className="grid gap-3 sm:rounded-3xl sm:border sm:border-white/18 sm:bg-white/10 sm:p-5 sm:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_18px_42px_rgba(0,0,0,0.18)] sm:backdrop-blur-xl md:grid-cols-3 2xl:flex 2xl:flex-col 2xl:gap-6 2xl:p-6">
           {mujerChakanaData.tip_extra && (
-            <div className="rounded-2xl border border-amber-200/30 bg-amber-100/15 p-5 text-amber-100 shadow-inner shadow-amber-900/20 md:col-span-3 2xl:col-span-1">
+            <div className="rounded-[20px] border border-amber-200/30 bg-amber-100/15 p-4 text-amber-100 shadow-inner shadow-amber-900/20 sm:rounded-2xl sm:p-5 md:col-span-3 2xl:col-span-1">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-200">
                 Consejo del día
               </p>
-              <p className="mt-3 max-w-3xl text-sm leading-relaxed text-amber-50 2xl:max-w-none">
+              <p className="mt-2 max-w-3xl text-sm leading-relaxed text-amber-50 sm:mt-3 2xl:max-w-none">
                 {mujerChakanaData.tip_extra}
               </p>
             </div>
           )}
 
-          <div className="rounded-2xl border border-white/18 bg-white/10 p-5 text-white/74 backdrop-blur-xl md:col-span-1">
+          <div className="rounded-[20px] border border-white/18 bg-white/10 p-4 text-white/74 backdrop-blur-xl sm:rounded-2xl sm:p-5 md:col-span-1">
             <p className="text-sm leading-relaxed">
               Tu ciclo es un mandala vivo. Registrar lo que sientes hoy abre una
               puerta a la{" "}
@@ -355,12 +355,12 @@ export default function CicloResumen({
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/16 bg-white/10 p-5 text-sm text-white/68 backdrop-blur-xl md:col-span-2 2xl:col-span-1">
+          <div className="rounded-[20px] border border-white/16 bg-white/10 p-4 text-sm text-white/68 backdrop-blur-xl sm:rounded-2xl sm:p-5 md:col-span-2 2xl:col-span-1">
             <p>
               Si necesitas inspiración extra, visita el manual o consulta el
               calendario lunar. Tu práctica constante es un acto de amor.
             </p>
-            <div className="mt-4 flex flex-col gap-3 text-sm sm:flex-row">
+            <div className="mt-3 flex flex-col gap-2 text-sm sm:mt-4 sm:flex-row sm:gap-3">
               <Link
                 href="/manual"
                 className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 px-4 py-2 text-white/85 transition hover:border-white/40 hover:text-white"
@@ -380,7 +380,7 @@ export default function CicloResumen({
 
       {showUpsell && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-md">
-          <div className="glass-panel max-w-md rounded-3xl p-8 text-center text-rose-900">
+          <div className="glass-panel max-w-md rounded-[22px] p-5 text-center text-rose-900 sm:rounded-3xl sm:p-8">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-rose-600 text-white shadow-lg">
               <Lock className="h-7 w-7" />
             </div>
