@@ -23,7 +23,7 @@ export default function SetupPerfil() {
       } = await supabase.auth.getUser();
 
       if (error || !user) {
-        router.push("/login");
+        router.replace("/auth/login");
         return;
       }
 
@@ -154,7 +154,7 @@ export default function SetupPerfil() {
           className="w-full border border-pink-300 p-2 rounded-xl mb-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-400"
         />
 
-        <label className="block text-sm font-semibold mb-1">🌕 Tu imagen</label>
+        <p className="mb-1 block text-sm font-semibold">🌕 Tu imagen</p>
         <AvatarUploader
           userId={userId}
           onUpload={(url) => setAvatarUrl(url)}
