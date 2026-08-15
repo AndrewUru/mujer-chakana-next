@@ -25,6 +25,7 @@ import {
   ArrowRight,
   Flame,
   Leaf,
+  LoaderCircle,
   LogIn,
   Moon,
   Sparkles,
@@ -170,40 +171,145 @@ function StoryChapter({
 }
 
 function OracleMoment() {
-  const [prompt, setPrompt] = useState<keyof typeof ORACLE_RESPONSES>("claridad");
+  const [intention, setIntention] =
+    useState<keyof typeof ORACLE_RESPONSES>("claridad");
+  const [seed, setSeed] = useState("");
+  const [reading, setReading] = useState("");
+  const [isListening, setIsListening] = useState(false);
+  const [error, setError] = useState("");
+  const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => () => abortRef.current?.abort(), []);
+
+  const openReading = async () => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+    setIsListening(true);
+    setReading("");
+    setError("");
+
+    try {
+      const response = await fetch("/api/samari/umbral", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ intention, seed }),
+        signal: controller.signal,
+      });
+
+      if (!response.ok || !response.body) {
+        const payload = await response.json().catch(() => null);
+        throw new Error(payload?.error || "La lectura no pudo comenzar.");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        setReading((current) => current + decoder.decode(value, { stream: true }));
+      }
+    } catch (requestError) {
+      if (requestError instanceof DOMException && requestError.name === "AbortError") return;
+      setReading(ORACLE_RESPONSES[intention]);
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "Samari está en pausa. Te dejamos una semilla para este momento.",
+      );
+    } finally {
+      if (abortRef.current === controller) {
+        setIsListening(false);
+        abortRef.current = null;
+      }
+    }
+  };
 
   return (
-    <div className={styles.oracle} aria-label="Una muestra de la guía de Samari">
-      <p className={styles.oracleQuestion}>¿Qué necesita tu energía ahora?</p>
+    <div className={styles.oracle} aria-label="Una microlectura con Samari">
+      <div className={styles.oracleHeading}>
+        <span className={styles.oraclePresence} aria-hidden="true" />
+        <p className={styles.oracleQuestion}>Samari · presente</p>
+        <span className={styles.oracleAi}>IA</span>
+      </div>
+      <p className={styles.oraclePrompt}>¿Qué necesitas encontrar ahora?</p>
       <div className={styles.oracleChoices}>
         {(Object.keys(ORACLE_RESPONSES) as Array<keyof typeof ORACLE_RESPONSES>).map(
           (choice) => (
             <button
               key={choice}
               type="button"
-              className={prompt === choice ? styles.oracleChoiceActive : styles.oracleChoice}
-              aria-pressed={prompt === choice}
-              onClick={() => setPrompt(choice)}
+              className={
+                intention === choice ? styles.oracleChoiceActive : styles.oracleChoice
+              }
+              aria-pressed={intention === choice}
+              onClick={() => {
+                setIntention(choice);
+                setReading("");
+                setError("");
+              }}
             >
               {choice}
             </button>
           ),
         )}
       </div>
-      <AnimatePresence mode="wait">
-        <motion.blockquote
-          key={prompt}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.3 }}
-        >
-          “{ORACLE_RESPONSES[prompt]}”
-        </motion.blockquote>
-      </AnimatePresence>
+      <label className={styles.oracleSeed}>
+        <span>Deja una palabra <small>opcional</small></span>
+        <input
+          value={seed}
+          onChange={(event) => setSeed(event.target.value.slice(0, 80))}
+          placeholder="Ej. decisión, cansancio, comienzo…"
+          maxLength={80}
+          disabled={isListening}
+        />
+      </label>
+      <button
+        type="button"
+        className={styles.oracleAction}
+        onClick={openReading}
+        disabled={isListening}
+      >
+        {isListening ? (
+          <>
+            <LoaderCircle className={styles.oracleSpinner} aria-hidden="true" />
+            Samari está escuchando
+          </>
+        ) : (
+          <>
+            <Sparkles aria-hidden="true" />
+            Abrir mi microlectura
+          </>
+        )}
+      </button>
+      <div className={styles.oracleReading} aria-live="polite" aria-busy={isListening}>
+        <AnimatePresence mode="wait">
+          {(reading || isListening) && (
+            <motion.blockquote
+              key={isListening && !reading ? "listening" : "reading"}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3 }}
+            >
+              {reading || "Escuchando el espacio entre tus palabras…"}
+              {isListening && reading ? <span className={styles.oracleCursor} /> : null}
+            </motion.blockquote>
+          )}
+        </AnimatePresence>
+      </div>
+      {error ? <p className={styles.oracleError}>{error}</p> : null}
       <p className={styles.oracleNote}>
-        Una pequeña muestra. Dentro, Samari conversa con tus propios registros.
+        Una lectura simbólica basada solo en lo que eliges aquí. Dentro, Samari puede
+        acompañarte con el contexto de tus propios registros.
       </p>
+      {reading ? (
+        <Link href="/register" className={styles.oracleInvitation}>
+          Llevar esta conversación a mi ciclo
+          <ArrowRight aria-hidden="true" />
+        </Link>
+      ) : null}
     </div>
   );
 }
