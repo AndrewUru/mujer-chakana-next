@@ -331,7 +331,7 @@ export default function Home() {
               Mujer <em>Chakana</em>
             </span>
           </Link>
-          <Link href="/login" className={styles.loginLink}>
+          <Link href="/auth/login" className={styles.loginLink}>
             <LogIn size={15} aria-hidden="true" />
             Entrar
           </Link>
@@ -504,7 +504,7 @@ export default function Home() {
                 Crear mi espacio
                 <ArrowRight size={17} aria-hidden="true" />
               </Link>
-              <Link href="/login" className={styles.secondaryAction}>Ya tengo cuenta</Link>
+              <Link href="/auth/login" className={styles.secondaryAction}>Ya tengo cuenta</Link>
             </div>
             <footer className={styles.storyFooter}>
               <span>Mujer Chakana · 2026</span>
