@@ -171,6 +171,14 @@ export default function NuevoRegistro({
     const fechaHoy = new Date().toISOString().split("T")[0];
 
     try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        throw new Error("La sesión ha caducado.");
+      }
+
       // Insertar y obtener el ID del nuevo registro
       const { data: insertData, error } = await supabase
         .from("registros")
@@ -197,35 +205,53 @@ export default function NuevoRegistro({
         return;
       }
 
-      // Llamar a OpenAI para generar el mensaje
-      const response = await fetch("/api/generar-mensaje", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nombre,
-          emociones,
-          energia,
-          creatividad,
-          espiritualidad,
-          notas,
-          dia_ciclo,
-          ciclo_actual,
-          arquetipo,
-        }),
-      });
+      let mensajeFinal =
+        "Tu registro quedó guardado. Samari retomará la reflexión cuando vuelva a estar disponible.";
 
-      const data = await response.json();
+      try {
+        const response = await fetch("/api/generar-mensaje", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            nombre,
+            emociones,
+            energia,
+            creatividad,
+            espiritualidad,
+            notas,
+            dia_ciclo,
+            ciclo_actual,
+            arquetipo,
+          }),
+        });
 
-      // Mostrar mensaje de éxito
-      const mensajeFinal = data.mensaje || "Registro guardado exitosamente!";
+        if (!response.ok) {
+          throw new Error("Samari no pudo crear la reflexión.");
+        }
+
+        const data = await response.json();
+        mensajeFinal = data.mensaje || mensajeFinal;
+
+        if (data.mensaje) {
+          await supabase
+            .from("registros")
+            .update({ mensaje: data.mensaje })
+            .eq("id", insertData.id);
+        }
+
+        addToast("success", "¡Registro guardado y reflexión generada!");
+      } catch (reflectionError) {
+        console.error("Error generando la reflexión:", reflectionError);
+        addToast(
+          "info",
+          "Tu registro está guardado, aunque Samari no pudo responder ahora.",
+        );
+      }
+
       setMensaje(mensajeFinal);
-      addToast("success", "¡Registro guardado y reflexión generada!");
-
-      // Actualizar el registro con el mensaje generado
-      await supabase
-        .from("registros")
-        .update({ mensaje: data.mensaje })
-        .eq("id", insertData.id);
 
       // Limpiar campos y mostrar éxito
       setEmociones("");

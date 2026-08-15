@@ -108,6 +108,9 @@ Crea un archivo `.env.local` y agrega tus claves de Supabase y OpenAI:
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 OPENAI_API_KEY=your-openai-api-key
+# Opcionales: permiten cambiar de modelo sin modificar el código
+OPENAI_CHAT_MODEL=gpt-5.6-luna
+OPENAI_REFLECTION_MODEL=gpt-5.6-luna
 ```
 
 5. Inicia el servidor de desarrollo:

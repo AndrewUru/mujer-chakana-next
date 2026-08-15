@@ -9,10 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^4.0.42",
+    "@ai-sdk/react": "^4.0.69",
     "@heroicons/react": "^2.2.0",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/auth-helpers-react": "^0.5.0",
     "@supabase/supabase-js": "^2.49.4",
+    "ai": "^7.0.66",
     "cookies-next": "^5.1.0",
     "framer-motion": "^12.7.4",
     "html2canvas": "^1.4.1",

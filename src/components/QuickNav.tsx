@@ -1,23 +1,20 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useChat } from "@ai-sdk/react";
 import { AnimatePresence, motion } from "framer-motion";
+import { DefaultChatTransport, type UIMessage } from "ai";
 import {
-  MessageCircle,
-  X,
-  Sparkles,
-  Send,
+  CircleStop,
+  Lightbulb,
   Loader2,
   RefreshCcw,
-  Lightbulb,
+  Send,
+  ShieldCheck,
+  Sparkles,
+  X,
 } from "lucide-react";
-
-interface ChatMessage {
-  id: string;
-  role: "assistant" | "user";
-  content: string;
-  timestamp: string;
-}
+import { supabase } from "@/lib/supabaseClient";
 
 interface QuickNavProps {
   currentDay?: number;
@@ -25,10 +22,10 @@ interface QuickNavProps {
 }
 
 const SUGGESTIONS = [
-  "¿Qué arquetipo puedo trabajar hoy?",
-  "Ayúdame a crear una intención para mi ritual",
-  "Recuérdame cómo alinear mi energía con la luna",
-  "Necesito un respiro consciente ahora mismo",
+  "¿Qué necesita mi energía hoy?",
+  "Ayúdame a ver un patrón en mis registros",
+  "Crea una intención breve para mi ritual",
+  "Necesito una pausa consciente ahora",
 ];
 
 const uniqueId = () =>
@@ -37,111 +34,108 @@ const uniqueId = () =>
     : Math.random().toString(36).slice(2, 11);
 
 const buildIntro = (userName?: string, currentDay?: number) => {
-  const greeting = userName ? `Hola ${userName}, soy Samari.` : "Hola, soy Samari.";
+  const greeting = userName ? `Hola, ${userName}. Soy Samari.` : "Hola, soy Samari.";
   const cycleNote = currentDay
-    ? ` Hoy acompaño tu día ${currentDay} del ciclo.`
-    : " Estoy aquí para guiar tu camino cíclico.";
-  return `${greeting}${cycleNote} Pregúntame lo que necesites y elaboraré una guía personalizada.`;
+    ? ` Estoy leyendo contigo el día ${currentDay} de tu ciclo.`
+    : " Estoy aquí para acompañar tu camino cíclico.";
+
+  return `${greeting}${cycleNote} Puedes traerme una emoción, una pregunta o algo que se esté repitiendo.`;
 };
 
-const createAssistantMessage = (content: string): ChatMessage => ({
+const createIntroMessage = (userName?: string, currentDay?: number): UIMessage => ({
   id: uniqueId(),
   role: "assistant",
-  content,
-  timestamp: new Date().toISOString(),
+  parts: [{ type: "text", text: buildIntro(userName, currentDay) }],
 });
 
-const createUserMessage = (content: string): ChatMessage => ({
-  id: uniqueId(),
-  role: "user",
-  content,
-  timestamp: new Date().toISOString(),
-});
+const getMessageText = (message: UIMessage) =>
+  message.parts
+    .filter((part) => part.type === "text")
+    .map((part) => part.text)
+    .join("");
 
 const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>(() => [
-    createAssistantMessage(buildIntro(userName, currentDay)),
-  ]);
   const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const introMessage = useMemo(
-    () => createAssistantMessage(buildIntro(userName, currentDay)),
-    [userName, currentDay]
+    () => createIntroMessage(userName, currentDay),
+    [currentDay, userName],
   );
 
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: "/api/chat",
+        prepareSendMessagesRequest: async ({ messages }) => {
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
+          const headers = new Headers();
+
+          if (session?.access_token) {
+            headers.set("Authorization", `Bearer ${session.access_token}`);
+          }
+
+          return {
+            body: { messages },
+            headers,
+          };
+        },
+      }),
+    [],
+  );
+
+  const {
+    messages,
+    setMessages,
+    sendMessage,
+    status,
+    error,
+    clearError,
+    stop,
+  } = useChat({
+    id: "samari-cycle-guide",
+    messages: [introMessage],
+    transport,
+    throttle: 40,
+  });
+
+  const isWorking = status === "submitted" || status === "streaming";
+
   useEffect(() => {
-    setMessages((prev) => {
-      const onlyIntro = prev.length === 1 && prev[0].role === "assistant";
-      return onlyIntro ? [introMessage] : prev;
+    setMessages((previous) => {
+      const isOnlyIntro =
+        previous.length === 1 && previous[0]?.role === "assistant";
+      return isOnlyIntro ? [introMessage] : previous;
     });
-  }, [introMessage]);
+  }, [introMessage, setMessages]);
 
   useEffect(() => {
     if (!isOpen || !bottomRef.current) return;
     bottomRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isOpen]);
+  }, [isOpen, messages, status]);
 
-  const sendMessage = async (text: string) => {
+  const submitMessage = (text: string) => {
     const trimmed = text.trim();
-    if (!trimmed) return;
+    if (!trimmed || isWorking) return;
 
-    const userMessage = createUserMessage(trimmed);
-    const conversation = [...messages, userMessage];
-    setMessages(conversation);
+    clearError();
     setInput("");
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: conversation.map(({ role, content }) => ({ role, content })),
-          context: { currentDay, userName },
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Respuesta no valida");
-      }
-
-      const data = await response.json();
-      if (!data.reply) {
-        throw new Error("Respuesta vacia");
-      }
-
-      setMessages((prev) => [...prev, createAssistantMessage(data.reply)]);
-    } catch (err) {
-      console.error("chat error", err);
-      setError("No pude conectar con el oráculo. Inténtalo de nuevo.");
-    } finally {
-      setLoading(false);
-    }
+    void sendMessage({ text: trimmed });
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!loading) {
-      sendMessage(input);
-    }
-  };
-
-  const handleSuggestion = (suggestion: string) => {
-    if (loading) return;
-    setInput(suggestion);
-    sendMessage(suggestion);
+    submitMessage(input);
   };
 
   const resetChat = () => {
-    setMessages([createAssistantMessage(buildIntro(userName, currentDay))]);
+    void stop();
+    clearError();
+    setMessages([createIntroMessage(userName, currentDay)]);
     setInput("");
-    setError(null);
   };
 
   return (
@@ -152,140 +146,201 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
       transition={{ delay: 0.4, duration: 0.4 }}
     >
       <motion.button
-        onClick={() => setIsOpen((prev) => !prev)}
-        className="glass flex items-center gap-2 rounded-full px-4 py-3 text-rose-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
+        type="button"
+        onClick={() => setIsOpen((previous) => !previous)}
+        className="glass flex min-h-11 items-center gap-2 rounded-full px-4 py-3 font-semibold text-rose-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.96 }}
         aria-expanded={isOpen}
         aria-controls="samari-chat-panel"
         aria-label={isOpen ? "Cerrar guía de Samari" : "Abrir guía de Samari"}
       >
-        <MessageCircle className="h-5 w-5" />
-        <span>{isOpen ? "Cerrar guia" : "Habla con Samari"}</span>
+        <span className="relative">
+          <Sparkles className="h-5 w-5" />
+          {!isOpen && (
+            <span className="absolute -right-1 -top-1 h-2 w-2 animate-pulse rounded-full bg-amber-400" />
+          )}
+        </span>
+        <span>{isOpen ? "Cerrar guía" : "Habla con Samari"}</span>
       </motion.button>
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div
+          <motion.section
             id="samari-chat-panel"
             role="dialog"
             aria-modal="false"
             aria-labelledby="samari-chat-title"
-            className="glass-shell absolute bottom-16 right-0 w-[min(360px,calc(100vw-1.5rem))] rounded-3xl p-4"
-            initial={{ opacity: 0, scale: 0.9, y: 12 }}
+            className="glass-shell absolute bottom-16 right-0 flex max-h-[min(680px,calc(100svh-var(--nav-height)-7rem))] w-[min(390px,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-[28px] border border-white/65 shadow-[0_24px_80px_rgba(94,32,57,0.22)]"
+            initial={{ opacity: 0, scale: 0.92, y: 14 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 12 }}
-            transition={{ duration: 0.2 }}
+            exit={{ opacity: 0, scale: 0.92, y: 14 }}
+            transition={{ duration: 0.22 }}
           >
-            <div className="mb-3 flex items-start justify-between gap-4 border-b border-white/50 pb-3">
-              <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-rose-400">
-                  Chat sagrado
-                </p>
-                <p className="flex items-center gap-2 text-lg font-semibold text-rose-700">
-                  <Sparkles className="h-4 w-4" />
-                  <span id="samari-chat-title">Samari guía</span>
-                </p>
-                <p className="text-xs text-rose-500">
-                  {currentDay
-                    ? `Día ${currentDay} del ciclo`
-                    : "Disponible para tu ciclo"}
-                </p>
+            <header className="border-b border-white/55 bg-gradient-to-br from-rose-100/80 via-white/35 to-amber-50/60 p-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-rose-500 to-pink-700 text-white shadow-lg shadow-rose-300/40">
+                    <Sparkles className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-extrabold uppercase tracking-[0.25em] text-rose-400">
+                      Guía cíclica con IA
+                    </p>
+                    <h2
+                      id="samari-chat-title"
+                      className="font-[family-name:var(--font-display)] text-xl font-semibold text-rose-950"
+                    >
+                      Samari
+                    </h2>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={resetChat}
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/70 bg-white/45 text-rose-600 transition hover:bg-white/80"
+                    aria-label="Iniciar una conversación nueva"
+                  >
+                    <RefreshCcw className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsOpen(false)}
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/70 bg-white/45 text-rose-600 transition hover:bg-white/80"
+                    aria-label="Cerrar chat"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={resetChat}
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/60 bg-white/35 text-rose-500 hover:bg-white/70"
-                  aria-label="Reiniciar chat"
-                >
-                  <RefreshCcw className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsOpen(false)}
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/60 bg-white/35 text-rose-500 hover:bg-white/70"
-                  aria-label="Cerrar chat"
-                >
-                  <X className="h-4 w-4" />
-                </button>
+
+              <div className="mt-3 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-wider text-rose-700">
+                {currentDay && (
+                  <span className="rounded-full bg-white/55 px-2.5 py-1">Día {currentDay}</span>
+                )}
+                <span className="flex items-center gap-1 rounded-full bg-white/55 px-2.5 py-1">
+                  <ShieldCheck className="h-3 w-3" />
+                  contexto privado
+                </span>
+                <span className="rounded-full bg-white/55 px-2.5 py-1">memoria reciente</span>
               </div>
-            </div>
+            </header>
 
             <div
-              ref={containerRef}
-              className="flex max-h-[360px] flex-col gap-3 overflow-y-auto pr-1"
+              className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 py-4"
+              aria-live="polite"
             >
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`rounded-2xl border px-3 py-2 text-sm leading-relaxed ${
-                    message.role === "assistant"
-                      ? "self-start border-white/60 bg-rose-50/62 text-rose-900 shadow-inner backdrop-blur"
-                      : "self-end border-white/70 bg-white/62 text-rose-700 shadow-inner backdrop-blur"
-                  }`}
-                >
-                  {message.content}
-                </div>
-              ))}
+              {messages.map((message) => {
+                const content = getMessageText(message);
+                if (!content) return null;
 
-              {loading && (
-                <div className="flex items-center gap-2 text-sm text-rose-500">
+                return (
+                  <motion.div
+                    key={message.id}
+                    className={`max-w-[88%] rounded-[20px] border px-3.5 py-3 text-sm leading-relaxed shadow-sm ${
+                      message.role === "assistant"
+                        ? "self-start rounded-bl-md border-rose-100/80 bg-rose-50/78 text-rose-950"
+                        : "self-end rounded-br-md border-rose-500/20 bg-gradient-to-br from-rose-500 to-pink-600 text-white"
+                    }`}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    {message.role === "assistant" && (
+                      <span className="mb-1 block text-[9px] font-extrabold uppercase tracking-[0.18em] text-rose-400">
+                        Samari
+                      </span>
+                    )}
+                    <p className="whitespace-pre-wrap">{content}</p>
+                  </motion.div>
+                );
+              })}
+
+              {status === "submitted" && (
+                <div className="flex items-center gap-2 text-xs text-rose-500">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Samari está escribiendo...
+                  Leyendo tu momento y tus registros…
                 </div>
               )}
 
+              {status === "streaming" && (
+                <button
+                  type="button"
+                  onClick={() => void stop()}
+                  className="flex min-h-11 w-fit items-center gap-2 rounded-full border border-rose-200 bg-white/60 px-3 text-xs font-semibold text-rose-600"
+                >
+                  <CircleStop className="h-4 w-4" />
+                  Detener respuesta
+                </button>
+              )}
+
               {error && (
-                <p className="glass-soft rounded-xl px-3 py-2 text-xs text-rose-600">
-                  {error}
-                </p>
+                <div className="rounded-2xl border border-red-200 bg-red-50/85 px-3 py-2 text-xs leading-relaxed text-red-700">
+                  Samari no pudo responder ahora. Revisa tu conexión e inténtalo de nuevo.
+                </div>
               )}
               <div ref={bottomRef} />
             </div>
 
-            {!loading && (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {SUGGESTIONS.map((suggestion) => (
-                  <button
-                    key={suggestion}
-                    type="button"
-                    className="flex min-h-11 items-center gap-1 rounded-full border border-white/60 bg-white/34 px-3 py-2 text-xs text-rose-600 transition hover:bg-white/70"
-                    onClick={() => handleSuggestion(suggestion)}
-                  >
-                    <Lightbulb className="h-3.5 w-3.5" />
-                    {suggestion}
-                  </button>
-                ))}
+            {messages.length <= 1 && !isWorking && (
+              <div className="border-t border-white/55 px-4 py-3">
+                <p className="mb-2 flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.16em] text-rose-400">
+                  <Lightbulb className="h-3.5 w-3.5" />
+                  Puedes comenzar por aquí
+                </p>
+                <div className="grid gap-1.5">
+                  {SUGGESTIONS.map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      type="button"
+                      className="min-h-11 rounded-2xl border border-white/70 bg-white/45 px-3 py-2 text-left text-xs font-semibold text-rose-700 transition hover:border-rose-200 hover:bg-white/80"
+                      onClick={() => submitMessage(suggestion)}
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="mt-3 flex gap-2">
-              <label htmlFor="samari-chat-input" className="sr-only">
-                Escribe tu mensaje
-              </label>
-              <input
-                id="samari-chat-input"
-                value={input}
-                onChange={(event) => setInput(event.target.value)}
-                placeholder="Comparte lo que sientes..."
-                className="flex-1 rounded-2xl border border-white/60 bg-white/62 px-3 py-2 text-sm text-rose-700 focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
-                disabled={loading}
-              />
-              <button
-                type="submit"
-                className="flex min-h-11 min-w-11 items-center justify-center rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 px-4 py-2 text-white shadow focus:outline-none focus:ring-2 focus:ring-rose-300 disabled:cursor-not-allowed disabled:opacity-50"
-                aria-label="Enviar mensaje"
-                disabled={!input.trim() || loading}
-              >
-                {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Send className="h-4 w-4" />
-                )}
-              </button>
+            <form onSubmit={handleSubmit} className="border-t border-white/60 bg-white/38 p-3">
+              <div className="flex gap-2">
+                <label htmlFor="samari-chat-input" className="sr-only">
+                  Escribe tu mensaje para Samari
+                </label>
+                <textarea
+                  id="samari-chat-input"
+                  value={input}
+                  onChange={(event) => setInput(event.target.value.slice(0, 1_500))}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" && !event.shiftKey) {
+                      event.preventDefault();
+                      submitMessage(input);
+                    }
+                  }}
+                  placeholder="Comparte lo que estás sintiendo…"
+                  className="max-h-28 min-h-12 flex-1 resize-none rounded-2xl border border-white/70 bg-white/70 px-3.5 py-3 text-sm text-rose-900 placeholder:text-rose-300 focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
+                  rows={1}
+                  disabled={isWorking}
+                />
+                <button
+                  type="submit"
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 text-white shadow-lg shadow-rose-300/35 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45"
+                  aria-label="Enviar mensaje"
+                  disabled={!input.trim() || isWorking}
+                >
+                  {isWorking ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+              <p className="mt-2 px-1 text-[10px] leading-relaxed text-rose-400">
+                Samari acompaña tu reflexión; no sustituye atención médica o psicológica.
+              </p>
             </form>
-          </motion.div>
+          </motion.section>
         )}
       </AnimatePresence>
     </motion.div>
