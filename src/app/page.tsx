@@ -368,7 +368,7 @@ export default function Home() {
                 Cruzar el umbral
                 <ArrowDown size={17} aria-hidden="true" />
               </button>
-              <Link href="/register" className={styles.secondaryAction}>
+              <Link href="/auth/register" className={styles.secondaryAction}>
                 Crear mi espacio
                 <ArrowRight size={17} aria-hidden="true" />
               </Link>
