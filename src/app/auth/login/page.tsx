@@ -7,13 +7,13 @@ import LoginForm from "@/components/LoginForm";
 
 const highlights = [
   "Accede a tus registros y rituales en segundos.",
-  "Mantente al dia con los recursos que liberamos cada luna.",
-  "Sincroniza tu energia con una guia hecha para ti.",
+  "Mantente al día con los recursos que liberamos cada luna.",
+  "Sincroniza tu energía con una guía hecha para ti.",
 ];
 
 export default function LoginPage() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[url('/bg-chakana.png')] bg-cover bg-center text-rose-900">
+    <main className="relative min-h-screen overflow-hidden bg-[url('/mujer-chakana.webp')] bg-cover bg-center text-rose-900">
       <div className="absolute inset-0 bg-gradient-to-br from-white/85 via-white/75 to-rose-100/60 backdrop-blur-3xl" />
       <motion.div
         initial={{ opacity: 0.25, scale: 0.9 }}
@@ -39,11 +39,11 @@ export default function LoginPage() {
             Regresa a tu altar digital
           </span>
           <h1 className="text-4xl font-extrabold leading-tight text-rose-950 sm:text-5xl">
-            Inicia sesion y vuelve a tu ciclo consciente
+            Inicia sesión y vuelve a tu ciclo consciente
           </h1>
           <p className="text-base text-rose-700 sm:text-lg">
-            Desbloquea tu moonboard, continua los rituales que guardaste y recibe
-            la orientacion amorosa que tejimos para esta vuelta lunar.
+            Desbloquea tu moonboard, continúa los rituales que guardaste y recibe
+            la orientación amorosa que tejimos para esta vuelta lunar.
           </p>
           <ul className="space-y-2 text-sm text-rose-700 sm:text-base">
             {highlights.map((item) => (
@@ -62,7 +62,7 @@ export default function LoginPage() {
               href="/auth/register"
               className="font-semibold text-rose-700 underline-offset-2 hover:underline"
             >
-              Registrate gratis
+              Regístrate gratis
             </Link>
           </div>
         </motion.section>
@@ -98,7 +98,7 @@ export default function LoginPage() {
 
           <div className="mt-8 text-xs text-rose-500">
             <span className="font-semibold">Consejo:</span> si es tu primera vez
-            aqui, recuerda revisar tu bandeja de correo para activar tu acceso.
+            aquí, recuerda revisar tu bandeja de correo para activar tu acceso.
           </div>
         </motion.section>
       </div>

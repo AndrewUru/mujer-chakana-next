@@ -7,13 +7,13 @@ import RegisterForm from "@/components/RegisterForm";
 
 const highlights = [
   "Activa tu moonboard gratuito y empieza a registrar tus ciclos.",
-  "Recibe rituales y audio guias que acompanian cada fase.",
-  "Configura tu espacio con tu propio ritmo y acompanamiento.",
+  "Recibe rituales y audioguías que acompañan cada fase.",
+  "Configura tu espacio con tu propio ritmo y acompañamiento.",
 ];
 
 export default function RegisterPage() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[url('/bg-chakana.png')] bg-cover bg-center text-rose-900">
+    <main className="relative min-h-screen overflow-hidden bg-[url('/mujer-chakana.webp')] bg-cover bg-center text-rose-900">
       <div className="absolute inset-0 bg-gradient-to-br from-white/85 via-white/75 to-rose-100/60 backdrop-blur-3xl" />
       <motion.div
         initial={{ opacity: 0.25, scale: 0.9 }}
@@ -39,11 +39,11 @@ export default function RegisterPage() {
             Crea tu altar digital
           </span>
           <h1 className="text-4xl font-extrabold leading-tight text-rose-950 sm:text-5xl">
-            Abre tu cuenta y teje tu camino ciclico
+            Abre tu cuenta y teje tu camino cíclico
           </h1>
           <p className="text-base text-rose-700 sm:text-lg">
-            El registro es gratuito. Comienza con herramientas basicas y cuando lo
-            sientas, expande tu practica con la suscripcion amorosa.
+            El registro es gratuito. Comienza con herramientas básicas y, cuando lo
+            sientas, expande tu práctica con la suscripción amorosa.
           </p>
           <ul className="space-y-2 text-sm text-rose-700 sm:text-base">
             {highlights.map((item) => (
@@ -62,7 +62,7 @@ export default function RegisterPage() {
               href="/auth/login"
               className="font-semibold text-rose-700 underline-offset-2 hover:underline"
             >
-              Inicia sesion
+              Inicia sesión
             </Link>
           </div>
         </motion.section>
@@ -86,7 +86,7 @@ export default function RegisterPage() {
             </span>
             <div className="space-y-1">
               <h2 className="text-2xl font-semibold text-rose-900 sm:text-3xl">
-                Tu viaje comienza aqui
+                Tu viaje comienza aquí
               </h2>
               <p className="text-sm text-rose-600">
                 Completa el formulario para recibir acceso inmediato a tu dashboard.
@@ -98,7 +98,7 @@ export default function RegisterPage() {
 
           <div className="mt-8 text-xs text-rose-500">
             <span className="font-semibold">Tip:</span> si deseas subir tu avatar,
-            podras hacerlo despues de confirmar tu correo.
+            podrás hacerlo después de confirmar tu correo.
           </div>
         </motion.section>
       </div>

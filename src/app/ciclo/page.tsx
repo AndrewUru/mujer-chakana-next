@@ -33,7 +33,7 @@ export default function CicloPage() {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) {
-        router.push("/auth/login");
+        router.replace("/auth/login");
         return;
       }
 
@@ -41,7 +41,7 @@ export default function CicloPage() {
         data: { session },
       } = await supabase.auth.getSession();
       if (!session) {
-        router.push("/auth/login");
+        router.replace("/auth/login");
         return;
       }
 
@@ -54,7 +54,7 @@ export default function CicloPage() {
         .maybeSingle();
 
       if (perfilError || !perfil?.suscripcion_activa) {
-        router.push("/suscripcion");
+        router.replace("/suscripcion");
         return;
       }
 
@@ -91,10 +91,14 @@ export default function CicloPage() {
   if (!authChecked || loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-rose-50 via-white to-amber-50">
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-rose-100 bg-white/70 px-6 py-8 text-rose-600 shadow-lg">
+        <div
+          className="flex flex-col items-center gap-3 rounded-2xl border border-rose-100 bg-white/70 px-6 py-8 text-rose-600 shadow-lg"
+          role="status"
+          aria-live="polite"
+        >
           <div className="flex items-center gap-2 text-sm font-semibold">
             <Sparkles className="h-5 w-5 animate-spin text-rose-400" />
-            Preparando tu galeria de arquetipos...
+            Preparando tu galería de arquetipos...
           </div>
           <p className="text-xs text-rose-500">Verificando acceso y cargando datos.</p>
         </div>
@@ -134,7 +138,7 @@ export default function CicloPage() {
   );
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[url('/bg-chakana.png')] bg-cover bg-center text-rose-900">
+    <main className="relative min-h-screen overflow-hidden bg-[url('/mujer-chakana.webp')] bg-cover bg-center text-rose-900">
       <div className="absolute inset-0 bg-gradient-to-br from-white/85 via-white/75 to-rose-100/60 backdrop-blur-3xl" />
       <motion.div
         initial={{ opacity: 0.3, scale: 0.85 }}
@@ -164,12 +168,12 @@ export default function CicloPage() {
               Los 28 arquetipos que habitan tu ciclo
             </h1>
             <p className="text-base text-rose-700 sm:text-lg">
-              Explora cada dia, conecta con el arquetipo que lo inspira y accede a los
-              rituales que acompanian tu vuelta lunar. Este espacio esta disponible para
+              Explora cada día, conecta con el arquetipo que lo inspira y accede a los
+              rituales que acompañan tu vuelta lunar. Este espacio está disponible para
               suscriptoras activas.
             </p>
             <p className="text-sm italic text-rose-500">
-              Lo que hoy necesitas ya vive en ti. Solo es cuestion de recordarlo.
+              Lo que hoy necesitas ya vive en ti. Solo es cuestión de recordarlo.
             </p>
           </div>
         </motion.section>
@@ -188,7 +192,7 @@ export default function CicloPage() {
                 Semana {semana}
               </span>
               <h2 className="text-2xl font-semibold text-rose-900 sm:text-3xl">
-                Ritmo elemental de los dias {items[0]?.dia_ciclo} al {items.at(-1)?.dia_ciclo}
+                Ritmo elemental de los días {items[0]?.dia_ciclo} al {items.at(-1)?.dia_ciclo}
               </h2>
             </div>
 
@@ -214,7 +218,7 @@ export default function CicloPage() {
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center bg-rose-100 text-sm text-rose-500">
-                          Sin imagen disponible
+                          Imagen no disponible
                         </div>
                       )}
                       <span
@@ -227,7 +231,7 @@ export default function CicloPage() {
                     <div className="space-y-3 p-4 sm:px-6 sm:py-5">
                       <div className="flex items-center justify-between text-sm text-rose-500">
                         <span className="rounded-full border border-rose-100 bg-rose-50 px-3 py-1 text-xs font-semibold">
-                          Dia {dia.dia_ciclo}
+                          Día {dia.dia_ciclo}
                         </span>
                         <span className="text-xs uppercase tracking-[0.25em] text-rose-400">
                           Semana {dia.semana}
@@ -255,7 +259,7 @@ export default function CicloPage() {
                             className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-3 py-1 font-semibold text-rose-600 transition hover:border-rose-300 hover:text-rose-700"
                           >
                             <AudioLines className="h-4 w-4" />
-                            Audio guia
+                            Audioguía
                           </a>
                         )}
                         {dia.ritual_pdf && (

@@ -82,7 +82,7 @@ const elementMeta: Record<ElementKey, ElementMeta> = {
       "Respira profundo, ordena tus pensamientos y comparte tu verdad.",
   },
   default: {
-    texture: "url('/bg-chakana.png')",
+    texture: "url('/mujer-chakana.webp')",
     overlay: "from-rose-950/75 via-rose-900/60 to-stone-900/70",
     icon: Sparkles,
     iconRing:

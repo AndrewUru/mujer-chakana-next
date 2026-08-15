@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordMinLength = 6;
@@ -92,7 +93,7 @@ export default function LoginForm() {
     if (error) {
       const message =
         error.message === "Invalid login credentials"
-          ? "Correo o contrasena incorrectos. Intenta de nuevo."
+          ? "Correo o contraseña incorrectos. Inténtalo de nuevo."
           : `Error: ${error.message}`;
       setFeedback(message);
       setLoading(false);
@@ -130,14 +131,14 @@ export default function LoginForm() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="flex flex-col gap-5"
-      aria-label="Formulario de inicio de sesion"
+      aria-label="Formulario de inicio de sesión"
     >
       <div className="space-y-2 text-left">
         <label
           htmlFor="email"
           className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-500"
         >
-          Correo electronico
+          Correo electrónico
         </label>
         <div className="relative">
           <motion.input
@@ -177,14 +178,14 @@ export default function LoginForm() {
           htmlFor="password"
           className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-500"
         >
-          Contrasena
+          Contraseña
         </label>
         <div className="relative">
           <motion.input
             id="password"
             ref={passwordRef}
             type={showPassword ? "text" : "password"}
-            placeholder="Tu contrasena"
+            placeholder="Tu contraseña"
             value={form.password}
             onChange={handleChange("password")}
             onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
@@ -198,10 +199,9 @@ export default function LoginForm() {
           />
           <button
             type="button"
-            tabIndex={-1}
-            className="absolute right-3 top-3 text-rose-400 transition hover:text-rose-600"
+            className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-xl text-rose-400 transition hover:bg-rose-50 hover:text-rose-600"
             onClick={() => setShowPassword((prev) => !prev)}
-            aria-label={showPassword ? "Ocultar contrasena" : "Mostrar contrasena"}
+            aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
           >
             {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
@@ -214,18 +214,16 @@ export default function LoginForm() {
             className="flex items-center gap-1 text-xs text-rose-500"
           >
             <AlertCircle className="h-4 w-4" />
-            Minimo {passwordMinLength} caracteres.
+            Mínimo {passwordMinLength} caracteres.
           </motion.p>
         )}
         <div className="flex justify-end text-xs">
-          <button
-            type="button"
-            tabIndex={-1}
-            className="text-rose-500 underline-offset-2 transition hover:text-rose-700 hover:underline"
-            onClick={() => router.push("/auth/recuperar")}
+          <Link
+            href="/auth/recuperar"
+            className="inline-flex min-h-11 items-center text-rose-500 underline-offset-2 transition hover:text-rose-700 hover:underline"
           >
-            Olvidaste tu contrasena?
-          </button>
+            ¿Olvidaste tu contraseña?
+          </Link>
         </div>
       </div>
 
@@ -234,15 +232,15 @@ export default function LoginForm() {
         disabled={loading}
         whileHover={{ scale: loading ? 1 : 1.02 }}
         whileTap={{ scale: loading ? 1 : 0.96 }}
-        className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-rose-600 via-rose-700 to-rose-800 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-rose-600 via-rose-700 to-rose-800 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? (
           <>
             <Loader2 className="h-5 w-5 animate-spin" />
-            Iniciando sesion...
+            Iniciando sesión...
           </>
         ) : (
-          "Iniciar sesion"
+          "Iniciar sesión"
         )}
       </motion.button>
 
@@ -264,13 +262,13 @@ export default function LoginForm() {
       </AnimatePresence>
 
       <div className="flex flex-col items-center gap-2 text-xs text-rose-500">
-        <span>No tienes cuenta todavia?</span>
+        <span>¿No tienes cuenta todavía?</span>
         <button
           type="button"
           onClick={() => router.push("/auth/register")}
-          className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 font-semibold text-rose-700 transition hover:border-rose-300 hover:bg-rose-100"
+          className="min-h-11 rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 font-semibold text-rose-700 transition hover:border-rose-300 hover:bg-rose-100"
         >
-          Registrate gratis aqui
+          Regístrate gratis aquí
         </button>
       </div>
     </motion.form>

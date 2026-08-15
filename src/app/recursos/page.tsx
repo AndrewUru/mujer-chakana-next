@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
+import { RefreshCcw, Search, X } from "lucide-react";
 
 interface Recurso {
   id: string;
@@ -21,28 +22,100 @@ interface Recurso {
 export default function RecursosPage() {
   const [recursos, setRecursos] = useState<Recurso[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState("todos");
+
+  const fetchRecursos = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    const { data, error: requestError } = await supabase
+      .from("recursos")
+      .select("*")
+      .order("creado_en", { ascending: false });
+
+    if (requestError) {
+      setError("No pudimos cargar la biblioteca en este momento.");
+    } else {
+      setRecursos(data ?? []);
+    }
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
-    const fetchRecursos = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("recursos")
-        .select("*")
-        .order("creado_en", { ascending: false });
-      if (!error && data) setRecursos(data);
-      setLoading(false);
-    };
-    fetchRecursos();
-  }, []);
+    void fetchRecursos();
+  }, [fetchRecursos]);
+
+  const availableTypes = useMemo(
+    () => Array.from(new Set(recursos.map(({ tipo }) => tipo))).sort(),
+    [recursos]
+  );
+
+  const filteredResources = useMemo(() => {
+    const normalizedQuery = query.trim().toLocaleLowerCase("es");
+
+    return recursos.filter((recurso) => {
+      const matchesType = typeFilter === "todos" || recurso.tipo === typeFilter;
+      const searchableText = [
+        recurso.titulo,
+        recurso.descripcion,
+        recurso.fase,
+        recurso.arquetipo,
+        recurso.elemento,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLocaleLowerCase("es");
+
+      return matchesType && searchableText.includes(normalizedQuery);
+    });
+  }, [query, recursos, typeFilter]);
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-rose-400 mb-4"></div>
-        <p className="text-rose-700 text-lg font-medium">
-          Cargando recursos...
-        </p>
-      </div>
+      <main className="mx-auto min-h-[60vh] max-w-7xl px-3 py-8 sm:px-6 sm:py-12">
+        <div className="mb-8 space-y-3 text-center" role="status" aria-live="polite">
+          <div className="mx-auto h-8 w-64 animate-pulse rounded-xl bg-rose-100/80" />
+          <div className="mx-auto h-4 w-80 max-w-full animate-pulse rounded-lg bg-rose-100/55" />
+          <span className="sr-only">Cargando biblioteca de recursos</span>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+          {Array.from({ length: 8 }, (_, index) => (
+            <div
+              key={index}
+              className="glass-panel animate-pulse rounded-[20px] p-4 sm:rounded-3xl sm:p-6"
+              aria-hidden="true"
+            >
+              <div className="h-48 rounded-2xl bg-rose-100/60" />
+              <div className="mt-5 h-5 w-3/4 rounded-lg bg-rose-100/70" />
+              <div className="mt-3 h-4 rounded-lg bg-rose-100/45" />
+              <div className="mt-2 h-4 w-4/5 rounded-lg bg-rose-100/45" />
+            </div>
+          ))}
+        </div>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="flex min-h-[60vh] items-center justify-center px-4 text-center">
+        <div className="glass-panel max-w-md rounded-3xl p-8">
+          <p className="app-kicker">Biblioteca no disponible</p>
+          <h1 className="mt-3 text-3xl font-semibold text-rose-950">
+            Volvamos a intentarlo
+          </h1>
+          <p className="mt-3 text-sm leading-6 text-rose-800/75">{error}</p>
+          <button
+            type="button"
+            onClick={() => void fetchRecursos()}
+            className="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-rose-600 px-5 py-2.5 font-semibold text-white shadow-lg hover:bg-rose-700"
+          >
+            <RefreshCcw className="h-4 w-4" />
+            Reintentar
+          </button>
+        </div>
+      </main>
     );
   }
 
@@ -50,14 +123,63 @@ export default function RecursosPage() {
     <main className="min-h-screen bg-gradient-to-br from-white/78 via-rose-50/52 to-pink-50/46 px-3 py-6 pb-20 sm:px-6 sm:py-12">
       <div className="max-w-7xl mx-auto">
         {/* Header mejorado */}
-        <div className="mb-7 text-center sm:mb-12">
+        <div className="mb-7 text-center sm:mb-10">
           <h1 className="mb-3 bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-3xl font-bold text-transparent sm:mb-4 md:text-5xl">
-            Recursos Disponibles
+            Biblioteca para tu ciclo
           </h1>
           <p className="text-gray-700 text-lg max-w-2xl mx-auto">
-            Colección de recursos educativos cuidadosamente seleccionados
+            Encuentra audios, rituales y guías según lo que necesitas hoy.
           </p>
         </div>
+
+        {recursos.length > 0 ? (
+          <section
+            className="glass-panel mb-7 rounded-[22px] p-4 sm:mb-10 sm:rounded-3xl sm:p-5"
+            aria-label="Buscar y filtrar recursos"
+          >
+            <label htmlFor="resource-search" className="sr-only">
+              Buscar recursos
+            </label>
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-rose-400" />
+              <input
+                id="resource-search"
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Buscar por título, fase, arquetipo o elemento..."
+                className="min-h-12 w-full rounded-2xl pl-12 pr-12"
+              />
+              {query ? (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-xl text-rose-500 hover:bg-rose-50"
+                  aria-label="Limpiar búsqueda"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              ) : null}
+            </div>
+            <div className="mt-4 flex gap-2 overflow-x-auto pb-1" aria-label="Filtrar por formato">
+              {["todos", ...availableTypes].map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setTypeFilter(type)}
+                  aria-pressed={typeFilter === type}
+                  className={`min-h-10 shrink-0 rounded-full border px-4 py-2 text-sm font-semibold capitalize transition ${
+                    typeFilter === type
+                      ? "border-rose-300 bg-rose-600 text-white shadow-md"
+                      : "border-white/70 bg-white/55 text-rose-700 hover:bg-white/85"
+                  }`}
+                >
+                  {type === "todos" ? "Todos" : type}
+                </button>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         {recursos.length === 0 ? (
           <div className="glass-panel py-20 text-center rounded-3xl">
@@ -71,19 +193,39 @@ export default function RecursosPage() {
               Los recursos aparecerán aquí cuando estén disponibles
             </p>
           </div>
+        ) : filteredResources.length === 0 ? (
+          <div className="glass-panel rounded-3xl py-16 text-center">
+            <span className="text-4xl" aria-hidden="true">🔎</span>
+            <h2 className="mt-4 text-2xl font-semibold text-rose-900">
+              No encontramos coincidencias
+            </h2>
+            <p className="mt-2 text-sm text-rose-700">
+              Prueba otra palabra o vuelve a mostrar todos los formatos.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setQuery("");
+                setTypeFilter("todos");
+              }}
+              className="mt-5 min-h-11 rounded-2xl border border-rose-200 bg-white/70 px-5 py-2.5 font-semibold text-rose-700"
+            >
+              Limpiar filtros
+            </button>
+          </div>
         ) : (
           <>
             {/* Contador de recursos */}
             <div className="flex justify-between items-center mb-8">
               <p className="text-sm text-rose-600">
-                <span className="font-semibold">{recursos.length}</span>{" "}
-                recursos encontrados
+                <span className="font-semibold">{filteredResources.length}</span>{" "}
+                {filteredResources.length === 1 ? "recurso encontrado" : "recursos encontrados"}
               </p>
             </div>
 
             {/* Grid de recursos mejorado */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
-              {recursos.map((recurso) => (
+              {filteredResources.map((recurso) => (
                 <Link
                   key={recurso.id}
                   href={`/recursos/${recurso.id}`}
@@ -151,7 +293,7 @@ export default function RecursosPage() {
                     </div>
 
                     {/* Indicador de hover */}
-                    <div className="flex items-center justify-center mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="mt-4 flex items-center justify-center opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-visible:opacity-100">
                       <span className="text-xs text-rose-600 font-medium flex items-center gap-1">
                         Ver recurso
                         <svg

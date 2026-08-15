@@ -30,67 +30,56 @@ export default function CookieConsent() {
   };
 
   const handleClose = () => {
-    setIsVisible(false);
-    setTimeout(() => setShowBanner(false), 300);
+    handleReject();
   };
 
   if (!showBanner) return null;
 
   return (
-    <>
-      {/* Backdrop for better focus */}
       <div
-        className={`fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-opacity duration-300 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}
-        onClick={handleClose}
-        aria-hidden="true"
-      />
-
-      {/* Main banner */}
-      <div
-        className={`fixed bottom-5 left-4 right-4 md:left-8 md:right-8 lg:left-20 lg:right-20 z-50 transition-all duration-500 ease-out ${
+        className={`fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] left-3 right-3 z-[60] transition-all duration-500 ease-out sm:bottom-5 ${
           isVisible
             ? "translate-y-0 opacity-100 scale-100"
             : "translate-y-full opacity-0 scale-95"
         }`}
-        role="alert"
+        role="dialog"
+        aria-modal="false"
         aria-labelledby="cookie-title"
         aria-describedby="cookie-description"
       >
-        <div className="bg-white/95 backdrop-blur-md border border-rose-200/50 rounded-3xl shadow-2xl p-6 max-w-4xl mx-auto">
+        <div className="mx-auto max-w-3xl rounded-[24px] border border-rose-200/60 bg-white/95 p-4 shadow-[0_24px_70px_rgba(76,5,25,0.22)] backdrop-blur-xl sm:p-5">
           {/* Close button */}
           <button
+            type="button"
             onClick={handleClose}
-            className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
-            aria-label="Cerrar banner de cookies"
+            className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-full text-slate-500 transition-colors duration-200 hover:bg-rose-50 hover:text-rose-700 sm:right-3 sm:top-3"
+            aria-label="Cerrar y usar solo cookies esenciales"
           >
             <X className="w-5 h-5 text-gray-500" />
           </button>
 
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-4 lg:space-y-0 lg:space-x-6">
+          <div className="flex flex-col gap-4 pr-7 md:flex-row md:items-center md:justify-between md:gap-6">
             {/* Content */}
-            <div className="flex items-start space-x-4 flex-1">
+            <div className="flex flex-1 items-start gap-3 sm:gap-4">
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-gradient-to-br from-rose-100 to-rose-200 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">🍪</span>
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-rose-100 to-rose-200 sm:h-11 sm:w-11">
+                  <span className="text-xl">🍪</span>
                 </div>
               </div>
 
               <div className="flex-1 min-w-0">
                 <h3
                   id="cookie-title"
-                  className="text-lg font-semibold text-gray-900 mb-2"
+                  className="mb-1 text-lg font-semibold text-slate-900"
                 >
                   Tu privacidad es importante
                 </h3>
                 <p
                   id="cookie-description"
-                  className="text-gray-600 text-sm leading-relaxed mb-3"
+                  className="mb-2 text-sm leading-relaxed text-slate-600"
                 >
-                  Utilizamos cookies para mejorar tu experiencia, analizar el
-                  tráfico y personalizar contenido. Puedes gestionar tus
-                  preferencias en cualquier momento.
+                  Usamos cookies opcionales para analizar y mejorar la
+                  experiencia. Puedes continuar únicamente con las esenciales.
                 </p>
                 <div className="flex items-center space-x-1 text-xs text-gray-500">
                   <Info className="w-4 h-4" />
@@ -106,10 +95,11 @@ export default function CookieConsent() {
             </div>
 
             {/* Action buttons */}
-            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full lg:w-auto">
+            <div className="flex w-full flex-col gap-2 sm:flex-row md:w-auto">
               <button
+                type="button"
                 onClick={handleAccept}
-                className="flex items-center justify-center space-x-2 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 font-medium"
+                className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 px-5 py-2.5 font-semibold text-white shadow-lg transition hover:from-rose-700 hover:to-rose-800 hover:shadow-xl"
                 aria-label="Aceptar todas las cookies"
               >
                 <CheckCircle className="w-5 h-5" />
@@ -117,8 +107,9 @@ export default function CookieConsent() {
               </button>
 
               <button
+                type="button"
                 onClick={handleReject}
-                className="flex items-center justify-center space-x-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 font-medium"
+                className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-slate-100 px-5 py-2.5 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-200"
                 aria-label="Rechazar cookies no esenciales"
               >
                 <XCircle className="w-5 h-5" />
@@ -128,6 +119,5 @@ export default function CookieConsent() {
           </div>
         </div>
       </div>
-    </>
   );
 }

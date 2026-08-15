@@ -1,10 +1,23 @@
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import Script from "next/script";
 import CookieConsent from "@/components/CookieConsent";
 import { Metadata } from "next";
-import AmbientChakanaScene from "@/components/AmbientChakanaScene";
+import { Cormorant_Garamond, Nunito_Sans } from "next/font/google";
+import AmbientSceneLazy from "@/components/AmbientSceneLazy";
 import PageTransition from "@/components/PageTransition";
+
+const bodyFont = Nunito_Sans({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const displayFont = Cormorant_Garamond({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+  weight: ["600", "700"],
+});
 
 // Metadatos optimizados usando la nueva API de Next.js 13+
 export const metadata: Metadata = {
@@ -78,6 +91,10 @@ export const metadata: Metadata = {
     google: "tu-google-verification-code",
   },
   category: "health",
+  icons: {
+    icon: "/logo_chakana.png",
+    apple: "/logo_chakana.png",
+  },
 };
 
 export default function RootLayout({
@@ -86,52 +103,31 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className="dark">
+    <html
+      lang="es"
+      className={`${bodyFont.variable} ${displayFont.variable}`}
+    >
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         {/* PWA / App */}
         <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/icon-192x192.png" />
+        <link rel="apple-touch-icon" href="/logo_chakana.png" />
         <meta name="theme-color" content="#e91e63" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Ginergética" />
 
-        {/* Favicon */}
-        <link rel="icon" href="/icon-192x192.png" />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/icon-32x32.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/icon-16x16.png"
-        />
-
-        {/* Preconnect para optimización de rendimiento */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link rel="preconnect" href="https://www.paypal.com" />
-
-        {/* DNS Prefetch para recursos externos */}
-        <link rel="dns-prefetch" href="//elsaltoweb.es" />
       </head>
-      <body className="min-h-screen font-sans text-pink-900 relative antialiased">
+      <body className="relative min-h-screen text-pink-900 antialiased">
+        <a className="skip-link" href="#main-content">
+          Saltar al contenido
+        </a>
         {/* Capa de la imagen de fondo optimizada */}
         <div
           className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-[0.18] mix-blend-multiply blur-[0.2px] saturate-[0.72]"
           style={{
-            backgroundImage:
-              "url('https://elsaltoweb.es/wp-content/uploads/2025/04/mujer-chakana.png')",
+            backgroundImage: "url('/mujer-chakana.webp')",
             backgroundAttachment: "fixed",
           }}
           aria-hidden="true"
@@ -142,26 +138,19 @@ export default function RootLayout({
           className="fixed inset-0 z-10 bg-[radial-gradient(circle_at_18%_12%,rgba(255,255,255,0.86),transparent_34rem),radial-gradient(circle_at_88%_16%,rgba(255,249,237,0.88),transparent_32rem),linear-gradient(135deg,rgba(255,250,253,0.9),rgba(255,243,248,0.78)_48%,rgba(255,250,239,0.84))]"
           aria-hidden="true"
         />
-        <AmbientChakanaScene />
+        <AmbientSceneLazy />
 
         {/* Contenido principal */}
         <div className="relative z-20 flex flex-col min-h-screen">
-          <main className="app-main flex-1">
+          <div id="main-content" className="app-main flex-1" tabIndex={-1}>
             <PageTransition>{children}</PageTransition>
-          </main>
+          </div>
           <Navbar />
         </div>
 
         {/* Componentes de terceros */}
         <CookieConsent />
 
-        {/* Scripts optimizados */}
-        <Script
-          src="https://www.paypal.com/sdk/js?client-id=TU_CLIENT_ID&currency=EUR"
-          strategy="afterInteractive"
-        />
-
-        {/* Analytics o scripts adicionales pueden ir aquí */}
       </body>
     </html>
   );

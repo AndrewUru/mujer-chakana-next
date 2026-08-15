@@ -122,7 +122,7 @@ export default function BienvenidaPage() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[url('/bg-chakana.png')] bg-cover bg-center text-rose-900">
+    <main className="relative min-h-screen overflow-hidden bg-[url('/mujer-chakana.webp')] bg-cover bg-center text-rose-900">
       <div className="absolute inset-0 bg-gradient-to-br from-white/85 via-white/75 to-rose-100/60 backdrop-blur-3xl" />
       <motion.div
         initial={{ opacity: 0.3, scale: 0.85 }}

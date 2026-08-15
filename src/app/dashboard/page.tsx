@@ -103,9 +103,9 @@ function CycleProgress({ day }: { day: number }) {
         />
       </div>
       <div className="mt-3 flex items-center justify-between text-xs font-medium text-rose-600">
-        <span>Dia {day}</span>
+        <span>Día {day}</span>
         <span>{phase}</span>
-        <span>Dia {TOTAL_CYCLE_DAYS}</span>
+        <span>Día {TOTAL_CYCLE_DAYS}</span>
       </div>
     </div>
   );
@@ -198,7 +198,7 @@ export default function DashboardPage() {
       return;
     }
 
-    setLoadingMessage("Calculando tu ciclo...");
+      setLoadingMessage("Calculando tu ciclo...");
     const startDate = new Date(perfilData.fecha_inicio);
     const cycleDay = getCycleDay(startDate);
     const endDate = new Date(startDate);
@@ -234,26 +234,26 @@ export default function DashboardPage() {
 
   const descripcionCorta = estadoCiclo?.descripcion
     ? `${estadoCiclo.descripcion.split(".")[0]}.`
-    : "Registra tus sensaciones para activar una lectura mas personal.";
+    : "Registra tus sensaciones para activar una lectura más personal.";
 
   const cycleHighlights = useMemo(
     () =>
       estadoCiclo
         ? [
             {
-              label: "Arquetipo guia",
+              label: "Arquetipo guía",
               value: estadoCiclo.arquetipo,
               description: descripcionCorta,
             },
             {
-              label: "Elemento del dia",
+              label: "Elemento del día",
               value: estadoCiclo.elemento,
-              description: "Usalo como simbolo para ordenar tu energia de hoy.",
+              description: "Úsalo como símbolo para ordenar tu energía de hoy.",
             },
             {
               label: "Ritmo actual",
-              value: `Dia ${day} · Ciclo ${cicloActual}`,
-              description: "Observa tu energia y registra lo que aparece.",
+              value: `Día ${day} · Ciclo ${cicloActual}`,
+              description: "Observa tu energía y registra lo que aparece.",
             },
           ]
         : [
@@ -266,7 +266,7 @@ export default function DashboardPage() {
             {
               label: "Recursos",
               value: "Biblioteca viva",
-              description: "Explora audios, rituales y guias para acompanar el proceso.",
+              description: "Explora audios, rituales y guías para acompañar el proceso.",
             },
             {
               label: "Comunidad",
@@ -290,13 +290,13 @@ export default function DashboardPage() {
       {
         id: "moonboard",
         label: "Moonboard",
-        description: "Mapa visual de 28 dias",
+        description: "Mapa visual de 28 días",
         Icon: CalendarDays,
       },
       {
         id: "registro",
         label: "Registro",
-        description: "Anota como estas hoy",
+        description: "Anota cómo estás hoy",
         Icon: PenLine,
         disabled: !(userId && estadoCiclo && fechaInicioCiclo),
       },
@@ -352,11 +352,11 @@ export default function DashboardPage() {
               Configura tu fecha de inicio
             </h2>
             <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-rose-800/72">
-              Necesitamos tu fecha de inicio para calcular el dia del ciclo y
-              activar la guia diaria.
+              Necesitamos tu fecha de inicio para calcular el día del ciclo y
+              activar la guía diaria.
             </p>
             <PrimaryAction href="/setup" className="mt-6">
-              Ir a configuracion
+              Ir a configuración
             </PrimaryAction>
           </GlassCard>
         );
@@ -402,7 +402,7 @@ export default function DashboardPage() {
                   Biblioteca para tu proceso
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-rose-800/72">
-                  Rituales, audios y guias para acompanar el momento del ciclo
+                  Rituales, audios y guías para acompañar el momento del ciclo
                   que estas transitando.
                 </p>
               </div>
@@ -433,7 +433,7 @@ export default function DashboardPage() {
                   {userName || "Exploradora"}
                 </h1>
                 <p className="mt-2 text-sm leading-6 text-rose-800/70">
-                  {fechaActual || "Hoy"} · Dia {day} · Ciclo {cicloActual}
+                  {fechaActual || "Hoy"} · Día {day} · Ciclo {cicloActual}
                 </p>
               </div>
 
@@ -511,7 +511,7 @@ export default function DashboardPage() {
                     {userName || "Exploradora"}
                   </h1>
                   <p className="mt-1 text-sm text-rose-800/70">
-                    Dia {day} · Ciclo {cicloActual}
+                    Día {day} · Ciclo {cicloActual}
                   </p>
                 </div>
                 <PrimaryAction
@@ -561,7 +561,7 @@ export default function DashboardPage() {
                   className="app-focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-2xl border border-white/70 bg-white/46 px-4 py-2 text-sm font-semibold text-rose-800 transition hover:bg-white/72"
                 >
                   <BookOpen className="h-4 w-4" />
-                  Guia
+                  Guía
                 </Link>
               </div>
 

@@ -38,12 +38,24 @@ html {
 body {
   min-height: 100vh;
   color: var(--app-ink);
+  font-family: var(--font-body), "Segoe UI", sans-serif;
   background:
     radial-gradient(circle at 12% 8%, rgba(255, 227, 237, 0.72), transparent 30rem),
     radial-gradient(circle at 86% 12%, rgba(255, 246, 226, 0.78), transparent 32rem),
     radial-gradient(circle at 18% 86%, rgba(232, 246, 255, 0.58), transparent 28rem),
     linear-gradient(135deg, #fffafd 0%, #fff5f8 42%, #fffaf0 100%);
   background-attachment: fixed;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), Georgia, serif;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 html,
@@ -68,6 +80,34 @@ body::before {
 ::selection {
   color: white;
   background: rgba(244, 63, 94, 0.78);
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  transform: translateY(-150%);
+  border-radius: 0.875rem;
+  background: #9f1239;
+  padding: 0.75rem 1rem;
+  color: white;
+  font-weight: 800;
+  box-shadow: 0 12px 30px rgba(76, 5, 25, 0.25);
+  transition: transform 160ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(225, 29, 72, 0.46);
+  outline-offset: 3px;
 }
 
 /* Superficies glass reutilizables */
@@ -145,6 +185,10 @@ button {
 
 button:hover {
   transform: translateY(-1px);
+}
+
+button:disabled {
+  transform: none;
 }
 
 /* Inputs y textareas */
@@ -295,4 +339,19 @@ form {
 
 .animate-star {
   animation: star 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

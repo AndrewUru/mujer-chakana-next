@@ -153,7 +153,7 @@ export default function RegisterForm() {
         <motion.input
           id="username"
           type="text"
-          placeholder="Como quieres que te llamemos?"
+          placeholder="¿Cómo quieres que te llamemos?"
           value={form.username}
           onChange={handleChange("username")}
           onBlur={() => setTouched((prev) => ({ ...prev, username: true }))}
@@ -182,7 +182,7 @@ export default function RegisterForm() {
           htmlFor="email"
           className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-500"
         >
-          Correo electronico
+          Correo electrónico
         </label>
         <div className="relative">
           <motion.input
@@ -212,7 +212,7 @@ export default function RegisterForm() {
             className="flex items-center gap-1 text-xs text-rose-500"
           >
             <AlertCircle className="h-4 w-4" />
-            Ingresa un correo valido.
+            Ingresa un correo válido.
           </motion.p>
         )}
       </div>
@@ -222,12 +222,12 @@ export default function RegisterForm() {
           htmlFor="password"
           className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-500"
         >
-          Contrasena
+          Contraseña
         </label>
         <motion.input
           id="password"
           type="password"
-          placeholder="Crea una contrasena segura"
+          placeholder="Crea una contraseña segura"
           value={form.password}
           onChange={handleChange("password")}
           onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
@@ -247,14 +247,14 @@ export default function RegisterForm() {
             className="flex items-center gap-1 text-xs text-rose-500"
           >
             <AlertCircle className="h-4 w-4" />
-            Minimo {passwordMinLength} caracteres.
+            Mínimo {passwordMinLength} caracteres.
           </motion.p>
         )}
       </div>
 
       <div className="rounded-3xl border border-amber-200/60 bg-amber-50/70 px-5 py-4 text-xs text-amber-700">
         <strong>Importante:</strong> al crear tu cuenta configuraremos tu ciclo en
-        el Dia 1. Podras ajustarlo desde el dashboard cuando lo necesites.
+        el día 1. Podrás ajustarlo desde el dashboard cuando lo necesites.
       </div>
 
       <motion.button
@@ -262,7 +262,7 @@ export default function RegisterForm() {
         disabled={loading}
         whileHover={{ scale: loading ? 1 : 1.02 }}
         whileTap={{ scale: loading ? 1 : 0.96 }}
-        className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-rose-600 via-rose-700 to-rose-800 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-rose-600 via-rose-700 to-rose-800 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? (
           <>

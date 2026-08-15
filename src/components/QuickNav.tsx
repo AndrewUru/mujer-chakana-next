@@ -25,9 +25,9 @@ interface QuickNavProps {
 }
 
 const SUGGESTIONS = [
-  "Que arquetipo puedo trabajar hoy?",
-  "Ayudame a crear una intencion para mi ritual",
-  "Recuentame como alinear mi energia con la luna",
+  "¿Qué arquetipo puedo trabajar hoy?",
+  "Ayúdame a crear una intención para mi ritual",
+  "Recuérdame cómo alinear mi energía con la luna",
   "Necesito un respiro consciente ahora mismo",
 ];
 
@@ -39,9 +39,9 @@ const uniqueId = () =>
 const buildIntro = (userName?: string, currentDay?: number) => {
   const greeting = userName ? `Hola ${userName}, soy Samari.` : "Hola, soy Samari.";
   const cycleNote = currentDay
-    ? ` Hoy acompanio tu dia ${currentDay} del ciclo.`
-    : " Estoy aqui para guiar tu camino ciclico.";
-  return `${greeting}${cycleNote} Preguntame lo que necesites y elaborare una guia personalizada.`;
+    ? ` Hoy acompaño tu día ${currentDay} del ciclo.`
+    : " Estoy aquí para guiar tu camino cíclico.";
+  return `${greeting}${cycleNote} Pregúntame lo que necesites y elaboraré una guía personalizada.`;
 };
 
 const createAssistantMessage = (content: string): ChatMessage => ({
@@ -119,7 +119,7 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
       setMessages((prev) => [...prev, createAssistantMessage(data.reply)]);
     } catch (err) {
       console.error("chat error", err);
-      setError("No pude conectar con el oraculo. Intenta de nuevo.");
+      setError("No pude conectar con el oráculo. Inténtalo de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -146,7 +146,7 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
 
   return (
     <motion.div
-      className="fixed bottom-6 right-6 z-40"
+      className="fixed bottom-[calc(var(--nav-height)+1.25rem+env(safe-area-inset-bottom))] right-3 z-40 sm:bottom-[calc(var(--nav-height)+1.75rem+env(safe-area-inset-bottom))] sm:right-6"
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4, duration: 0.4 }}
@@ -158,6 +158,7 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
         whileTap={{ scale: 0.96 }}
         aria-expanded={isOpen}
         aria-controls="samari-chat-panel"
+        aria-label={isOpen ? "Cerrar guía de Samari" : "Abrir guía de Samari"}
       >
         <MessageCircle className="h-5 w-5" />
         <span>{isOpen ? "Cerrar guia" : "Habla con Samari"}</span>
@@ -167,7 +168,10 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
         {isOpen && (
           <motion.div
             id="samari-chat-panel"
-            className="glass-shell absolute bottom-16 right-0 w-[320px] rounded-3xl p-4 sm:w-[360px]"
+            role="dialog"
+            aria-modal="false"
+            aria-labelledby="samari-chat-title"
+            className="glass-shell absolute bottom-16 right-0 w-[min(360px,calc(100vw-1.5rem))] rounded-3xl p-4"
             initial={{ opacity: 0, scale: 0.9, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 12 }}
@@ -180,11 +184,11 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
                 </p>
                 <p className="flex items-center gap-2 text-lg font-semibold text-rose-700">
                   <Sparkles className="h-4 w-4" />
-                  Samari guia
+                  <span id="samari-chat-title">Samari guía</span>
                 </p>
                 <p className="text-xs text-rose-500">
                   {currentDay
-                    ? `Dia ${currentDay} del ciclo`
+                    ? `Día ${currentDay} del ciclo`
                     : "Disponible para tu ciclo"}
                 </p>
               </div>
@@ -192,7 +196,7 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
                 <button
                   type="button"
                   onClick={resetChat}
-                  className="rounded-full border border-white/60 bg-white/35 p-1 text-rose-500 hover:bg-white/70"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/60 bg-white/35 text-rose-500 hover:bg-white/70"
                   aria-label="Reiniciar chat"
                 >
                   <RefreshCcw className="h-4 w-4" />
@@ -200,7 +204,7 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="rounded-full border border-white/60 bg-white/35 p-1 text-rose-500 hover:bg-white/70"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/60 bg-white/35 text-rose-500 hover:bg-white/70"
                   aria-label="Cerrar chat"
                 >
                   <X className="h-4 w-4" />
@@ -228,7 +232,7 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
               {loading && (
                 <div className="flex items-center gap-2 text-sm text-rose-500">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Samari esta escribiendo...
+                  Samari está escribiendo...
                 </div>
               )}
 
@@ -246,7 +250,7 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
                   <button
                     key={suggestion}
                     type="button"
-                    className="flex items-center gap-1 rounded-full border border-white/60 bg-white/34 px-3 py-1 text-xs text-rose-600 transition hover:bg-white/70"
+                    className="flex min-h-11 items-center gap-1 rounded-full border border-white/60 bg-white/34 px-3 py-2 text-xs text-rose-600 transition hover:bg-white/70"
                     onClick={() => handleSuggestion(suggestion)}
                   >
                     <Lightbulb className="h-3.5 w-3.5" />
@@ -270,7 +274,8 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
               />
               <button
                 type="submit"
-                className="rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 px-4 py-2 text-white shadow focus:outline-none focus:ring-2 focus:ring-rose-300 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex min-h-11 min-w-11 items-center justify-center rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 px-4 py-2 text-white shadow focus:outline-none focus:ring-2 focus:ring-rose-300 disabled:cursor-not-allowed disabled:opacity-50"
+                aria-label="Enviar mensaje"
                 disabled={!input.trim() || loading}
               >
                 {loading ? (
