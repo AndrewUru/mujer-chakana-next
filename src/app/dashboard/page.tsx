@@ -1,21 +1,30 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { motion } from "framer-motion";
 import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+} from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
+import {
+  ArrowRight,
   BookOpen,
   CalendarDays,
+  Compass,
   Flower2,
   Leaf,
   Moon,
   PenLine,
+  Settings,
   Sparkles,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
-import EstadoActualCiclo from "@/components/EstadoActualCiclo";
 import Moonboard from "@/components/Moonboard";
 import RecursosList from "@/components/RecursosList";
 import CicloResumen from "@/components/CicloResumen";
@@ -29,6 +38,7 @@ import {
   PrimaryAction,
 } from "@/components/ui/AppPrimitives";
 import { EstadoCiclo, Recurso } from "@/types/index";
+import styles from "./dashboard.module.css";
 
 const TOTAL_CYCLE_DAYS = 28;
 
@@ -49,16 +59,29 @@ interface DashboardPanelItem {
   disabled?: boolean;
 }
 
+const ELEMENT_SCENES: Record<string, { image: string; accent: string; label: string }> = {
+  agua: { image: "/agua-ui.webp", accent: "#83e2ea", label: "Agua" },
+  fuego: { image: "/fuego-ui.webp", accent: "#ffb26f", label: "Fuego" },
+  tierra: { image: "/tierra-ui.webp", accent: "#d8b36e", label: "Tierra" },
+  aire: { image: "/cielo-ui.webp", accent: "#f0d3c4", label: "Aire" },
+  cielo: { image: "/cielo-ui.webp", accent: "#f0d3c4", label: "Cielo" },
+};
+
+const normalizeElement = (value?: string | null) =>
+  (value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+
 const LoadingState = ({ message }: { message: string }) => (
-  <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
-    <div className="relative h-16 w-16">
-      <div className="absolute inset-0 rounded-full border-4 border-rose-200" />
-      <div className="absolute inset-0 animate-spin rounded-full border-4 border-rose-500 border-t-transparent" />
-      <Moon className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 text-rose-600" />
+  <div className={styles.loadingState}>
+    <div className={styles.loadingCompass} aria-hidden="true">
+      <span />
+      <Moon />
     </div>
-    <p className="mt-6 max-w-sm text-base font-semibold text-rose-800">
-      {message}
-    </p>
+    <p>{message}</p>
+    <small>Organizando tu cielo interior</small>
   </div>
 );
 
@@ -87,26 +110,20 @@ function CycleProgress({ day }: { day: number }) {
   const phase = getCyclePhase(day);
 
   return (
-    <div className="rounded-2xl border border-white/60 bg-white/42 p-4 shadow-inner">
-      <div className="flex items-center justify-between gap-4 text-sm">
-        <span className="font-semibold text-rose-800">Progreso del ciclo</span>
-        <span className="font-bold text-rose-900">
-          {Math.round(percentage)}%
-        </span>
+    <div
+      className={styles.cycleDial}
+      style={{ "--cycle-progress": `${percentage * 3.6}deg` } as CSSProperties}
+      aria-label={`Día ${day} de ${TOTAL_CYCLE_DAYS}, fase ${phase}`}
+    >
+      <div className={styles.dialOrbit} aria-hidden="true">
+        <span />
       </div>
-      <div className="mt-3 h-2 overflow-hidden rounded-full bg-rose-100 shadow-inner">
-        <motion.div
-          className="h-full rounded-full bg-gradient-to-r from-rose-500 to-pink-500"
-          initial={{ width: 0 }}
-          animate={{ width: `${percentage}%` }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-        />
+      <div className={styles.dialCore}>
+        <small>día</small>
+        <strong>{day}</strong>
+        <span>de {TOTAL_CYCLE_DAYS}</span>
       </div>
-      <div className="mt-3 flex items-center justify-between text-xs font-medium text-rose-600">
-        <span>Día {day}</span>
-        <span>{phase}</span>
-        <span>Día {TOTAL_CYCLE_DAYS}</span>
-      </div>
+      <p>{phase}</p>
     </div>
   );
 }
@@ -121,19 +138,26 @@ function InsightCard({
   description: string;
 }) {
   return (
-    <GlassCard className="p-5">
-      <p className="app-kicker">{label}</p>
-      <p className="mt-3 text-xl font-semibold text-rose-950">{value}</p>
-      <p className="mt-2 text-sm leading-6 text-rose-800/72">{description}</p>
-    </GlassCard>
+    <article className={styles.insightCard}>
+      <p>{label}</p>
+      <strong>{value}</strong>
+      <span>{description}</span>
+    </article>
   );
 }
 
 export default function DashboardPage() {
   const router = useRouter();
+  const reduceMotion = useReducedMotion();
   const { ToastContainer } = useToast();
   const [userName, setUserName] = useState<string | null>(null);
-  const [fechaActual, setFechaActual] = useState("");
+  const [fechaActual] = useState(() =>
+    new Date().toLocaleDateString("es-ES", {
+      weekday: "long",
+      day: "2-digit",
+      month: "long",
+    }),
+  );
   const [day, setDay] = useState(1);
   const [estadoCiclo, setEstadoCiclo] = useState<EstadoCiclo | null>(null);
   const [recursosData, setRecursosData] = useState<Recurso[]>([]);
@@ -181,14 +205,6 @@ export default function DashboardPage() {
     setUserName(perfilData?.display_name || "");
     setPerfil(perfilData ?? null);
     setRecursosData(recursos || []);
-    setFechaActual(
-      new Date().toLocaleDateString("es-ES", {
-        weekday: "long",
-        day: "2-digit",
-        month: "long",
-      })
-    );
-
     if (!perfilData?.fecha_inicio) {
       setEstadoCiclo(null);
       setDay(1);
@@ -328,13 +344,7 @@ export default function DashboardPage() {
     switch (activePanel) {
       case "ciclo":
         return estadoCiclo ? (
-          <div className="space-y-4 sm:space-y-6">
-            <section className="hidden gap-4 md:grid md:grid-cols-3">
-              {cycleHighlights.map((item) => (
-                <InsightCard key={item.label} {...item} />
-              ))}
-            </section>
-            <EstadoActualCiclo data={estadoCiclo} />
+          <div className={styles.cycleContent}>
             {fechaInicioCiclo && fechaFinCiclo ? (
               <CicloResumen
                 day={day}
@@ -342,6 +352,7 @@ export default function DashboardPage() {
                 fechaFinCiclo={fechaFinCiclo}
                 userName={userName ?? undefined}
                 mujerChakanaData={estadoCiclo}
+                isSubscriber={isSubscriber}
               />
             ) : null}
           </div>
@@ -413,7 +424,7 @@ export default function DashboardPage() {
                 Ver todos
               </Link>
             </div>
-            <RecursosList recursos={recursosData} />
+            <RecursosList recursos={recursosData} isSubscriber={isSubscriber} />
           </GlassCard>
         );
       default:
@@ -421,158 +432,139 @@ export default function DashboardPage() {
     }
   })();
 
+  const elementScene = ELEMENT_SCENES[normalizeElement(estadoCiclo?.elemento)] || {
+    image: "/mujer-chakana.webp",
+    accent: "#f2a9bd",
+    label: "Chakana",
+  };
+  const heroImage = estadoCiclo?.imagen_url || elementScene.image;
+  const firstName = userName?.trim().split(/\s+/)[0] || "Exploradora";
+  const canRegister = Boolean(userId && estadoCiclo && fechaInicioCiclo);
+
   return (
-    <>
-      <PageShell className="relative text-rose-950">
-        <div className="grid gap-5 lg:grid-cols-[18rem_minmax(0,1fr)] lg:items-start xl:grid-cols-[20rem_minmax(0,1fr)]">
-          <aside className="glass-shell sticky top-5 hidden max-h-[calc(100vh-2.5rem)] overflow-auto rounded-[28px] p-4 lg:block">
-            <div className="space-y-5">
-              <div className="rounded-3xl border border-white/60 bg-white/42 p-4">
-                <p className="app-kicker">Dashboard</p>
-                <h1 className="mt-2 text-2xl font-semibold leading-tight text-rose-950">
-                  {userName || "Exploradora"}
-                </h1>
-                <p className="mt-2 text-sm leading-6 text-rose-800/70">
-                  {fechaActual || "Hoy"} · Día {day} · Ciclo {cicloActual}
-                </p>
-              </div>
+    <div
+      className={styles.dashboard}
+      style={{ "--dashboard-accent": elementScene.accent } as CSSProperties}
+    >
+      <PageShell className={styles.pageShell}>
+        <motion.header
+          className={styles.hero}
+          initial={reduceMotion ? false : { opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className={styles.heroImage} aria-hidden="true">
+            <Image src={heroImage} alt="" fill sizes="100vw" priority />
+          </div>
+          <div className={styles.heroVeil} aria-hidden="true" />
 
-              <CycleProgress day={day} />
+          <div className={styles.heroTopline}>
+            <span className={styles.observatoryMark}>
+              <Compass aria-hidden="true" />
+              Observatorio cíclico
+            </span>
+            <div className={styles.heroMeta}>
+              <span><Leaf aria-hidden="true" /> {isSubscriber ? "Círculo activo" : "Plan gratuito"}</span>
+              <Link href="/setup" aria-label="Configurar perfil">
+                <Settings aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
 
-              <nav className="space-y-2" aria-label="Secciones del dashboard">
-                {dashboardPanels.map(
-                  ({ id, label, description, Icon, disabled }) => {
-                    const isActive = activePanel === id;
-
-                    return (
-                      <button
-                        key={id}
-                        type="button"
-                        disabled={disabled}
-                        onClick={() => setActivePanel(id)}
-                        className={`app-focus-ring flex w-full items-center gap-3 rounded-2xl border px-3 py-3 text-left transition ${
-                          isActive
-                            ? "border-rose-200/80 bg-white/70 text-rose-950 shadow-inner"
-                            : "border-transparent text-rose-700 hover:border-white/70 hover:bg-white/42"
-                        } ${disabled ? "cursor-not-allowed opacity-45" : ""}`}
-                      >
-                        <span
-                          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${
-                            isActive
-                              ? "border-rose-200 bg-rose-100/80 text-rose-700"
-                              : "border-white/60 bg-white/36 text-rose-500"
-                          }`}
-                        >
-                          <Icon className="h-5 w-5" />
-                        </span>
-                        <span className="min-w-0">
-                          <span className="block text-sm font-semibold">
-                            {label}
-                          </span>
-                          <span className="mt-0.5 block truncate text-xs text-rose-700/64">
-                            {description}
-                          </span>
-                        </span>
-                      </button>
-                    );
-                  }
-                )}
-              </nav>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div className="rounded-2xl border border-white/60 bg-white/42 p-3">
-                  <Leaf className="mb-2 h-4 w-4 text-rose-500" />
-                  <p className="text-[0.68rem] font-bold uppercase tracking-[0.16em] text-rose-500">
-                    Plan
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-rose-950">
-                    {isSubscriber ? "Activo" : "Gratuito"}
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-white/60 bg-white/42 p-3">
-                  <Sparkles className="mb-2 h-4 w-4 text-rose-500" />
-                  <p className="text-[0.68rem] font-bold uppercase tracking-[0.16em] text-rose-500">
-                    Recursos
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-rose-950">
-                    {recursosData.length}
-                  </p>
-                </div>
+          <div className={styles.heroGrid}>
+            <div className={styles.heroCopy}>
+              <p>{fechaActual}</p>
+              <h1>
+                Hoy, {firstName},
+                <em>{estadoCiclo ? estadoCiclo.arquetipo : "tu ciclo pide un punto de partida"}.</em>
+              </h1>
+              <span className={styles.heroDescription}>
+                {estadoCiclo
+                  ? descripcionCorta
+                  : "Configura tu fecha de inicio para abrir la lectura de este día."}
+              </span>
+              <div className={styles.heroActions}>
+                <button
+                  type="button"
+                  onClick={() => setActivePanel("registro")}
+                  disabled={!canRegister}
+                  className={styles.primaryHeroAction}
+                >
+                  <PenLine aria-hidden="true" />
+                  Registrar cómo estoy
+                  <ArrowRight aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActivePanel("moonboard")}
+                  className={styles.secondaryHeroAction}
+                >
+                  Ver mi Moonboard
+                </button>
               </div>
             </div>
-          </aside>
 
-          <div className="min-w-0 space-y-5">
-            <section className="glass-shell rounded-[28px] p-4 sm:p-5 lg:hidden">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="app-kicker">Dashboard</p>
-                  <h1 className="mt-1 text-2xl font-semibold text-rose-950">
-                    {userName || "Exploradora"}
-                  </h1>
-                  <p className="mt-1 text-sm text-rose-800/70">
-                    Día {day} · Ciclo {cicloActual}
-                  </p>
-                </div>
-                <PrimaryAction
-                  onClick={() => setActivePanel("registro")}
-                  disabled={!(userId && estadoCiclo && fechaInicioCiclo)}
-                  className="min-h-10 px-4"
-                >
-                  <PenLine className="h-4 w-4" />
-                </PrimaryAction>
-              </div>
-              <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
-                {dashboardPanels.map(({ id, label, Icon, disabled }) => (
-                  <button
-                    key={id}
-                    type="button"
-                    disabled={disabled}
-                    onClick={() => setActivePanel(id)}
-                    className={`app-focus-ring inline-flex shrink-0 items-center gap-2 rounded-2xl border px-3 py-2 text-sm font-semibold transition ${
-                      activePanel === id
-                        ? "border-rose-200 bg-white/72 text-rose-950"
-                        : "border-white/60 bg-white/34 text-rose-700"
-                    } ${disabled ? "opacity-45" : ""}`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </section>
-
-            <motion.section
-              key={activePanel}
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.28 }}
-              className="min-w-0"
-            >
-              <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <p className="app-kicker">{activePanelData.label}</p>
-                  <h2 className="mt-1 text-2xl font-semibold text-rose-950 sm:text-3xl">
-                    {activePanelData.description}
-                  </h2>
-                </div>
-                <Link
-                  href="/manual"
-                  className="app-focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-2xl border border-white/70 bg-white/46 px-4 py-2 text-sm font-semibold text-rose-800 transition hover:bg-white/72"
-                >
-                  <BookOpen className="h-4 w-4" />
-                  Guía
-                </Link>
-              </div>
-
-              {activeContent}
-            </motion.section>
+            <CycleProgress day={day} />
           </div>
-        </div>
-      </PageShell>
 
+          <section className={styles.insightRail} aria-label="Lectura rápida del día">
+            {cycleHighlights.map((item) => (
+              <InsightCard key={item.label} {...item} />
+            ))}
+          </section>
+        </motion.header>
+
+        <nav className={styles.panelNav} aria-label="Capítulos del dashboard" role="tablist">
+          {dashboardPanels.map(({ id, label, description, Icon, disabled }, index) => {
+            const isActive = activePanel === id;
+            return (
+              <button
+                key={id}
+                id={`dashboard-tab-${id}`}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                aria-controls="dashboard-panel"
+                disabled={disabled}
+                onClick={() => setActivePanel(id)}
+                className={isActive ? styles.panelTabActive : styles.panelTab}
+              >
+                <span className={styles.panelIndex}>0{index + 1}</span>
+                <Icon aria-hidden="true" />
+                <span>
+                  <strong>{label}</strong>
+                  <small>{description}</small>
+                </span>
+              </button>
+            );
+          })}
+        </nav>
+
+        <motion.section
+          key={activePanel}
+          id="dashboard-panel"
+          role="tabpanel"
+          aria-labelledby={`dashboard-tab-${activePanel}`}
+          className={styles.workspace}
+          initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.34 }}
+        >
+          <header className={styles.workspaceHeader}>
+            <div>
+              <p>{activePanelData.label} · capítulo activo</p>
+              <h2>{activePanelData.description}</h2>
+            </div>
+            <Link href="/manual" className={styles.guideLink}>
+              <BookOpen aria-hidden="true" />
+              Abrir guía
+            </Link>
+          </header>
+          <div className={styles.workspaceContent}>{activeContent}</div>
+        </motion.section>
+      </PageShell>
       <QuickNav currentDay={day} userName={userName || ""} />
       <ToastContainer />
-    </>
+    </div>
   );
 }

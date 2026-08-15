@@ -1,0 +1,735 @@
+.dashboard {
+  --dashboard-accent: #f2a9bd;
+  min-height: 100svh;
+  color: #fff8f3;
+  background:
+    radial-gradient(circle at 78% 8%, color-mix(in srgb, var(--dashboard-accent) 14%, transparent), transparent 28rem),
+    linear-gradient(180deg, #190710 0%, #260a17 34rem, #f6eee9 63rem);
+}
+
+.pageShell {
+  padding-top: clamp(0.8rem, 2vw, 1.5rem) !important;
+  padding-bottom: calc(var(--nav-height) + 4.5rem) !important;
+}
+
+.pageShell :global(.app-container) {
+  max-width: 88rem;
+}
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 40rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: clamp(1.6rem, 4vw, 3.2rem);
+  background: #240914;
+  box-shadow: 0 40px 100px rgba(36, 6, 19, 0.28);
+}
+
+.heroImage,
+.heroVeil {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+
+.heroImage img {
+  object-fit: cover;
+  object-position: center 28%;
+  filter: saturate(0.82) contrast(1.05);
+  transform: scale(1.02);
+}
+
+.heroVeil {
+  z-index: -1;
+  background:
+    linear-gradient(94deg, rgba(22, 4, 13, 0.97) 3%, rgba(35, 7, 18, 0.9) 42%, rgba(25, 6, 15, 0.48) 70%, rgba(20, 5, 13, 0.78)),
+    linear-gradient(0deg, rgba(15, 3, 9, 0.96), transparent 45%);
+}
+
+.heroTopline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1.1rem, 2.5vw, 2rem) clamp(1.2rem, 4vw, 3.4rem) 0;
+}
+
+.observatoryMark,
+.heroMeta,
+.heroMeta span,
+.heroMeta a {
+  display: inline-flex;
+  align-items: center;
+}
+
+.observatoryMark {
+  gap: 0.55rem;
+  color: var(--dashboard-accent);
+  font-size: 0.63rem;
+  font-weight: 850;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.observatoryMark svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.heroMeta {
+  gap: 0.65rem;
+}
+
+.heroMeta span,
+.heroMeta a {
+  min-height: 2.5rem;
+  gap: 0.45rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.58);
+  background: rgba(0, 0, 0, 0.18);
+  font-size: 0.62rem;
+  font-weight: 750;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+}
+
+.heroMeta a {
+  width: 2.5rem;
+  justify-content: center;
+  padding: 0;
+}
+
+.heroMeta svg {
+  width: 0.86rem;
+  height: 0.86rem;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(17rem, 0.65fr);
+  align-items: center;
+  gap: clamp(1.5rem, 5vw, 6rem);
+  min-height: 27rem;
+  padding: clamp(2.5rem, 6vw, 5rem) clamp(1.2rem, 4vw, 3.4rem) 8.5rem;
+}
+
+.heroCopy {
+  max-width: 49rem;
+}
+
+.heroCopy > p {
+  margin: 0 0 1rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.heroCopy h1 {
+  margin: 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(3.2rem, 6.4vw, 6.5rem);
+  font-weight: 420;
+  letter-spacing: -0.055em;
+  line-height: 0.88;
+  text-wrap: balance;
+}
+
+.heroCopy h1 em {
+  display: block;
+  max-width: 44rem;
+  margin-top: 0.12em;
+  color: var(--dashboard-accent);
+  font-weight: 400;
+}
+
+.heroDescription {
+  display: block;
+  max-width: 35rem;
+  margin-top: 1.5rem;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.8rem;
+}
+
+.primaryHeroAction,
+.secondaryHeroAction {
+  display: inline-flex;
+  min-height: 3.15rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.72rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 850;
+  cursor: pointer;
+  transition: transform 180ms ease, opacity 180ms ease, background 180ms ease;
+}
+
+.primaryHeroAction {
+  border: 1px solid var(--dashboard-accent);
+  color: #2b1013;
+  background: var(--dashboard-accent);
+  box-shadow: 0 14px 38px color-mix(in srgb, var(--dashboard-accent) 18%, transparent);
+}
+
+.secondaryHeroAction {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.primaryHeroAction:hover:not(:disabled),
+.secondaryHeroAction:hover {
+  transform: translateY(-2px);
+}
+
+.primaryHeroAction:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.primaryHeroAction svg,
+.secondaryHeroAction svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.primaryHeroAction svg:last-child {
+  margin-left: 0.15rem;
+}
+
+.cycleDial {
+  --cycle-progress: 0deg;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(24vw, 19rem);
+  aspect-ratio: 1;
+  justify-self: center;
+  border-radius: 50%;
+  background: conic-gradient(var(--dashboard-accent) var(--cycle-progress), rgba(255, 255, 255, 0.12) 0);
+  box-shadow: 0 0 0 1rem rgba(255, 255, 255, 0.025), 0 32px 80px rgba(0, 0, 0, 0.32);
+}
+
+.cycleDial::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: inherit;
+  background: rgba(27, 6, 15, 0.91);
+  backdrop-filter: blur(14px);
+}
+
+.dialOrbit {
+  position: absolute;
+  inset: -9%;
+  border: 1px dashed color-mix(in srgb, var(--dashboard-accent) 36%, transparent);
+  border-radius: 50%;
+  animation: dialTurn 24s linear infinite;
+}
+
+.dialOrbit span {
+  position: absolute;
+  top: 49%;
+  left: -0.25rem;
+  width: 0.48rem;
+  height: 0.48rem;
+  border-radius: 50%;
+  background: var(--dashboard-accent);
+  box-shadow: 0 0 1rem var(--dashboard-accent);
+}
+
+.dialCore {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dialCore small,
+.dialCore span,
+.cycleDial > p {
+  font-size: 0.6rem;
+  font-weight: 850;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.dialCore small {
+  color: var(--dashboard-accent);
+}
+
+.dialCore strong {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(4.4rem, 8vw, 7rem);
+  font-weight: 400;
+  letter-spacing: -0.08em;
+  line-height: 0.9;
+}
+
+.dialCore span {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.cycleDial > p {
+  position: absolute;
+  bottom: 17%;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.64);
+}
+
+.insightRail {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(15, 3, 9, 0.56);
+  backdrop-filter: blur(18px);
+}
+
+.insightCard {
+  min-width: 0;
+  padding: 1.15rem clamp(1rem, 2.8vw, 2.4rem);
+  border-right: 1px solid rgba(255, 255, 255, 0.11);
+}
+
+.insightCard:last-child {
+  border-right: 0;
+}
+
+.insightCard p {
+  margin: 0;
+  color: var(--dashboard-accent);
+  font-size: 0.56rem;
+  font-weight: 850;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.insightCard strong,
+.insightCard span {
+  display: block;
+}
+
+.insightCard strong {
+  overflow: hidden;
+  margin-top: 0.35rem;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.insightCard span {
+  overflow: hidden;
+  margin-top: 0.25rem;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 0.64rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.panelNav {
+  position: sticky;
+  top: 0.65rem;
+  z-index: 12;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.45rem;
+  margin: 0.8rem 0;
+  padding: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 1.45rem;
+  background: rgba(248, 240, 236, 0.82);
+  box-shadow: 0 18px 55px rgba(67, 19, 40, 0.12);
+  backdrop-filter: blur(22px);
+}
+
+.panelTab,
+.panelTabActive {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+  min-height: 3.9rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 1.05rem;
+  text-align: left;
+  cursor: pointer;
+  transition: color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.panelTab {
+  color: rgba(72, 26, 45, 0.64);
+  background: transparent;
+}
+
+.panelTab:hover:not(:disabled) {
+  color: #4c1730;
+  background: rgba(255, 255, 255, 0.54);
+}
+
+.panelTabActive {
+  color: #fff9f4;
+  background: #3a1024;
+  box-shadow: 0 12px 26px rgba(58, 16, 36, 0.18);
+}
+
+.panelTab:disabled,
+.panelTabActive:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.panelIndex {
+  color: currentColor;
+  font-size: 0.5rem;
+  font-weight: 900;
+  opacity: 0.48;
+}
+
+.panelTab > svg,
+.panelTabActive > svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--dashboard-accent);
+}
+
+.panelTab strong,
+.panelTab small,
+.panelTabActive strong,
+.panelTabActive small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.panelTab strong,
+.panelTabActive strong {
+  font-size: 0.72rem;
+}
+
+.panelTab small,
+.panelTabActive small {
+  margin-top: 0.1rem;
+  font-size: 0.54rem;
+  opacity: 0.54;
+}
+
+.workspace {
+  min-width: 0;
+  padding: clamp(1rem, 3vw, 2.5rem);
+  border: 1px solid rgba(89, 34, 55, 0.1);
+  border-radius: clamp(1.5rem, 3vw, 2.6rem);
+  color: #4a1730;
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--dashboard-accent) 13%, transparent), transparent 26rem),
+    rgba(255, 250, 247, 0.92);
+  box-shadow: 0 28px 80px rgba(67, 19, 40, 0.1);
+}
+
+.workspaceHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.4rem;
+}
+
+.workspaceHeader p {
+  margin: 0;
+  color: #a43d62;
+  font-size: 0.58rem;
+  font-weight: 850;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.workspaceHeader h2 {
+  margin: 0.4rem 0 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.guideLink {
+  display: inline-flex;
+  min-height: 2.65rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid rgba(74, 23, 48, 0.14);
+  border-radius: 999px;
+  color: #6f2946;
+  background: rgba(255, 255, 255, 0.62);
+  font-size: 0.67rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.guideLink svg {
+  width: 0.9rem;
+}
+
+.workspaceContent {
+  min-width: 0;
+}
+
+.cycleContent {
+  display: grid;
+  gap: 1rem;
+}
+
+.primaryHeroAction:focus-visible,
+.secondaryHeroAction:focus-visible,
+.heroMeta a:focus-visible,
+.panelTab:focus-visible,
+.panelTabActive:focus-visible,
+.guideLink:focus-visible {
+  outline: 2px solid var(--dashboard-accent);
+  outline-offset: 3px;
+}
+
+.loadingState {
+  position: relative;
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff8f3;
+  background: radial-gradient(circle at center, #591b36, #190710 65%);
+}
+
+.loadingCompass {
+  position: relative;
+  display: grid;
+  width: 6rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px dashed rgba(242, 169, 189, 0.48);
+  border-radius: 50%;
+  animation: dialTurn 4s linear infinite;
+}
+
+.loadingCompass span {
+  position: absolute;
+  top: -0.22rem;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #f2a9bd;
+  box-shadow: 0 0 1rem #f2a9bd;
+}
+
+.loadingCompass svg {
+  width: 1.7rem;
+  animation: dialTurn 4s linear reverse infinite;
+}
+
+.loadingState p {
+  margin: 1.4rem 0 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.45rem;
+}
+
+.loadingState small {
+  margin-top: 0.35rem;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+@keyframes dialTurn {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 960px) {
+  .heroGrid {
+    grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.5fr);
+    padding-bottom: 9rem;
+  }
+
+  .cycleDial {
+    width: min(30vw, 17rem);
+  }
+
+  .panelTab,
+  .panelTabActive {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .panelIndex {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .dashboard {
+    background: linear-gradient(180deg, #190710 0%, #260a17 38rem, #f6eee9 69rem);
+  }
+
+  .pageShell {
+    padding-right: 0.65rem !important;
+    padding-left: 0.65rem !important;
+  }
+
+  .hero {
+    min-height: 51rem;
+    border-radius: 1.7rem;
+  }
+
+  .heroImage img {
+    object-position: center top;
+  }
+
+  .heroVeil {
+    background:
+      linear-gradient(180deg, rgba(23, 5, 14, 0.42), rgba(28, 6, 16, 0.91) 42%, rgba(17, 3, 10, 0.98) 76%),
+      linear-gradient(90deg, rgba(22, 4, 13, 0.72), transparent);
+  }
+
+  .heroTopline {
+    padding: 1rem 1rem 0;
+  }
+
+  .heroMeta span {
+    display: none;
+  }
+
+  .heroGrid {
+    display: flex;
+    min-height: auto;
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 1.8rem;
+    padding: 2rem 1.2rem 14.5rem;
+  }
+
+  .cycleDial {
+    width: min(56vw, 13.5rem);
+    align-self: center;
+  }
+
+  .dialCore strong {
+    font-size: 4.8rem;
+  }
+
+  .heroCopy h1 {
+    font-size: clamp(3.2rem, 14vw, 4.7rem);
+  }
+
+  .heroActions {
+    display: grid;
+    width: 100%;
+  }
+
+  .primaryHeroAction,
+  .secondaryHeroAction {
+    width: 100%;
+  }
+
+  .insightRail {
+    grid-template-columns: 1fr;
+  }
+
+  .insightCard {
+    padding: 0.75rem 1.2rem;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  }
+
+  .insightCard:last-child {
+    border-bottom: 0;
+  }
+
+  .insightCard span {
+    display: none;
+  }
+
+  .panelNav {
+    display: flex;
+    overflow-x: auto;
+    padding: 0.42rem;
+    scrollbar-width: none;
+  }
+
+  .panelNav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .panelTab,
+  .panelTabActive {
+    display: inline-flex;
+    min-width: max-content;
+    min-height: 3rem;
+    gap: 0.45rem;
+    padding: 0.55rem 0.8rem;
+  }
+
+  .panelTab small,
+  .panelTabActive small {
+    display: none;
+  }
+
+  .workspace {
+    padding: 1rem;
+    border-radius: 1.6rem;
+  }
+
+  .workspaceHeader {
+    align-items: flex-start;
+  }
+
+  .workspaceHeader h2 {
+    font-size: 1.75rem;
+  }
+
+  .guideLink {
+    width: 2.65rem;
+    padding: 0;
+    font-size: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialOrbit,
+  .loadingCompass,
+  .loadingCompass svg {
+    animation: none;
+  }
+
+  .primaryHeroAction,
+  .secondaryHeroAction,
+  .panelTab,
+  .panelTabActive {
+    transition: none;
+  }
+}

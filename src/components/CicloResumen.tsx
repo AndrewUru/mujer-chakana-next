@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type MouseEvent } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { useMemo, useState, type MouseEvent } from "react";
 import Link from "next/link";
 import {
   Droplets,
@@ -96,22 +95,23 @@ const elementMeta: Record<ElementKey, ElementMeta> = {
 
 export default function CicloResumen({
   mujerChakanaData,
+  isSubscriber,
 }: {
   day: number;
   fechaInicioCiclo: Date;
   fechaFinCiclo: Date;
   userName?: string;
   mujerChakanaData: MujerChakanaData;
+  isSubscriber: boolean;
 }) {
-  const [suscripcionActiva, setSuscripcionActiva] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [showUpsell, setShowUpsell] = useState(false);
 
-  const elementKey = (
-    ["Agua", "Fuego", "Tierra", "Aire"].includes(mujerChakanaData.elemento)
-      ? (mujerChakanaData.elemento as ElementKey)
-      : "default"
-  ) as ElementKey;
+  const elementKey: ElementKey =
+    mujerChakanaData.elemento === "Cielo"
+      ? "Aire"
+      : ["Agua", "Fuego", "Tierra", "Aire"].includes(mujerChakanaData.elemento)
+        ? (mujerChakanaData.elemento as ElementKey)
+        : "default";
   const {
     texture,
     overlay,
@@ -121,28 +121,6 @@ export default function CicloResumen({
     accent,
     affirmation,
   } = elementMeta[elementKey];
-
-  useEffect(() => {
-    const fetchSuscripcion = async () => {
-      setLoading(true);
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-      const { data } = await supabase
-        .from("perfiles")
-        .select("suscripcion_activa")
-        .eq("user_id", user.id)
-        .single();
-      setSuscripcionActiva(Boolean(data?.suscripcion_activa));
-      setLoading(false);
-    };
-
-    fetchSuscripcion();
-  }, []);
 
   const resourceItems = useMemo(
     () =>
@@ -189,17 +167,6 @@ export default function CicloResumen({
     event.preventDefault();
     setShowUpsell(true);
   };
-
-  if (loading) {
-    return (
-      <div className="mb-4 rounded-[22px] border border-pink-200/40 bg-gradient-to-br from-pink-900/70 via-rose-900/70 to-purple-900/70 p-5 text-white shadow-xl backdrop-blur-md sm:mb-6 sm:rounded-3xl sm:p-8">
-        <div className="flex items-center justify-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/60 border-t-transparent" />
-          <span className="text-lg font-medium">Cargando tu ciclo...</span>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div
@@ -285,7 +252,7 @@ export default function CicloResumen({
                       </span>
                       <div className="flex flex-1 items-center justify-between">
                         <p className="font-medium text-white">{label}</p>
-                        {suscripcionActiva ? (
+                        {isSubscriber ? (
                           <Sparkles className="h-5 w-5 text-amber-200" />
                         ) : (
                           <Lock className="h-5 w-5 text-white/50" />
@@ -293,7 +260,7 @@ export default function CicloResumen({
                       </div>
                     </div>
                     <p className="text-xs text-white/70">{description}</p>
-                    {!suscripcionActiva && (
+                    {!isSubscriber && (
                       <p className="text-xs font-semibold text-rose-200">
                         Disponible con suscripción activa.
                       </p>
@@ -306,7 +273,7 @@ export default function CicloResumen({
 
           <div className="space-y-3 sm:space-y-4">
             {hasPremiumContent ? (
-              suscripcionActiva ? (
+              isSubscriber ? (
                 <Link
                   href={dailyContentHref}
                   className="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-rose-500 via-rose-600 to-rose-700 px-4 py-3 text-sm font-semibold text-white shadow-xl transition duration-300 hover:from-rose-600 hover:via-rose-700 hover:to-rose-800 hover:shadow-rose-900/40 sm:gap-3 sm:px-6 sm:py-4 sm:text-base"

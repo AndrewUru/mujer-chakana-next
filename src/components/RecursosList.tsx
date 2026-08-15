@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import {
   Music2,
@@ -11,7 +11,6 @@ import {
   Sparkles,
   Gift,
 } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
 
 type Recurso = {
   id: string;
@@ -72,36 +71,13 @@ function getTipoIcon(tipo: string) {
   return iconByTipo[tipo] ?? <BookOpen className="h-5 w-5" />;
 }
 
-export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
-  const [suscripcionActiva, setSuscripcionActiva] = useState(false);
-
-  useEffect(() => {
-    const fetchPerfil = async () => {
-      const {
-        data: { user },
-        error: authError,
-      } = await supabase.auth.getUser();
-
-      if (authError || !user) {
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("perfiles")
-        .select("suscripcion_activa")
-        .eq("user_id", user.id)
-        .single();
-
-      if (error) {
-        console.error("Error obteniendo perfil:", error.message);
-        return;
-      }
-
-      setSuscripcionActiva(Boolean(data?.suscripcion_activa));
-    };
-
-    fetchPerfil();
-  }, []);
+export default function RecursosList({
+  recursos,
+  isSubscriber,
+}: {
+  recursos: Recurso[];
+  isSubscriber: boolean;
+}) {
 
   const groupedResources = useMemo(
     () => ({
@@ -120,7 +96,7 @@ export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
 
   const renderCards = (lista: Recurso[], tier: Tier) => {
     const isPremiumTier = tier !== "gratuito";
-    const locked = isPremiumTier && !suscripcionActiva;
+    const locked = isPremiumTier && !isSubscriber;
 
     if (!lista.length) {
       return (
@@ -231,7 +207,7 @@ export default function RecursosList({ recursos }: { recursos: Recurso[] }) {
                 </h2>
                 <p className="text-sm text-rose-600">{section.description}</p>
               </div>
-              {tier !== "gratuito" && !suscripcionActiva && (
+              {tier !== "gratuito" && !isSubscriber && (
                 <Link
                   href="/suscripcion"
                   className="glass-soft inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2 text-xs font-semibold text-rose-600 transition hover:bg-white/70 hover:text-rose-700"

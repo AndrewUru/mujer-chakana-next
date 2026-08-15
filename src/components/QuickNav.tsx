@@ -148,7 +148,7 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
       <motion.button
         type="button"
         onClick={() => setIsOpen((previous) => !previous)}
-        className="glass flex min-h-11 items-center gap-2 rounded-full px-4 py-3 font-semibold text-rose-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
+        className="flex h-[3.25rem] w-[3.25rem] items-center justify-center gap-2 rounded-full border border-rose-200/25 bg-[#2b0817]/95 px-0 font-semibold text-rose-100 shadow-[0_18px_50px_rgba(43,8,23,0.34)] backdrop-blur-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 sm:h-auto sm:w-auto sm:min-h-11 sm:px-4 sm:py-3"
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.96 }}
         aria-expanded={isOpen}
@@ -161,7 +161,9 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
             <span className="absolute -right-1 -top-1 h-2 w-2 animate-pulse rounded-full bg-amber-400" />
           )}
         </span>
-        <span>{isOpen ? "Cerrar guía" : "Habla con Samari"}</span>
+        <span className="hidden sm:inline">
+          {isOpen ? "Cerrar guía" : "Habla con Samari"}
+        </span>
       </motion.button>
 
       <AnimatePresence>
