@@ -1,426 +1,517 @@
 "use client";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
+
 import {
-  SparklesIcon,
-  StarIcon,
-  MoonIcon,
-  HeartIcon,
-  PlayCircleIcon,
-  BookOpenIcon,
-  CheckBadgeIcon,
-} from "@heroicons/react/24/outline";
-import { motion } from "framer-motion";
+  type CSSProperties,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+} from "framer-motion";
+import {
+  ArrowDown,
+  ArrowRight,
+  Flame,
+  Leaf,
+  LogIn,
+  Moon,
+  Sparkles,
+  Waves,
+  Wind,
+} from "lucide-react";
+import styles from "./home-story.module.css";
 
-export default function HomePage() {
-  const router = useRouter();
-  const supabase = createClientComponentClient();
+interface StoryScene {
+  id: string;
+  number: string;
+  shortLabel: string;
+  image: string;
+  imageAlt: string;
+  objectPosition?: string;
+  accent: string;
+  overlay: string;
+}
 
-  const highlights = [
-    {
-      title: "Moonboard consciente",
-      description:
-        "Registra tus emociones y honra tu ritmo interior con un mandala lunar interactivo.",
-      icon: MoonIcon,
-    },
-    {
-      title: "Rituales vivos",
-      description:
-        "Activa prácticas y audio-guías alineadas con cada fase del ciclo para nutrir tu presencia.",
-      icon: PlayCircleIcon,
-    },
-    {
-      title: "Acompañamiento amoroso",
-      description:
-        "Recibe recordatorios, reflexiones y materiales que sostienen cada momento de tu proceso.",
-      icon: HeartIcon,
-    },
-  ];
+const STORY_SCENES: StoryScene[] = [
+  {
+    id: "umbral",
+    number: "00",
+    shortLabel: "Umbral",
+    image: "/mujer-chakana.webp",
+    imageAlt: "Ilustración de una mujer conectada con la luna y la naturaleza",
+    objectPosition: "center 28%",
+    accent: "#f7b5c8",
+    overlay:
+      "linear-gradient(100deg, rgba(35, 7, 22, .94) 2%, rgba(55, 9, 31, .76) 48%, rgba(28, 7, 20, .38) 100%)",
+  },
+  {
+    id: "agua",
+    number: "01",
+    shortLabel: "Escuchar",
+    image: "/agua-ui.webp",
+    imageAlt: "Superficie profunda del agua",
+    accent: "#88e6ef",
+    overlay:
+      "linear-gradient(105deg, rgba(3, 26, 38, .96), rgba(4, 61, 76, .72) 56%, rgba(2, 26, 38, .54))",
+  },
+  {
+    id: "fuego",
+    number: "02",
+    shortLabel: "Nombrar",
+    image: "/fuego-ui.webp",
+    imageAlt: "Llamas en movimiento",
+    accent: "#ffc37a",
+    overlay:
+      "linear-gradient(100deg, rgba(34, 7, 4, .97), rgba(101, 25, 7, .76) 56%, rgba(47, 8, 3, .58))",
+  },
+  {
+    id: "tierra",
+    number: "03",
+    shortLabel: "Enraizar",
+    image: "/tierra-ui.webp",
+    imageAlt: "Textura orgánica de tierra",
+    accent: "#e6c07a",
+    overlay:
+      "linear-gradient(105deg, rgba(25, 17, 8, .97), rgba(73, 43, 15, .74) 58%, rgba(25, 15, 5, .6))",
+  },
+  {
+    id: "cielo",
+    number: "04",
+    shortLabel: "Integrar",
+    image: "/cielo-ui.webp",
+    imageAlt: "Nubes doradas atravesadas por la luz",
+    accent: "#ffe0b0",
+    overlay:
+      "linear-gradient(105deg, rgba(38, 26, 34, .94), rgba(79, 55, 66, .66) 54%, rgba(49, 33, 39, .54))",
+  },
+  {
+    id: "altar",
+    number: "05",
+    shortLabel: "Comenzar",
+    image: "/mujer-chakana.webp",
+    imageAlt: "Mujer frente a un paisaje lunar",
+    objectPosition: "center 28%",
+    accent: "#ffd5df",
+    overlay:
+      "radial-gradient(circle at 50% 34%, rgba(112, 34, 69, .18), rgba(20, 5, 15, .9) 72%), linear-gradient(rgba(31, 5, 20, .68), rgba(18, 3, 12, .94))",
+  },
+];
 
-  const journeySteps = [
-    {
-      title: "Llega a tu altar digital",
-      description:
-        "Crea tu espacio personal y accede al moonboard gratuito para comenzar a observarte.",
-    },
-    {
-      title: "Observa tu ciclo con claridad",
-      description:
-        "Registra energía, emociones y corporalidad para reconocer patrones y necesidades.",
-    },
-    {
-      title: "Profundiza cuando lo sientas",
-      description:
-        "Suscríbete para activar audio-guías, rituales y nuevos contenidos antes que nadie.",
-    },
-  ];
+const ORACLE_RESPONSES = {
+  claridad:
+    "Hoy no necesitas resolverlo todo. Nombra una sola verdad y deja que ordene el resto.",
+  descanso:
+    "Tu pausa no interrumpe el camino: también es camino. Baja el ritmo y escucha lo que permanece.",
+  movimiento:
+    "La energía quiere circular. Elige un gesto pequeño, hazlo presente y permite que abra espacio.",
+};
 
-  const subscriptionPerks = [
-    {
-      title: "Funcionalidades anticipadas",
-      description:
-        "Accede primero a herramientas, contenidos y mejoras que vamos tejiendo cada mes.",
-      icon: SparklesIcon,
-    },
-    {
-      title: "Guías y rituales exclusivos",
-      description:
-        "Explora audio-guías, ceremonias y propuestas profundas para cada momento del ciclo.",
-      icon: BookOpenIcon,
-    },
-    {
-      title: "Sostén a la comunidad",
-      description:
-        "Con tu aporte de 2,99 €/mes ayudas a mantener la plataforma y a expandir su medicina.",
-      icon: CheckBadgeIcon,
-    },
-  ];
+const MOONBOARD_DAYS = Array.from({ length: 28 }, (_, index) => index + 1);
+
+interface StoryChapterProps {
+  scene: StoryScene;
+  index: number;
+  align?: "left" | "right" | "center";
+  onActive: (index: number) => void;
+  children: ReactNode;
+}
+
+function StoryChapter({
+  scene,
+  index,
+  align = "left",
+  onActive,
+  children,
+}: StoryChapterProps) {
+  const ref = useRef<HTMLElement>(null);
+  const isInView = useInView(ref, { amount: 0.56 });
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    let active = true;
+    if (isInView) onActive(index);
+  }, [index, isInView, onActive]);
 
-    const handleRedirectIfLoggedIn = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (active && session) {
-        router.replace("/dashboard");
-      }
-    };
+  const alignmentClass = {
+    left: styles.chapterLeft,
+    right: styles.chapterRight,
+    center: styles.chapterCenter,
+  }[align];
 
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        if (active && session) {
-          router.replace("/dashboard");
-        }
-      }
-    );
+  return (
+    <section
+      ref={ref}
+      id={`scene-${scene.id}`}
+      className={`${styles.chapter} ${alignmentClass}`}
+      aria-labelledby={`title-${scene.id}`}
+    >
+      <motion.div
+        className={styles.chapterInner}
+        initial={reduceMotion ? false : { opacity: 0, y: 48 }}
+        whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+        viewport={{ once: false, amount: 0.38 }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {children}
+      </motion.div>
+    </section>
+  );
+}
 
-    handleRedirectIfLoggedIn();
+function OracleMoment() {
+  const [prompt, setPrompt] = useState<keyof typeof ORACLE_RESPONSES>("claridad");
+
+  return (
+    <div className={styles.oracle} aria-label="Una muestra de la guía de Samari">
+      <p className={styles.oracleQuestion}>¿Qué necesita tu energía ahora?</p>
+      <div className={styles.oracleChoices}>
+        {(Object.keys(ORACLE_RESPONSES) as Array<keyof typeof ORACLE_RESPONSES>).map(
+          (choice) => (
+            <button
+              key={choice}
+              type="button"
+              className={prompt === choice ? styles.oracleChoiceActive : styles.oracleChoice}
+              aria-pressed={prompt === choice}
+              onClick={() => setPrompt(choice)}
+            >
+              {choice}
+            </button>
+          ),
+        )}
+      </div>
+      <AnimatePresence mode="wait">
+        <motion.blockquote
+          key={prompt}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.3 }}
+        >
+          “{ORACLE_RESPONSES[prompt]}”
+        </motion.blockquote>
+      </AnimatePresence>
+      <p className={styles.oracleNote}>
+        Una pequeña muestra. Dentro, Samari conversa con tus propios registros.
+      </p>
+    </div>
+  );
+}
+
+function MoonboardOrbit() {
+  return (
+    <div className={styles.moonboardOrbit} aria-label="Un ciclo lunar de 28 días">
+      {MOONBOARD_DAYS.map((day, index) => (
+        <span
+          key={day}
+          className={styles.orbitDay}
+          style={{ "--day-index": index } as CSSProperties}
+        >
+          {day}
+        </span>
+      ))}
+      <div className={styles.orbitCenter}>
+        <Moon aria-hidden="true" />
+        <span>tu ciclo</span>
+      </div>
+    </div>
+  );
+}
+
+export default function Home() {
+  const router = useRouter();
+  const [supabase] = useState(() => createClientComponentClient());
+  const [activeScene, setActiveScene] = useState(0);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
+  const activateScene = useCallback((index: number) => {
+    setActiveScene((current) => (current === index ? current : index));
+  }, []);
+
+  const goToScene = useCallback(
+    (sceneId: string) => {
+      document.getElementById(`scene-${sceneId}`)?.scrollIntoView({
+        behavior: reduceMotion ? "auto" : "smooth",
+        block: "start",
+      });
+    },
+    [reduceMotion],
+  );
+
+  useEffect(() => {
+    let mounted = true;
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (mounted && session) router.replace("/dashboard");
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) router.replace("/dashboard");
+    });
 
     return () => {
-      active = false;
-      listener.subscription.unsubscribe();
+      mounted = false;
+      subscription.unsubscribe();
     };
   }, [router, supabase]);
 
+  useEffect(() => {
+    const nextScene = STORY_SCENES[activeScene + 1];
+    if (!nextScene) return;
+
+    const image = new window.Image();
+    image.src = nextScene.image;
+  }, [activeScene]);
+
+  const scene = STORY_SCENES[activeScene];
+
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[url('/mujer-chakana.webp')] bg-cover bg-center text-pink-900">
-      <div className="absolute inset-0 bg-gradient-to-br from-white/72 via-white/58 to-rose-100/38 backdrop-blur-2xl" />
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.7 }}
-        transition={{ duration: 1.4, ease: "easeOut" }}
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.32),rgba(255,255,255,0.04))]"
-      />
-
-      <div className="relative z-10 px-4 py-6 sm:px-6 lg:px-10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-16 pb-20">
-          <motion.nav
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-            className="glass flex flex-col items-center gap-4 rounded-2xl px-5 py-4 text-center sm:flex-row sm:justify-between sm:text-left"
+    <main
+      className={styles.story}
+      data-story-scene={scene.id}
+      style={{ "--scene-accent": scene.accent } as CSSProperties}
+    >
+      <div className={styles.stage} aria-hidden="true">
+        <AnimatePresence mode="sync">
+          <motion.div
+            key={scene.id}
+            className={styles.stageScene}
+            initial={reduceMotion ? false : { opacity: 0, scale: 1.04 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduceMotion ? 0 : 1.1, ease: "easeOut" }}
           >
-            <div>
-              <span className="text-xs font-semibold uppercase tracking-[0.35em] text-rose-500">
-                Ginergética
-              </span>
-              <p className="text-lg font-semibold text-rose-900 sm:text-xl">
-                Sabiduría en cada fase de tu ciclo
-              </p>
-            </div>
-            <p className="max-w-md text-sm text-rose-700 sm:text-base">
-              Una guía digital para cultivar tu energía femenina y honrar tus
-              ritmos naturales.
-            </p>
-          </motion.nav>
+            <Image
+              src={scene.image}
+              alt=""
+              fill
+              priority={activeScene === 0}
+              quality={88}
+              sizes="100vw"
+              className={styles.stageImage}
+              style={{ objectPosition: scene.objectPosition ?? "center" }}
+            />
+            <div className={styles.stageOverlay} style={{ background: scene.overlay }} />
+          </motion.div>
+        </AnimatePresence>
+        <div className={styles.vignette} />
+        <div className={styles.grain} />
+        <motion.div
+          className={styles.sigil}
+          animate={reduceMotion ? undefined : { rotate: activeScene * 18, scale: [1, 1.035, 1] }}
+          transition={{ rotate: { duration: 1.1 }, scale: { duration: 8, repeat: Infinity } }}
+        />
+      </div>
 
-          <motion.section
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: "easeOut" }}
-            className="glass-shell relative grid gap-6 overflow-hidden rounded-[24px] p-5 sm:gap-10 sm:rounded-[32px] sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:p-12"
-          >
-            <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent" />
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.8, ease: "easeOut" }}
-              className="space-y-6 text-center lg:text-left"
-            >
-              <span className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-100/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-rose-600">
-                Ritual cotidiano
-              </span>
-              <h1 className="text-3xl font-extrabold leading-tight text-rose-950 sm:text-4xl lg:text-5xl">
-                Reconecta con tu energía cíclica desde un altar digital vivo.
-              </h1>
-              <p className="text-base leading-relaxed text-rose-800 sm:text-lg">
-                Ginergética reúne la metafísica nativa femenina con la
-                tecnología consciente. Observa tu moonboard, registra tus
-                sensaciones y recibe guía amorosa para transitar cada fase con
-                más claridad y autocuidado.
-              </p>
-              <div className="flex flex-col items-center gap-4 pt-6 sm:flex-row sm:justify-center lg:justify-start">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => router.push("/auth/register")}
-                  className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-rose-600 via-rose-700 to-rose-800 px-9 py-4 text-base font-semibold text-white shadow-xl transition"
-                >
-                  <SparklesIcon className="h-6 w-6 transition group-hover:scale-110 group-hover:text-rose-100" />
-                  <span>Regístrate gratis</span>
-                </motion.button>
+      <div className={styles.storyLayer}>
+        <motion.div className={styles.progress} style={{ scaleX: progress }} />
 
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => router.push("/auth/login")}
-                  className="glass-soft group inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-base font-semibold text-rose-700 transition hover:bg-white/70"
-                >
-                  <StarIcon className="h-6 w-6 text-rose-500 transition group-hover:text-rose-600" />
-                  <span>Ya tengo cuenta</span>
-                </motion.button>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
-              className="relative flex items-center justify-center"
-            >
-              <div className="glass-panel relative h-94 w-full max-w-sm overflow-hidden rounded-[28px] sm:h-72">
-                <Image
-                  src="/mujer-chakana.webp"
-                  alt="Logo Mujer Chakana"
-                  fill
-                  priority
-                  className="object-cover object-top scale-110 transition-transform duration-500 hover:scale-115"
-                />
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 0.6, scale: 1 }}
-                transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
-                className="glass-soft absolute -bottom-5 left-8 h-16 w-28 rounded-full"
-              />
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 0.6, scale: 1 }}
-                transition={{ delay: 0.5, duration: 0.7, ease: "easeOut" }}
-                className="glass-soft absolute -top-5 right-6 h-16 w-28 rounded-full"
-              />
-            </motion.div>
-          </motion.section>
-
-          <motion.section
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ delay: 0.1, duration: 0.8, ease: "easeOut" }}
-            className="grid gap-6 sm:gap-10 lg:grid-cols-[1.1fr_0.9fr]"
-          >
-            <div className="glass-panel space-y-4 rounded-[22px] p-5 sm:rounded-3xl sm:p-8">
-              <h2 className="text-2xl font-semibold text-rose-900 sm:text-3xl">
-                ¿Qué es esta app?
-              </h2>
-              <p className="text-base leading-relaxed text-rose-800">
-                Ginergética es un sistema de autoconocimiento basado en el ciclo
-                menstrual, inspirado en la metafísica nativa femenina. Ofrece
-                herramientas como el <strong>moonboard</strong>, un mandala
-                lunar donde registras emociones, energía y estados internos a lo
-                largo del ciclo.
-              </p>
-              <p className="text-base leading-relaxed text-rose-800">
-                Digitalizamos este recorrido sagrado para que habites cada fase
-                a tu ritmo, con amor y conciencia, integrando saberes
-                ancestrales a tu día a día.
-              </p>
-              <motion.blockquote
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2, duration: 0.6 }}
-                className="glass-soft rounded-2xl px-6 py-5 text-sm italic text-rose-700"
+        <div className={styles.storyChrome}>
+          <Link href="/" className={styles.brand} aria-label="Mujer Chakana, inicio">
+            <span className={styles.brandMark}>✦</span>
+            <span>
+              Mujer <em>Chakana</em>
+            </span>
+          </Link>
+          <Link href="/login" className={styles.loginLink}>
+            <LogIn size={15} aria-hidden="true" />
+            Entrar
+          </Link>
+          <nav className={styles.sceneNav} aria-label="Capítulos de la experiencia">
+            {STORY_SCENES.map((item, index) => (
+              <button
+                key={item.id}
+                type="button"
+                className={activeScene === index ? styles.sceneNavActive : styles.sceneNavItem}
+                aria-current={activeScene === index ? "step" : undefined}
+                aria-label={`Ir al capítulo ${item.number}: ${item.shortLabel}`}
+                onClick={() => goToScene(item.id)}
               >
-                “Tu sabiduría es cíclica: cada vuelta te muestra un rostro nuevo
-                de ti. Aquí encuentras un espejo para abrazarlo.”
-              </motion.blockquote>
-            </div>
-
-            <div className="grid gap-4">
-              {highlights.map(({ title, description, icon: Icon }) => (
-                <motion.div
-                  key={title}
-                  initial={{ opacity: 0, x: 40 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                  className="glass-soft flex flex-col gap-3 rounded-[20px] p-4 sm:rounded-3xl sm:p-6"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/60 bg-rose-100/55 shadow-inner">
-                      <Icon className="h-6 w-6 text-rose-500" />
-                    </span>
-                    <h3 className="text-lg font-semibold text-rose-900">
-                      {title}
-                    </h3>
-                  </div>
-                  <p className="text-sm leading-relaxed text-rose-700">
-                    {description}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.section>
-
-          <motion.section
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ delay: 0.15, duration: 0.7, ease: "easeOut" }}
-            className="glass-panel rounded-[22px] p-5 sm:rounded-3xl sm:p-8"
-          >
-            <div className="mb-5 space-y-2 text-center sm:mb-8">
-              <h2 className="text-2xl font-semibold text-rose-900 sm:text-3xl">
-                Tu recorrido cíclico dentro de Ginergética
-              </h2>
-              <p className="text-base text-rose-700">
-                Un proceso simple para volver a habitarte con presencia.
-              </p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-3 sm:gap-6">
-              {journeySteps.map((step, index) => (
-                <motion.div
-                  key={step.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="glass-soft flex flex-col gap-3 rounded-[20px] p-4 text-center sm:rounded-3xl sm:p-6"
-                >
-                  <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border border-white/60 bg-rose-100/60 text-sm font-semibold text-rose-600 shadow-inner">
-                    {index + 1}
-                  </span>
-                  <h3 className="text-lg font-semibold text-rose-900">
-                    {step.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-rose-700">
-                    {step.description}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.section>
-
-          <motion.section
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
-            className="grid gap-6 sm:gap-8 lg:grid-cols-[1fr_1fr]"
-          >
-            <div className="glass-panel space-y-4 rounded-[22px] p-5 sm:rounded-3xl sm:p-8">
-              <h2 className="text-2xl font-semibold text-rose-900 sm:text-3xl">
-                ¿Por qué ofrecemos una suscripción?
-              </h2>
-              <p className="text-base leading-relaxed text-rose-800">
-                Ginergética es un espacio de conexión con la sabiduría cíclica y
-                ancestral. Mantenemos funciones esenciales como el{" "}
-                <strong>moonboard</strong> y los{" "}
-                <strong>registros personales</strong> totalmente gratuitos, para
-                que cualquier mujer pueda iniciar su camino de autoconocimiento
-                sin barreras.
-              </p>
-              <p className="text-base leading-relaxed text-rose-800">
-                Sostener y hacer crecer esta plataforma implica dedicación, amor
-                y recursos. Por eso, creamos una suscripción accesible de{" "}
-                <strong>2,99 €/mes</strong> que permite cubrir los costos
-                técnicos y continuar tejiendo nuevas herramientas, contenidos y
-                mejoras.
-              </p>
-              <p className="text-base leading-relaxed text-rose-800">
-                Como agradecimiento, las suscriptoras disfrutan de lanzamientos
-                anticipados, audio-guías y recursos especiales para profundizar
-                su práctica.
-              </p>
-            </div>
-
-            <div className="grid gap-4">
-              {subscriptionPerks.map(({ title, description, icon: Icon }) => (
-                <motion.div
-                  key={title}
-                  initial={{ opacity: 0, x: 40 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                  className="glass-soft flex gap-3 rounded-[20px] p-4 sm:gap-4 sm:rounded-3xl sm:p-6"
-                >
-                  <span className="mt-1 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/60 bg-rose-100/55 shadow-inner">
-                    <Icon className="h-6 w-6 text-rose-500" />
-                  </span>
-                  <div className="space-y-1.5">
-                    <h3 className="text-lg font-semibold text-rose-900">
-                      {title}
-                    </h3>
-                    <p className="text-sm leading-relaxed text-rose-700">
-                      {description}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.section>
-
-          <motion.section
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-20px" }}
-            transition={{ delay: 0.25, duration: 0.7, ease: "easeOut" }}
-            className="glass-panel mx-auto w-full max-w-2xl rounded-[20px] px-4 py-5 text-center sm:rounded-3xl sm:px-6 sm:py-6"
-          >
-            <div className="flex flex-col items-center justify-center gap-3">
-              <svg
-                className="h-6 w-6 text-rose-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 21C12 21 7 16.5 4.5 13.5C2 10.5 3 7 6 5C8.5 3.5 12 6.5 12 6.5C12 6.5 15.5 3.5 18 5C21 7 22 10.5 19.5 13.5C17 16.5 12 21 12 21Z"
-                />
-              </svg>
-              <span className="text-sm font-medium text-rose-700">
-                Esta aplicación ha sido creada por
-              </span>
-              <div className="flex flex-wrap items-center justify-center gap-2">
-                <a
-                  href="https://www.samariluz.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block rounded-xl border border-white/60 bg-rose-100/60 px-4 py-1.5 text-sm font-semibold text-rose-800 transition hover:bg-white/70"
-                >
-                  Samari Luz
-                </a>
-                <span className="text-sm text-rose-800">
-                  para acompañar y empoderar a mujeres en su viaje de
-                  autoconocimiento.
-                </span>
-              </div>
-              <span className="mt-2 block text-xs text-pink-400/80">
-                &copy; {new Date().getFullYear()} Ginergética.com · Todos los
-                derechos reservados.
-              </span>
-            </div>
-          </motion.section>
+                <span>{item.number}</span>
+                <strong>{item.shortLabel}</strong>
+              </button>
+            ))}
+          </nav>
         </div>
+
+        <StoryChapter scene={STORY_SCENES[0]} index={0} onActive={activateScene}>
+          <div className={styles.heroCopy}>
+            <p className={styles.eyebrow}>Una experiencia cíclica · Capítulo 00</p>
+            <h1 id="title-umbral">
+              No vienes a medir tus días.
+              <em>Vienes a escucharlos.</em>
+            </h1>
+            <p className={styles.lead}>
+              Un espacio íntimo para leer tu energía, reconocer tus ritmos y convertir
+              cada vuelta del ciclo en sabiduría propia.
+            </p>
+            <div className={styles.heroActions}>
+              <button type="button" className={styles.primaryAction} onClick={() => goToScene("agua")}>
+                Cruzar el umbral
+                <ArrowDown size={17} aria-hidden="true" />
+              </button>
+              <Link href="/register" className={styles.secondaryAction}>
+                Crear mi espacio
+                <ArrowRight size={17} aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
+          <p className={styles.scrollWhisper}>
+            Desliza para entrar <span>↓</span>
+          </p>
+        </StoryChapter>
+
+        <StoryChapter scene={STORY_SCENES[1]} index={1} align="right" onActive={activateScene}>
+          <div className={styles.splitScene}>
+            <div className={styles.sceneCopy}>
+              <div className={styles.elementGlyph}>
+                <Waves aria-hidden="true" />
+              </div>
+              <p className={styles.eyebrow}>01 · Escuchar</p>
+              <h2 id="title-agua">Todo comienza en lo que sientes.</h2>
+              <p>
+                Antes de interpretar, registrar. Antes de corregir, sentir. Tu Moonboard
+                recoge señales pequeñas para que puedas mirar el ciclo completo.
+              </p>
+              <div className={styles.whisperList} aria-label="Preguntas para escuchar tu cuerpo">
+                <span>¿Cómo habita hoy tu cuerpo?</span>
+                <span>¿Dónde se mueve tu energía?</span>
+                <span>¿Qué emoción pide espacio?</span>
+              </div>
+            </div>
+            <aside className={styles.miniMoonboard}>
+              <span className={styles.moonPhase}>◒</span>
+              <div>
+                <small>Día 17 · Menguante</small>
+                <strong>energía serena</strong>
+                <p>escucha · pausa · claridad</p>
+              </div>
+            </aside>
+          </div>
+        </StoryChapter>
+
+        <StoryChapter scene={STORY_SCENES[2]} index={2} onActive={activateScene}>
+          <div className={styles.fireLayout}>
+            <div className={styles.sceneCopy}>
+              <div className={styles.elementGlyph}>
+                <Flame aria-hidden="true" />
+              </div>
+              <p className={styles.eyebrow}>02 · Nombrar</p>
+              <h2 id="title-fuego">
+                Cuando lo nombras,
+                <em>la energía cambia.</em>
+              </h2>
+              <p>
+                Samari, tu guía con inteligencia artificial, encuentra patrones en tus
+                registros y te devuelve preguntas, no recetas. Una voz para acompañar la tuya.
+              </p>
+            </div>
+            <OracleMoment />
+          </div>
+        </StoryChapter>
+
+        <StoryChapter scene={STORY_SCENES[3]} index={3} align="right" onActive={activateScene}>
+          <div className={styles.earthLayout}>
+            <MoonboardOrbit />
+            <div className={styles.sceneCopy}>
+              <div className={styles.elementGlyph}>
+                <Leaf aria-hidden="true" />
+              </div>
+              <p className={styles.eyebrow}>03 · Enraizar</p>
+              <h2 id="title-tierra">Lo que observas se convierte en raíz.</h2>
+              <p>
+                Día a día aparecen tus mapas: ritmos, repeticiones y recursos. No para
+                encasillarte, sino para devolverte contexto cuando más lo necesitas.
+              </p>
+              <dl className={styles.dataPoem}>
+                <div>
+                  <dt>28</dt>
+                  <dd>días de presencia</dd>
+                </div>
+                <div>
+                  <dt>1</dt>
+                  <dd>lenguaje propio</dd>
+                </div>
+                <div>
+                  <dt>∞</dt>
+                  <dd>formas de volver</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </StoryChapter>
+
+        <StoryChapter scene={STORY_SCENES[4]} index={4} onActive={activateScene}>
+          <div className={styles.skyLayout}>
+            <div className={styles.sceneCopy}>
+              <div className={styles.elementGlyph}>
+                <Wind aria-hidden="true" />
+              </div>
+              <p className={styles.eyebrow}>04 · Integrar</p>
+              <h2 id="title-cielo">Cada vuelta te devuelve distinta.</h2>
+              <p>
+                Arquetipos, rituales breves y audios se abren según tu momento. La experiencia
+                no te empuja hacia delante: camina contigo en espiral.
+              </p>
+            </div>
+            <div className={styles.constellation} aria-label="Los cuatro elementos de tu camino">
+              <span><Waves aria-hidden="true" /> Agua</span>
+              <span><Flame aria-hidden="true" /> Fuego</span>
+              <span><Leaf aria-hidden="true" /> Tierra</span>
+              <span><Wind aria-hidden="true" /> Cielo</span>
+            </div>
+          </div>
+        </StoryChapter>
+
+        <StoryChapter
+          scene={STORY_SCENES[5]}
+          index={5}
+          align="center"
+          onActive={activateScene}
+        >
+          <div className={styles.finalScene}>
+            <div className={styles.finalMoon} aria-hidden="true">
+              <Sparkles />
+            </div>
+            <p className={styles.eyebrow}>05 · Comenzar</p>
+            <h2 id="title-altar">
+              Tu ciclo ya está hablando.
+              <em>¿Quieres escucharlo?</em>
+            </h2>
+            <p>
+              Empieza con tu Moonboard y tus registros diarios. Es gratis, íntimo y tuyo.
+            </p>
+            <div className={styles.heroActions}>
+              <Link href="/register" className={styles.primaryAction}>
+                Crear mi espacio
+                <ArrowRight size={17} aria-hidden="true" />
+              </Link>
+              <Link href="/login" className={styles.secondaryAction}>Ya tengo cuenta</Link>
+            </div>
+            <footer className={styles.storyFooter}>
+              <span>Mujer Chakana · 2026</span>
+              <span>Diseñado para volver a ti.</span>
+            </footer>
+          </div>
+        </StoryChapter>
       </div>
     </main>
   );
