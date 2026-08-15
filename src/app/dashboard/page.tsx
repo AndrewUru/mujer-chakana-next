@@ -372,7 +372,7 @@ export default function DashboardPage() {
           </GlassCard>
         );
       case "moonboard":
-        return <Moonboard />;
+        return <Moonboard startDate={fechaInicioCiclo} />;
       case "registro":
         return userId && estadoCiclo && fechaInicioCiclo ? (
           <NuevoRegistro
