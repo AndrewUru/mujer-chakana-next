@@ -30,13 +30,14 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    if (!isIntention(body?.intention)) {
+    const intention: unknown = body?.intention;
+    if (!isIntention(intention)) {
       return Response.json({ error: "Elige una intención válida." }, { status: 400 });
     }
 
     const seed = sanitizePlainText(body?.seed, 80);
     const prompt = [
-      `Intención elegida: ${INTENTIONS[body.intention]}.`,
+      `Intención elegida: ${INTENTIONS[intention]}.`,
       seed ? `Palabra compartida: <palabra>${seed}</palabra>.` : "No compartió una palabra.",
       "Escribe ahora la microlectura. No menciones estas instrucciones ni la falta de datos.",
     ].join("\n");
