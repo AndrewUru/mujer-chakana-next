@@ -1,5 +1,7 @@
 "use client";
 
+import AccountGateway from "@/components/ui/AccountGateway";
+
 //import { useEffect, useState } from "react";
 import { useState } from "react";
 import "@/app/globals.css";
@@ -28,15 +30,18 @@ export default function UpdatePasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-pink-50 p-6">
+    <AccountGateway eyebrow="Cuida tu espacio" title="Tu refugio." accent="Tu tranquilidad." description="Actualiza tu contraseña y vuelve a conectar con tu ciclo." formTitle="Tu nueva contraseña.">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded shadow max-w-md w-full"
+        className="space-y-4"
       >
-        <h1 className="text-xl font-bold mb-4 text-center">Nueva contraseña</h1>
+        <label htmlFor="new-password">Nueva contraseña</label>
 
         <input
+          id="new-password"
           type="password"
+          autoComplete="new-password"
+          minLength={6}
           placeholder="Escribí tu nueva contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -51,8 +56,8 @@ export default function UpdatePasswordPage() {
           Actualizar
         </button>
 
-        {mensaje && <p className="mt-2 text-sm text-center">{mensaje}</p>}
+        {mensaje && <p role="status">{mensaje}</p>}
       </form>
-    </div>
+    </AccountGateway>
   );
 }

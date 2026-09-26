@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import styles from "./SetupPerfil.module.css";
 import AvatarUploader from "./AvatarUploader";
 
 export default function SetupPerfil() {
@@ -137,24 +138,26 @@ export default function SetupPerfil() {
 
   if (loading)
     return (
-      <p className="text-center mt-10 text-pink-600">
+      <p className={styles.loading} role="status">
         Cargando tu perfil sagrado...
       </p>
     );
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-xl border border-pink-100 text-pink-900  mx-auto mt-10 relative overflow-hidden">
+    <div className={styles.form}>
       <div className="relative z-10">
-        <label className="block text-sm font-semibold mb-1">
-          🌸 Tu nombre o seudónimo
+        <label htmlFor="profile-name">
+          Tu nombre o seudónimo
         </label>
         <input
+          id="profile-name"
+          autoComplete="nickname"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="w-full border border-pink-300 p-2 rounded-xl mb-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-400"
+          className={styles.input}
         />
 
-        <p className="mb-1 block text-sm font-semibold">🌕 Tu imagen</p>
+        <p className={styles.label}>Tu imagen <span>(opcional)</span></p>
         <AvatarUploader
           userId={userId}
           onUpload={(url) => setAvatarUrl(url)}
@@ -167,33 +170,32 @@ export default function SetupPerfil() {
             alt="Avatar"
             width={96}
             height={96}
-            className="mt-4 rounded-full object-cover mx-auto border-2 border-pink-500"
+            className={styles.avatar}
           />
         )}
 
-        <label className="block text-sm font-semibold mt-6 mb-1">
-          🩸 ¿Cuándo comenzó tu último ciclo?
+        <label htmlFor="cycle-start">
+          ¿Cuándo comenzó tu último ciclo?
         </label>
         <input
+          id="cycle-start"
+          aria-describedby="cycle-date-help"
           type="date"
           value={fechaInicio}
           onChange={(e) => setFechaInicio(e.target.value)}
-          className="w-full border border-pink-300 p-2 rounded-xl shadow-sm"
+          className={styles.input}
         />
-        <p className="text-xs text-pink-500 mt-1 mb-6">
-          ✨ Puedes corregir esta fecha más adelante si lo necesitas.
+        <p id="cycle-date-help" className={styles.help}>
+          Puedes corregir esta fecha más adelante si lo necesitas.
         </p>
 
         <button
           onClick={handleSave}
           disabled={isUploading}
-          className={`w-full py-3 rounded-xl font-semibold transition shadow-md ${
-            isUploading
-              ? "bg-gray-400 text-white cursor-not-allowed"
-              : "bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:scale-105"
-          }`}
+          className={styles.save}
+          type="button"
         >
-          {isUploading ? "Subiendo imagen..." : "Guardar y continuar 🌺"}
+          {isUploading ? "Subiendo imagen..." : "Guardar y continuar"}
         </button>
       </div>
     </div>

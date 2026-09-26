@@ -1,5 +1,7 @@
 "use client";
 
+import AccountGateway from "@/components/ui/AccountGateway";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
@@ -35,21 +37,19 @@ export default function ActualizarClavePage() {
     } else {
       setExito(true);
       setTimeout(() => {
-        router.push("/login");
+        router.push("/auth/login");
       }, 3000);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-16 p-6 bg-white rounded shadow">
-      <h1 className="text-2xl font-bold text-center text-rose-700 mb-4">
-        Establecer nueva contraseña
-      </h1>
+    <AccountGateway eyebrow="Un nuevo comienzo" title="Vuelve a tu espacio." accent="A tu ritmo." description="Elige una nueva contraseña para continuar tu recorrido personal." formTitle="Tu nueva contraseña.">
       <form onSubmit={handleSubmit} className="space-y-4">
         <label className="block">
-          <span className="text-gray-700">Nueva contraseña</span>
+          <span >Nueva contraseña</span>
           <input
             type="password"
+            autoComplete="new-password"
             className="mt-1 block w-full border rounded px-3 py-2"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -57,16 +57,17 @@ export default function ActualizarClavePage() {
           />
         </label>
         <label className="block">
-          <span className="text-gray-700">Confirmar contraseña</span>
+          <span >Confirmar contraseña</span>
           <input
             type="password"
+            autoComplete="new-password"
             className="mt-1 block w-full border rounded px-3 py-2"
             value={confirmacion}
             onChange={(e) => setConfirmacion(e.target.value)}
             required
           />
         </label>
-        {error && <div className="text-red-600">{error}</div>}
+        {error && <div role="alert">{error}</div>}
         <button
           type="submit"
           className="w-full bg-rose-600 text-white py-2 rounded hover:bg-rose-700 transition"
@@ -74,11 +75,11 @@ export default function ActualizarClavePage() {
           Guardar contraseña
         </button>
         {exito && (
-          <div className="text-green-600 mt-2 text-center">
+          <div role="status">
             ✅ Contraseña actualizada. Serás redirigida al inicio de sesión.
           </div>
         )}
       </form>
-    </div>
+    </AccountGateway>
   );
 }

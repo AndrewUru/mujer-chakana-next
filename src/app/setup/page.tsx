@@ -7,11 +7,8 @@ import SetupPerfil from "@/components/SetupPerfil";
 import Link from "next/link";
 import Image from "next/image";
 
-import {
-  ArrowRightIcon,
-  SparklesIcon,
-  BookOpenIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowUpRight, BookOpen, CalendarDays } from "lucide-react";
+import styles from "./setup.module.css";
 
 export default function SetupPage() {
   const router = useRouter();
@@ -60,141 +57,39 @@ export default function SetupPage() {
   }, [router]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-50 flex flex-col items-center justify-start pb-20 px-4 py-10 backdrop-blur-sm">
-      <div className="max-w-6xl w-full space-y-12">
-        {/* Header Section */}
-        <header className="text-center">
-          <div className="mb-12 mx-auto bg-white/95 border border-pink-100 p-8 rounded-3xl shadow-lg max-w-2xl text-center backdrop-blur-md">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4 tracking-wide">
-                🌸 Bienvenida a tu Santuario Lunar
-              </h1>
-
-              <p className="text-base text-gray-600 leading-relaxed max-w-2xl mx-auto px-4">
-                Tu espacio sagrado para reconectar con tu esencia. Gestiona tu
-                perfil, sigue tu ciclo y descubre contenido exclusivo
-                sincronizado con las fases lunares. Todo diseñado para nutrir tu
-                feminidad.
-              </p>
-            </div>
-
-            {loading ? (
-              <div className="animate-pulse space-y-6">
-                <div className="h-24 bg-pink-100 rounded-2xl"></div>
+    <main className={styles.page}>
+      <Image src="/tierra-ui.webp" alt="" fill priority sizes="100vw" className={styles.backdrop} />
+      <div className={styles.veil} aria-hidden="true" />
+      <nav className={styles.nav} aria-label="Navegación de perfil">
+        <Link href="/dashboard">Mujer Chakana <span>/ Tu espacio</span></Link>
+        <Link href="/manual"><BookOpen size={16} /> Guía de uso</Link>
+      </nav>
+      <div className={styles.layout}>
+        <section className={styles.story} aria-labelledby="setup-title">
+          <p className={styles.eyebrow}>01 / Un punto de partida</p>
+          <h1 id="setup-title">Tu ciclo empieza<br /><em>contigo.</em></h1>
+          <p className={styles.intro}>Dale un nombre a este espacio y un comienzo a tu recorrido. Puedes volver aquí cuando necesites ajustar tu perfil.</p>
+          {loading ? <p className={styles.loading} role="status">Preparando tu espacio...</p> : perfil ? (
+            <div className={styles.summary}>
+              <div className={styles.identity}>
+                <Image src={perfil.avatar_url || "/Luna-nueva.webp"} alt="" width={64} height={64} />
+                <div><span>Tu identidad</span><h2>{perfil.display_name || "Tu nuevo comienzo"}</h2><p>{perfil.email}</p></div>
               </div>
-            ) : (
-              perfil && (
-                <div className="grid gap-6">
-                  {/* Profile Card */}
-                  <div className="bg-white/80 border border-pink-100 p-6 rounded-2xl shadow-sm">
-                    <div className="flex flex-col items-center space-y-4">
-                      {perfil.avatar_url && (
-                        <Image
-                          src={perfil.avatar_url}
-                          alt="avatar"
-                          width={96}
-                          height={96}
-                          className="rounded-full border-4 border-pink-200 shadow-lg"
-                        />
-                      )}
-                      <div>
-                        <h2 className="text-xl font-semibold text-gray-800 bg-gradient-to-r from-pink-700 to-purple-700 bg-clip-text text-transparent">
-                          {perfil.display_name}
-                        </h2>
-                        <p className="text-sm text-gray-500 mt-1">
-                          {perfil.email}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Cycle Status */}
-                  <div className="backdrop-blur-lg bg-white/50 border border-pink-100 p-5 rounded-2xl">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="bg-pink-100 p-2 rounded-lg">
-                          <span className="text-pink-600 text-xl">🌱</span>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-500">
-                            Inicio de ciclo
-                          </p>
-                          <p className="font-medium text-gray-700">
-                            {perfil.fecha_inicio
-                              ? new Date(
-                                  perfil.fecha_inicio
-                                ).toLocaleDateString("es-ES")
-                              : "No registrado"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Subscription Card */}
-                  <div className="bg-gradient-to-br from-pink-50 to-white border border-pink-100 p-6 rounded-2xl shadow-sm">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
-                      <span className="bg-pink-600 text-white p-2 rounded-lg">
-                        💎
-                      </span>
-                      <span>Estado de Suscripción</span>
-                    </h3>
-
-                    {perfil.suscripcion_activa ? (
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <p className="text-sm text-gray-500">Plan actual</p>
-                            <p className="font-medium text-gray-800 uppercase">
-                              {perfil.tipo_plan}
-                            </p>
-                          </div>
-                          <span className="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
-                            Activa
-                          </span>
-                        </div>
-                        <Link
-                          href="/suscripcion/gestionar"
-                          className="w-full inline-flex justify-center items-center space-x-2 bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl transition-all shadow-sm hover:shadow-md"
-                        >
-                          <span>Gestionar Plan</span>
-                          <ArrowRightIcon className="w-4 h-4" />
-                        </Link>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        <div className="text-center py-4">
-                          <p className="text-gray-500 text-sm mb-2">
-                            No tienes suscripción activa
-                          </p>
-                          <Link
-                            href="/suscripcion"
-                            className="inline-flex items-center space-x-2 bg-white border border-pink-200 hover:border-pink-300 text-pink-600 px-6 py-3 rounded-xl transition-all shadow-sm hover:shadow-md"
-                          >
-                            <SparklesIcon className="w-5 h-5" />
-                            <span>Ver Planes</span>
-                          </Link>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )
-            )}
-            <SetupPerfil />
-          </div>
-        </header>
-
-        {/* Documentation Link */}
-        <div className="text-center">
-          <Link
-            href="/manual"
-            className="inline-flex items-center space-x-2 text-pink-600 hover:text-pink-800 bg-pink-50 hover:bg-pink-100 px-6 py-3 rounded-full transition-all"
-          >
-            <BookOpenIcon className="w-5 h-5" />
-            <span className="font-medium">Guía de Usuario</span>
-          </Link>
-        </div>
+              <div className={styles.detail}><CalendarDays size={19} /><div><span>Inicio de ciclo</span><strong>{perfil.fecha_inicio ? new Date(`${perfil.fecha_inicio.slice(0, 10)}T12:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }) : "Por definir"}</strong></div></div>
+              <div className={styles.subscription}>
+                <div><span>Tu membresía</span><strong>{perfil.suscripcion_activa ? `Plan ${perfil.tipo_plan || "activo"}` : "Acceso gratuito"}</strong></div>
+                <Link href={perfil.suscripcion_activa ? "/suscripcion/gestionar" : "/suscripcion"}>{perfil.suscripcion_activa ? "Gestionar plan" : "Explorar planes"}<ArrowUpRight size={16} /></Link>
+              </div>
+            </div>
+          ) : <p className={styles.intro}>Completa tus datos para preparar tu espacio personal.</p>}
+          <p className={styles.footnote}>Cada vuelta es distinta. Este es tu punto de partida.</p>
+        </section>
+        <section className={styles.panel} aria-labelledby="profile-title">
+          <p className={styles.eyebrow}>02 / A tu manera</p>
+          <h2 id="profile-title">Habita tu <em>espacio.</em></h2>
+          <p className={styles.panelIntro}>Tu nombre, tu imagen y el inicio de esta vuelta.</p>
+          <SetupPerfil />
+        </section>
       </div>
     </main>
   );

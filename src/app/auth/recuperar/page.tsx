@@ -1,5 +1,7 @@
 "use client";
 
+import AccountGateway from "@/components/ui/AccountGateway";
+
 import React, { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -31,26 +33,20 @@ export default function RecuperarPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-16 p-6 bg-white rounded shadow">
-      <h1 className="text-2xl font-bold mb-4 text-rose-700">
-        Recuperar Contraseña
-      </h1>
-      <p className="mb-6 text-gray-600">
-        Ingresa tu correo electrónico y te enviaremos instrucciones para
-        restablecer tu contraseña.
-      </p>
+    <AccountGateway eyebrow="Volver a conectar" title="Retoma tu camino." accent="Estamos aquí." description="Recupera el acceso a tus registros y rituales. Te enviaremos por correo los pasos para elegir una nueva contraseña." formTitle="Recupera tu acceso.">
       <form onSubmit={handleSubmit} className="space-y-4">
         <label className="block">
-          <span className="text-gray-700">Correo electrónico</span>
+          <span >Correo electrónico</span>
           <input
             type="email"
+            autoComplete="email"
             className="mt-1 block w-full border rounded px-3 py-2"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
         </label>
-        {error && <div className="text-red-600">{error}</div>}
+        {error && <div role="alert">{error}</div>}
         <button
           type="submit"
           className="w-full bg-rose-600 text-white py-2 rounded hover:bg-rose-700 transition"
@@ -58,12 +54,12 @@ export default function RecuperarPage() {
           Enviar instrucciones
         </button>
         {submitted && (
-          <div className="text-green-600 mt-2">
+          <div role="status">
             Si el correo existe, recibirás instrucciones para restablecer tu
             contraseña.
           </div>
         )}
       </form>
-    </div>
+    </AccountGateway>
   );
 }

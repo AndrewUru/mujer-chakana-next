@@ -13,19 +13,15 @@ export default function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
 
-  if (reduceMotion) {
-    return <MotionConfig reducedMotion="always">{children}</MotionConfig>;
-  }
-
   return (
     <MotionConfig reducedMotion="user">
       <AnimatePresence mode="wait">
         <motion.div
           key={pathname}
-          initial={{ opacity: 0 }}
+          initial={false}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: reduceMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
         >
           {children}
         </motion.div>

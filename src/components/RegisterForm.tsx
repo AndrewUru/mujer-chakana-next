@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { Loader2, AlertCircle } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordMinLength = 6;
@@ -18,6 +18,7 @@ interface TouchedState {
 
 export default function RegisterForm() {
   const router = useRouter();
+  const reduceMotion = useReducedMotion();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -137,7 +138,7 @@ export default function RegisterForm() {
   return (
     <motion.form
       onSubmit={handleSubmit}
-      initial={{ opacity: 0, y: 24 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="flex flex-col gap-5 text-left"
@@ -159,7 +160,7 @@ export default function RegisterForm() {
           onBlur={() => setTouched((prev) => ({ ...prev, username: true }))}
           required
           disabled={loading}
-          whileFocus={{ scale: 1.01 }}
+          whileFocus={reduceMotion ? undefined : { scale: 1.01 }}
           className="w-full rounded-xl border border-rose-100 bg-white/70 px-4 py-3 text-sm text-rose-900 shadow-inner placeholder:text-rose-400 focus:border-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-200 transition disabled:opacity-60"
           aria-invalid={isUsernameInvalid}
           aria-describedby={isUsernameInvalid ? "username-error" : undefined}
@@ -194,7 +195,7 @@ export default function RegisterForm() {
             onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
             required
             disabled={loading}
-            whileFocus={{ scale: 1.01 }}
+            whileFocus={reduceMotion ? undefined : { scale: 1.01 }}
             className="w-full rounded-xl border border-rose-100 bg-white/70 px-4 py-3 text-sm text-rose-900 shadow-inner placeholder:text-rose-400 focus:border-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-200 transition disabled:opacity-60"
             autoComplete="email"
             aria-invalid={isEmailInvalid}
@@ -233,7 +234,7 @@ export default function RegisterForm() {
           onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
           required
           disabled={loading}
-          whileFocus={{ scale: 1.01 }}
+          whileFocus={reduceMotion ? undefined : { scale: 1.01 }}
           className="w-full rounded-xl border border-rose-100 bg-white/70 px-4 py-3 text-sm text-rose-900 shadow-inner placeholder:text-rose-400 focus:border-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-200 transition disabled:opacity-60"
           autoComplete="new-password"
           aria-invalid={isPasswordInvalid}
@@ -252,7 +253,7 @@ export default function RegisterForm() {
         )}
       </div>
 
-      <div className="rounded-3xl border border-amber-200/60 bg-amber-50/70 px-5 py-4 text-xs text-amber-700">
+      <div data-account-note className="rounded-3xl border border-amber-200/60 bg-amber-50/70 px-5 py-4 text-xs text-amber-700">
         <strong>Importante:</strong> al crear tu cuenta configuraremos tu ciclo en
         el día 1. Podrás ajustarlo desde el dashboard cuando lo necesites.
       </div>
@@ -260,8 +261,8 @@ export default function RegisterForm() {
       <motion.button
         type="submit"
         disabled={loading}
-        whileHover={{ scale: loading ? 1 : 1.02 }}
-        whileTap={{ scale: loading ? 1 : 0.96 }}
+        whileHover={reduceMotion ? undefined : { scale: loading ? 1 : 1.02 }}
+        whileTap={reduceMotion ? undefined : { scale: loading ? 1 : 0.96 }}
         className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-rose-600 via-rose-700 to-rose-800 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? (
