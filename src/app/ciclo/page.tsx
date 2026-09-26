@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 import { AlertTriangle, ArrowDown, ArrowUpRight, AudioLines, FileText, Sparkles } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { getLunarImageForCycleDay } from "@/lib/lunarImages";
 import styles from "./ciclo.module.css";
 
 interface MujerChakanaData {
@@ -119,7 +120,7 @@ export default function CicloPage() {
                 {items.map((day, index) => (
                   <article key={day.id} className={`${styles.card} ${index === 0 && sectionIndex % 2 === 0 ? styles.cardFeatured : ""}`}>
                     <div className={styles.cardVisual}>
-                      {day.imagen_url ? <Image src={day.imagen_url} alt="" fill sizes="(max-width: 720px) 88vw, (max-width: 1100px) 45vw, 28vw" className={styles.cardImage} /> : <div className={styles.imageFallback}><Sparkles /></div>}
+                      <Image src={getLunarImageForCycleDay(day.dia_ciclo).src} alt={`${getLunarImageForCycleDay(day.dia_ciclo).name} ? representaci?n del ciclo personal`} fill sizes="(max-width: 720px) 88vw, (max-width: 1100px) 45vw, 28vw" className={styles.cardImage} style={{ objectFit: "contain" }} />
                       <div className={styles.cardVeil} /><span className={styles.dayIndex}>{String(day.dia_ciclo).padStart(2, "0")}</span>
                       <span className={styles.element}>{day.elemento === "Cielo" ? "Aire · Cielo" : day.elemento}</span>
                     </div>

@@ -2,6 +2,8 @@
 
 import { useMemo, useState, type MouseEvent } from "react";
 import { CalendarRange, Clock, Lock, Moon, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { getLunarImageForDate } from "@/lib/lunarImages";
 import LunarModal from "./LunarModal";
 import styles from "./Moonboard.module.css";
 
@@ -81,9 +83,13 @@ export default function Moonboard({ startDate }: MoonboardProps) {
                   <div className={styles.dayPath}>
                     {days.map(({ day, isToday, isPast, isFuture }) => {
                       const available = !isFuture;
+                      const date = new Date(cycle.currentStart);
+                      date.setDate(date.getDate() + day - 1);
+                      const lunarImage = getLunarImageForDate(date);
                       const label = `Día ${day}${isToday ? ", hoy" : isPast ? ", disponible" : ", próximo"}`;
                       return (
-                        <button type="button" key={day} disabled={!available} onClick={(event) => available && handleDay(event, day)} className={`${styles.day} ${isToday ? styles.today : isPast ? styles.past : styles.future}`} aria-label={label} title={label}>
+                        <button type="button" key={day} disabled={!available} onClick={(event) => available && handleDay(event, day)} className={`${styles.day} ${isToday ? styles.today : isPast ? styles.past : styles.future}`} aria-label={`${label}, ${lunarImage.name}`} title={`${label}, ${lunarImage.name}`}>
+                          <Image src={lunarImage.src} alt="" width={80} height={80} className={styles.phaseImage} sizes="80px" />
                           <span>{String(day).padStart(2, "0")}</span>
                           <i aria-hidden="true">{isToday ? <Moon /> : isPast ? <Sparkles /> : <Lock />}</i>
                         </button>

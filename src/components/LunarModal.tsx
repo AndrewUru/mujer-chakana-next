@@ -3,9 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
+import { getLunarImageForDate } from "@/lib/lunarImages";
 import * as lune from "lune";
 import { createClient } from "@supabase/supabase-js";
-import { X, Sparkles, CalendarDays, MoonStar } from "lucide-react";
+import { X, Sparkles, CalendarDays } from "lucide-react";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -61,6 +62,7 @@ const colorMap = {
 } as const;
 
 export default function LunarModal({ fecha, onClose }: LunarModalProps) {
+  const lunarImage = getLunarImageForDate(fecha);
   const [fase, setFase] = useState<FaseLunarDB | null>(null);
   const [closing, setClosing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -173,17 +175,15 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
                 <div className="mx-auto flex h-44 w-44 items-center justify-center rounded-full border border-white/15 bg-white/10 shadow-inner shadow-sky-300/20 backdrop-blur">
                   {loading ? (
                     <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-white/60" />
-                  ) : fase.imagen_url ? (
+                  ) : (
                     <Image
-                      src={fase.imagen_url}
-                      alt={fase.nombre_fase}
+                      src={lunarImage.src}
+                      alt={lunarImage.name}
                       width={176}
                       height={176}
                       className="h-44 w-44 rounded-full object-contain"
                       priority
                     />
-                  ) : (
-                    <MoonStar className="h-12 w-12 text-white/70" />
                   )}
                 </div>
 
@@ -197,7 +197,7 @@ export default function LunarModal({ fecha, onClose }: LunarModalProps) {
                     id="lunar-modal-title"
                     className="text-3xl font-bold leading-tight sm:text-4xl"
                   >
-                    {fase.nombre_fase}
+                    {lunarImage.name}
                   </h1>
                   <p className="text-sm text-white/70 sm:text-base">
                     Dia seleccionado:{" "}
