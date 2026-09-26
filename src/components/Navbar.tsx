@@ -16,11 +16,7 @@ import {
 import Image from "next/image";
 import type { Session } from "@supabase/supabase-js";
 
-const navItemBase =
-  "group flex min-h-[58px] min-w-[58px] flex-col items-center justify-center gap-1 rounded-2xl px-2 py-1.5 text-xs font-semibold transition-all duration-300";
-
-const navIconBase =
-  "flex h-8 w-8 items-center justify-center rounded-2xl border transition-all duration-300";
+import styles from "./Navbar.module.css";
 
 export default function Navbar() {
   const [authStatus, setAuthStatus] = useState<
@@ -86,9 +82,9 @@ export default function Navbar() {
   return (
     <nav
       aria-label="Navegación principal"
-      className="glass fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] left-3 right-3 z-50 rounded-[26px] border-rose-100/60 px-2 py-1.5 sm:bottom-[calc(1.25rem+env(safe-area-inset-bottom))] sm:left-1/2 sm:right-auto sm:w-[min(720px,calc(100%-40px))] sm:-translate-x-1/2"
+      className={styles.dock}
     >
-      <div className="mx-auto flex max-w-md items-center justify-around gap-1 text-pink-700 sm:max-w-none sm:gap-2">
+      <div className={styles.items}>
         {loggedIn ? (
           <>
             <NavItem
@@ -118,23 +114,23 @@ export default function Navbar() {
             <button
               type="button"
               onClick={handleLogout}
-              className={`${navItemBase} text-rose-600 hover:bg-white/40 hover:text-rose-900`}
+              className={`${styles.item} ${styles.logout}`}
               aria-label="Cerrar sesión"
             >
               {avatar ? (
                 <Image
                   src={avatar}
-                  alt="Tu perfil"
+                  alt=""
                   width={32}
                   height={32}
-                  className="h-8 w-8 rounded-full border-2 border-white/70 object-cover shadow-[0_8px_20px_rgba(143,21,85,0.16)] ring-1 ring-rose-200/60"
+                  className={styles.avatar}
                 />
               ) : (
-                <span className={`${navIconBase} border-rose-100/70 bg-white/45`}>
+                <span className={styles.icon}>
                   <LogOut className="h-5 w-5" />
                 </span>
               )}
-              <span className="text-xs">Salir</span>
+              <span className={styles.label}>Salir</span>
             </button>
           </>
         ) : (
@@ -176,22 +172,10 @@ function NavItem({
       href={href}
       aria-current={active ? "page" : undefined}
       aria-label={label}
-      className={`${navItemBase} ${
-        active
-          ? "bg-white/55 text-rose-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_10px_24px_rgba(143,21,85,0.12)]"
-          : "text-rose-600 hover:bg-white/40 hover:text-rose-900"
-      }`}
+      className={`${styles.item} ${active ? styles.active : ""}`}
     >
-      <div
-        className={`${navIconBase} ${
-          active
-            ? "border-rose-200/80 bg-rose-100/60 text-rose-700"
-            : "border-white/50 bg-white/30 text-rose-500 group-hover:border-rose-100/80 group-hover:bg-white/60"
-        }`}
-      >
-        {icon}
-      </div>
-      <span className="text-xs">{label}</span>
+      <span className={styles.icon} aria-hidden="true">{icon}</span>
+      <span className={styles.label}>{label}</span>
     </Link>
   );
 }

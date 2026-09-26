@@ -4,7 +4,7 @@ const { chromium } = require('playwright');
  const context=await browser.newContext({viewport:{width:1366,height:900},reducedMotion:'reduce'});
  await context.addCookies([{name:'cookie_consent',value:'rejected',url:'http://localhost:3000'}]);
  await context.route('**/auth/v1/**',route=>route.abort());
- const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push({url:page.url(),stack:e.stack}));
  for(const route of ['register','recuperar','actualizar-clave','update-password']) {
   await page.goto(`http://localhost:3000/auth/${route}`);
   await page.locator('form').waitFor();
@@ -16,7 +16,7 @@ const { chromium } = require('playwright');
    await page.locator('input[type=password]').nth(0).fill('example-one');
    await page.locator('input[type=password]').nth(1).fill('example-two');
    await page.getByRole('button',{name:'Guardar contrase',exact:false}).click();
-   await page.getByRole('alert').waitFor();
+   await page.locator('form [role=alert]').waitFor();
   }
   console.log(JSON.stringify({route,overflow:await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),title:await page.locator('h1').innerText()}));
   await page.setViewportSize({width:1366,height:900});

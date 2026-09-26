@@ -1,0 +1,55 @@
+.dock {
+  position: fixed;
+  z-index: 50;
+  bottom: calc(1.25rem + env(safe-area-inset-bottom));
+  left: 50%;
+  width: min(660px, calc(100% - 2.5rem));
+  transform: translateX(-50%);
+  padding: .5rem;
+  border: 1px solid #e8b1c63d;
+  border-radius: 1.5rem;
+  background: linear-gradient(120deg, #38202ef5, #1f111df5);
+  box-shadow: 0 16px 55px #0d030b66, inset 0 1px 0 #ffe5ee0d;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  color: #e5c5d2;
+}
+.items { display: flex; align-items: stretch; gap: .4rem; }
+.item {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .65rem;
+  padding: .6rem;
+  border: 1px solid transparent;
+  border-radius: 1rem;
+  background: transparent;
+  color: #d9b5c6;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color .18s ease, background .18s ease, border-color .18s ease;
+}
+.icon { display: grid; place-items: center; flex-shrink: 0; width: 26px; height: 26px; }
+.icon svg { width: 21px; height: 21px; stroke-width: 1.6; }
+.label { font-size: .72rem; font-weight: 700; line-height: 1.2; }
+.item:hover { color: #fff1f6; background: #f2b8d00d; border-color: #f2b8d026; }
+.item.active { color: #ffdbe9; background: #edacc521; border-color: #edacc53d; }
+.active::after { content: ""; position: absolute; bottom: .35rem; left: calc(50% - .6rem); width: 1.2rem; height: 2px; border-radius: 2px; background: #edb3cc; box-shadow: 0 0 10px #edb3cc50; }
+.item:focus-visible { outline: 2px solid #f5c3d8; outline-offset: 2px; }
+.avatar { width: 27px; height: 27px; flex-shrink: 0; border-radius: 50%; border: 1px solid #e8b1c670; object-fit: cover; }
+.logout { margin-left: .25rem; }
+@media(max-width:600px) {
+  .dock { bottom: calc(.65rem + env(safe-area-inset-bottom)); width: calc(100% - 1.25rem); border-radius: 1.3rem; padding: .35rem; }
+  .items { gap: .15rem; }
+  .item { flex-direction: column; gap: .35rem; padding: .4rem .15rem .6rem; min-height: 62px; border-radius: .95rem; }
+  .label { font-size: .6rem; }
+  .icon { width: 25px; height: 25px; }
+  .avatar { width: 25px; height: 25px; }
+  .logout { margin-left: 0; }
+  .active::after { bottom: .2rem; width: .8rem; left: calc(50% - .4rem); }
+}
+@media(prefers-reduced-motion:reduce) { .item { transition: none; } }
