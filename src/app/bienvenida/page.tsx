@@ -206,9 +206,9 @@ export default function BienvenidaPage() {
       <div className={styles.grain} aria-hidden="true" />
 
       <header className={styles.header}>
-        <Link href="/" className={styles.brand} aria-label="Mujer Chakana, inicio">
+        <Link href="/" className={styles.brand} aria-label="Ginergética, inicio">
           <Image src="/logo_chakana.png" alt="" width={38} height={38} priority />
-          <span>Mujer Chakana</span>
+          <span>Ginergética</span>
         </Link>
         <span className={styles.arrivalCode}>Umbral · 01</span>
       </header>

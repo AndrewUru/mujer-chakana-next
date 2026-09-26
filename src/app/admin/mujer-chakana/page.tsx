@@ -69,13 +69,13 @@ export default function AdminMujerChakanaPage() {
         <Breadcrumbs
           items={[
             { label: "Admin", href: "/admin" },
-            { label: "Mujer Chakana", href: "/admin/mujer-chakana" },
+            { label: "Ginergética", href: "/admin/mujer-chakana" },
             { label: "Editar Arquetipo" },
           ]}
         />
 
         <h1 className="text-2xl font-extrabold text-pink-800 tracking-tight">
-          ✨ Admin · Mujer Chakana
+          ✨ Admin · Ginergética
         </h1>
       </div>
 

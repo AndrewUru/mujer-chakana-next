@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowUpRight, BookOpen, Trash2 } from "lucide-react";
+import styles from "./registros.module.css";
 import { supabase } from "@/lib/supabaseClient";
 
 // ---- Modal de confirmación ----
@@ -16,38 +19,18 @@ function ConfirmModal({
   onConfirmar: () => void;
   onCancelar: () => void;
 }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => { dialog.current?.showModal(); }, []);
   return (
-    <AnimatePresence>
-      <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-md"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
-        <motion.div
-          className="glass-panel max-w-md rounded-[22px] p-5 text-center sm:rounded-3xl sm:p-8"
-          initial={{ scale: 0.8 }}
-          animate={{ scale: 1 }}
-          exit={{ scale: 0.8 }}
-        >
-          <p className="text-rose-800 text-lg mb-6">{mensaje}</p>
-          <div className="flex justify-center gap-4">
-            <button
-              onClick={onCancelar}
-              className="glass-soft px-4 py-2 rounded-lg text-rose-700 hover:bg-white/70"
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={onConfirmar}
-              className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600"
-            >
-              Sí, eliminar
-            </button>
-          </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+    <dialog ref={dialog} className={styles.dialog} onCancel={onCancelar} aria-labelledby="delete-title">
+      <p className={styles.eyebrow}>Tu diario personal</p>
+      <h2 id="delete-title">¿Eliminar este registro?</h2>
+      <p>{mensaje}</p>
+      <div className={styles.actions}>
+        <button type="button" onClick={onCancelar} autoFocus>Conservar</button>
+        <button type="button" onClick={onConfirmar} className={styles.danger}>Sí, eliminar</button>
+      </div>
+    </dialog>
   );
 }
 
@@ -67,6 +50,7 @@ interface Registro {
 export default function RegistroPage() {
   const [registros, setRegistros] = useState<Registro[]>([]);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
   const [mesSeleccionado, setMesSeleccionado] = useState<string>("todos");
   const router = useRouter();
   const [registroAEliminar, setRegistroAEliminar] = useState<string | null>(
@@ -93,6 +77,7 @@ export default function RegistroPage() {
 
       if (error) {
         console.error("Error cargando registros", error.message);
+        setErrorMessage("No pudimos cargar tus registros. Intenta recargar la página.");
       } else {
         setRegistros(data || []);
       }
@@ -107,7 +92,7 @@ export default function RegistroPage() {
   const mesesDisponibles = Array.from(
     new Set(
       registros.map((r) =>
-        new Date(r.fecha).toLocaleString("default", {
+        new Date(r.fecha).toLocaleString("es-ES", {
           month: "long",
           year: "numeric",
         })
@@ -121,7 +106,7 @@ export default function RegistroPage() {
       ? registros
       : registros.filter(
           (r) =>
-            new Date(r.fecha).toLocaleString("default", {
+            new Date(r.fecha).toLocaleString("es-ES", {
               month: "long",
               year: "numeric",
             }) === mesSeleccionado
@@ -139,6 +124,8 @@ export default function RegistroPage() {
 
     if (error) {
       console.error("Error eliminando el registro:", error.message);
+      setMostrandoConfirmacion(false);
+      setErrorMessage("No se pudo eliminar el registro. Inténtalo de nuevo.");
       return;
     }
 
@@ -146,135 +133,35 @@ export default function RegistroPage() {
     setMostrandoConfirmacion(false);
   }
 
-  // ----- Loading -----
-  if (loading)
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-white-700">
-        <motion.div
-          className="w-16 h-16 border-4 border-pink-300 border-t-transparent rounded-full animate-spin mb-4"
-          initial={{ rotate: 0 }}
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, ease: "linear", duration: 1 }}
-        />
-        <p className="text-2xl font-semibold">🌙 Cargando tus registros...</p>
-      </div>
-    );
-
-  // ----- Render -----
   return (
-    <main className="mx-auto max-w-7xl px-3 py-5 pb-24 text-rose-900 sm:px-6 sm:py-8">
-      <section className="glass-shell mb-6 rounded-[24px] p-5 text-center sm:mb-10 sm:rounded-3xl sm:p-8">
-        <h1 className="mb-3 text-3xl font-extrabold text-pink-800 sm:mb-4 sm:text-4xl">
-          🌸 Mis Registros Diarios
-        </h1>
-        <p className="text-lg text-rose-700 max-w-2xl mx-auto">
-          Cada día que completas tu registro, das un paso hacia tu
-          autoconocimiento y bienestar cíclico.
-          <p>
-            <span className="font-semibold">
-              Las suscriptoras pueden solicitar una video consulta personalizada
-              con Samari Luz
-            </span>
-          </p>
-          para profundizar en su camino y recibir una guía exclusiva. ✨
-        </p>
-      </section>
-
-      <div className="mb-6 flex justify-center">
-        <select
-          className="rounded-xl border border-rose-300 bg-white/70 p-2 text-rose-800 shadow-inner"
-          onChange={(e) => setMesSeleccionado(e.target.value)}
-          value={mesSeleccionado}
-        >
-          <option value="todos">🌕 Ver todos los meses</option>
-          {mesesDisponibles.map((mes) => (
-            <option key={mes} value={mes}>
-              {mes}
-            </option>
-          ))}
-        </select>
+    <main className={styles.page}>
+      <Image src="/agua-ui.webp" alt="" fill priority sizes="100vw" className={styles.backdrop} />
+      <div className={styles.veil} aria-hidden="true" />
+      <div className={styles.content}>
+        <nav className={styles.topline}><Link href="/dashboard">Mujer Chakana / Observatorio</Link><span>Archivo personal</span></nav>
+        <header className={styles.hero}>
+          <div><p className={styles.eyebrow}>Lo que sientes deja huella</p><h1>La memoria<br /><em>de tu ciclo.</em></h1></div>
+          <div className={styles.intro}><p>Cada registro guarda una parte de ti. Vuelve a tus palabras, reconoce tus ritmos y descubre lo que cambia con cada vuelta.</p><Link href="/dashboard">Volver a mi día <ArrowUpRight size={17} /></Link></div>
+        </header>
+        <div className={styles.toolbar}>
+          <p aria-live="polite"><strong>{loading ? "—" : registrosFiltrados.length}</strong> {registrosFiltrados.length === 1 ? "momento guardado" : "momentos guardados"}</p>
+          <label>Explorar por mes<select onChange={(e) => setMesSeleccionado(e.target.value)} value={mesSeleccionado}><option value="todos">Todos los meses</option>{mesesDisponibles.map(mes => <option key={mes} value={mes}>{mes}</option>)}</select></label>
+        </div>
+        {errorMessage && <p className={styles.error} role="alert">{errorMessage}</p>}
+        {loading ? <div className={styles.empty} role="status">Abriendo tu diario...</div> : registrosFiltrados.length === 0 ? (
+          <div className={styles.empty}><BookOpen size={32} /><h2>{registros.length ? "Este mes espera tus palabras." : "Tu historia empieza con un día."}</h2><p>{registros.length ? "Prueba otro mes para volver a tus registros." : "Registra cómo te sientes desde tu espacio personal."}</p><Link href="/dashboard">Ir a mi espacio <ArrowUpRight size={16} /></Link></div>
+        ) : <div className={styles.grid}>{registrosFiltrados.map(registro => (
+          <article className={styles.card} key={registro.id}>
+            <header className={styles.cardHeader}><div><p>{new Date(registro.fecha).toLocaleDateString("es-ES", { month: "long", year: "numeric" })}</p><h2>{new Date(registro.fecha).toLocaleDateString("es-ES", { day: "2-digit", weekday: "long" })}</h2></div><button type="button" onClick={() => pedirConfirmacion(registro.id)} aria-label={`Eliminar registro del ${new Date(registro.fecha).toLocaleDateString("es-ES")}`}><Trash2 size={16} /></button></header>
+            <p className={styles.eyebrow}>Así me sentía</p><p className={styles.emotions}>{registro.emociones || "Emociones sin registrar"}</p>
+            <dl className={styles.metrics}>{[["Energía",registro.energia],["Creatividad",registro.creatividad],["Espiritualidad",registro.espiritualidad]].map(([label,value]) => <div key={label}><dt>{label}</dt><dd>{value ?? "—"}</dd></div>)}</dl>
+            {registro.notas && <blockquote>{registro.notas}</blockquote>}
+            {registro.mensaje && <div className={styles.reflection}><span>Reflexión del día</span><p>{registro.mensaje}</p></div>}
+          </article>
+        ))}</div>}
+        <aside className={styles.support}><span>Acompañar tu recorrido</span><p>Las suscriptoras pueden solicitar una videoconsulta personalizada con Samari Luz para profundizar en su camino.</p></aside>
       </div>
-
-      {registrosFiltrados.length === 0 ? (
-        <div className="glass-soft mx-auto max-w-md rounded-xl p-4">
-          <p className="text-center text-pink-500 italic text-lg">
-            No hay registros para este mes. 🌸
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
-          <AnimatePresence>
-            {registrosFiltrados.map((registro) => (
-              <motion.div
-                key={registro.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.4 }}
-                className={`glass-panel rounded-[20px] p-4 transition-all hover:scale-[1.02] sm:rounded-3xl sm:p-6
-              ${
-                registro.energia && registro.energia >= 4
-                  ? "border-pink-300/70"
-                  : "border-rose-100/70"
-              }`}
-              >
-                <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-pink-700">
-                  📅 {new Date(registro.fecha).toLocaleDateString()}
-                </h2>
-
-                <ul className="text-sm space-y-2">
-                  <li>
-                    💬 <strong>Emociones:</strong>{" "}
-                    {registro.emociones || "Sin registrar"}
-                  </li>
-                  <li>
-                    🔥 <strong>Energía:</strong>{" "}
-                    {registro.energia ?? "No registrado"}
-                  </li>
-                  <li>
-                    🎨 <strong>Creatividad:</strong>{" "}
-                    {registro.creatividad ?? "No registrado"}
-                  </li>
-                  <li>
-                    🪷 <strong>Espiritualidad:</strong>{" "}
-                    {registro.espiritualidad ?? "No registrado"}
-                  </li>
-                </ul>
-
-                {registro.notas && (
-                  <blockquote className="mt-4 text-sm italic text-rose-600 border-l-4 border-rose-300 pl-4">
-                    “{registro.notas}”
-                  </blockquote>
-                )}
-
-                {registro.mensaje && (
-                  <div className="glass-soft mt-4 rounded-xl border-l-4 border-pink-300 p-4 text-sm text-rose-800">
-                    🌸 <strong>Reflexión del día:</strong>
-                    <br />
-                    {registro.mensaje}
-                  </div>
-                )}
-
-                <button
-                  onClick={() => pedirConfirmacion(registro.id)}
-                  className="mt-4 rounded-lg border border-red-200/70 bg-red-100/70 px-4 py-2 text-red-700 transition hover:bg-red-100"
-                >
-                  🗑 Eliminar
-                </button>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-      )}
-
-      {/* Modal de confirmación */}
-      {mostrandoConfirmacion && registroAEliminar && (
-        <ConfirmModal
-          mensaje="¿Estás segura de que quieres eliminar este registro? Esta acción no se puede deshacer."
-          onConfirmar={() => eliminarRegistro(registroAEliminar)}
-          onCancelar={() => setMostrandoConfirmacion(false)}
-        />
-      )}
+      {mostrandoConfirmacion && registroAEliminar && <ConfirmModal mensaje="Esta acción no se puede deshacer. Puedes conservarlo y volver a leerlo cuando quieras." onConfirmar={() => eliminarRegistro(registroAEliminar)} onCancelar={() => setMostrandoConfirmacion(false)} />}
     </main>
   );
 }

@@ -12,7 +12,7 @@ export default function LoginPage() {
       <header className={styles.header}>
         <Link href="/" className={styles.brand}>
           <Image src="/logo_chakana.png" alt="" width={38} height={38} />
-          Mujer Chakana
+          Ginergética
         </Link>
         <Link href="/" className={styles.back}><ArrowLeft size={14} /> Volver al inicio</Link>
       </header>

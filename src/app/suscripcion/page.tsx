@@ -1,5 +1,9 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
+import { Headphones, BookOpen, Sparkles, ArrowLeft } from "lucide-react";
+import styles from "./suscripcion.module.css";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
@@ -63,59 +67,20 @@ export default function SuscripcionPage() {
     loadPayPalScript().then(() => setSdkReady(true));
   }, []);
 
-  if (loading) {
-    return <p className="text-center py-10">Cargando...</p>;
-  }
-
   return (
-    <main className="flex items-center justify-center mb-20">
-      <div className="bg-white/80 p-8 rounded-3xl shadow-2xl max-w-md text-center border border-rose-200 space-y-4">
-        <h1 className="text-xl font-extrabold text-pink-700 mb-2">
-          🌟 Suscripción Premium
-        </h1>
-        <p className="text-pink-600 mb-4 text-lg">
-          Accede a contenido exclusivo por solo{" "}
-          <span className="font-bold text-pink-800">2,99 € / mes</span> o{" "}
-          <span className="font-bold text-pink-800">29,99€ / año</span>.
-        </p>
-
-        <ul className="text-left text-sm mb-6 text-gray-800 space-y-2">
-          <li>✅ Acceso a rituales PDF</li>
-          <li>✅ Audios diarios exclusivos</li>
-          <li>✅ Recursos sagrados desbloqueados</li>
-        </ul>
-
-        {sdkReady && (
-          <>
-            <div className="space-y-2 border-t border-rose-100 pt-4">
-              <h2 className="font-semibold text-lg text-rose-700">
-                Suscripción mensual
-              </h2>
-              <PayPalSubscriptionButton
-                planId={PAYPAL_PLANS.mensual.id}
-                userId={userId}
-              />
-            </div>
-
-            <div className="space-y-2 border-t border-rose-100 pt-4">
-              <h2 className="font-semibold text-lg text-rose-700">
-                Suscripción anual
-              </h2>
-              <PayPalSubscriptionButton
-                planId={PAYPAL_PLANS.anual.id}
-                userId={userId}
-              />
-            </div>
-          </>
+    <main className={styles.page}>
+      <Image src="/cielo-ui.webp" alt="" fill priority sizes="100vw" className={styles.backdrop} /><div className={styles.veil} aria-hidden="true" />
+      <div className={styles.content}>
+        <Link href="/dashboard" className={styles.back}><ArrowLeft size={15} /> Volver a mi espacio</Link>
+        <header className={styles.hero}><p className={styles.eyebrow}>Mujer Chakana / Membresía</p><h1>Dale espacio<br /><em>a tu profundidad.</em></h1><p>Rituales, audios y recursos para acompañar cada vuelta. Elige cómo quieres continuar tu recorrido.</p></header>
+        <div className={styles.benefits}><span><BookOpen size={20} /> Rituales en PDF</span><span><Headphones size={20} /> Audios diarios exclusivos</span><span><Sparkles size={20} /> Recursos desbloqueados</span></div>
+        {loading ? <p className={styles.loading} role="status">Preparando tus opciones...</p> : (
+          <div className={styles.plans}>
+            <section className={styles.plan} aria-labelledby="monthly-title"><p className={styles.eyebrow}>Un mes a la vez</p><h2 id="monthly-title">A tu ritmo.</h2><p className={styles.price}>2,99 <span>€ / mes</span></p><p className={styles.description}>Una invitación mensual a observar, sentir y conectar contigo.</p><div className={styles.billing}>Suscripción mensual</div>{sdkReady ? <PayPalSubscriptionButton planId={PAYPAL_PLANS.mensual.id} userId={userId} /> : <p className={styles.loading} role="status">Cargando PayPal...</p>}</section>
+            <section className={`${styles.plan} ${styles.annual}`} aria-labelledby="annual-title"><span className={styles.badge}>Tu recorrido completo</span><p className={styles.eyebrow}>Un año para ti</p><h2 id="annual-title">Vuelta tras vuelta.</h2><p className={styles.price}>29,99 <span>€ / año</span></p><p className={styles.description}>Un año de acceso para sostener tu práctica y explorar tus ciclos.</p><div className={styles.billing}>Suscripción anual</div>{sdkReady ? <PayPalSubscriptionButton planId={PAYPAL_PLANS.anual.id} userId={userId} /> : <p className={styles.loading} role="status">Cargando PayPal...</p>}</section>
+          </div>
         )}
-
-        {!sdkReady && (
-          <p className="text-sm text-gray-500 italic">Cargando PayPal...</p>
-        )}
-
-        <p className="text-xs text-gray-500 pt-2">
-          Cancelas cuando quieras. Procesado con PayPal.
-        </p>
+        <p className={styles.note}>Cancela cuando quieras. Pagos procesados con PayPal.</p>
       </div>
     </main>
   );
