@@ -1,107 +1,50 @@
-"use client";
-
-import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import LoginForm from "@/components/LoginForm";
-
-const highlights = [
-  "Accede a tus registros y rituales en segundos.",
-  "Mantente al día con los recursos que liberamos cada luna.",
-  "Sincroniza tu energía con una guía hecha para ti.",
-];
+import styles from "./login.module.css";
 
 export default function LoginPage() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[url('/mujer-chakana.webp')] bg-cover bg-center text-rose-900">
-      <div className="absolute inset-0 bg-gradient-to-br from-white/85 via-white/75 to-rose-100/60 backdrop-blur-3xl" />
-      <motion.div
-        initial={{ opacity: 0.25, scale: 0.9 }}
-        animate={{ opacity: 0.45, scale: 1 }}
-        transition={{ duration: 2, ease: "easeOut" }}
-        className="pointer-events-none absolute -top-32 right-0 h-96 w-96 rounded-full bg-rose-200/40 blur-3xl"
-      />
-      <motion.div
-        initial={{ opacity: 0.25, scale: 0.9 }}
-        animate={{ opacity: 0.4, scale: 1 }}
-        transition={{ duration: 2.2, ease: "easeOut" }}
-        className="pointer-events-none absolute -bottom-40 left-0 h-[420px] w-[420px] rounded-full bg-rose-100/50 blur-3xl"
-      />
+    <main className={styles.gateway}>
+      <Image src="/cielo-ui.webp" alt="" fill priority sizes="100vw" className={styles.landscape} />
+      <div className={styles.veil} aria-hidden="true" />
+      <header className={styles.header}>
+        <Link href="/" className={styles.brand}>
+          <Image src="/logo_chakana.png" alt="" width={38} height={38} />
+          Mujer Chakana
+        </Link>
+        <Link href="/" className={styles.back}><ArrowLeft size={14} /> Volver al inicio</Link>
+      </header>
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-4 py-12 sm:px-6 lg:flex-row lg:items-center lg:gap-16 lg:px-10">
-        <motion.section
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-xl space-y-6 text-center lg:text-left"
-        >
-          <span className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-100/70 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-rose-600">
-            Regresa a tu altar digital
-          </span>
-          <h1 className="text-4xl font-extrabold leading-tight text-rose-950 sm:text-5xl">
-            Inicia sesión y vuelve a tu ciclo consciente
-          </h1>
-          <p className="text-base text-rose-700 sm:text-lg">
-            Desbloquea tu moonboard, continúa los rituales que guardaste y recibe
-            la orientación amorosa que tejimos para esta vuelta lunar.
-          </p>
-          <ul className="space-y-2 text-sm text-rose-700 sm:text-base">
-            {highlights.map((item) => (
-              <li
-                key={item}
-                className="flex items-start justify-center gap-2 lg:justify-start"
-              >
-                <span className="mt-1 h-2 w-2 rounded-full bg-rose-500" aria-hidden />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="flex items-center justify-center gap-3 pt-2 text-sm text-rose-600 lg:justify-start">
-            <span>¿Necesitas una cuenta?</span>
-            <Link
-              href="/auth/register"
-              className="font-semibold text-rose-700 underline-offset-2 hover:underline"
-            >
-              Regístrate gratis
-            </Link>
+      <div className={styles.stage}>
+        <section className={styles.story} aria-labelledby="arrival-title">
+          <p className={styles.eyebrow}><span /> Un espacio para volver a ti</p>
+          <h1 id="arrival-title">Tu ritmo.<br />{" "}Tu refugio.<br /><em>Tu regreso.</em></h1>
+          <p className={styles.intro}>Hay un lugar donde cada parte de tu ciclo tiene sentido. Tus registros, tus rituales y tu próximo descubrimiento te esperan aquí.</p>
+          <div className={styles.moon} aria-hidden="true">
+            <div className={styles.orbit} />
+            <Image src="/Luna-llena.webp" alt="" width={250} height={250} sizes="(max-width: 760px) 120px, 250px" />
+            <span>Todo vuelve a comenzar</span>
           </div>
-        </motion.section>
+          <div className={styles.chapters}><span>01 / Observar</span><span>02 / Sentir</span><span>03 / Habitar</span></div>
+        </section>
 
-        <motion.section
-          initial={{ opacity: 0, y: 40, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
-          className="mt-10 w-full max-w-md rounded-[32px] border border-rose-100/80 bg-white/85 p-8 text-center shadow-2xl backdrop-blur-xl lg:mt-0"
-        >
-          <div className="mb-6 flex flex-col items-center gap-4">
-            <span className="inline-flex h-16 w-16 items-center justify-center rounded-full border border-rose-100 bg-white shadow-inner">
-              <Image
-                src="/logo_chakana.png"
-                alt="Logo Mujer Chakana"
-                width={64}
-                height={64}
-                className="h-14 w-14 object-contain"
-                priority
-              />
-            </span>
-            <div className="space-y-1">
-              <h2 className="text-2xl font-semibold text-rose-900 sm:text-3xl">
-                Bienvenida de vuelta
-              </h2>
-              <p className="text-sm text-rose-600">
-                Ingresa tus datos para continuar tu recorrido.
-              </p>
-            </div>
+        <section className={styles.panel} aria-labelledby="login-title">
+          <div className={styles.panelHeading}>
+            <span className={styles.eyebrow}>Tu espacio personal</span>
+            <h2 id="login-title">Bienvenida<br />{" "}<em>de vuelta.</em></h2>
+            <p>Inicia sesión para continuar tu recorrido.</p>
           </div>
-
           <LoginForm />
-
-          <div className="mt-8 text-xs text-rose-500">
-            <span className="font-semibold">Consejo:</span> si es tu primera vez
-            aquí, recuerda revisar tu bandeja de correo para activar tu acceso.
-          </div>
-        </motion.section>
+          <p className={styles.note}>¿Es tu primera visita? Revisa tu correo para confirmar tu cuenta antes de entrar.</p>
+        </section>
       </div>
+
+      <footer className={styles.footer}>
+        <span>Un ciclo a la vez. A tu manera.</span>
+        <Link href="/auth/register">Comienza tu recorrido <ArrowUpRight size={15} /></Link>
+      </footer>
     </main>
   );
 }

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -17,6 +17,7 @@ interface TouchedState {
 
 export default function LoginForm() {
   const router = useRouter();
+  const reduceMotion = useReducedMotion();
   const passwordRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({ email: "", password: "" });
@@ -127,7 +128,7 @@ export default function LoginForm() {
   return (
     <motion.form
       onSubmit={handleSubmit}
-      initial={{ opacity: 0, y: 24 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="flex flex-col gap-5"
@@ -150,7 +151,7 @@ export default function LoginForm() {
             onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
             required
             disabled={loading}
-            whileFocus={{ scale: 1.01 }}
+            whileFocus={reduceMotion ? undefined : { scale: 1.01 }}
             className="w-full rounded-xl border border-rose-100 bg-white/70 px-4 py-3 text-sm text-rose-900 shadow-inner placeholder:text-rose-400 focus:border-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-200 transition disabled:opacity-60"
             autoComplete="email"
             aria-invalid={isEmailInvalid}
@@ -191,7 +192,7 @@ export default function LoginForm() {
             onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
             required
             disabled={loading}
-            whileFocus={{ scale: 1.01 }}
+            whileFocus={reduceMotion ? undefined : { scale: 1.01 }}
             className="w-full rounded-xl border border-rose-100 bg-white/70 px-4 py-3 text-sm text-rose-900 shadow-inner placeholder:text-rose-400 focus:border-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-200 transition disabled:opacity-60"
             autoComplete="current-password"
             aria-invalid={isPasswordInvalid}
@@ -230,8 +231,8 @@ export default function LoginForm() {
       <motion.button
         type="submit"
         disabled={loading}
-        whileHover={{ scale: loading ? 1 : 1.02 }}
-        whileTap={{ scale: loading ? 1 : 0.96 }}
+        whileHover={reduceMotion ? undefined : { scale: loading ? 1 : 1.02 }}
+        whileTap={reduceMotion ? undefined : { scale: loading ? 1 : 0.96 }}
         className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-rose-600 via-rose-700 to-rose-800 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? (
