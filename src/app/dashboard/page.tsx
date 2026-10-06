@@ -4,22 +4,24 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type CSSProperties,
 } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
   BookOpen,
   CalendarDays,
-  Compass,
   Flower2,
   Leaf,
   Moon,
   PenLine,
+  Pause,
+  Play,
   Settings,
   Sparkles,
 } from "lucide-react";
@@ -105,16 +107,23 @@ const getCyclePhase = (day: number) => {
   return "Lutea";
 };
 
-function CycleProgress({ day }: { day: number }) {
+function CycleProgress({ day, onExplore, still }: { day: number; onExplore: () => void; still: boolean }) {
   const percentage = Math.min(100, (day / TOTAL_CYCLE_DAYS) * 100);
   const phase = getCyclePhase(day);
 
   return (
-    <div
+    <button
+      type="button"
+      onClick={onExplore}
       className={styles.cycleDial}
       style={{ "--cycle-progress": `${percentage * 3.6}deg` } as CSSProperties}
-      aria-label={`Día ${day} de ${TOTAL_CYCLE_DAYS}, fase ${phase}`}
+      aria-label={`Día ${day} de ${TOTAL_CYCLE_DAYS}, fase ${phase}. Explorar mi Moonboard`}
     >
+      <svg className={styles.dialDrawing} viewBox="0 0 200 200" aria-hidden="true">
+        <circle className={styles.dialTrack} cx="100" cy="100" r="98" />
+        <motion.circle className={styles.dialProgress} cx="100" cy="100" r="98" initial={still ? false : { pathLength: 0 }} animate={{ pathLength: percentage / 100 }} transition={{ duration: still ? 0 : 1.8, delay: still ? 0 : 0.25, ease: "easeOut" }} />
+        {Array.from({ length: TOTAL_CYCLE_DAYS }, (_, index) => <circle key={index} cx="100" cy="11" r={index === day - 1 ? 2.1 : 0.8} transform={`rotate(${index * 360 / TOTAL_CYCLE_DAYS} 100 100)`} className={index < day ? styles.dialTickActive : styles.dialTick} />)}
+      </svg>
       <div className={styles.dialOrbit} aria-hidden="true">
         <span />
       </div>
@@ -124,7 +133,8 @@ function CycleProgress({ day }: { day: number }) {
         <span>de {TOTAL_CYCLE_DAYS}</span>
       </div>
       <p>{phase}</p>
-    </div>
+      <span className={styles.dialExplore}>Explorar ciclo <ArrowRight size={12} /></span>
+    </button>
   );
 }
 
@@ -149,6 +159,14 @@ function InsightCard({
 export default function DashboardPage() {
   const router = useRouter();
   const reduceMotion = useReducedMotion();
+  const [motionPaused, setMotionPaused] = useState(false);
+  const still = Boolean(reduceMotion || motionPaused);
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
+  const sceneX = useSpring(pointerX, { stiffness: 45, damping: 24 });
+  const sceneY = useSpring(pointerY, { stiffness: 45, damping: 24 });
+  const panelRef = useRef<HTMLElement>(null);
+  const navRef = useRef<HTMLElement>(null);
   const { ToastContainer } = useToast();
   const [userName, setUserName] = useState<string | null>(null);
   const [fechaActual] = useState(() =>
@@ -170,6 +188,18 @@ export default function DashboardPage() {
   const [loadingMessage, setLoadingMessage] = useState(
     "Cargando tu espacio personal..."
   );
+
+  function openPanel(panel: DashboardPanel) {
+    setActivePanel(panel);
+    requestAnimationFrame(() => {
+      panelRef.current?.scrollIntoView({ behavior: still ? "instant" : "smooth", block: "start" });
+      panelRef.current?.focus({ preventScroll: true });
+    });
+  }
+
+  useEffect(() => {
+    if (still) { pointerX.set(0); pointerY.set(0); }
+  }, [still, pointerX, pointerY]);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -444,6 +474,7 @@ export default function DashboardPage() {
   return (
     <div
       className={styles.dashboard}
+      data-motion={still ? "paused" : "active"}
       style={{ "--dashboard-accent": elementScene.accent } as CSSProperties}
     >
       <PageShell className={styles.pageShell}>
@@ -452,18 +483,23 @@ export default function DashboardPage() {
           initial={reduceMotion ? false : { opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
+          onPointerMove={(event) => {
+            if (still || event.pointerType !== "mouse") return;
+            const bounds = event.currentTarget.getBoundingClientRect();
+            pointerX.set(((event.clientX - bounds.left) / bounds.width - 0.5) * 18);
+            pointerY.set(((event.clientY - bounds.top) / bounds.height - 0.5) * 12);
+          }}
+          onPointerLeave={() => { pointerX.set(0); pointerY.set(0); }}
         >
-          <div className={styles.heroImage} aria-hidden="true">
-            <Image src={heroImage} alt="" fill sizes="100vw" priority />
-          </div>
-          <div className={styles.heroVeil} aria-hidden="true" />
+          <div className={styles.heroAtmosphere} aria-hidden="true"><span /><span /><span /></div>
 
           <div className={styles.heroTopline}>
             <span className={styles.observatoryMark}>
-              <Compass aria-hidden="true" />
-              Observatorio cíclico
+              <Flower2 aria-hidden="true" />
+              Ginergética<span>MI ESPACIO PERSONAL</span>
             </span>
             <div className={styles.heroMeta}>
+              {!reduceMotion && <button type="button" className={styles.motionControl} aria-label={motionPaused ? "Activar movimiento ambiental" : "Pausar movimiento ambiental"} aria-pressed={motionPaused} onClick={() => setMotionPaused(value => !value)}>{motionPaused ? <Play aria-hidden="true" /> : <Pause aria-hidden="true" />}</button>}
               <span><Leaf aria-hidden="true" /> {isSubscriber ? "Círculo activo" : "Plan gratuito"}</span>
               <Link href="/setup" aria-label="Configurar perfil">
                 <Settings aria-hidden="true" />
@@ -473,30 +509,30 @@ export default function DashboardPage() {
 
           <div className={styles.heroGrid}>
             <div className={styles.heroCopy}>
-              <p>{fechaActual}</p>
+              <p>Hola, {firstName}<span />{fechaActual}</p>
               <h1>
-                Hoy, {firstName},
-                <em>{estadoCiclo ? estadoCiclo.arquetipo : "tu ciclo pide un punto de partida"}.</em>
+                Tu día,
+                <em>a tu ritmo.</em>
               </h1>
+              <div className={styles.dailyGuide}><span className={styles.guideIcon}><Leaf size={19} aria-hidden="true" /></span><div><small>{estadoCiclo ? "HOY TE ACOMPAÑA" : "COMIENZA POR TI"}</small><strong>{estadoCiclo?.arquetipo || "Cada ciclo es un nuevo comienzo"}</strong></div></div>
               <span className={styles.heroDescription}>
                 {estadoCiclo
                   ? descripcionCorta
                   : "Configura tu fecha de inicio para abrir la lectura de este día."}
               </span>
               <div className={styles.heroActions}>
-                <button
+                {canRegister ? <button
                   type="button"
-                  onClick={() => setActivePanel("registro")}
-                  disabled={!canRegister}
+                  onClick={() => openPanel("registro")}
                   className={styles.primaryHeroAction}
                 >
                   <PenLine aria-hidden="true" />
                   Registrar cómo estoy
                   <ArrowRight aria-hidden="true" />
-                </button>
+                </button> : <Link href="/setup" className={styles.primaryHeroAction}>Configurar mi ciclo <ArrowRight aria-hidden="true" /></Link>}
                 <button
                   type="button"
-                  onClick={() => setActivePanel("moonboard")}
+                  onClick={() => openPanel("moonboard")}
                   className={styles.secondaryHeroAction}
                 >
                   Ver mi Moonboard
@@ -504,7 +540,17 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <CycleProgress day={day} />
+            <div className={styles.heroVisual}>
+              <div className={styles.portraitFrame}>
+                <motion.div className={styles.heroImage} style={{ x: still ? 0 : sceneX, y: still ? 0 : sceneY }} aria-hidden="true">
+                  <Image src={heroImage} alt="" fill sizes="(max-width: 720px) 85vw, 40vw" priority />
+                </motion.div>
+                <div className={styles.portraitCaption}><span>{elementScene.label}</span><small>Un elemento para conectar contigo</small></div>
+              </div>
+              <svg className={styles.botanicalLine} viewBox="0 0 120 260" fill="none" aria-hidden="true"><path d="M56 254C80 189 24 112 68 6M61 217C105 206 112 173 109 154C77 163 61 184 61 217ZM58 171C18 159 9 136 13 111C44 123 55 144 58 171ZM56 122C84 115 108 91 106 67C78 75 59 97 56 122ZM56 79C34 66 24 42 31 23C49 37 56 55 56 79Z" stroke="currentColor" strokeWidth="1.1" /></svg>
+              <span className={styles.portraitNote}>Todo empieza<br /><em>por escucharte.</em></span>
+              {fechaInicioCiclo && <CycleProgress day={day} still={still} onExplore={() => openPanel("moonboard")} />}
+            </div>
           </div>
 
           <section className={styles.insightRail} aria-label="Lectura rápida del día">
@@ -514,7 +560,8 @@ export default function DashboardPage() {
           </section>
         </motion.header>
 
-        <nav className={styles.panelNav} aria-label="Capítulos del dashboard" role="tablist">
+        <div className={styles.sectionIntro}><span>Un espacio, muchas formas de cuidarte</span><small>ELIGE POR DÓNDE SEGUIR <ArrowRight size={13} aria-hidden="true" /></small></div>
+        <nav ref={navRef} className={styles.panelNav} aria-label="Capítulos del dashboard" role="tablist">
           {dashboardPanels.map(({ id, label, description, Icon, disabled }, index) => {
             const isActive = activePanel === id;
             return (
@@ -525,10 +572,21 @@ export default function DashboardPage() {
                 role="tab"
                 aria-selected={isActive}
                 aria-controls="dashboard-panel"
+                tabIndex={isActive ? 0 : -1}
                 disabled={disabled}
                 onClick={() => setActivePanel(id)}
+                onKeyDown={(event) => {
+                  if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+                  event.preventDefault();
+                  const enabled = dashboardPanels.filter(panel => !panel.disabled);
+                  const current = enabled.findIndex(panel => panel.id === id);
+                  const next = event.key === "Home" ? 0 : event.key === "End" ? enabled.length - 1 : (current + (event.key === "ArrowRight" ? 1 : -1) + enabled.length) % enabled.length;
+                  setActivePanel(enabled[next].id);
+                  navRef.current?.querySelector<HTMLButtonElement>(`#dashboard-tab-${enabled[next].id}`)?.focus();
+                }}
                 className={isActive ? styles.panelTabActive : styles.panelTab}
               >
+                {isActive && <motion.span className={styles.tabIndicator} layoutId="dashboard-active-tab" transition={still ? { duration: 0 } : { type: "spring", stiffness: 360, damping: 34 }} />}
                 <span className={styles.panelIndex}>0{index + 1}</span>
                 <Icon aria-hidden="true" />
                 <span>
@@ -541,7 +599,8 @@ export default function DashboardPage() {
         </nav>
 
         <motion.section
-          key={activePanel}
+          ref={panelRef}
+          tabIndex={-1}
           id="dashboard-panel"
           role="tabpanel"
           aria-labelledby={`dashboard-tab-${activePanel}`}
@@ -552,7 +611,7 @@ export default function DashboardPage() {
         >
           <header className={styles.workspaceHeader}>
             <div>
-              <p>{activePanelData.label} · capítulo activo</p>
+              <p>Tu espacio de {activePanelData.label.toLocaleLowerCase("es")}</p>
               <h2>{activePanelData.description}</h2>
             </div>
             <Link href="/manual" className={styles.guideLink}>
@@ -560,7 +619,7 @@ export default function DashboardPage() {
               Abrir guía
             </Link>
           </header>
-          <div className={styles.workspaceContent}>{activeContent}</div>
+          <motion.div key={activePanel} className={styles.workspaceContent} initial={still ? false : { opacity: 0, y: 16, filter: "blur(3px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>{activeContent}</motion.div>
         </motion.section>
       </PageShell>
       <QuickNav currentDay={day} userName={userName || ""} />

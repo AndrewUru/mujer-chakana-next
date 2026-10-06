@@ -107,16 +107,19 @@ const NuevoRecursoPage = () => {
             htmlFor="tipo"
             className="block text-sm font-medium text-gray-700"
           >
-            Tipo (pdf / audio / video)
+            Formato del recurso
           </label>
-          <input
-            type="text"
+          <select
             id="tipo"
             value={tipo}
             onChange={(e) => setTipo(e.target.value)}
             required
             className="mt-1 block w-full rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-rose-500 focus:border-rose-500"
-          />
+          >
+            <option value="pdf">PDF</option>
+            <option value="audio">Audio</option>
+            <option value="video">Vídeo</option>
+          </select>
         </div>
 
         <div>
