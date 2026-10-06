@@ -30,7 +30,7 @@ const NuevoRecursoPage = () => {
     const userId = data?.user?.id;
 
     if (!userId || userError) {
-      alert("Debes iniciar sesión para crear un recurso.");
+      setMensaje({ text: "Debes iniciar sesión para crear un recurso.", error: true });
       return;
     }
 
@@ -48,24 +48,24 @@ const NuevoRecursoPage = () => {
 
     if (error) {
       console.error("Error al crear recurso:", error.message);
-      setMensaje({ text: "No se pudo guardar el recurso. Int?ntalo de nuevo.", error: true });
+      setMensaje({ text: "No se pudo guardar el recurso. Inténtalo de nuevo.", error: true });
     } else {
-      alert("Recurso añadido correctamente.");
+      setMensaje({ text: "Recurso añadido correctamente. Puedes añadir otro o volver a la biblioteca." });
       setTitulo("");
       setDescripcion("");
       setTipo("pdf");
       setUrl("");
       setTipoSuscripcion([]);
     }
-    } catch { setMensaje({ text: "No se pudo guardar el recurso. Int?ntalo de nuevo.", error: true }); }
+    } catch { setMensaje({ text: "No se pudo guardar el recurso. Inténtalo de nuevo.", error: true }); }
     finally { setGuardando(false); }
   };
 
   return (
     <div className="admin-legacy-form">
-      <Link href="/admin/recursos" className="admin-subtitle">? Volver a recursos</Link>
+      <Link href="/admin/recursos" className="admin-subtitle">← Volver a recursos</Link>
       <h1 className="text-2xl font-bold text-rose-700 mb-6 text-center">
-        🌕 Añadir Nuevo Recurso
+        Nuevo recurso
       </h1>
       {mensaje && <div role={mensaje.error ? "alert" : "status"} className={`admin-notice ${mensaje.error ? "error" : ""}`}>{mensaje.text}</div>}
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -161,7 +161,7 @@ const NuevoRecursoPage = () => {
             type="submit"
             className="mt-4 bg-rose-600 text-white px-6 py-2 rounded-full hover:bg-rose-700 transition"
           >
-            Guardar Recurso 🌸
+            {guardando ? "Guardando…" : "Guardar recurso"}
           </button>
         </div>
       </form>
