@@ -1,254 +1,83 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-import Breadcrumbs from "@/components/Breadcrumbs";
+import { useRouter } from "next/navigation";
+import { Search, ChevronLeft, ChevronRight, Users } from "lucide-react";
 
 interface Usuario {
   user_id: string;
   display_name: string;
-  email: string; // Added email property
+  email: string;
   rol: string;
   suscripcion_activa: boolean;
-  tipo_plan?: string; // Added tipo_plan property
-  fecha_inicio?: string; // <-- agregar esto
-  fecha_expiracion?: string; // <-- y esto también
+  tipo_plan?: string;
 }
+const PAGE_SIZE = 10;
 
 export default function AdminPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [userName, setUserName] = useState<string | null>(null);
+  const [userName, setUserName] = useState("");
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-  const [mensajeExito, setMensajeExito] = useState<string | null>(null);
-  const [mensajeError, setMensajeError] = useState<string | null>(null);
-
+  const [notice, setNotice] = useState<{ text: string; error?: boolean } | null>(null);
+  const [pending, setPending] = useState<string[]>([]);
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState("all");
+  const [page, setPage] = useState(1);
   useEffect(() => {
-    async function checkAdminAndFetchUsers() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        router.push("/auth/login");
-        return;
-      }
-
-      const { data: perfil, error } = await supabase
-        .from("perfiles")
-        .select("rol, display_name")
-        .eq("user_id", user.id)
-        .single();
-
-      if (error || !perfil || perfil.rol !== "admin") {
-        router.push("/dashboard");
-        return;
-      }
-
-      setUserName(perfil.display_name);
-
-      const { data: usersData, error: errorUsers } = await supabase
-        .from("perfiles")
-        .select(
-          "user_id, email, display_name, rol, tipo_plan, suscripcion_activa"
-        )
-        .returns<Usuario[]>();
-
-      if (errorUsers) {
-        setMensajeError("No se pudo cargar la lista de usuarias.");
-      } else if (usersData) {
-        setUsuarios(usersData);
-      }
-
-      setLoading(false);
+    let cancelled = false;
+    async function load() {
+      try {
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError) throw authError;
+        if (!user) { router.replace("/auth/login"); return; }
+        const { data: profile, error } = await supabase.from("perfiles").select("rol, display_name").eq("user_id", user.id).single();
+        if (error) throw error;
+        if (profile?.rol !== "admin") { router.replace("/dashboard"); return; }
+        const { data, error: usersError } = await supabase.from("perfiles").select("user_id, email, display_name, rol, tipo_plan, suscripcion_activa").order("display_name").returns<Usuario[]>();
+        if (usersError) throw usersError;
+        if (!cancelled) { setUserName(profile.display_name ?? ""); setUsuarios(data ?? []); }
+      } catch { if (!cancelled) setNotice({ text: "No se pudo cargar la comunidad. Recarga la página para volver a intentarlo.", error: true }); }
+      finally { if (!cancelled) setLoading(false); }
     }
-
-    checkAdminAndFetchUsers();
+    void load();
+    return () => { cancelled = true; };
   }, [router]);
 
-  const toggleSuscripcion = async (userId: string, estadoActual: boolean) => {
-    const { error } = await supabase
-      .from("perfiles")
-      .update({ suscripcion_activa: !estadoActual })
-      .eq("user_id", userId);
-
-    if (!error) {
-      setUsuarios((prev) =>
-        prev.map((u) =>
-          u.user_id === userId ? { ...u, suscripcion_activa: !estadoActual } : u
-        )
-      );
-      setMensajeExito(
-        `La suscripción de ${userId.slice(0, 8)}… se actualizó correctamente.`
-      );
-      setTimeout(() => setMensajeExito(null), 4000);
-    } else {
-      setMensajeError("No se pudo actualizar la suscripción.");
-      setTimeout(() => setMensajeError(null), 4000);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 via-white to-pink-100">
-        <div className="flex flex-col items-center gap-3">
-          <span className="animate-spin rounded-full h-8 w-8 border-4 border-pink-400 border-t-transparent"></span>
-          <span className="text-pink-700 font-medium">
-            Cargando acceso de administradora...
-          </span>
-        </div>
-      </div>
-    );
+  async function toggleSubscription(user: Usuario) {
+    if (pending.includes(user.user_id)) return;
+    setPending(prev => [...prev, user.user_id]);
+    setNotice(null);
+    try {
+      const { data, error } = await supabase.from("perfiles").update({ suscripcion_activa: !user.suscripcion_activa }).eq("user_id", user.user_id).select("user_id");
+      if (error || !data?.length) throw error ?? new Error("Sin cambios");
+      setUsuarios(prev => prev.map(item => item.user_id === user.user_id ? { ...item, suscripcion_activa: !user.suscripcion_activa } : item));
+      setNotice({ text: `Suscripción de ${user.display_name || user.email || "la usuaria"} ${user.suscripcion_activa ? "desactivada" : "activada"}.` });
+    } catch { setNotice({ text: "No se pudo actualizar la suscripción. Inténtalo de nuevo.", error: true }); }
+    finally { setPending(prev => prev.filter(id => id !== user.user_id)); }
   }
-
-  return (
-    <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-100 px-2 py-8 pb-24">
-      <div className="max-w-6xl mx-auto space-y-8">
-        <header className="text-center space-y-1">
-          <Breadcrumbs
-            items={[
-              { label: "Admin", href: "/admin" },
-              { label: "Usuarios" }, // página actual (sin href)
-            ]}
-          />
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-pink-800 drop-shadow">
-            🌟 Admin Dashboard
-          </h1>
-          <p className="text-pink-600 text-base sm:text-lg mt-1">
-            Bienvenida, <span className="font-semibold">{userName}</span>
-          </p>
-        </header>
-
-        {/* Mensajes de éxito o error */}
-        <div className="space-y-2">
-          {mensajeExito && (
-            <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 px-4 py-2 rounded-lg shadow text-sm font-medium">
-              <span>✅</span> <span>{mensajeExito}</span>
-            </div>
-          )}
-          {mensajeError && (
-            <div className="flex items-center gap-2 bg-rose-50 border border-rose-200 text-rose-700 px-4 py-2 rounded-lg shadow text-sm font-medium">
-              <span>⚠️</span> <span>{mensajeError}</span>
-            </div>
-          )}
-        </div>
-        <section className="text-center mt-10">
-          <h3 className="text-base sm:text-lg text-pink-700 font-semibold mb-3">
-            Accesos rápidos de edición
-          </h3>
-          <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href="/admin/mujer-chakana"
-              className="px-5 py-2.5 rounded-xl bg-pink-600 text-white hover:bg-pink-700 font-semibold shadow transition text-sm"
-            >
-              ✨ Editar Mujer Chakana
-            </a>
-            <a
-              href="/admin/recursos"
-              className="px-5 py-2.5 rounded-xl bg-rose-400 text-white hover:bg-rose-500 font-semibold shadow transition text-sm"
-            >
-              🔮 Editar Recursos
-            </a>
-            <a
-              href="/admin/moonboard"
-              className="px-5 py-2.5 rounded-xl bg-rose-400 text-white hover:bg-rose-500 font-semibold shadow transition text-sm"
-            >
-              🌙 Editar Moonboard
-            </a>
-          </div>
-        </section>
-
-        <section className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-pink-100 p-5 overflow-x-auto">
-          <h2 className="text-xl sm:text-2xl font-bold text-pink-700 mb-4 flex items-center gap-2">
-            <span className="text-2xl">👥</span> Usuarios Registrados
-          </h2>
-          <div className="overflow-x-auto rounded-xl">
-            <table className="w-full border border-pink-50 text-xs sm:text-sm text-pink-900 bg-white/90 shadow-inner">
-              <thead className="bg-pink-100 text-pink-800 sticky top-0 z-10">
-                <tr>
-                  <th className="py-2 px-3 border-b font-semibold text-left">
-                    Nombre
-                  </th>
-                  <th className="py-2 px-3 border-b font-semibold text-left">
-                    Correo
-                  </th>
-                  <th className="py-2 px-3 border-b font-semibold text-left">
-                    Rol
-                  </th>
-                  <th className="py-2 px-3 border-b font-semibold text-left">
-                    Plan
-                  </th>
-                  <th className="py-2 px-3 border-b font-semibold text-left">
-                    Inicio
-                  </th>
-                  <th className="py-2 px-3 border-b font-semibold text-left">
-                    Vencimiento
-                  </th>
-                  <th className="py-2 px-3 border-b font-semibold text-center">
-                    Suscripción
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {usuarios.map((usuario, i) => (
-                  <tr
-                    key={usuario.user_id}
-                    className={`transition-all ${
-                      i % 2 === 0 ? "bg-white" : "bg-pink-50"
-                    } hover:bg-pink-100`}
-                  >
-                    <td className="px-3 py-2 border-b font-medium max-w-[120px] truncate">
-                      {usuario.display_name || "—"}
-                    </td>
-                    <td className="px-3 py-2 border-b text-xs text-gray-600 max-w-[160px] truncate">
-                      {usuario.email || "—"}
-                    </td>
-                    <td className="px-3 py-2 border-b capitalize">
-                      {usuario.rol}
-                    </td>
-                    <td className="px-3 py-2 border-b capitalize text-pink-700 font-semibold">
-                      {usuario.tipo_plan || "—"}
-                    </td>
-                    <td className="px-3 py-2 border-b text-xs">
-                      {usuario.fecha_inicio
-                        ? new Date(usuario.fecha_inicio).toLocaleDateString()
-                        : "—"}
-                    </td>
-                    <td className="px-3 py-2 border-b text-xs text-gray-500">
-                      {usuario.fecha_expiracion
-                        ? new Date(
-                            usuario.fecha_expiracion
-                          ).toLocaleDateString()
-                        : "—"}
-                    </td>
-                    <td className="px-3 py-2 border-b text-center">
-                      <button
-                        onClick={() =>
-                          toggleSuscripcion(
-                            usuario.user_id,
-                            usuario.suscripcion_activa
-                          )
-                        }
-                        className={`px-3 py-1 rounded-full text-xs font-semibold shadow-sm border transition
-                          ${
-                            usuario.suscripcion_activa
-                              ? "bg-green-100 text-green-700 border-green-200 hover:bg-green-200"
-                              : "bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200"
-                          }
-                        `}
-                        title="Cambiar estado de suscripción"
-                      >
-                        {usuario.suscripcion_activa ? "Activa" : "No activa"}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      </div>
-    </main>
-  );
+  const normalized = query.trim().toLocaleLowerCase("es");
+  const filtered = usuarios.filter(user => `${user.display_name ?? ""} ${user.email ?? ""}`.toLocaleLowerCase("es").includes(normalized) && (status === "all" || user.suscripcion_activa === (status === "active")));
+  const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pages);
+  const visible = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const active = usuarios.filter(user => user.suscripcion_activa).length;
+  return <main className="admin-page">
+    <header className="admin-heading"><div><p className="admin-eyebrow">La comunidad, en un vistazo</p><h1>Un espacio para acompañar.</h1><p className="admin-subtitle">Bienvenida{userName ? `, ${userName}` : ""}. Gestiona las usuarias y sus suscripciones.</p></div><span className="admin-badge"><Users size={14} /> Comunidad</span></header>
+    {notice && <div role={notice.error ? "alert" : "status"} className={`admin-notice ${notice.error ? "error" : ""}`}>{notice.text}</div>}
+    <section className="admin-stats" aria-label="Resumen de la comunidad">{[
+      ["Usuarias registradas", usuarios.length, "Personas que forman parte del espacio"],
+      ["Suscripciones activas", active, "Con acceso habilitado"],
+      ["Sin suscripción activa", usuarios.length - active, "Con acceso por activar"],
+    ].map(([label, value, description]) => <div className="admin-stat" key={label}><span>{label}</span><strong>{loading ? "—" : value}</strong><small>{description}</small></div>)}</section>
+    <section className="admin-panel" aria-labelledby="users-title" aria-busy={loading}>
+      <div className="admin-panel-heading"><div><h2 id="users-title">Usuarias</h2><p className="admin-subtitle">Encuentra un perfil y gestiona su acceso.</p></div><span className="admin-badge">{loading ? "…" : filtered.length} perfiles</span></div>
+      <div className="admin-toolbar"><label className="admin-search"><Search size={18} aria-hidden="true" /><input aria-label="Buscar por nombre o correo" placeholder="Buscar por nombre o correo…" value={query} onChange={e => { setQuery(e.target.value); setPage(1); }} /></label><select aria-label="Filtrar suscripciones" value={status} onChange={e => { setStatus(e.target.value); setPage(1); }}><option value="all">Todas las suscripciones</option><option value="active">Activas</option><option value="inactive">Sin suscripción activa</option></select></div>
+      {loading ? <div role="status" className="admin-empty">Cargando la comunidad…</div> : filtered.length === 0 ? <div className="admin-empty"><h3>{usuarios.length ? "No encontramos coincidencias" : "Todavía no hay usuarias"}</h3><p>{usuarios.length ? "Prueba con otro nombre o cambia el filtro." : "Los perfiles aparecerán aquí cuando estén disponibles."}</p>{usuarios.length > 0 && <button className="admin-button" onClick={() => { setQuery(""); setStatus("all"); setPage(1); }}>Limpiar filtros</button>}</div> : <>
+        <div className="admin-table-scroll"><table className="admin-table"><thead><tr><th scope="col">Usuaria</th><th scope="col">Rol</th><th scope="col">Plan</th><th scope="col">Suscripción</th><th scope="col">Acción</th></tr></thead><tbody>{visible.map(user => <tr key={user.user_id}><td><div className="admin-person"><span className="admin-avatar" aria-hidden="true">{(user.display_name || user.email || "U").slice(0, 1).toUpperCase()}</span><div><strong>{user.display_name || "Sin nombre"}</strong><small>{user.email || "Sin correo"}</small></div></div></td><td>{user.rol === "admin" ? "Administradora" : user.rol || "Usuaria"}</td><td>{user.tipo_plan || "Sin plan"}</td><td><span className={`admin-badge ${user.suscripcion_activa ? "active" : ""}`}>{user.suscripcion_activa ? "Activa" : "Inactiva"}</span></td><td><button className="admin-button" disabled={pending.includes(user.user_id)} aria-label={`${user.suscripcion_activa ? "Desactivar" : "Activar"} suscripción de ${user.display_name || user.email}`} onClick={() => toggleSubscription(user)}>{pending.includes(user.user_id) ? "Actualizando…" : user.suscripcion_activa ? "Desactivar" : "Activar"}</button></td></tr>)}</tbody></table></div>
+        <footer className="admin-pagination"><span>{(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, filtered.length)} de {filtered.length} usuarias</span><div><button className="admin-button" aria-label="Página anterior" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}><ChevronLeft size={16} /></button><span>{currentPage} / {pages}</span><button className="admin-button" aria-label="Página siguiente" disabled={currentPage === pages} onClick={() => setPage(currentPage + 1)}><ChevronRight size={16} /></button></div></footer>
+      </>}
+    </section>
+  </main>;
 }

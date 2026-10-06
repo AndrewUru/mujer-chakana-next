@@ -1,186 +1,42 @@
-"use client";
-
+﻿"use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+import Link from "next/link";
 import Image from "next/image";
-import Breadcrumbs from "@/components/Breadcrumbs";
-
-interface MujerChakana {
-  id: number;
-  arquetipo: string;
-  elemento: string;
-  descripcion: string;
-  imagen_url?: string;
-  audio_url?: string;
-  ritual_pdf?: string;
-}
-
+import { Pencil, Trash2, Search, FileText } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
+interface Arquetipo { id: number; arquetipo: string; elemento: string; descripcion: string; imagen_url?: string; audio_url?: string; ritual_pdf?: string; }
 export default function AdminMujerChakanaPage() {
-  const router = useRouter();
-
-  const [arquetipos, setArquetipos] = useState<MujerChakana[]>([]);
+  const [items, setItems] = useState<Arquetipo[]>([]);
   const [loading, setLoading] = useState(true);
-  const [mensajeExito, setMensajeExito] = useState<string | null>(null);
-  const [mensajeError, setMensajeError] = useState<string | null>(null);
-
+  const [query, setQuery] = useState("");
+  const [pending, setPending] = useState<number | null>(null);
+  const [notice, setNotice] = useState<{ text: string; error?: boolean } | null>(null);
   useEffect(() => {
-    fetchArquetipos();
+    let cancelled = false;
+    async function load() {
+      try {
+        const { data, error } = await supabase.from("mujer_chakana").select("*").order("arquetipo");
+        if (error) throw error;
+        if (!cancelled) setItems(data ?? []);
+      } catch { if (!cancelled) setNotice({ text: "No se pudieron cargar los arquetipos. Recarga la página para volver a intentarlo.", error: true }); }
+      finally { if (!cancelled) setLoading(false); }
+    }
+    void load(); return () => { cancelled = true; };
   }, []);
-
-  async function fetchArquetipos() {
-    setLoading(true);
-    setMensajeError(null);
-
-    const { data, error } = await supabase.from("mujer_chakana").select("*");
-
-    if (!error && data) {
-      setArquetipos(data);
-    } else {
-      setMensajeError("No se pudieron cargar los arquetipos.");
-    }
-    setLoading(false);
+  async function remove(item: Arquetipo) {
+    if (!confirm(`¿Eliminar «${item.arquetipo}»? Esta acción no se puede deshacer.`)) return;
+    setPending(item.id); setNotice(null);
+    try {
+      const { data, error } = await supabase.from("mujer_chakana").delete().eq("id", item.id).select("id");
+      if (error || !data?.length) throw error ?? new Error("Sin cambios");
+      setItems(prev => prev.filter(value => value.id !== item.id)); setNotice({ text: "Arquetipo eliminado correctamente." });
+    } catch { setNotice({ text: "No se pudo eliminar el arquetipo. Inténtalo de nuevo.", error: true }); }
+    finally { setPending(null); }
   }
-
-  async function deleteArquetipo(id: number) {
-    const confirmar = confirm(
-      "¿Seguro que deseas eliminar este arquetipo? Esta acción no se puede deshacer."
-    );
-    if (!confirmar) return;
-
-    const { error } = await supabase
-      .from("mujer_chakana")
-      .delete()
-      .eq("id", id);
-
-    if (!error) {
-      setMensajeExito("Arquetipo eliminado correctamente.");
-      fetchArquetipos();
-      setTimeout(() => setMensajeExito(null), 4000);
-    } else {
-      setMensajeError("Ocurrió un error al eliminar el arquetipo.");
-      setTimeout(() => setMensajeError(null), 4000);
-    }
-  }
-
-  return (
-    <main className="max-w-6xl mx-auto py-8 space-y-6 px-2 sm:px-6 pb-40">
-      <div className="bg-white/60 backdrop-blur-md rounded-2xl shadow-lg border border-pink-100 px-6 py-5 mb-6 flex flex-col gap-2">
-        <Breadcrumbs
-          items={[
-            { label: "Admin", href: "/admin" },
-            { label: "Ginergética", href: "/admin/mujer-chakana" },
-            { label: "Editar Arquetipo" },
-          ]}
-        />
-
-        <h1 className="text-2xl font-extrabold text-pink-800 tracking-tight">
-          ✨ Admin · Ginergética
-        </h1>
-      </div>
-
-      {/* Mensajes de éxito o error */}
-      {mensajeExito && (
-        <div className="bg-green-50 border border-green-300 text-green-700 px-3 py-2 rounded-lg shadow text-sm">
-          {mensajeExito}
-        </div>
-      )}
-      {mensajeError && (
-        <div className="bg-red-50 border border-red-300 text-red-700 px-3 py-2 rounded-lg shadow text-sm">
-          {mensajeError}
-        </div>
-      )}
-
-      <div className="flex justify-end mb-2">
-        <button
-          className="bg-pink-600 text-white px-4 py-2 rounded-xl hover:bg-pink-700 font-semibold shadow flex items-center gap-2 transition"
-          onClick={() => router.push("/admin/mujer-chakana/crear")}
-        >
-          <span className="text-lg">+</span> Nuevo Arquetipo
-        </button>
-      </div>
-
-      {loading ? (
-        <p className="text-pink-600">Cargando arquetipos...</p>
-      ) : arquetipos.length === 0 ? (
-        <p className="text-gray-500 italic">
-          No hay arquetipos registrados aún.
-        </p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {arquetipos.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white border border-pink-100 rounded-2xl p-4 shadow-md hover:shadow-lg transition-all flex flex-col gap-2 relative group"
-            >
-              {/* Imagen pequeña */}
-              {item.imagen_url && (
-                <div className="flex justify-center mb-2">
-                  <Image
-                    src={item.imagen_url}
-                    alt={`Imagen del arquetipo ${item.arquetipo}`}
-                    className="rounded-xl border border-pink-50 object-cover shadow w-28 h-28"
-                    width={112}
-                    height={112}
-                  />
-                </div>
-              )}
-
-              {/* Info principal */}
-              <h2 className="text-base font-bold text-pink-800 truncate">
-                {item.arquetipo}
-              </h2>
-              <p className="text-xs text-pink-600 mb-1">
-                Elemento: <span className="font-semibold">{item.elemento}</span>
-              </p>
-              <p className="text-gray-700 text-xs line-clamp-3">
-                {item.descripcion}
-              </p>
-
-              {/* Audio y PDF */}
-              <div className="flex flex-col gap-1 mt-2">
-                {item.audio_url && (
-                  <audio controls className="w-full rounded">
-                    <source src={item.audio_url} type="audio/mpeg" />
-                    Tu navegador no soporta audio.
-                  </audio>
-                )}
-                {item.ritual_pdf && (
-                  <a
-                    href={item.ritual_pdf}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-pink-700 hover:underline text-xs mt-1"
-                  >
-                    📄 Ritual PDF
-                  </a>
-                )}
-              </div>
-
-              {/* Acciones */}
-              <div className="flex gap-4 mt-3">
-                <button
-                  className="flex items-center gap-1 text-pink-600 hover:underline text-xs"
-                  onClick={() =>
-                    router.push(`/admin/mujer-chakana/editar/${item.id}`)
-                  }
-                >
-                  <span className="text-lg">✏️</span> Editar
-                </button>
-                <button
-                  className="flex items-center gap-1 text-rose-500 hover:underline text-xs"
-                  onClick={() => deleteArquetipo(item.id)}
-                >
-                  <span className="text-lg">🗑️</span> Eliminar
-                </button>
-              </div>
-
-              {/* Sombra extra en hover */}
-              <span className="absolute inset-0 rounded-2xl ring-1 ring-pink-100 group-hover:ring-rose-200 transition pointer-events-none" />
-            </div>
-          ))}
-        </div>
-      )}
-    </main>
-  );
+  const filtered = items.filter(item => `${item.arquetipo} ${item.elemento}`.toLocaleLowerCase("es").includes(query.trim().toLocaleLowerCase("es")));
+  return <main className="admin-page"><header className="admin-heading"><div><p className="admin-eyebrow">La esencia de cada arquetipo</p><h1>Mujer Chakana.</h1><p className="admin-subtitle">Cuida las historias, los rituales y los elementos de cada arquetipo.</p></div><span className="admin-badge">{items.length} arquetipos</span></header>
+    {notice && <div role={notice.error ? "alert" : "status"} className={`admin-notice ${notice.error ? "error" : ""}`}>{notice.text}</div>}
+    <div className="admin-toolbar" style={{ padding: "0 0 24px" }}><label className="admin-search"><Search size={18} /><input value={query} onChange={e => setQuery(e.target.value)} aria-label="Buscar arquetipos" placeholder="Buscar por arquetipo o elemento…" /></label></div>
+    {loading ? <div role="status" className="admin-empty">Cargando arquetipos…</div> : !filtered.length ? <div className="admin-empty">{items.length ? "No encontramos arquetipos con esa búsqueda." : "Todavía no hay arquetipos registrados."}</div> : <section className="admin-grid" aria-label="Arquetipos">{filtered.map(item => <article className="admin-card" key={item.id}><div className="admin-archetype-heading">{item.imagen_url && <Image src={item.imagen_url} alt={`Arquetipo ${item.arquetipo}`} width={80} height={80} className="admin-archetype-image" />}<div><span className="admin-badge">{item.elemento || "Sin elemento"}</span><h2 style={{ marginTop: 12 }}>{item.arquetipo}</h2></div></div><p>{item.descripcion || "Sin descripción."}</p>{item.audio_url && <audio controls preload="none" aria-label={`Audio de ${item.arquetipo}`} style={{ width: "100%" }} src={item.audio_url} />}{item.ritual_pdf && <a className="admin-button" style={{ marginTop: 12 }} href={item.ritual_pdf} target="_blank" rel="noopener noreferrer"><FileText size={15} /> Ver ritual PDF</a>}<div className="admin-card-actions"><Link className="admin-button" href={`/admin/mujer-chakana/editar/${item.id}`}><Pencil size={15} /> Editar</Link><button className="admin-button danger" disabled={pending !== null} onClick={() => remove(item)} aria-label={`Eliminar ${item.arquetipo}`}><Trash2 size={15} />{pending === item.id ? "Eliminando…" : "Eliminar"}</button></div></article>)}</section>}
+  </main>;
 }

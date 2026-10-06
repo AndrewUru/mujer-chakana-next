@@ -1,103 +1,44 @@
-// src/app/admin/recursos/page.tsx
-"use client";
-
+﻿"use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Search, Plus, Pencil, Trash2, BookOpen } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
-import Breadcrumbs from "@/components/Breadcrumbs";
-
-interface Recurso {
-  id: number;
-  titulo: string;
-  tipo: string;
-  descripcion: string;
-  url?: string;
-}
-
+interface Recurso { id: number; titulo: string; tipo: string; descripcion: string; url?: string; }
 export default function RecursosAdminPage() {
-  const router = useRouter();
   const [recursos, setRecursos] = useState<Recurso[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [query, setQuery] = useState("");
+  const [tipo, setTipo] = useState("");
+  const [pending, setPending] = useState<number | null>(null);
+  const [notice, setNotice] = useState<{ text: string; error?: boolean } | null>(null);
   useEffect(() => {
-    async function fetchRecursos() {
-      const { data, error } = await supabase.from("recursos").select("*");
-      if (error) {
-        console.error("Error cargando recursos:", error.message);
-      } else {
-        setRecursos(data || []);
-      }
-      setLoading(false);
+    let cancelled = false;
+    async function load() {
+      try {
+        const { data, error } = await supabase.from("recursos").select("*").order("titulo");
+        if (error) throw error;
+        if (!cancelled) setRecursos(data ?? []);
+      } catch { if (!cancelled) setNotice({ text: "No se pudieron cargar los recursos. Recarga la página para intentarlo de nuevo.", error: true }); }
+      finally { if (!cancelled) setLoading(false); }
     }
-
-    fetchRecursos();
+    void load(); return () => { cancelled = true; };
   }, []);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-pink-700">
-        Cargando recursos...
-      </div>
-    );
+  async function remove(recurso: Recurso) {
+    if (!confirm(`¿Eliminar «${recurso.titulo}»? Esta acción no se puede deshacer.`)) return;
+    setPending(recurso.id); setNotice(null);
+    try {
+      const { data, error } = await supabase.from("recursos").delete().eq("id", recurso.id).select("id");
+      if (error || !data?.length) throw error ?? new Error("Sin cambios");
+      setRecursos(prev => prev.filter(item => item.id !== recurso.id));
+      setNotice({ text: "Recurso eliminado correctamente." });
+    } catch { setNotice({ text: "No se pudo eliminar el recurso. Inténtalo de nuevo.", error: true }); }
+    finally { setPending(null); }
   }
-
-  return (
-    <main className="max-w-6xl mx-auto py-10 space-y-8 pb-40">
-      <div className="bg-white/60 backdrop-blur-md border border-pink-100 rounded-2xl shadow-lg px-6 py-5 mb-6 flex flex-col gap-3 items-start">
-        <h1 className="text-3xl font-bold text-pink-800 flex items-center gap-2">
-          🔮 Administrar Recursos
-        </h1>
-        <Breadcrumbs
-          items={[{ label: "Admin", href: "/admin" }, { label: "Recursos" }]}
-        />
-
-        <button
-          onClick={() => router.push("/admin/recursos/nuevo")}
-          className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition font-semibold shadow"
-        >
-          ➕ Añadir nuevo recurso
-        </button>
-      </div>
-
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        {recursos.map((recurso) => (
-          <div
-            key={recurso.id}
-            className="bg-white border border-pink-100 rounded-xl p-5 shadow"
-          >
-            <h2 className="text-xl font-semibold text-pink-700">
-              {recurso.titulo}
-            </h2>
-            <p className="text-sm text-gray-600">{recurso.tipo}</p>
-            <p className="mt-2 text-gray-700">{recurso.descripcion}</p>
-
-            <div className="flex gap-4 mt-4">
-              <button
-                onClick={() =>
-                  router.push(`/admin/recursos/editar/${recurso.id}`)
-                }
-                className="text-sm px-3 py-1 rounded-md bg-pink-200 hover:bg-pink-300 text-pink-800"
-              >
-                ✏️ Editar
-              </button>
-              <button
-                onClick={async () => {
-                  if (confirm("¿Seguro que deseas eliminar este recurso?")) {
-                    await supabase
-                      .from("recursos")
-                      .delete()
-                      .eq("id", recurso.id);
-                    router.refresh();
-                  }
-                }}
-                className="text-sm px-3 py-1 rounded-md bg-rose-200 hover:bg-rose-300 text-rose-800"
-              >
-                🗑️ Eliminar
-              </button>
-            </div>
-          </div>
-        ))}
-      </section>
-    </main>
-  );
+  const filtered = recursos.filter(item => `${item.titulo} ${item.descripcion}`.toLocaleLowerCase("es").includes(query.trim().toLocaleLowerCase("es")) && (!tipo || item.tipo === tipo));
+  return <main className="admin-page">
+    <header className="admin-heading"><div><p className="admin-eyebrow">Biblioteca de la comunidad</p><h1>Recursos para crecer.</h1><p className="admin-subtitle">Organiza los materiales que acompañan cada experiencia.</p></div><Link href="/admin/recursos/nuevo" className="admin-button primary"><Plus size={17} /> Nuevo recurso</Link></header>
+    {notice && <div role={notice.error ? "alert" : "status"} className={`admin-notice ${notice.error ? "error" : ""}`}>{notice.text}</div>}
+    <section className="admin-panel" style={{ marginBottom: 24 }}><div className="admin-panel-heading"><h2>Biblioteca</h2><span className="admin-badge">{filtered.length} recursos</span></div><div className="admin-toolbar"><label className="admin-search"><Search size={18} /><input aria-label="Buscar recursos" value={query} onChange={e => setQuery(e.target.value)} placeholder="Buscar un título o una descripción…" /></label><select value={tipo} onChange={e => setTipo(e.target.value)} aria-label="Filtrar por tipo"><option value="">Todos los formatos</option>{Array.from(new Set(recursos.map(item => item.tipo))).filter(Boolean).sort().map(value => <option key={value} value={value}>{value}</option>)}</select></div></section>
+    {loading ? <div role="status" className="admin-empty">Cargando recursos…</div> : !filtered.length ? <div className="admin-empty"><BookOpen size={30} style={{ margin: "0 auto 16px" }} /><h2>{recursos.length ? "No encontramos coincidencias" : "Tu biblioteca empieza aquí"}</h2><p>{recursos.length ? "Prueba otra búsqueda o cambia el formato." : "Añade el primer recurso para la comunidad."}</p></div> : <section className="admin-grid" aria-label="Recursos">{filtered.map(item => <article key={item.id} className="admin-card"><span className="admin-badge">{item.tipo || "Recurso"}</span><h2 style={{ marginTop: 16 }}>{item.titulo}</h2><p>{item.descripcion || "Sin descripción."}</p><div className="admin-card-actions"><Link className="admin-button" href={`/admin/recursos/editar/${item.id}`}><Pencil size={15} /> Editar</Link><button className="admin-button danger" disabled={pending !== null} onClick={() => remove(item)} aria-label={`Eliminar ${item.titulo}`}><Trash2 size={15} />{pending === item.id ? "Eliminando…" : "Eliminar"}</button></div></article>)}</section>}
+  </main>;
 }
