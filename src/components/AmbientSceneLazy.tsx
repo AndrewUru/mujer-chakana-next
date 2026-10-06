@@ -10,6 +10,6 @@ const AmbientChakanaScene = dynamic(
 
 export default function AmbientSceneLazy() {
   const pathname = usePathname();
-  if (pathname === "/dashboard" || pathname === "/manual") return null;
+  if (pathname === "/dashboard" || pathname === "/manual" || pathname === "/recursos") return null;
   return <AmbientChakanaScene />;
 }

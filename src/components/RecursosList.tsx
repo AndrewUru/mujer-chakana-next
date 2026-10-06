@@ -2,6 +2,7 @@
 
 import { useId, useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowUpRight, BookOpen, Check, Headphones, Lock, Play, Search, SlidersHorizontal, Sparkles, X } from "lucide-react";
 import styles from "./RecursosList.module.css";
 
@@ -12,6 +13,10 @@ type Recurso = {
   titulo: string;
   url: string;
   descripcion: string;
+  imagen_url?: string;
+  fase?: string;
+  arquetipo?: string;
+  elemento?: string;
   tipo_suscripcion: Tier | Tier[];
 };
 type Format = "audio" | "pdf" | "video" | "otro";
@@ -48,7 +53,7 @@ export default function RecursosList({ recursos, isSubscriber }: { recursos: Rec
   const visible = library.filter(resource =>
     (format === "todos" || resource.format === format) &&
     (access === "todos" || (access === "disponibles" ? resource.available : !resource.available && resource.knownAccess)) &&
-    normalize(`${resource.titulo} ${resource.descripcion}`).includes(normalize(query))
+    normalize([resource.titulo, resource.descripcion, resource.fase, resource.arquetipo, resource.elemento].filter(Boolean).join(" ")).includes(normalize(query))
   );
   const hasFilters = query !== "" || format !== "todos" || access !== "todos";
   const reset = () => { setQuery(""); setFormat("todos"); setAccess("todos"); };
@@ -94,6 +99,7 @@ export default function RecursosList({ recursos, isSubscriber }: { recursos: Rec
           const Icon = meta.icon;
           return <article key={resource.id} className={styles.card} data-format={resource.format}>
             <div className={styles.art} aria-hidden="true">
+              {resource.imagen_url && <Image src={resource.imagen_url} alt="" fill sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw" className={styles.cover} />}
               <span className={styles.orbit} /><span className={styles.orbitInner} />
               {resource.format === "audio" && <div className={styles.wave}>{[18, 32, 22, 48, 65, 38, 76, 48, 28, 58, 36, 20, 30].map((height, index) => <i key={index} style={{ height }} />)}</div>}
               <span className={styles.artIcon}><Icon size={30} strokeWidth={1.2} /></span>
@@ -104,6 +110,7 @@ export default function RecursosList({ recursos, isSubscriber }: { recursos: Rec
               <div className={styles.metadata}><span>{resource.plan}</span><span>{resource.available ? "Disponible" : resource.knownAccess ? "Exclusivo" : "Próximamente"}</span></div>
               <h3>{resource.titulo}</h3>
               <p>{resource.descripcion || "Un espacio para acompañar tu práctica y volver a ti."}</p>
+              {[resource.fase, resource.arquetipo, resource.elemento].some(Boolean) && <div className={styles.tags}>{[resource.fase, resource.arquetipo, resource.elemento].filter(Boolean).map((tag, index) => <span key={index}>{tag}</span>)}</div>}
               {resource.knownAccess ? <Link className={styles.cardLink} href={resource.available ? `/recursos/${resource.id}` : "/suscripcion"} aria-label={`${resource.available ? meta.action : "Conocer planes"}: ${resource.titulo}`}>
                 <span>{resource.available ? meta.action : "Conocer planes"}</span>
                 {resource.available ? <ArrowUpRight size={18} aria-hidden="true" /> : <Lock size={16} aria-hidden="true" />}
