@@ -63,7 +63,7 @@ export const metadata: Metadata = {
         url: "https://elsaltoweb.es/wp-content/uploads/2025/04/mujer-chakana.png",
         width: 1200,
         height: 630,
-        alt: "Mujer Chakana - Ciclo Lunar y Autoexploración",
+        alt: "Ginergetica - Ciclo Lunar y Autoexploración",
       },
     ],
   },

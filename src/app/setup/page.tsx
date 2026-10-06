@@ -61,7 +61,7 @@ export default function SetupPage() {
       <Image src="/tierra-ui.webp" alt="" fill priority sizes="100vw" className={styles.backdrop} />
       <div className={styles.veil} aria-hidden="true" />
       <nav className={styles.nav} aria-label="Navegación de perfil">
-        <Link href="/dashboard">Mujer Chakana <span>/ Tu espacio</span></Link>
+        <Link href="/dashboard">Ginergética <span>/ Tu espacio</span></Link>
         <Link href="/manual"><BookOpen size={16} /> Guía de uso</Link>
       </nav>
       <div className={styles.layout}>

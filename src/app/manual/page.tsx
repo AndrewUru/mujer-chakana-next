@@ -10,7 +10,7 @@ export default function ManualPage() {
           🌸 Manual de Usuario <br /> GINERGETICA
         </h1>
         <p className="text-lg md:text-xl text-rose-700 max-w-3xl mx-auto mb-4">
-          Bienvenida a <strong>Mujer Chakana</strong>, tu espacio sagrado para
+          Bienvenida a <strong>Ginergética</strong>, tu espacio sagrado para
           reconectar con tu ciclo, tus arquetipos y tu energía creadora.
         </p>
         <p className="text-md md:text-lg text-pink-700 max-w-2xl mx-auto">
