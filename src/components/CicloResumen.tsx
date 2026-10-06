@@ -1,19 +1,9 @@
-"use client";
+﻿"use client";
 
-import { useMemo, useState, type MouseEvent } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import {
-  Droplets,
-  Flame,
-  Mountain,
-  Wind,
-  Sparkles,
-  Lock,
-  Music2,
-  ScrollText,
-  Clapperboard,
-  LucideIcon,
-} from "lucide-react";
+import { ArrowUpRight, Droplets, Flame, Mountain, Wind, Sparkles, Lock, Music2, ScrollText, Clapperboard, BookOpen } from "lucide-react";
+import styles from "./CicloResumen.module.css";
 
 interface MujerChakanaData {
   elemento: string;
@@ -23,80 +13,14 @@ interface MujerChakanaData {
   video_url?: string;
   tip_extra?: string;
 }
-
-type ElementKey = "Agua" | "Fuego" | "Tierra" | "Aire" | "default";
-
-interface ElementMeta {
-  texture: string;
-  overlay: string;
-  icon: LucideIcon;
-  iconRing: string;
-  badge: string;
-  accent: string;
-  affirmation: string;
-}
-
-const elementMeta: Record<ElementKey, ElementMeta> = {
-  Agua: {
-    texture: "url('/agua-ui.webp')",
-    overlay: "from-sky-950/80 via-sky-900/60 to-slate-900/75",
-    icon: Droplets,
-    iconRing:
-      "from-sky-200/40 to-blue-200/20 border-sky-100/50 shadow-[0_20px_45px_rgba(125,211,252,0.35)]",
-    badge: "bg-sky-100/15 border-sky-100/40 text-sky-100",
-    accent: "text-sky-100",
-    affirmation:
-      "Fluye con sensibilidad, hidrata tu cuerpo y escucha tu intuición.",
-  },
-  Fuego: {
-    texture: "url('/fuego-ui.webp')",
-    overlay: "from-rose-950/80 via-red-900/60 to-orange-900/70",
-    icon: Flame,
-    iconRing:
-      "from-rose-200/50 to-orange-200/20 border-rose-100/50 shadow-[0_20px_45px_rgba(248,113,113,0.35)]",
-    badge: "bg-rose-100/20 border-rose-100/40 text-rose-100",
-    accent: "text-rose-100",
-    affirmation:
-      "Prende tu creatividad, expresa tu poder interior y honra tu brillo.",
-  },
-  Tierra: {
-    texture: "url('/tierra-ui.webp')",
-    overlay: "from-stone-950/80 via-emerald-900/60 to-stone-900/70",
-    icon: Mountain,
-    iconRing:
-      "from-emerald-200/40 to-lime-200/20 border-emerald-100/40 shadow-[0_20px_45px_rgba(52,211,153,0.32)]",
-    badge: "bg-emerald-100/15 border-emerald-100/40 text-emerald-100",
-    accent: "text-emerald-100",
-    affirmation: "Enraíza tu energía, nutre el cuerpo y organiza tus espacios.",
-  },
-  Aire: {
-    texture: "url('/cielo-ui.webp')",
-    overlay: "from-indigo-950/80 via-purple-900/60 to-blue-900/70",
-    icon: Wind,
-    iconRing:
-      "from-indigo-200/40 to-purple-200/20 border-indigo-100/40 shadow-[0_20px_45px_rgba(129,140,248,0.32)]",
-    badge: "bg-indigo-100/20 border-indigo-100/40 text-indigo-100",
-    accent: "text-indigo-100",
-    affirmation:
-      "Respira profundo, ordena tus pensamientos y comparte tu verdad.",
-  },
-  default: {
-    texture: "url('/mujer-chakana.webp')",
-    overlay: "from-rose-950/75 via-rose-900/60 to-stone-900/70",
-    icon: Sparkles,
-    iconRing:
-      "from-rose-200/40 to-pink-200/20 border-rose-100/40 shadow-[0_20px_45px_rgba(244,114,182,0.30)]",
-    badge: "bg-rose-100/20 border-rose-100/40 text-rose-100",
-    accent: "text-rose-100",
-    affirmation:
-      "Celebra tu ciclo y permite que cada fase revele un aprendizaje nuevo.",
-  },
+const elements = {
+  Agua: { Icon: Droplets, phrase: "Haz espacio para lo que sientes.", description: "Fluye con sensibilidad y encuentra un momento para escuchar tu intuición." },
+  Fuego: { Icon: Flame, phrase: "Dale espacio a tu chispa.", description: "Explora tu creatividad y encuentra una forma de expresar lo que llevas dentro." },
+  Tierra: { Icon: Mountain, phrase: "Vuelve a lo que te sostiene.", description: "Baja el ritmo, conecta con tu cuerpo y cuida los pequeños gestos de cada día." },
+  Aire: { Icon: Wind, phrase: "Abre una ventana a lo nuevo.", description: "Respira, ordena tus pensamientos y encuentra palabras para tu propia voz." },
 };
 
-export default function CicloResumen({
-  mujerChakanaData,
-  isSubscriber,
-}: {
+export default function CicloResumen({ mujerChakanaData, isSubscriber, day }: {
   day: number;
   fechaInicioCiclo: Date;
   fechaFinCiclo: Date;
@@ -104,278 +28,32 @@ export default function CicloResumen({
   mujerChakanaData: MujerChakanaData;
   isSubscriber: boolean;
 }) {
-  const [showUpsell, setShowUpsell] = useState(false);
-
-  const elementKey: ElementKey =
-    mujerChakanaData.elemento === "Cielo"
-      ? "Aire"
-      : ["Agua", "Fuego", "Tierra", "Aire"].includes(mujerChakanaData.elemento)
-        ? (mujerChakanaData.elemento as ElementKey)
-        : "default";
-  const {
-    texture,
-    overlay,
-    icon: ElementIcon,
-    iconRing,
-    badge,
-    accent,
-    affirmation,
-  } = elementMeta[elementKey];
-
-  const resourceItems = useMemo(
-    () =>
-      [
-        {
-          id: "audio",
-          label: "Audio guía",
-          description:
-            "Conecta con tu voz interior y sincroniza tu respiración.",
-          icon: Music2,
-          url: mujerChakanaData.audio_url,
-        },
-        {
-          id: "ritual",
-          label: "Ritual guiado",
-          description: "Un paso a paso para honrar el arquetipo del día.",
-          icon: ScrollText,
-          url: mujerChakanaData.ritual_pdf,
-        },
-        {
-          id: "video",
-          label: "Video inspiración",
-          description: "Movimiento consciente y visualizaciones activas.",
-          icon: Clapperboard,
-          url: mujerChakanaData.video_url,
-        },
-      ].filter((item) => item.url),
-    [
-      mujerChakanaData.audio_url,
-      mujerChakanaData.ritual_pdf,
-      mujerChakanaData.video_url,
-    ]
-  );
-
-  const hasPremiumContent = resourceItems.length > 0;
-
-  const dailyContentHref = `/ritual?pdf=${encodeURIComponent(
-    mujerChakanaData.ritual_pdf || ""
-  )}&audio=${encodeURIComponent(
-    mujerChakanaData.audio_url || ""
-  )}&video=${encodeURIComponent(mujerChakanaData.video_url || "")}`;
-
-  const handleNoAccess = (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    setShowUpsell(true);
-  };
-
-  return (
-    <div
-      className="relative flex min-h-[420px] flex-col justify-center overflow-hidden rounded-[24px] border border-white/20 p-4 text-white shadow-2xl shadow-rose-900/25 sm:rounded-[32px] sm:p-6 lg:p-8"
-      style={{
-        backgroundImage: texture,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div
-        className={`pointer-events-none absolute inset-0 rounded-[24px] bg-gradient-to-br sm:rounded-[32px] ${overlay}`}
-      />
-      <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent sm:inset-x-8" />
-
-      <div className="relative z-10 grid gap-6 lg:gap-8 2xl:grid-cols-[minmax(0,1.1fr)_minmax(22rem,0.72fr)]">
-        <div className="space-y-6 sm:space-y-8">
-          <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left">
-            <div className="flex flex-col items-center gap-3 sm:items-start sm:gap-4">
-              <span
-                className={`flex h-20 w-20 items-center justify-center rounded-full border backdrop-blur-md bg-gradient-to-br sm:h-24 sm:w-24 ${iconRing}`}
-              >
-                <ElementIcon className="h-10 w-10 text-white/90 sm:h-12 sm:w-12" />
-              </span>
-              <span
-                className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.18em] sm:px-4 sm:text-xs sm:tracking-[0.2em] ${badge}`}
-              >
-                Ritmo elemental
-              </span>
-            </div>
-            <div className="mt-4 sm:ml-8 sm:mt-0">
-              <h1 className="text-3xl font-bold leading-tight sm:text-5xl">
-                {mujerChakanaData.elemento}
-              </h1>
-              <p
-                className={`mt-2 max-w-xl text-sm leading-relaxed sm:mt-3 sm:text-base ${accent}`}
-              >
-                {affirmation}
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-3 rounded-[20px] border border-white/20 bg-white/10 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_18px_42px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:rounded-3xl sm:p-6">
-            <h2 className="text-base font-semibold text-white sm:text-lg">
-              Panorama del ciclo presente
-            </h2>
-            <div className="flex flex-wrap items-center gap-2 text-xs text-white/80 sm:gap-3 sm:text-sm">
-              <span className="rounded-full border border-white/24 bg-white/14 px-3 py-1 font-medium shadow-inner sm:px-4">
-                Elemento guía: {mujerChakanaData.elemento}
-              </span>
-              {mujerChakanaData.semana && (
-                <span className="rounded-full border border-white/24 bg-white/14 px-3 py-1 font-medium shadow-inner sm:px-4">
-                  Semana lunar: {mujerChakanaData.semana}
-                </span>
-              )}
-              <span className="rounded-full border border-white/24 bg-white/14 px-3 py-1 font-medium shadow-inner sm:px-4">
-                Recursos sugeridos: {resourceItems.length || "Próximamente"}
-              </span>
-            </div>
-
-            <p className="text-sm text-white/70">
-              Honra este momento registrando tus emociones y necesidades; así,
-              la plataforma podrá guiarte con mayor precisión en tus próximos
-              días.
-            </p>
-          </div>
-
-          {hasPremiumContent && (
-            <div className="space-y-3 sm:space-y-4">
-              <h3 className="text-base font-semibold text-white/90">
-                Herramientas disponibles hoy
-              </h3>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {resourceItems.map(({ id, label, description, icon: Icon }) => (
-                  <div
-                    key={id}
-                    className="group flex flex-col gap-2 rounded-[18px] border border-white/18 bg-white/10 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] backdrop-blur-xl transition duration-300 hover:border-white/35 hover:bg-white/16 sm:rounded-2xl sm:p-4"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/10">
-                        <Icon className="h-5 w-5 text-white/90" />
-                      </span>
-                      <div className="flex flex-1 items-center justify-between">
-                        <p className="font-medium text-white">{label}</p>
-                        {isSubscriber ? (
-                          <Sparkles className="h-5 w-5 text-amber-200" />
-                        ) : (
-                          <Lock className="h-5 w-5 text-white/50" />
-                        )}
-                      </div>
-                    </div>
-                    <p className="text-xs text-white/70">{description}</p>
-                    {!isSubscriber && (
-                      <p className="text-xs font-semibold text-rose-200">
-                        Disponible con suscripción activa.
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="space-y-3 sm:space-y-4">
-            {hasPremiumContent ? (
-              isSubscriber ? (
-                <Link
-                  href={dailyContentHref}
-                  className="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-rose-500 via-rose-600 to-rose-700 px-4 py-3 text-sm font-semibold text-white shadow-xl transition duration-300 hover:from-rose-600 hover:via-rose-700 hover:to-rose-800 hover:shadow-rose-900/40 sm:gap-3 sm:px-6 sm:py-4 sm:text-base"
-                >
-                  <Sparkles className="h-5 w-5 transition group-hover:scale-110" />
-                  Acceder al portal del día
-                </Link>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleNoAccess}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-semibold text-white/80 backdrop-blur-md transition duration-300 hover:border-white/40 hover:text-white sm:gap-3 sm:px-6 sm:py-4 sm:text-base"
-                >
-                  <Lock className="h-5 w-5" />
-                  Contenido exclusivo · suscríbete para acceder
-                </button>
-              )
-            ) : (
-              <p className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-center text-sm text-white/70 backdrop-blur-md sm:px-6 sm:py-4">
-                Estamos preparando nuevos recursos para esta fase. Vuelve pronto
-                o explora el manual para seguir profundizando.
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className="grid gap-3 sm:rounded-3xl sm:border sm:border-white/18 sm:bg-white/10 sm:p-5 sm:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_18px_42px_rgba(0,0,0,0.18)] sm:backdrop-blur-xl md:grid-cols-3 2xl:flex 2xl:flex-col 2xl:gap-6 2xl:p-6">
-          {mujerChakanaData.tip_extra && (
-            <div className="rounded-[20px] border border-amber-200/30 bg-amber-100/15 p-4 text-amber-100 shadow-inner shadow-amber-900/20 sm:rounded-2xl sm:p-5 md:col-span-3 2xl:col-span-1">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-200">
-                Consejo del día
-              </p>
-              <p className="mt-2 max-w-3xl text-sm leading-relaxed text-amber-50 sm:mt-3 2xl:max-w-none">
-                {mujerChakanaData.tip_extra}
-              </p>
-            </div>
-          )}
-
-          <div className="rounded-[20px] border border-white/18 bg-white/10 p-4 text-white/74 backdrop-blur-xl sm:rounded-2xl sm:p-5 md:col-span-1">
-            <p className="text-sm leading-relaxed">
-              Tu ciclo es un mandala vivo. Registrar lo que sientes hoy abre una
-              puerta a la{" "}
-              <span className="font-semibold text-white">sabiduría propia</span>
-              . Permítete descansar, crear o moverte según lo que tu cuerpo
-              exprese.
-            </p>
-          </div>
-
-          <div className="rounded-[20px] border border-white/16 bg-white/10 p-4 text-sm text-white/68 backdrop-blur-xl sm:rounded-2xl sm:p-5 md:col-span-2 2xl:col-span-1">
-            <p>
-              Si necesitas inspiración extra, visita el manual o consulta el
-              calendario lunar. Tu práctica constante es un acto de amor.
-            </p>
-            <div className="mt-3 flex flex-col gap-2 text-sm sm:mt-4 sm:flex-row sm:gap-3">
-              <Link
-                href="/manual"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 px-4 py-2 text-white/85 transition hover:border-white/40 hover:text-white"
-              >
-                Guía práctica
-              </Link>
-              <Link
-                href="/ciclo"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 px-4 py-2 text-white/85 transition hover:border-white/40 hover:text-white"
-              >
-                Ver calendario
-              </Link>
-            </div>
-          </div>
-        </div>
+  const [showAccess, setShowAccess] = useState(false);
+  const key = mujerChakanaData.elemento === "Cielo" ? "Aire" : mujerChakanaData.elemento;
+  const element = elements[key as keyof typeof elements] || { Icon: Sparkles, phrase: "Encuentra tu propia forma de estar.", description: "Escucha lo que necesitas hoy y deja espacio para descubrirlo sin prisa." };
+  const { Icon } = element;
+  const resources = [
+    { id: "audio", label: "Escucha tu audio guía", description: "Un momento para conectar hacia dentro", Icon: Music2, url: mujerChakanaData.audio_url },
+    { id: "ritual", label: "Un ritual para este día", description: "Lleva tu intención a un pequeño gesto", Icon: ScrollText, url: mujerChakanaData.ritual_pdf },
+    { id: "video", label: "Inspírate en movimiento", description: "Una invitación para explorar y sentir", Icon: Clapperboard, url: mujerChakanaData.video_url },
+  ].filter(resource => resource.url);
+  const dailyContentHref = `/ritual?pdf=${encodeURIComponent(mujerChakanaData.ritual_pdf || "")}&audio=${encodeURIComponent(mujerChakanaData.audio_url || "")}&video=${encodeURIComponent(mujerChakanaData.video_url || "")}`;
+  return <div className={styles.summary}>
+    <section className={styles.elementCard}>
+      <div className={styles.elementTop}><span><Icon size={15} /> {mujerChakanaData.elemento}</span><small>DÍA {day}</small></div>
+      <Icon className={styles.elementArt} aria-hidden="true" strokeWidth={.7} />
+      <div className={styles.elementCopy}><p>UNA INVITACIÓN PARA HOY</p><h3>{element.phrase}</h3><span>{element.description}</span></div>
+      {mujerChakanaData.semana && <small className={styles.week}>Semana lunar · {mujerChakanaData.semana}</small>}
+    </section>
+    <section className={styles.practices} aria-labelledby="daily-practices">
+      <p className={styles.eyebrow}>A TU MANERA, SIN PRISA</p><h3 id="daily-practices">Pequeños rituales.<br /><em>Tiempo para ti.</em></h3>
+      <div className={styles.resourceList}>
+        {resources.map(({ id, label, description, Icon: ResourceIcon }) => isSubscriber ? <Link className={styles.resource} key={id} href={dailyContentHref}><span className={styles.resourceIcon}><ResourceIcon size={20} /></span><span><strong>{label}</strong><small>{description}</small></span><ArrowUpRight size={18} /></Link> : <button type="button" className={styles.resource} key={id} onClick={() => setShowAccess(value => !value)} aria-expanded={showAccess} aria-controls="cycle-subscription"><span className={styles.resourceIcon}><ResourceIcon size={20} /></span><span><strong>{label}</strong><small>Disponible con suscripción</small></span><Lock size={15} /></button>)}
+        {!resources.length && <p className={styles.empty}>Todavía no hay recursos para este día. Puedes encontrar inspiración en la guía práctica.</p>}
+        <Link href="/manual" className={styles.resource}><span className={styles.resourceIcon}><BookOpen size={20} /></span><span><strong>Explora la guía práctica</strong><small>Ideas para acompañar tu propio ritmo</small></span><ArrowUpRight size={18} /></Link>
       </div>
-
-      {showUpsell && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-md">
-          <div className="glass-panel max-w-md rounded-[22px] p-5 text-center text-rose-900 sm:rounded-3xl sm:p-8">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-rose-600 text-white shadow-lg">
-              <Lock className="h-7 w-7" />
-            </div>
-
-            <h3 className="text-2xl font-bold">Contenido exclusivo</h3>
-            <p className="mt-3 text-sm leading-relaxed text-rose-700">
-              Activa tu suscripción para abrir rituales, audio-guías y videos
-              diseñados especialmente para este día del ciclo.
-            </p>
-
-            <div className="mt-6 space-y-3">
-              <Link
-                href="/suscripcion"
-                className="block w-full rounded-xl bg-gradient-to-r from-rose-500 to-rose-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:from-rose-600 hover:to-rose-700"
-              >
-                Ver planes de suscripción
-              </Link>
-              <button
-                type="button"
-                onClick={() => setShowUpsell(false)}
-                className="block w-full text-sm font-medium text-rose-500 transition hover:text-rose-600"
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+      {showAccess && <div className={styles.access} id="cycle-subscription"><p>Estos rituales forman parte de la suscripción. Descubre qué incluye y elige cómo continuar.</p><Link href="/suscripcion">Ver suscripciones <ArrowUpRight size={14} /></Link><button type="button" onClick={() => setShowAccess(false)}>Cerrar</button></div>}
+    </section>
+    {mujerChakanaData.tip_extra && <aside className={styles.dailyTip}><Sparkles size={19} aria-hidden="true" /><div><p>Una idea para llevarte</p><span>{mujerChakanaData.tip_extra}</span></div></aside>}
+  </div>;
 }
