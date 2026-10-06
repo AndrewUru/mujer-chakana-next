@@ -28,6 +28,7 @@ export default function DashboardJourneyScene({ scene: chapter, color, paused, p
       return;
     }
     canvas.dataset.renderer = "threejs";
+    canvas.hidden = false;
     renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 720 ? 1.25 : 1.75));
     const scene = new THREE.Scene();
@@ -163,7 +164,9 @@ export default function DashboardJourneyScene({ scene: chapter, color, paused, p
       canvas.removeEventListener("webglcontextlost", contextLost);
       geometry.dispose(); material.dispose();
       for (const orbit of orbits) { orbit.geometry.dispose(); orbit.material.dispose(); }
-      renderer.dispose(); renderer.forceContextLoss();
+      // Keep the canvas context reusable during React Strict Mode's effect replay.
+      // All owned GPU buffers/materials and renderer resources are disposed above.
+      renderer.dispose();
     };
     // The renderer persists; reactive settings are read from the ref above.
     // eslint-disable-next-line react-hooks/exhaustive-deps

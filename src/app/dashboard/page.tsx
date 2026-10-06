@@ -72,7 +72,14 @@ export default function DashboardPage() {
      for(const entry of entries)if(entry.isIntersecting)setActiveScene((entry.target as HTMLElement).dataset.sceneId as SceneId);
    },{rootMargin:"-25% 0px -55% 0px",threshold:0});
    rootRef.current?.querySelectorAll('[data-scene-id]').forEach(el=>observer.observe(el));
-   return ()=>observer.disconnect();
+   const hashTarget = document.getElementById(window.location.hash.slice(1));
+   const frame = requestAnimationFrame(() => {
+     if (hashTarget && rootRef.current?.contains(hashTarget) && hashTarget.dataset.sceneId) {
+       hashTarget.scrollIntoView({ behavior: "instant", block: "start" });
+       hashTarget.focus({ preventScroll: true });
+     }
+   });
+   return ()=> { observer.disconnect(); cancelAnimationFrame(frame); };
  },[loading]);
   const loadData = useCallback(async () => {
     setLoading(true);

@@ -613,7 +613,7 @@ export default function Home() {
               <Link href="/auth/login" className={styles.secondaryAction}>Ya tengo cuenta</Link>
             </div>
             <footer className={styles.storyFooter}>
-              <span>Mujer Chakana · 2026</span>
+              <span>Ginergética · 2026</span>
               <span>Diseñado para volver a ti.</span>
             </footer>
           </div>
