@@ -1,17 +1,11 @@
-"use client";
+﻿"use client";
 
-import { useMemo } from "react";
+import { useId, useMemo, useState } from "react";
 import Link from "next/link";
-import {
-  Music2,
-  ScrollText,
-  BookOpen,
-  Lock,
-  ShieldCheck,
-  Sparkles,
-  Gift,
-} from "lucide-react";
+import { ArrowUpRight, BookOpen, Check, Headphones, Lock, Play, Search, SlidersHorizontal, Sparkles, X } from "lucide-react";
+import styles from "./RecursosList.module.css";
 
+type Tier = "gratuito" | "mensual" | "anual";
 type Recurso = {
   id: string;
   tipo: string;
@@ -20,216 +14,110 @@ type Recurso = {
   descripcion: string;
   tipo_suscripcion: Tier | Tier[];
 };
-
-type Tier = "gratuito" | "mensual" | "anual";
-
-function includesTier(value: Recurso["tipo_suscripcion"], tier: Tier) {
-  return (Array.isArray(value) ? value : [value]).some(
-    (item) => typeof item === "string" && item.toLowerCase().trim() === tier
-  );
+type Format = "audio" | "pdf" | "video" | "otro";
+const formats = {
+  audio: { label: "Audios", singular: "Audio", action: "Explorar audio", icon: Headphones },
+  pdf: { label: "Guías PDF", singular: "Guía PDF", action: "Abrir guía", icon: BookOpen },
+  video: { label: "Vídeos", singular: "Vídeo", action: "Explorar vídeo", icon: Play },
+  otro: { label: "Otros recursos", singular: "Recurso", action: "Explorar recurso", icon: Sparkles },
+};
+const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+function getFormat(value: string): Format {
+  const type = normalize(value);
+  return type === "audio" || type === "pdf" || type === "video" ? type : "otro";
 }
 
-const tierMeta: Record<
-  Tier,
-  {
-    title: string;
-    icon: React.ReactNode;
-    accent: string;
-    badgeClass: string;
-    description: string;
-  }
-> = {
-  gratuito: {
-    title: "Recursos gratuitos",
-    icon: <Gift className="h-5 w-5 text-emerald-500" />,
-    accent: "text-emerald-600",
-    badgeClass:
-      "bg-emerald-100/80 text-emerald-700 border border-emerald-200 shadow-sm",
-    description:
-      "Materiales abiertos para iniciar tu recorrido y sostener tu práctica diaria.",
-  },
-  mensual: {
-    title: "Contenido exclusivo mensual",
-    icon: <Sparkles className="h-5 w-5 text-amber-500" />,
-    accent: "text-amber-600",
-    badgeClass:
-      "bg-amber-100/80 text-amber-700 border border-amber-200 shadow-sm",
-    description:
-      "Audio-guías y rituales anticipados disponibles con la suscripción mensual.",
-  },
-  anual: {
-    title: "Recursos para suscripción anual",
-    icon: <ShieldCheck className="h-5 w-5 text-rose-500" />,
-    accent: "text-rose-600",
-    badgeClass:
-      "bg-rose-100/80 text-rose-700 border border-rose-200 shadow-sm",
-    description:
-      "Biblioteca completa de contenidos profundos para acompañar tus 12 lunas.",
-  },
-};
-
-const iconByTipo: Record<string, React.ReactNode> = {
-  audio: <Music2 className="h-5 w-5" />,
-  pdf: <ScrollText className="h-5 w-5" />,
-};
-
-function getTipoIcon(tipo: string) {
-  return iconByTipo[tipo] ?? <BookOpen className="h-5 w-5" />;
-}
-
-export default function RecursosList({
-  recursos,
-  isSubscriber,
-}: {
-  recursos: Recurso[];
-  isSubscriber: boolean;
-}) {
-
-  const groupedResources = useMemo(
-    () => ({
-      gratuito: recursos.filter(
-        (r) => includesTier(r.tipo_suscripcion, "gratuito")
-      ),
-      mensual: recursos.filter(
-        (r) => includesTier(r.tipo_suscripcion, "mensual")
-      ),
-      anual: recursos.filter(
-        (r) => includesTier(r.tipo_suscripcion, "anual")
-      ),
-    }),
-    [recursos]
+export default function RecursosList({ recursos, isSubscriber }: { recursos: Recurso[]; isSubscriber: boolean }) {
+  const searchId = useId();
+  const [query, setQuery] = useState("");
+  const [format, setFormat] = useState<Format | "todos">("todos");
+  const [access, setAccess] = useState("todos");
+  const library = useMemo(() => Array.from(new Map(recursos.map(resource => [resource.id, resource])).values()).map(resource => {
+    const tiers = (Array.isArray(resource.tipo_suscripcion) ? resource.tipo_suscripcion : [resource.tipo_suscripcion]).map(tier => typeof tier === "string" ? normalize(tier) : "");
+    const free = tiers.includes("gratuito");
+    const paid = tiers.includes("mensual") || tiers.includes("anual");
+    return {
+      ...resource,
+      format: getFormat(resource.tipo),
+      available: free || (paid && isSubscriber),
+      knownAccess: free || paid,
+      plan: free ? "Gratuito" : tiers.includes("mensual") && tiers.includes("anual") ? "Mensual · Anual" : tiers.includes("mensual") ? "Plan mensual" : tiers.includes("anual") ? "Plan anual" : "Acceso por confirmar",
+    };
+  }), [recursos, isSubscriber]);
+  const availableCount = library.filter(resource => resource.available).length;
+  const visible = library.filter(resource =>
+    (format === "todos" || resource.format === format) &&
+    (access === "todos" || (access === "disponibles" ? resource.available : !resource.available && resource.knownAccess)) &&
+    normalize(`${resource.titulo} ${resource.descripcion}`).includes(normalize(query))
   );
-
-  const renderCards = (lista: Recurso[], tier: Tier) => {
-    const isPremiumTier = tier !== "gratuito";
-    const locked = isPremiumTier && !isSubscriber;
-
-    if (!lista.length) {
-      return (
-        <div className="glass-soft col-span-full rounded-[20px] p-5 text-center text-sm text-rose-700 sm:rounded-3xl sm:p-8">
-          Estamos preparando nuevos recursos para esta categoría. Vuelve pronto.
-        </div>
-      );
-    }
-
-    return lista.map((recurso) => {
-      const cardBase =
-        "group relative flex h-full flex-col justify-between rounded-[20px] p-4 transition hover:-translate-y-1 sm:rounded-3xl sm:p-6";
-
-      if (locked) {
-        return (
-          <div
-            key={recurso.id}
-            className={`${cardBase} glass-soft text-rose-300`}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/45 bg-white/30 text-rose-200 shadow-inner">
-                  {getTipoIcon(recurso.tipo)}
-                </span>
-                <div>
-                  <h3 className="text-base font-semibold line-through">
-                    {recurso.titulo}
-                  </h3>
-                  <p className="text-xs italic text-rose-400">
-                    {recurso.descripcion}
-                  </p>
-                </div>
-              </div>
-              <span
-                className={`flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${tierMeta[tier].badgeClass}`}
-              >
-                <Lock className="h-3.5 w-3.5" />
-                {tier === "mensual" ? "Mensual" : "Anual"}
-              </span>
-            </div>
-
-            <div className="mt-6 flex flex-col items-center gap-2 text-sm text-rose-500">
-              <Lock className="h-4 w-4" />
-              <p className="text-center">
-                Disponible para suscriptoras {tier === "mensual" ? "mensuales" : "anuales"}.
-              </p>
-              <Link
-                href="/suscripcion"
-                className="text-xs font-semibold text-rose-600 underline-offset-2 hover:underline"
-                tabIndex={-1}
-                aria-disabled="true"
-              >
-                Conocer planes
-              </Link>
-            </div>
-          </div>
-        );
-      }
-
-      return (
-        <Link
-          key={recurso.id}
-          href={`/recursos/${recurso.id}`}
-          className={`${cardBase} glass-panel hover:bg-white/70`}
-        >
-          <div className="flex items-start justify-between gap-4">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/60 bg-rose-100/55 text-rose-500 shadow-inner">
-              {getTipoIcon(recurso.tipo)}
-            </span>
-            <span
-              className={`flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${tierMeta[tier].badgeClass}`}
-            >
-              {tier === "gratuito" ? "Gratis" : tier === "mensual" ? "Mensual" : "Anual"}
-            </span>
-          </div>
-          <div className="mt-5 space-y-2">
-            <h3 className="text-lg font-semibold text-rose-900">
-              {recurso.titulo}
-            </h3>
-            <p className="text-sm text-rose-700">{recurso.descripcion}</p>
-          </div>
-          <span className="mt-6 inline-flex items-center gap-2 text-xs font-semibold text-rose-500 transition group-hover:text-rose-600">
-            Explorar recurso
-            <span aria-hidden="true">→</span>
-          </span>
-        </Link>
-      );
-    });
-  };
+  const hasFilters = query !== "" || format !== "todos" || access !== "todos";
+  const reset = () => { setQuery(""); setFormat("todos"); setAccess("todos"); };
 
   return (
-    <div className="space-y-8 sm:space-y-12">
-      {(["gratuito", "mensual", "anual"] as Tier[]).map((tier) => {
-        const section = tierMeta[tier];
-
-        return (
-          <section key={tier} className="space-y-4">
-            <div className="flex flex-col gap-2 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
-              <div className="space-y-1">
-                <span
-                  className={`glass-soft inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] ${section.accent}`}
-                >
-                  {section.icon}
-                  {tier}
-                </span>
-                <h2 className={`text-2xl font-semibold ${section.accent}`}>
-                  {section.title}
-                </h2>
-                <p className="text-sm text-rose-600">{section.description}</p>
-              </div>
-              {tier !== "gratuito" && !isSubscriber && (
-                <Link
-                  href="/suscripcion"
-                  className="glass-soft inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2 text-xs font-semibold text-rose-600 transition hover:bg-white/70 hover:text-rose-700"
-                >
-                  <Sparkles className="h-4 w-4" />
-                  Activar suscripcion
-                </Link>
-              )}
+    <div className={styles.library}>
+      <div className={styles.intro}>
+        <span className={styles.eyebrow}><Sparkles size={14} aria-hidden="true" /> Pequeñas pausas, nuevas perspectivas</span>
+        <span className={styles.inventory}>{availableCount} de {library.length} disponibles para ti</span>
+      </div>
+      {library.length > 0 && <>
+        <div className={styles.toolbar}>
+          <div className={styles.search}>
+            <Search size={18} aria-hidden="true" />
+            <label className={styles.srOnly} htmlFor={searchId}>Buscar en la biblioteca</label>
+            <input id={searchId} type="search" placeholder="¿Qué necesitas hoy?" value={query} onChange={event => setQuery(event.target.value)} />
+            {query && <button type="button" onClick={() => setQuery("")} aria-label="Borrar búsqueda"><X size={16} /></button>}
+          </div>
+          <label className={styles.access}>
+            <SlidersHorizontal size={16} aria-hidden="true" />
+            <span className={styles.srOnly}>Filtrar por acceso</span>
+            <select value={access} onChange={event => setAccess(event.target.value)}>
+              <option value="todos">Todo el contenido</option>
+              <option value="disponibles">Disponible para mí</option>
+              <option value="exclusivos">Por desbloquear</option>
+            </select>
+          </label>
+        </div>
+        <div className={styles.filterRow}>
+          <div className={styles.filters} role="group" aria-label="Filtrar por formato">
+            <button type="button" aria-pressed={format === "todos"} onClick={() => setFormat("todos")}>Todo <span>{library.length}</span></button>
+            {(Object.keys(formats) as Format[]).filter(key => library.some(resource => resource.format === key)).map(key => {
+              const Icon = formats[key].icon;
+              return <button key={key} type="button" aria-pressed={format === key} onClick={() => setFormat(key)}><Icon size={14} aria-hidden="true" />{formats[key].label}</button>;
+            })}
+          </div>
+          <span className={styles.resultCount} role="status" aria-live="polite">{visible.length} {visible.length === 1 ? "recurso" : "recursos"}</span>
+        </div>
+      </>}
+      <div className={styles.grid}>
+        {visible.map(resource => {
+          const meta = formats[resource.format];
+          const Icon = meta.icon;
+          return <article key={resource.id} className={styles.card} data-format={resource.format}>
+            <div className={styles.art} aria-hidden="true">
+              <span className={styles.orbit} /><span className={styles.orbitInner} />
+              {resource.format === "audio" && <div className={styles.wave}>{[18, 32, 22, 48, 65, 38, 76, 48, 28, 58, 36, 20, 30].map((height, index) => <i key={index} style={{ height }} />)}</div>}
+              <span className={styles.artIcon}><Icon size={30} strokeWidth={1.2} /></span>
+              <span className={styles.formatLabel}>{meta.singular}</span>
+              <span className={styles.artNumber}>{resource.available ? <Check size={15} /> : <Lock size={14} />}</span>
             </div>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-              {renderCards(groupedResources[tier], tier)}
+            <div className={styles.body}>
+              <div className={styles.metadata}><span>{resource.plan}</span><span>{resource.available ? "Disponible" : resource.knownAccess ? "Exclusivo" : "Próximamente"}</span></div>
+              <h3>{resource.titulo}</h3>
+              <p>{resource.descripcion || "Un espacio para acompañar tu práctica y volver a ti."}</p>
+              {resource.knownAccess ? <Link className={styles.cardLink} href={resource.available ? `/recursos/${resource.id}` : "/suscripcion"} aria-label={`${resource.available ? meta.action : "Conocer planes"}: ${resource.titulo}`}>
+                <span>{resource.available ? meta.action : "Conocer planes"}</span>
+                {resource.available ? <ArrowUpRight size={18} aria-hidden="true" /> : <Lock size={16} aria-hidden="true" />}
+              </Link> : <span className={styles.pending}>Estamos preparando su acceso</span>}
             </div>
-          </section>
-        );
-      })}
+          </article>;
+        })}
+      </div>
+      {visible.length === 0 && <div className={styles.empty}>
+        <BookOpen size={32} strokeWidth={1} aria-hidden="true" />
+        <h3>{library.length ? "Probemos otro camino" : "Tu biblioteca está creciendo"}</h3>
+        <p>{library.length ? "No hay recursos que coincidan con esta selección. Prueba otra palabra o explora todos los formatos." : "Estamos preparando audios, guías y nuevas prácticas para acompañarte. Vuelve pronto."}</p>
+        {hasFilters && <button type="button" onClick={reset}>Ver todos los recursos <ArrowUpRight size={16} aria-hidden="true" /></button>}
+      </div>}
     </div>
   );
 }
