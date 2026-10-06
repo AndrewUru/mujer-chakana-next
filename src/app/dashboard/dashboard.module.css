@@ -95,3 +95,12 @@
  .stageScene img { object-position: 60% center !important; } .sigil { width: 110vw; right: -60vw; }
 }
 @media(prefers-reduced-motion:reduce) { .journey *, .journey *::after,.loadingMoon { animation: none !important; transition: none !important; } }
+.archetypeContent > section { border: 1px solid #ffffff25; background: #24090870; box-shadow: none; padding: clamp(2rem,5vw,4rem); }
+.archetypeContent :is(h2,p) { color: #fff8f3; }
+.archetypeContent p { opacity: .72; }
+.archetypeContent :is(button,a,svg) { color: var(--scene-accent); }
+.archetypeContent button { background: #ffffff0c; border: 1px solid #ffffff30; }
+.resourcesContent :global(.glass-soft), .resourcesContent :global(.glass-panel) { background: #ffffff08; color: #fff8f3bc; border: 1px solid #ffffff20; box-shadow: none; }
+.resourcesContent :is(h2,h3) { color: #fff8f3; }
+.resourcesContent :is(p,a) { color: #fff8f3b8; }
+.resourcesContent a:hover { background: #ffffff12; }

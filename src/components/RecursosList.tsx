@@ -18,10 +18,16 @@ type Recurso = {
   titulo: string;
   url: string;
   descripcion: string;
-  tipo_suscripcion: "gratuito" | "mensual" | "anual";
+  tipo_suscripcion: Tier | Tier[];
 };
 
 type Tier = "gratuito" | "mensual" | "anual";
+
+function includesTier(value: Recurso["tipo_suscripcion"], tier: Tier) {
+  return (Array.isArray(value) ? value : [value]).some(
+    (item) => typeof item === "string" && item.toLowerCase().trim() === tier
+  );
+}
 
 const tierMeta: Record<
   Tier,
@@ -82,13 +88,13 @@ export default function RecursosList({
   const groupedResources = useMemo(
     () => ({
       gratuito: recursos.filter(
-        (r) => r.tipo_suscripcion?.toLowerCase().trim() === "gratuito"
+        (r) => includesTier(r.tipo_suscripcion, "gratuito")
       ),
       mensual: recursos.filter(
-        (r) => r.tipo_suscripcion?.toLowerCase().trim() === "mensual"
+        (r) => includesTier(r.tipo_suscripcion, "mensual")
       ),
       anual: recursos.filter(
-        (r) => r.tipo_suscripcion?.toLowerCase().trim() === "anual"
+        (r) => includesTier(r.tipo_suscripcion, "anual")
       ),
     }),
     [recursos]

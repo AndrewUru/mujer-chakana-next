@@ -255,16 +255,18 @@ export default function DashboardPage() {
         );
       case "arquetipos":
         return (
+          <div className={styles.archetypeContent}>
           <ArquetiposPanel
             isLoadingProfile={perfil === null}
             isSubscriber={isSubscriber}
             onNavigateToArquetipos={() => router.push("/ciclo")}
             onNavigateToSuscripcion={() => router.push("/suscripcion")}
           />
+          </div>
         );
       case "recursos":
         return (
-          <GlassCard className="overflow-hidden p-5 sm:p-8">
+          <GlassCard className={`${styles.resourcesContent} overflow-hidden p-5 sm:p-8`}>
             <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="app-kicker">Recursos</p>
