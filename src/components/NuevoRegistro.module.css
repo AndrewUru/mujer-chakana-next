@@ -2,3 +2,27 @@
 @media(max-width:850px){.header{grid-template-columns:1fr}.context{border-top:1px solid rgba(75,27,46,.13);border-left:0;padding:1rem 0 0}.layout{grid-template-columns:1fr}.pulse{position:static}.score{width:8rem}.score:before{width:6.9rem}}
 @media(max-width:560px){.journal{border-radius:1.4rem}.header h2{font-size:2.75rem}.layout{padding:1rem}.step{padding:1rem}.sliderRow label small{display:none}.feelings{display:grid;grid-template-columns:repeat(2,1fr)}.feeling,.feelingActive{justify-content:center}.response{margin:0 1rem 1rem}}
 @media(prefers-reduced-motion:reduce){.submit i{animation:none}.feeling,.feelingActive,.submit,.field textarea{transition:none}}
+.immersive { background: #031b2866; color: #fff8f3; border-color: #ffffff24; box-shadow: none; backdrop-filter: blur(16px); }
+.immersive .header { background: transparent; border-color: #ffffff20; }
+.immersive .header h2 { font-size: clamp(2rem,3vw,3rem); }
+.immersive .header p,.immersive .field label,.immersive .stepIntro>span { color: #9ee3e9; }
+.immersive .header>div>span,.immersive .context small,.immersive .context span,.immersive .stepIntro p { color: #ffffffa6; }
+.immersive .context { border-color: #ffffff22; }
+.immersive .step,.immersive .sliderRow { background: #ffffff05; border-color: #ffffff1c; }
+.immersive .field textarea { color: #fff8f3; background: #00152280; border-color: #8adce055; }
+.immersive .field textarea::placeholder { color: #ffffff65; }
+.immersive .field textarea:focus { background: #001522cc; border-color: #88e6ef; }
+.immersive .field>small,.immersive .sliderRow label small,.immersive .scale { color: #ffffff80; }
+.immersive .feeling { background: #ffffff08; color: #ffffffb8; border-color: #ffffff26; }
+.immersive .feelingActive { background: #a2e2e7; color: #042833; border-color: #a2e2e7; }
+.immersive .sliderRow label>svg { color: #88e6ef; }
+.immersive .sliderRow input { background: linear-gradient(90deg,#88e6ef var(--level),#ffffff25 var(--level)); }
+.immersive .sliderRow input::-webkit-slider-thumb { background: #88e6ef; border-color: #123340; box-shadow: 0 0 0 1px #88e6ef; }
+.immersive .sliderRow input::-moz-range-thumb { background: #88e6ef; border-color: #123340; box-shadow: 0 0 0 1px #88e6ef; }
+.immersive .pulse { top: 7rem; background: #03222ddd; box-shadow: none; border: 1px solid #ffffff22; }
+.immersive .pulse>p:first-child { color: #88e6ef; }
+.immersive .score { background: conic-gradient(#88e6ef var(--score),#ffffff18 0); }
+.immersive .score::before { background: #03222d; }
+.immersive .submit { background: #9ee3e9; color: #042833; }
+.immersive .response { background: #03222dbb; border-color: #88e6ef44; color: #fff8f3; }
+.immersive .response div { color: #88e6ef; }

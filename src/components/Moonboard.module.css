@@ -3,3 +3,24 @@
 @media(prefers-reduced-motion:reduce){.day{transition:none}}
 
 .day .phaseImage{position:absolute;inset:5%;width:90%;height:90%;object-fit:contain}.day:has(.phaseImage)>span{align-self:end;margin-bottom:2%;padding:0 .3rem;border-radius:.4rem;background:rgba(247,240,233,.92);color:#48172c;font-size:clamp(.65rem,1.4vw,1rem);line-height:1.2}.future .phaseImage{opacity:.45}
+.immersive { background: #0a081a70; color: #fff8f3; border-color: #ffffff24; box-shadow: none; backdrop-filter: blur(16px); }
+.immersive .header { background: transparent; border-color: #ffffff20; }
+.immersive .copy>span,.immersive .current span,.immersive .weekLabel span { color: var(--scene-accent,#ddd2fa); }
+.immersive .copy h2 { font-size: clamp(2rem,3vw,3rem); }
+.immersive .copy p,.immersive .current small,.immersive .mapMeta p,.immersive .legend { color: #ffffff99; }
+.immersive .current { background: #ffffff06; border-color: #ffffff25; box-shadow: inset 0 0 0 .65rem #ffffff03; }
+.immersive .map { background: transparent; }
+.immersive .mapMeta,.immersive .legend { border-color: #ffffff20; }
+.immersive .mapMeta strong { color: #fff8f3; }
+.immersive .dayPath::before { background: #ffffff24; }
+.immersive .past { background: #ffffff0c; color: #fff8f3; border-color: #ffffff30; }
+.immersive .past:hover { border-color: var(--scene-accent,#ddd2fa); background: #ffffff22; }
+.immersive .today { background: #57457b; box-shadow: 0 0 0 .35rem #c7affb24,0 0 30px #c7affb24; }
+.immersive .future { background: #ffffff05; color: #ffffff40; }
+.immersive .day>i { background: #201a33; color: var(--scene-accent,#ddd2fa); }
+.immersive .day:has(.phaseImage)>span { background: #1c1630d9; color: #fff8f3; }
+.immersive .legendToday { background: #b79fe8; }
+.immersive .legendPast { background: #ffffff0c; border-color: #ffffff50; }
+.immersive .legendFuture { background: #ffffff20; }
+.immersive .noDate { border-color: #ffffff30; }
+.immersive .noDate p { color: #ffffffaa; }

@@ -1,6 +1,7 @@
-"use client";
+﻿"use client";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
@@ -19,6 +20,7 @@ import { EstadoCiclo, Recurso } from "@/types/index";
 import styles from "./dashboard.module.css";
 
 const TOTAL_CYCLE_DAYS = 28;
+const DashboardJourneyScene = dynamic(() => import("@/components/DashboardJourneyScene"), { ssr: false });
 interface Perfil { display_name: string; avatar_url: string | null; fecha_inicio: string | null; suscripcion_activa?: boolean; }
 type DashboardPanel = "ciclo" | "moonboard" | "registro" | "arquetipos" | "recursos";
 type SceneId = "inicio" | DashboardPanel;
@@ -43,7 +45,7 @@ export default function DashboardPage() {
  const [motionPaused,setMotionPaused]=useState(false);
  const still=Boolean(reduceMotion||motionPaused);
  const rootRef=useRef<HTMLDivElement>(null);
- const {scrollYProgress}=useScroll({target:rootRef,offset:["start start","end end"]});
+ const {scrollYProgress}=useScroll();
  const smoothProgress=useSpring(scrollYProgress,{stiffness:100,damping:30});
  const {ToastContainer}=useToast();
  const [activeScene,setActiveScene]=useState<SceneId>("inicio");
@@ -305,7 +307,7 @@ export default function DashboardPage() {
  if(loading)return <div className={styles.loadingState}><Moon className={styles.loadingMoon}/><p>{loadingMessage}</p><small>Un momento para volver a ti</small></div>;
  if(loadError)return <div className={styles.loadingState}><p>No pudimos abrir tu espacio.</p><button onClick={()=>void loadData()} className={styles.primaryAction}>Volver a intentar</button></div>;
  return <div ref={rootRef} className={styles.journey} data-motion={still?"paused":"active"} data-active-scene={activeScene} style={{"--scene-accent":scene.accent} as CSSProperties}>
-   <div className={styles.stage} aria-hidden="true"><AnimatePresence initial={false}><motion.div key={scene.image+scene.tint} className={styles.stageScene} initial={{opacity:0,scale:still?1:1.045}} animate={{opacity:1,scale:1}} exit={{opacity:0}} transition={{duration:still?0:1.1,ease:"easeOut"}}><Image src={scene.image} alt="" fill sizes="100vw" priority={activeScene==="inicio"} style={{objectPosition:activeScene==="inicio"?"center 28%":"center"}}/><div className={styles.stageTint} style={{background:scene.tint}}/></motion.div></AnimatePresence><div className={styles.vignette}/><div className={styles.grain}/><div className={styles.sigil}/><div className={styles.motes}>{Array.from({length:8},(_,i)=><i key={i} style={{"--i":i} as CSSProperties}/>)}</div></div>
+   <div className={styles.stage} aria-hidden="true"><AnimatePresence initial={false}><motion.div key={scene.image+scene.tint} className={styles.stageScene} initial={{opacity:0,scale:still?1:1.045}} animate={{opacity:1,scale:1}} exit={{opacity:0}} transition={{duration:still?0:1.1,ease:"easeOut"}}><Image src={scene.image} alt="" fill sizes="100vw" priority={activeScene==="inicio"} style={{objectPosition:activeScene==="inicio"?"center 28%":"center"}}/><div className={styles.stageTint} style={{background:scene.tint}}/></motion.div></AnimatePresence><div className={styles.vignette}/><div className={styles.grain}/><div className={styles.sigil}/><DashboardJourneyScene scene={sceneIndex} color={scene.accent} paused={still} progress={scrollYProgress}/><div className={styles.motes}>{Array.from({length:8},(_,i)=><i key={i} style={{"--i":i} as CSSProperties}/>)}</div></div>
    <motion.div className={styles.progress} style={{scaleX:still?scrollYProgress:smoothProgress}}/>
    <header className={styles.chrome}><Link href="/dashboard" className={styles.brand}><Flower2 size={22}/>Ginergética</Link><div className={styles.chromeMeta}><span>{isSubscriber?"Círculo activo":"Plan gratuito"}</span>{!reduceMotion&&<button onClick={()=>setMotionPaused(value=>!value)} aria-label={motionPaused?"Activar movimiento ambiental":"Pausar movimiento ambiental"} aria-pressed={motionPaused}>{motionPaused?<Play size={16}/>:<Pause size={16}/>}</button>}<Link href="/setup" aria-label="Configurar mi ciclo"><Settings size={17}/></Link></div></header>
    <nav className={styles.sceneNav} aria-label="Capítulos de tu experiencia">{navigation.map(({id,label},index)=><button key={id} onClick={()=>goToScene(id)} aria-current={activeScene===id?"step":undefined} aria-label={label}><span className={styles.navLabel}>{label}</span><span className={styles.navDot}/><small>0{index}</small></button>)}</nav>
@@ -323,3 +325,4 @@ export default function DashboardPage() {
    <QuickNav currentDay={day} userName={userName||""}/><ToastContainer/>
  </div>;
 }
+

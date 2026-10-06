@@ -32,3 +32,17 @@
 .access button { border: 0; background: transparent; margin-left: 1rem; text-decoration: underline; cursor: pointer; }
 @media(max-width:720px) { .summary { grid-template-columns: 1fr; gap: 1.25rem; } .elementCard { min-height: 19rem; padding: 1.3rem; } .elementCopy { margin-top: 4rem; } .practices > h3 { font-size: 2.1rem; } .dailyTip { padding: 1.1rem; } }
 @media(prefers-reduced-motion:reduce) { .elementArt, .resource { transition: none; } }
+.immersive { color: #fff8f3; }
+.immersive .elementCard { background: #ffffff09; border: 1px solid #ffffff24; backdrop-filter: blur(16px); }
+.immersive .elementTop, .immersive .elementCopy>p, .immersive .eyebrow, .immersive .week { color: var(--scene-accent,#e6c07a); }
+.immersive .elementArt { color: var(--scene-accent,#e6c07a); opacity: .2; }
+.immersive .elementCopy>span, .immersive .resource small, .immersive .empty { color: #fff8f3a8; }
+.immersive .practices>h3 em { color: var(--scene-accent,#e6c07a); }
+.immersive .resource { color: #fff8f3; border-color: #ffffff24; }
+.immersive .resource:hover { background: #ffffff0a; }
+.immersive .resourceIcon { color: var(--scene-accent,#e6c07a); background: #ffffff0c; border: 1px solid #ffffff18; }
+.immersive .resource>svg { color: var(--scene-accent,#e6c07a); }
+.immersive .dailyTip { background: #ffffff06; border-color: #ffffff24; color: var(--scene-accent,#e6c07a); }
+.immersive .dailyTip p { color: var(--scene-accent,#e6c07a); }
+.immersive .dailyTip span { color: #fff8f3b8; }
+.immersive .access { background: #160b10cc; border: 1px solid #ffffff22; color: #fff8f3; }
