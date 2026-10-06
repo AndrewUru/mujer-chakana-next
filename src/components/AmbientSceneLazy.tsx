@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 
 const AmbientChakanaScene = dynamic(
   () => import("@/components/AmbientChakanaScene"),
@@ -8,5 +9,7 @@ const AmbientChakanaScene = dynamic(
 );
 
 export default function AmbientSceneLazy() {
+  const pathname = usePathname();
+  if (pathname === "/dashboard") return null;
   return <AmbientChakanaScene />;
 }

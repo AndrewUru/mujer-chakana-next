@@ -82,7 +82,7 @@ export default function Navbar() {
   return (
     <nav
       aria-label="Navegación principal"
-      className={`${styles.dock} ${pathname === "/dashboard" ? styles.gardenDock : ""}`}
+      className={styles.dock}
     >
       <div className={styles.items}>
         {loggedIn ? (
