@@ -109,12 +109,12 @@ export default function EditarRecursoPage() {
       </p>
 
       {mensajeExito && (
-        <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded shadow">
+        <div role="status" className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded shadow">
           {mensajeExito}
         </div>
       )}
       {mensajeError && (
-        <div className="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded shadow">
+        <div role="alert" className="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded shadow">
           {mensajeError}
         </div>
       )}

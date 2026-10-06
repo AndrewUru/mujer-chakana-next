@@ -36,6 +36,7 @@ export default function EditarArquetipoPage() {
       if (error) {
         console.error("Error cargando arquetipo:", error.message);
         setMensajeError("No se pudo cargar el arquetipo.");
+        setLoading(false);
         return;
       }
 
@@ -80,13 +81,15 @@ export default function EditarArquetipoPage() {
     }
   };
 
-  if (loading || !arquetipo) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-pink-700">
         Cargando arquetipo...
       </div>
     );
   }
+
+  if (!arquetipo) return <div className="admin-page"><p role="alert" className="admin-notice error">{mensajeError}</p><button className="admin-button" onClick={() => router.push("/admin/mujer-chakana")}>Volver a arquetipos</button></div>;
 
   return (
     <main className="max-w-3xl mx-auto bg-white/90 py-10 px-6 rounded-2xl shadow-md pb-20 space-y-6">
@@ -107,13 +110,13 @@ export default function EditarArquetipoPage() {
       </p>
 
       {mensajeExito && (
-        <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded shadow mb-4">
+        <div role="status" className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded shadow mb-4">
           {mensajeExito}
         </div>
       )}
 
       {mensajeError && (
-        <div className="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded shadow mb-4">
+        <div role="alert" className="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded shadow mb-4">
           {mensajeError}
         </div>
       )}
@@ -144,9 +147,10 @@ export default function EditarArquetipoPage() {
           },
         ].map(({ label, key, isSelect, placeholder }) => (
           <div key={key} className="flex flex-col gap-2">
-            <label className="font-semibold text-pink-700">{label}</label>
+            <label htmlFor={key} className="font-semibold text-pink-700">{label}</label>
             {isSelect ? (
               <select
+                id={key}
                 required
                 value={arquetipo[key as keyof Arquetipo] || ""}
                 onChange={(e) =>
@@ -162,6 +166,7 @@ export default function EditarArquetipoPage() {
               </select>
             ) : (
               <input
+                id={key}
                 type="text"
                 value={arquetipo[key as keyof Arquetipo] || ""}
                 onChange={(e) =>

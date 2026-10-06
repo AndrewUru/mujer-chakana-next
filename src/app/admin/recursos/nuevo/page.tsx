@@ -1,9 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
 
 const NuevoRecursoPage = () => {
+  const [guardando, setGuardando] = useState(false);
+  const [mensaje, setMensaje] = useState<{ text: string; error?: boolean } | null>(null);
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [tipo, setTipo] = useState("pdf");
@@ -18,6 +21,10 @@ const NuevoRecursoPage = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (guardando) return;
+    setGuardando(true);
+    setMensaje(null);
+    try {
 
     const { data, error: userError } = await supabase.auth.getUser();
     const userId = data?.user?.id;
@@ -41,7 +48,7 @@ const NuevoRecursoPage = () => {
 
     if (error) {
       console.error("Error al crear recurso:", error.message);
-      alert("Error al guardar el recurso.");
+      setMensaje({ text: "No se pudo guardar el recurso. Int?ntalo de nuevo.", error: true });
     } else {
       alert("Recurso añadido correctamente.");
       setTitulo("");
@@ -50,13 +57,17 @@ const NuevoRecursoPage = () => {
       setUrl("");
       setTipoSuscripcion([]);
     }
+    } catch { setMensaje({ text: "No se pudo guardar el recurso. Int?ntalo de nuevo.", error: true }); }
+    finally { setGuardando(false); }
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-12 p-8 bg-white shadow-xl rounded-2xl border border-rose-200 pb-40">
+    <div className="admin-legacy-form">
+      <Link href="/admin/recursos" className="admin-subtitle">? Volver a recursos</Link>
       <h1 className="text-2xl font-bold text-rose-700 mb-6 text-center">
         🌕 Añadir Nuevo Recurso
       </h1>
+      {mensaje && <div role={mensaje.error ? "alert" : "status"} className={`admin-notice ${mensaje.error ? "error" : ""}`}>{mensaje.text}</div>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label
@@ -146,6 +157,7 @@ const NuevoRecursoPage = () => {
 
         <div className="text-center">
           <button
+            disabled={guardando}
             type="submit"
             className="mt-4 bg-rose-600 text-white px-6 py-2 rounded-full hover:bg-rose-700 transition"
           >
