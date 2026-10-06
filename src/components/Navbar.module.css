@@ -42,6 +42,12 @@
 .item:focus-visible { outline: 2px solid #f5c3d8; outline-offset: 2px; }
 .avatar { width: 27px; height: 27px; flex-shrink: 0; border-radius: 50%; border: 1px solid #e8b1c670; object-fit: cover; }
 .logout { margin-left: .25rem; }
+.gardenDock { background: #faf9f1f5; border-color: #ddd9cfff; box-shadow: 0 10px 40px #46533a20, inset 0 1px 0 #ffffff; color: #637159; }
+.gardenDock .item { color: #786f70; }
+.gardenDock .item:hover { color: #475740; background: #e9eddf; border-color: transparent; }
+.gardenDock .item.active { color: #fcfcf5; background: #65765e; border-color: #65765e; }
+.gardenDock .active::after { background: #f0f2de; box-shadow: none; }
+.gardenDock .item:focus-visible { outline-color: #664654; }
 @media(max-width:600px) {
   .dock { bottom: calc(.65rem + env(safe-area-inset-bottom)); width: calc(100% - 1.25rem); border-radius: 1.3rem; padding: .35rem; }
   .items { gap: .15rem; }

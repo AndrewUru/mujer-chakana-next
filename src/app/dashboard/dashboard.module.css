@@ -118,7 +118,7 @@
 .heroCopy > :nth-child(3) { animation-delay: .16s; }
 .heroCopy > :nth-child(4) { animation-delay: .24s; }
 .heroCopy > :nth-child(5) { animation-delay: .32s; }
-.dashboard[data-motion="paused"] *, .dashboard[data-motion="paused"] *::before { animation-play-state: paused; }
+.dashboard[data-motion="paused"] .dialOrbit, .dashboard[data-motion="paused"] .heroAtmosphere span { animation-play-state: paused; }
 .dashboard[data-motion="paused"] .heroCopy > * { animation: none; }
 @media (max-width: 1000px) {
   .heroGrid { gap: 1.5rem; padding-inline: .5rem; }
