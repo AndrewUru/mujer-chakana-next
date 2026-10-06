@@ -36,11 +36,11 @@ export default function ManualPage() {
     target?.scrollIntoView({ behavior: still ? "instant" : "smooth", block: "start" });
     target?.focus({ preventScroll: true });
   }
-  const entrance = { initial: still ? false as const : { opacity: 0, y: 28 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: .15 }, transition: { duration: .7 } };
+  const entrance = { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true, amount: .15 }, transition: { duration: still ? 0 : .7 } };
   return <main ref={rootRef} className={styles.manual} style={{ "--manual-accent": chapter.color, "--scene-accent": chapter.color } as CSSProperties} data-manual-scene={chapter.id}>
     <div className={styles.stage} aria-hidden="true"><AnimatePresence initial={false}><motion.div className={styles.backdrop} key={chapter.id} initial={{ opacity: 0, scale: still ? 1 : 1.035 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: still ? 0 : 1 }}><Image src={chapter.image} alt="" fill sizes="100vw" priority={active === 0} /><div style={{ background: `linear-gradient(100deg, ${chapter.tint}f5, ${chapter.tint}cc 60%, ${chapter.tint}b0)` }} /></motion.div></AnimatePresence><JourneyScene scene={active} color={chapter.color} paused={still} progress={scrollYProgress}/></div>
     <motion.div className={styles.progress} style={{ scaleX: scrollYProgress }}/>
-    <header className={styles.topbar}><Link href="/dashboard" className={styles.back}><ArrowLeft size={15}/> Volver a mi espacio</Link><span><Flower2 size={18}/> Ginergética · Guía práctica</span>{!reduced && <button type="button" onClick={() => setPaused(value => !value)} aria-label={paused ? "Activar movimiento ambiental" : "Pausar movimiento ambiental"} aria-pressed={paused}>{paused ? <Play size={15}/> : <Pause size={15}/>}</button>}</header>
+    <header className={styles.topbar}><Link href="/dashboard" className={styles.back}><ArrowLeft size={15}/> Volver a mi espacio</Link><span><Flower2 size={18}/> Ginergética · Guía práctica</span><button className={styles.motionButton} type="button" onClick={() => setPaused(value => !value)} aria-label={paused ? "Activar movimiento ambiental" : "Pausar movimiento ambiental"} aria-pressed={paused}>{paused ? <Play size={15}/> : <Pause size={15}/>}</button></header>
     <div className={styles.content}>
       <section className={styles.hero} data-chapter="0"><motion.div {...entrance}><p className={styles.eyebrow}><Compass size={15}/> UNA GUÍA PARA TU RECORRIDO</p><h1>No necesitas<br/>saber el camino.<br/><em>Solo comenzar.</em></h1><p className={styles.lead}>Este es tu espacio para conocer tu ciclo, explorar tus arquetipos y escuchar lo que sientes. Aquí encontrarás cómo dar cada paso.</p><button className={styles.primary} onClick={() => jump("comenzar")}>Abre tu guía <ArrowDown size={16}/></button></motion.div><div className={styles.heroMark} aria-hidden="true"><Moon strokeWidth={.7}/><span>OBSERVAR · SENTIR · INTEGRAR</span></div></section>
       <div className={styles.readingLayout}>
@@ -55,4 +55,3 @@ export default function ManualPage() {
     </div>
   </main>;
 }
-
