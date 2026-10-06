@@ -54,11 +54,12 @@
 .admin-notice { padding: 14px 18px; border-radius: 8px; background: #e8f0e9; color: #34674b; margin-bottom: 20px; font-size: 14px; }
 .admin-notice.error { background: #fae9e9; color: #9b3446; }
 .admin-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; }
-.admin-card { padding: 24px; border: 1px solid var(--admin-line); border-radius: 12px; background: #fffdfa; }
+.admin-card { min-width: 0; padding: 24px; border: 1px solid var(--admin-line); border-radius: 12px; background: #fffdfa; }
 .admin-card p { color: var(--admin-muted); font-size: 14px; line-height: 1.7; margin: 14px 0 22px; }
 .admin-card-actions { display: flex; gap: 10px; margin-top: 22px; }
 .admin-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.admin-fields label { display: flex; flex-direction: column; gap: 7px; font-size: 12px; font-weight: 800; }
+.admin-fields label { min-width: 0; display: flex; flex-direction: column; gap: 7px; font-size: 12px; font-weight: 800; }
+.admin-fields :is(input, textarea) { min-width: 0; width: 100%; }
 .admin-fields .wide { grid-column: 1/-1; }
 .admin-workspace main:not(.admin-page) { padding-bottom: 48px; margin-top: 28px; margin-inline: auto; width: calc(100% - 48px); background: #fffdfa; }
 @media (max-width: 1000px) { .admin-sidebar { width: 205px; padding-inline: 14px; } .admin-page { padding: 28px 24px; } .admin-topbar { padding-inline: 24px; } }
@@ -69,6 +70,20 @@
 .admin-workspace main:not(.admin-page), .admin-workspace .admin-legacy-form { border: 1px solid var(--admin-line); box-shadow: none; border-radius: 12px; background: #fffdfa; }
 .admin-workspace .admin-legacy-form { max-width: 700px; margin: 32px auto; padding: 32px; width: calc(100% - 32px); }
 .admin-workspace main:not(.admin-page) label, .admin-workspace .admin-legacy-form label { color: var(--admin-ink); }
-.admin-workspace main:not(.admin-page) :is(input, select, textarea), .admin-legacy-form :is(input, select, textarea) { width: 100%; }
+.admin-workspace main:not(.admin-page) :is(input:not([type=checkbox]), select, textarea), .admin-legacy-form :is(input:not([type=checkbox]), select, textarea) { width: 100%; }
 .admin-workspace main:not(.admin-page) button, .admin-legacy-form button { background: var(--admin-accent); color: white; border-radius: 8px; box-shadow: none; padding: 12px 20px; }
 .admin-workspace main:not(.admin-page) :is(.text-pink-700, .text-pink-800), .admin-legacy-form .text-rose-700 { color: var(--admin-ink); }
+@media (max-width: 760px) {
+  .admin-sidebar nav { display: grid; grid-template-columns: 1fr 1fr; overflow: visible; gap: 6px; }
+  .admin-table, .admin-table tbody { display: block; }
+  .admin-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .admin-table tbody tr { display: grid; grid-template-columns: 1fr 1fr; padding: 16px; border-top: 1px solid var(--admin-line); gap: 14px 12px; }
+  .admin-table td { display: block; border: none; padding: 0; }
+  .admin-table td:first-child { grid-column: 1 / -1; }
+  .admin-table td:not(:first-child)::before { display: block; color: var(--admin-muted); font-size: 10px; margin-bottom: 6px; }
+  .admin-table td:nth-child(2)::before { content: 'Rol'; }
+  .admin-table td:nth-child(3)::before { content: 'Plan'; }
+  .admin-table td:nth-child(4)::before { content: 'Suscripción'; }
+  .admin-table td:nth-child(5)::before { content: 'Acción'; }
+  .admin-table td:nth-child(5) .admin-button { min-height: 40px; }
+}

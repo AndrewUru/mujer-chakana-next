@@ -37,7 +37,8 @@ export default function EditarMoonboardPage() {
     try {
       for (const fase of fases.filter(item => dirty.includes(item.id))) {
         if (!fase.nombre_fase.trim() || !Number.isFinite(fase.rango_inicio) || !Number.isFinite(fase.rango_fin) || fase.rango_inicio > fase.rango_fin) throw new Error("Revisa los nombres y rangos: el inicio debe ser menor o igual que el final.");
-        const { id, ...values } = fase;
+        const { id, nombre_fase, color, simbolo, rango_inicio, rango_fin, mensaje } = fase;
+        const values = { nombre_fase, color, simbolo, rango_inicio, rango_fin, mensaje };
         const { data, error } = await supabase.from("fases_lunares").update(values).eq("id", id).select("id");
         if (error || !data?.length) throw new Error("No se pudieron guardar todas las fases. Los cambios pendientes se conservan para volver a intentarlo.");
         saved.push(id);
