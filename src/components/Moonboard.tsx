@@ -11,9 +11,9 @@ const TOTAL_DAYS = 28;
 const DAY_MS = 86_400_000;
 const WEEK_NAMES = ["Descenso", "Impulso", "Expansión", "Integración"];
 
-interface MoonboardProps { startDate: Date | null; }
+interface MoonboardProps { startDate: Date | null; immersive?: boolean; }
 
-export default function Moonboard({ startDate }: MoonboardProps) {
+export default function Moonboard({ startDate, immersive = false }: MoonboardProps) {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const today = useMemo(() => new Date(), []);
 
@@ -53,7 +53,7 @@ export default function Moonboard({ startDate }: MoonboardProps) {
 
   return (
     <>
-      <section className={styles.board} aria-labelledby="moonboard-title">
+      <section className={`${styles.board} ${immersive ? styles.immersive : ""}`} aria-labelledby="moonboard-title">
         <header className={styles.header}>
           <div className={styles.copy}>
             <span><Moon aria-hidden="true" /> Cartografía lunar</span>

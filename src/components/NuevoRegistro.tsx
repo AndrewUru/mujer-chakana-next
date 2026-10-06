@@ -11,6 +11,7 @@ import { useToast } from "./Toast";
 import styles from "./NuevoRegistro.module.css";
 
 interface Props {
+  immersive?: boolean;
   userId: string;
   nombre: string;
   dia_ciclo: number;
@@ -41,7 +42,7 @@ function describeLevel(label: string, value: number) {
   return `${label} expansiva: canalízala con intención.`;
 }
 
-export default function NuevoRegistro({ userId, nombre, dia_ciclo, ciclo_actual, arquetipo }: Props) {
+export default function NuevoRegistro({ userId, nombre, dia_ciclo, ciclo_actual, arquetipo, immersive = false }: Props) {
   const reduceMotion = useReducedMotion();
   const { addToast } = useToast();
   const [emociones, setEmociones] = useState("");

@@ -20,7 +20,8 @@ const elements = {
   Aire: { Icon: Wind, phrase: "Abre una ventana a lo nuevo.", description: "Respira, ordena tus pensamientos y encuentra palabras para tu propia voz." },
 };
 
-export default function CicloResumen({ mujerChakanaData, isSubscriber, day }: {
+export default function CicloResumen({ mujerChakanaData, isSubscriber, day, immersive = false }: {
+  immersive?: boolean;
   day: number;
   fechaInicioCiclo: Date;
   fechaFinCiclo: Date;
@@ -38,7 +39,7 @@ export default function CicloResumen({ mujerChakanaData, isSubscriber, day }: {
     { id: "video", label: "Inspírate en movimiento", description: "Una invitación para explorar y sentir", Icon: Clapperboard, url: mujerChakanaData.video_url },
   ].filter(resource => resource.url);
   const dailyContentHref = `/ritual?pdf=${encodeURIComponent(mujerChakanaData.ritual_pdf || "")}&audio=${encodeURIComponent(mujerChakanaData.audio_url || "")}&video=${encodeURIComponent(mujerChakanaData.video_url || "")}`;
-  return <div className={styles.summary}>
+  return <div className={`${styles.summary} ${immersive ? styles.immersive : ""}`}>
     <section className={styles.elementCard}>
       <div className={styles.elementTop}><span><Icon size={15} /> {mujerChakanaData.elemento}</span><small>DÍA {day}</small></div>
       <Icon className={styles.elementArt} aria-hidden="true" strokeWidth={.7} />
