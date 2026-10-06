@@ -434,7 +434,7 @@ export default function Home() {
           <Link href="/" className={styles.brand} aria-label="Mujer Chakana, inicio">
             <span className={styles.brandMark}>✦</span>
             <span>
-              Mujer <em>Chakana</em>
+              Ginergética
             </span>
           </Link>
           <Link href="/auth/login" className={styles.loginLink}>

@@ -26,9 +26,9 @@ export const metadata: Metadata = {
     template: "%s | Ginergética",
   },
   description:
-    "Mujer Chakana: Registra tu ciclo, conecta con las fases lunares y descubre tu Ginergía. Una herramienta espiritual y práctica para mujeres cíclicas.",
+    "Ginergética: Registra tu ciclo, conecta con las fases lunares y descubre tu Ginergía. Una herramienta espiritual y práctica para mujeres cíclicas.",
   keywords: [
-    "Mujer Chakana",
+    "Ginergética",
     "ciclo menstrual",
     "fases lunares",
     "ginergía",
@@ -38,9 +38,9 @@ export const metadata: Metadata = {
     "autoexploración",
     "espiritualidad femenina",
   ],
-  authors: [{ name: "Ginergía | Mujer Chakana" }],
-  creator: "Ginergía | Mujer Chakana",
-  publisher: "Ginergía | Mujer Chakana",
+  authors: [{ name: "Ginergía | Ginergética" }],
+  creator: "Ginergía | Ginergética",
+  publisher: "Ginergía | Ginergética",
   formatDetection: {
     email: false,
     address: false,
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_ES",
     url: "https://ginergetica.com",
-    title: "Mujer Chakana",
+    title: "Ginergética | Ciclo Lunar y Autoexploración",
     description:
       "Registra tu ciclo y sincronízate con la luna. Autoexploración espiritual y práctica.",
     siteName: "Ginergética",
