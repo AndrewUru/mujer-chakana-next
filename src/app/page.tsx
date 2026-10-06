@@ -526,7 +526,7 @@ export default function Home() {
                 <em>la energía cambia.</em>
               </h2>
               <p>
-                Samari, tu guía con inteligencia artificial, encuentra patrones en tus
+                Una guía con inteligencia artificial, encuentra patrones en tus
                 registros y te devuelve preguntas, no recetas. Una voz para acompañar la tuya.
               </p>
             </div>
