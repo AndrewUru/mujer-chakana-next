@@ -141,12 +141,14 @@ export default function RootLayout({
         <AmbientSceneLazy />
 
         {/* Contenido principal */}
-        <div className="relative z-20 flex flex-col min-h-screen">
-          <div id="main-content" className="app-main flex-1" tabIndex={-1}>
-            <PageTransition>{children}</PageTransition>
+        <PageTransition>
+          <div className="relative z-20 flex flex-col min-h-screen">
+            <div id="main-content" className="app-main flex-1" tabIndex={-1}>
+              {children}
+            </div>
+            <Navbar />
           </div>
-          <Navbar />
-        </div>
+        </PageTransition>
 
         {/* Componentes de terceros */}
         <CookieConsent />

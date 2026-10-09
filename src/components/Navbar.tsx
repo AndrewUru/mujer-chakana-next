@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import type { Session } from "@supabase/supabase-js";
+import { preparePageTransition, usePageTransition } from "./PageTransition";
 
 import styles from "./Navbar.module.css";
 
@@ -167,9 +168,16 @@ function NavItem({
   label: string;
   active?: boolean;
 }) {
+  const navigate = usePageTransition();
+
   return (
     <Link
       href={href}
+      onPointerEnter={preparePageTransition}
+      onFocus={preparePageTransition}
+      onNavigate={(event) => {
+        if (navigate?.(href, label)) event.preventDefault();
+      }}
       aria-current={active ? "page" : undefined}
       aria-label={label}
       className={`${styles.item} ${active ? styles.active : ""}`}

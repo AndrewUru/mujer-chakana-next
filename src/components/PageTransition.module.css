@@ -1,0 +1,33 @@
+.content { min-height: 100svh; }
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  color: #fff5ed;
+  background: #16080d;
+  cursor: progress;
+}
+.landscape, .shade, .portal { position: absolute; inset: 0; pointer-events: none; }
+.landscape { z-index: -3; background-position: center 35%; background-size: cover; opacity: .3; }
+.shade {
+  z-index: -2;
+  background: radial-gradient(ellipse at 50% 45%, #16080d22, #16080dcc 80%), linear-gradient(180deg, #16080d80, #16080d33 45%, #16080de6);
+}
+.portal { z-index: -1; }
+.portal canvas { display: block; width: 100%; height: 100%; }
+.center { position: relative; padding: 2rem; text-align: center; text-shadow: 0 2px 30px #16080d; }
+.center::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -4rem -2rem;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #16080dbb, transparent 70%);
+}
+.eyebrow { margin: 0 0 1.2rem; color: var(--journey-accent); font-size: .65rem; font-weight: 800; letter-spacing: .24em; text-transform: uppercase; }
+.word { margin: 0; font-family: var(--font-display), Georgia, serif; font-size: clamp(3.5rem, 10vw, 7rem); font-weight: 600; letter-spacing: -.05em; line-height: 1; }
+.caption { display: block; margin-top: 1.5rem; color: #fff5edbb; font-size: .75rem; letter-spacing: .06em; }
