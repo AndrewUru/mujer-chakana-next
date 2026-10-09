@@ -1,15 +1,23 @@
 "use client";
 
-import { MotionConfig, motion, useReducedMotion } from "framer-motion";
+import { MotionConfig, motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
-import { createContext, useCallback, useContext, useEffect, useRef, useState, useTransition, type CSSProperties, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, useSyncExternalStore, useTransition, type CSSProperties, type ReactNode } from "react";
 import styles from "./PageTransition.module.css";
 
 const PortalScene = dynamic(() => import("./NavigationPortalScene"), { ssr: false });
+const MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+const getReducedMotion = () => window.matchMedia(MOTION_QUERY).matches;
+const getServerReducedMotion = () => true;
+function subscribeToMotion(onChange: () => void) {
+  const media = window.matchMedia(MOTION_QUERY);
+  media.addEventListener("change", onChange);
+  return () => media.removeEventListener("change", onChange);
+}
 
 export function preparePageTransition() {
-  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  if (!getReducedMotion()) {
     void import("./NavigationPortalScene");
   }
 }
@@ -33,7 +41,7 @@ export function usePageTransition() {
 export default function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useSyncExternalStore(subscribeToMotion, getReducedMotion, getServerReducedMotion);
   const [journey, setJourney] = useState<Journey | null>(null);
   const [isPending, startTransition] = useTransition();
   const locked = useRef(false);
