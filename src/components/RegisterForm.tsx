@@ -97,7 +97,6 @@ export default function RegisterForm() {
           display_name: form.username.trim(),
           perfil_completo: false,
           tipo_plan: tipoPlan,
-          activo: true,
         },
       ]);
 
