@@ -6,7 +6,7 @@ declare module "lune" {
     last_quarter: Date;
   };
 
-  export function phase(date: Date): { phase: number };
+  export function phase(date: Date): { phase: number; illuminated: number; age: number };
 
   export function illumination() {
     throw new Error("Function not implemented.");

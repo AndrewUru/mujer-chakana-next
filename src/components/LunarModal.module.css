@@ -1,0 +1,169 @@
+.dialog {
+  --lunar-ink: #fff4eb;
+  --lunar-muted: #bdaab5;
+  --lunar-surface: #21131e;
+  --lunar-line: #fff4eb1a;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: clamp(.75rem, 3vw, 2.5rem);
+  border: 0;
+  background: transparent;
+  color: var(--lunar-ink);
+  overflow: hidden;
+}
+
+.dialog[open] { display: grid; place-items: center; }
+.dialog::backdrop { background: #100910b8; backdrop-filter: blur(14px); }
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 980px);
+  max-height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid #e2c7d42b;
+  border-radius: 28px;
+  background: radial-gradient(ellipse at 14% 35%, #61445030, transparent 55%), var(--lunar-surface);
+  box-shadow: 0 32px 100px #0006, inset 0 1px 0 #fff4eb0a;
+  animation: arrive 350ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  gap: 1rem;
+  padding: 1rem 1.5rem 1rem 2rem;
+  border-bottom: 1px solid var(--lunar-line);
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  color: var(--lunar-accent);
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.dialog button { font: inherit; cursor: pointer; transform: none; transition: background-color 180ms, border-color 180ms; }
+.dialog button:focus { box-shadow: none; }
+.dialog button:focus-visible { outline: 2px solid var(--lunar-accent); outline-offset: 4px; }
+
+.close {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--lunar-line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--lunar-muted);
+}
+.close:hover { background: #fff4eb0c; color: var(--lunar-ink); border-color: #fff4eb40; }
+
+.content {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  gap: 1.5rem clamp(1.75rem, 4vw, 3.5rem);
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #725060 transparent;
+  padding: 2.5rem 2.75rem;
+}
+
+.heading { grid-column: 2; min-width: 0; }
+.observatory { grid-column: 1; grid-row: 1 / span 2; align-self: start; padding-top: 1.5rem; }
+.orbit {
+  position: relative;
+  display: grid;
+  width: min(100%, 340px);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--lunar-accent) 23%, transparent);
+  border-radius: 50%;
+  isolation: isolate;
+}
+.orbit::before, .orbit::after { content: ""; position: absolute; pointer-events: none; border-radius: 50%; }
+.orbit::before { inset: -10px; border: 1px dashed color-mix(in srgb, var(--lunar-accent) 12%, transparent); }
+.orbit::after { inset: 12%; border: 1px solid #fff4eb0c; }
+.orbitMarker { position: absolute; inset: -3px; transform: rotate(var(--lunar-angle)); pointer-events: none; }
+.orbitMarker::before { content: ""; position: absolute; top: 0; left: calc(50% - 3px); width: 6px; height: 6px; border-radius: 50%; background: var(--lunar-accent); box-shadow: 0 0 12px var(--lunar-accent); }
+.moonHalo { position: absolute; inset: 8%; z-index: -1; border-radius: 50%; background: var(--lunar-accent); opacity: .07; filter: blur(26px); animation: breathe 8s ease-in-out infinite alternate; }
+.moonImage { position: relative; z-index: 1; width: 88%; height: auto; border-radius: 50%; object-fit: contain; filter: drop-shadow(0 12px 20px #0006); }
+.orbitCaption { margin: 1.8rem 0 0; text-align: center; color: var(--lunar-muted); font-size: .57rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; }
+
+.moonData { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.75rem 0 0; padding-top: 1.5rem; border-top: 1px solid var(--lunar-line); text-align: center; }
+.moonData > div + div { border-left: 1px solid var(--lunar-line); }
+.moonData dt { color: var(--lunar-muted); font-size: .65rem; }
+.moonData dd { margin: .2rem 0 0; color: var(--lunar-accent); font-family: var(--font-display), Georgia, serif; font-size: 2.4rem; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.moonData dd span { margin-left: .3rem; font-family: var(--font-body), sans-serif; font-size: .7rem; }
+
+.reading { grid-column: 2; min-width: 0; }
+.date { display: block; margin-bottom: .85rem; color: var(--lunar-accent); font-size: .72rem; letter-spacing: .06em; }
+.heading h1 { margin: 0; max-width: 10ch; color: var(--lunar-ink); font-family: var(--font-display), Georgia, serif; font-size: clamp(2.75rem, 5vw, 4.25rem); font-weight: 600; line-height: .98; letter-spacing: -.025em; }
+.intro { margin: .85rem 0 0; color: var(--lunar-muted); font-size: .9rem; line-height: 1.6; }
+.phaseMessage { padding-left: 1rem; border-left: 2px solid color-mix(in srgb, var(--lunar-accent) 60%, transparent); }
+.phaseMessage p { margin: 0; color: #e2d3db; font-size: .9rem; line-height: 1.8; white-space: pre-line; overflow-wrap: anywhere; }
+.phaseMessage .loading { color: var(--lunar-muted); }
+.retry { display: inline-flex; align-items: center; gap: .45rem; min-height: 44px; margin-top: .5rem; padding: .25rem 0; border: 0; background: transparent; color: var(--lunar-accent); text-decoration: underline; text-underline-offset: 4px; }
+.retry:hover { color: var(--lunar-ink); }
+
+.practice { margin-top: 2rem; }
+.practice h2 { margin: 0 0 1rem; color: var(--lunar-ink); font-family: var(--font-display), Georgia, serif; font-size: 1.6rem; font-weight: 600; }
+.practice ol { display: grid; gap: 1rem; list-style: none; margin: 0; padding: 0; }
+.practice li { display: grid; grid-template-columns: 1.5rem 1fr; gap: .7rem; }
+.step { padding-top: .15rem; color: var(--lunar-accent); font-size: .65rem; font-variant-numeric: tabular-nums; }
+.practice h3 { margin: 0; color: #f2e5ed; font-family: var(--font-body), sans-serif; font-size: .8rem; font-weight: 700; }
+.practice li p { margin: .25rem 0 0; color: var(--lunar-muted); font-size: .8rem; line-height: 1.65; }
+
+.footer { display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 1rem; padding: 1.15rem 2rem; border-top: 1px solid var(--lunar-line); }
+.footer p { margin: 0; color: var(--lunar-muted); font-family: var(--font-display), Georgia, serif; font-size: 1.15rem; font-style: italic; }
+.footer .returnButton { display: inline-flex; align-items: center; justify-content: center; gap: .65rem; min-height: 46px; padding: .7rem 1.15rem; border: 1px solid var(--lunar-accent); border-radius: 99px; background: var(--lunar-accent); color: #241721; font-size: .8rem; font-weight: 700; }
+.returnButton:hover { background: color-mix(in srgb, var(--lunar-accent) 85%, white); }
+
+.dialog[data-closing="true"] .panel { animation: depart 220ms ease-in both; }
+.dialog[data-closing="true"]::backdrop { animation: dim 220ms ease-in both; }
+@keyframes arrive { from { opacity: 0; transform: translateY(18px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes depart { to { opacity: 0; transform: translateY(12px) scale(.99); } }
+@keyframes dim { to { opacity: 0; } }
+@keyframes breathe { to { opacity: .14; transform: scale(1.08); } }
+
+@media (max-width: 640px) {
+  .dialog { padding: max(.65rem, env(safe-area-inset-top)) .65rem max(.65rem, env(safe-area-inset-bottom)); }
+  .panel { border-radius: 22px; }
+  .header { padding: .65rem 1rem .65rem 1.25rem; }
+  .content { grid-template-columns: 1fr; gap: 1.75rem; padding: 1.5rem 1.4rem 1.75rem; }
+  .heading, .reading { grid-column: 1; }
+  .observatory { grid-column: 1; grid-row: 2; padding-top: .5rem; }
+  .orbit { width: 210px; }
+  .orbitCaption { margin-top: 1.25rem; }
+  .moonData { max-width: 290px; margin: 1.1rem auto 0; padding-top: 1rem; }
+  .moonData dd { font-size: 1.85rem; }
+  .date { font-size: .68rem; }
+  .heading h1 { max-width: none; font-size: 3rem; }
+  .practice { margin-top: 1.5rem; }
+  .footer { padding: .85rem 1.25rem; }
+  .footer p { display: none; }
+  .footer .returnButton { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel, .moonHalo, .dialog[data-closing="true"] .panel, .dialog[data-closing="true"]::backdrop { animation: none; }
+  .dialog button { transition: none; }
+}
