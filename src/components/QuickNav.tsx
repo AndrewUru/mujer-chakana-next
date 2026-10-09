@@ -2,31 +2,15 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
-import { AnimatePresence, motion } from "framer-motion";
 import { DefaultChatTransport, type UIMessage } from "ai";
-import {
-  CircleStop,
-  Lightbulb,
-  Loader2,
-  RefreshCcw,
-  Send,
-  ShieldCheck,
-  Sparkles,
-  X,
-} from "lucide-react";
+import { ArrowUp, MessageCircle, RefreshCcw, Square, X } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import styles from "./QuickNav.module.css";
 
 interface QuickNavProps {
   currentDay?: number;
   userName?: string;
 }
-
-const SUGGESTIONS = [
-  "¿Qué necesita mi energía hoy?",
-  "Ayúdame a ver un patrón en mis registros",
-  "Crea una intención breve para mi ritual",
-  "Necesito una pausa consciente ahora",
-];
 
 const uniqueId = () =>
   typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -34,12 +18,9 @@ const uniqueId = () =>
     : Math.random().toString(36).slice(2, 11);
 
 const buildIntro = (userName?: string, currentDay?: number) => {
-  const greeting = userName ? `Hola, ${userName}. Soy Samari.` : "Hola, soy Samari.";
-  const cycleNote = currentDay
-    ? ` Estoy leyendo contigo el día ${currentDay} de tu ciclo.`
-    : " Estoy aquí para acompañar tu camino cíclico.";
-
-  return `${greeting}${cycleNote} Puedes traerme una emoción, una pregunta o algo que se esté repitiendo.`;
+  const greeting = userName ? `Hola, ${userName}.` : "Hola.";
+  const day = currentDay ? ` Hoy es tu día ${currentDay}.` : "";
+  return `${greeting}${day} ¿Cómo te sientes?`;
 };
 
 const createIntroMessage = (userName?: string, currentDay?: number): UIMessage => ({
@@ -57,7 +38,9 @@ const getMessageText = (message: UIMessage) =>
 const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const introMessage = useMemo(
     () => createIntroMessage(userName, currentDay),
@@ -113,9 +96,18 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
   }, [introMessage, setMessages]);
 
   useEffect(() => {
-    if (!isOpen || !bottomRef.current) return;
-    bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    if (!isOpen || !messagesRef.current) return;
+    messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
   }, [isOpen, messages, status]);
+
+  useEffect(() => {
+    if (isOpen) panelRef.current?.focus({ preventScroll: true });
+  }, [isOpen]);
+
+  const closeChat = () => {
+    setIsOpen(false);
+    triggerRef.current?.focus({ preventScroll: true });
+  };
 
   const submitMessage = (text: string) => {
     const trimmed = text.trim();
@@ -139,213 +131,116 @@ const QuickNav = ({ currentDay, userName }: QuickNavProps) => {
   };
 
   return (
-    <motion.div
-      className="fixed bottom-[calc(var(--nav-height)+1.25rem+env(safe-area-inset-bottom))] right-3 z-40 sm:bottom-[calc(var(--nav-height)+1.75rem+env(safe-area-inset-bottom))] sm:right-6"
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.4, duration: 0.4 }}
-    >
-      <motion.button
+    <div className={styles.root}>
+      <button
+        ref={triggerRef}
         type="button"
         onClick={() => setIsOpen((previous) => !previous)}
-        className="flex h-[3.25rem] w-[3.25rem] items-center justify-center gap-2 rounded-full border border-rose-200/25 bg-[#2b0817]/95 px-0 font-semibold text-rose-100 shadow-[0_18px_50px_rgba(43,8,23,0.34)] backdrop-blur-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 sm:h-auto sm:w-auto sm:min-h-11 sm:px-4 sm:py-3"
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.96 }}
+        className={styles.trigger}
         aria-expanded={isOpen}
         aria-controls="samari-chat-panel"
-        aria-label={isOpen ? "Cerrar guía de Samari" : "Abrir guía de Samari"}
+        aria-label={isOpen ? "Cerrar chat de Samari" : "Abrir chat de Samari"}
       >
-        <span className="relative">
-          <Sparkles className="h-5 w-5" />
-          {!isOpen && (
-            <span className="absolute -right-1 -top-1 h-2 w-2 animate-pulse rounded-full bg-amber-400" />
-          )}
-        </span>
-        <span className="hidden sm:inline">
-          {isOpen ? "Cerrar guía" : "Habla con Samari"}
-        </span>
-      </motion.button>
+        <MessageCircle size={18} aria-hidden="true" />
+        Samari
+      </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.section
-            id="samari-chat-panel"
-            role="dialog"
-            aria-modal="false"
-            aria-labelledby="samari-chat-title"
-            className="glass-shell absolute bottom-16 right-0 flex max-h-[min(680px,calc(100svh-var(--nav-height)-7rem))] w-[min(390px,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-[28px] border border-white/65 shadow-[0_24px_80px_rgba(94,32,57,0.22)]"
-            initial={{ opacity: 0, scale: 0.92, y: 14 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 14 }}
-            transition={{ duration: 0.22 }}
-          >
-            <header className="border-b border-white/55 bg-gradient-to-br from-rose-100/80 via-white/35 to-amber-50/60 p-4">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex min-w-0 items-center gap-3">
-                  <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-rose-500 to-pink-700 text-white shadow-lg shadow-rose-300/40">
-                    <Sparkles className="h-5 w-5" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] font-extrabold uppercase tracking-[0.25em] text-rose-400">
-                      Guía cíclica con IA
-                    </p>
-                    <h2
-                      id="samari-chat-title"
-                      className="font-[family-name:var(--font-display)] text-xl font-semibold text-rose-950"
-                    >
-                      Samari
-                    </h2>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={resetChat}
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/70 bg-white/45 text-rose-600 transition hover:bg-white/80"
-                    aria-label="Iniciar una conversación nueva"
-                  >
-                    <RefreshCcw className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsOpen(false)}
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/70 bg-white/45 text-rose-600 transition hover:bg-white/80"
-                    aria-label="Cerrar chat"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="mt-3 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-wider text-rose-700">
-                {currentDay && (
-                  <span className="rounded-full bg-white/55 px-2.5 py-1">Día {currentDay}</span>
-                )}
-                <span className="flex items-center gap-1 rounded-full bg-white/55 px-2.5 py-1">
-                  <ShieldCheck className="h-3 w-3" />
-                  contexto privado
-                </span>
-                <span className="rounded-full bg-white/55 px-2.5 py-1">memoria reciente</span>
-              </div>
-            </header>
-
-            <div
-              className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 py-4"
-              aria-live="polite"
+      {isOpen && (
+        <section
+          ref={panelRef}
+          id="samari-chat-panel"
+          role="dialog"
+          aria-labelledby="samari-chat-title"
+          tabIndex={-1}
+          className={styles.panel}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              event.stopPropagation();
+              closeChat();
+            }
+          }}
+        >
+          <header className={styles.header}>
+            <h2 id="samari-chat-title">Samari <span>IA</span></h2>
+            <button
+              type="button"
+              onClick={resetChat}
+              className={styles.iconButton}
+              aria-label="Nueva conversación"
+              title="Nueva conversación"
+              disabled={isWorking}
             >
-              {messages.map((message) => {
-                const content = getMessageText(message);
-                if (!content) return null;
+              <RefreshCcw size={17} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={closeChat}
+              className={styles.iconButton}
+              aria-label="Cerrar chat"
+              title="Cerrar chat"
+            >
+              <X size={19} aria-hidden="true" />
+            </button>
+          </header>
 
-                return (
-                  <motion.div
-                    key={message.id}
-                    className={`max-w-[88%] rounded-[20px] border px-3.5 py-3 text-sm leading-relaxed shadow-sm ${
-                      message.role === "assistant"
-                        ? "self-start rounded-bl-md border-rose-100/80 bg-rose-50/78 text-rose-950"
-                        : "self-end rounded-br-md border-rose-500/20 bg-gradient-to-br from-rose-500 to-pink-600 text-white"
-                    }`}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                  >
-                    {message.role === "assistant" && (
-                      <span className="mb-1 block text-[9px] font-extrabold uppercase tracking-[0.18em] text-rose-400">
-                        Samari
-                      </span>
-                    )}
-                    <p className="whitespace-pre-wrap">{content}</p>
-                  </motion.div>
-                );
-              })}
+          <div ref={messagesRef} className={styles.messages} role="log" aria-label="Conversación con Samari" aria-live="polite">
+            {messages.map((message) => {
+              const content = getMessageText(message);
+              if (!content) return null;
 
-              {status === "submitted" && (
-                <div className="flex items-center gap-2 text-xs text-rose-500">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Leyendo tu momento y tus registros…
-                </div>
-              )}
-
-              {status === "streaming" && (
-                <button
-                  type="button"
-                  onClick={() => void stop()}
-                  className="flex min-h-11 w-fit items-center gap-2 rounded-full border border-rose-200 bg-white/60 px-3 text-xs font-semibold text-rose-600"
+              return (
+                <p
+                  key={message.id}
+                  className={message.role === "assistant" ? styles.reply : styles.userMessage}
                 >
-                  <CircleStop className="h-4 w-4" />
-                  Detener respuesta
-                </button>
-              )}
-
-              {error && (
-                <div className="rounded-2xl border border-red-200 bg-red-50/85 px-3 py-2 text-xs leading-relaxed text-red-700">
-                  Samari no pudo responder ahora. Revisa tu conexión e inténtalo de nuevo.
-                </div>
-              )}
-              <div ref={bottomRef} />
-            </div>
-
-            {messages.length <= 1 && !isWorking && (
-              <div className="border-t border-white/55 px-4 py-3">
-                <p className="mb-2 flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.16em] text-rose-400">
-                  <Lightbulb className="h-3.5 w-3.5" />
-                  Puedes comenzar por aquí
+                  <span className="sr-only">{message.role === "assistant" ? "Samari: " : "Tú: "}</span>
+                  {content}
                 </p>
-                <div className="grid gap-1.5">
-                  {SUGGESTIONS.map((suggestion) => (
-                    <button
-                      key={suggestion}
-                      type="button"
-                      className="min-h-11 rounded-2xl border border-white/70 bg-white/45 px-3 py-2 text-left text-xs font-semibold text-rose-700 transition hover:border-rose-200 hover:bg-white/80"
-                      onClick={() => submitMessage(suggestion)}
-                    >
-                      {suggestion}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              );
+            })}
+            {status === "submitted" && (
+              <p className={styles.status} role="status">Samari está escribiendo…</p>
             )}
-
-            <form onSubmit={handleSubmit} className="border-t border-white/60 bg-white/38 p-3">
-              <div className="flex gap-2">
-                <label htmlFor="samari-chat-input" className="sr-only">
-                  Escribe tu mensaje para Samari
-                </label>
-                <textarea
-                  id="samari-chat-input"
-                  value={input}
-                  onChange={(event) => setInput(event.target.value.slice(0, 1_500))}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" && !event.shiftKey) {
-                      event.preventDefault();
-                      submitMessage(input);
-                    }
-                  }}
-                  placeholder="Comparte lo que estás sintiendo…"
-                  className="max-h-28 min-h-12 flex-1 resize-none rounded-2xl border border-white/70 bg-white/70 px-3.5 py-3 text-sm text-rose-900 placeholder:text-rose-300 focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
-                  rows={1}
-                  disabled={isWorking}
-                />
-                <button
-                  type="submit"
-                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 text-white shadow-lg shadow-rose-300/35 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45"
-                  aria-label="Enviar mensaje"
-                  disabled={!input.trim() || isWorking}
-                >
-                  {isWorking ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-              <p className="mt-2 px-1 text-[10px] leading-relaxed text-rose-400">
-                Samari acompaña tu reflexión; no sustituye atención médica o psicológica.
+            {error && (
+              <p className={styles.error} role="alert">
+                No se pudo obtener una respuesta. Inténtalo de nuevo.
               </p>
-            </form>
-          </motion.section>
-        )}
-      </AnimatePresence>
-    </motion.div>
+            )}
+          </div>
+
+          <form onSubmit={handleSubmit} className={styles.composer}>
+            <div className={styles.inputRow}>
+              <label htmlFor="samari-chat-input" className="sr-only">Mensaje para Samari</label>
+              <textarea
+                id="samari-chat-input"
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
+                    event.preventDefault();
+                    submitMessage(input);
+                  }
+                }}
+                placeholder="Escribe a Samari…"
+                maxLength={1500}
+                rows={1}
+                disabled={isWorking}
+              />
+              {isWorking ? (
+                <button type="button" onClick={() => void stop()} className={styles.sendButton} aria-label="Detener respuesta" title="Detener respuesta">
+                  <Square size={16} aria-hidden="true" />
+                </button>
+              ) : (
+                <button type="submit" className={styles.sendButton} aria-label="Enviar mensaje" title="Enviar mensaje" disabled={!input.trim()}>
+                  <ArrowUp size={20} aria-hidden="true" />
+                </button>
+              )}
+            </div>
+            <p className={styles.note}>Para reflexionar. No sustituye atención profesional.</p>
+          </form>
+        </section>
+      )}
+    </div>
   );
 };
 
