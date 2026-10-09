@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import ArchetypeImagePicker from "@/components/ArchetypeImagePicker";
+import { uploadArchetypeImage } from "@/lib/archetypeImages";
 
 export default function EditarArquetipoPage() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
   interface Arquetipo {
@@ -24,6 +26,13 @@ export default function EditarArquetipoPage() {
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
   const [mensajeError, setMensajeError] = useState<string | null>(null);
   const [guardando, setGuardando] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [saveStage, setSaveStage] = useState("");
+  const uploadedImage = useRef<{ file: File; url: string } | null>(null);
+  const saving = useRef(false);
+  const redirectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => { if (redirectTimer.current) clearTimeout(redirectTimer.current); }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -49,35 +58,54 @@ export default function EditarArquetipoPage() {
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!arquetipo) return;
+    if (!arquetipo || saving.current) return;
 
+    saving.current = true;
     setGuardando(true);
     setMensajeExito(null);
     setMensajeError(null);
 
-    const { error } = await supabase
-      .from("mujer_chakana")
-      .update({
+    try {
+      setSaveStage("Comprobando tu sesión…");
+      const { data: { user }, error: sessionError } = await supabase.auth.getUser();
+      if (sessionError || !user) throw new Error("Tu sesión ha caducado. Inicia sesión de nuevo para guardar.");
+      const { data: profile, error: profileError } = await supabase.from("perfiles").select("rol").eq("user_id", user.id).single();
+      if (profileError || profile?.rol !== "admin") throw new Error("Necesitas una sesión de administradora para guardar este arquetipo.");
+
+      let imageUrl = arquetipo.imagen_url;
+      if (imageFile) {
+        setSaveStage("Subiendo imagen…");
+        // Reuse an uploaded file if saving the database reference needs a retry.
+        if (uploadedImage.current?.file !== imageFile) {
+          uploadedImage.current = { file: imageFile, url: await uploadArchetypeImage(id, imageFile) };
+        }
+        imageUrl = uploadedImage.current.url;
+      }
+      setSaveStage("Guardando cambios…");
+      const { data: saved, error } = await supabase.from("mujer_chakana").update({
         arquetipo: arquetipo.arquetipo,
         descripcion: arquetipo.descripcion,
         elemento: arquetipo.elemento,
-        imagen_url: arquetipo.imagen_url,
+        imagen_url: imageUrl,
         audio_url: arquetipo.audio_url,
         ritual_pdf: arquetipo.ritual_pdf,
         tip_extra: arquetipo.tip_extra,
       })
-      .eq("id", id);
-
-    setGuardando(false);
-
-    if (error) {
-      console.error("Error actualizando arquetipo:", error.message);
-      setMensajeError("❌ Ocurrió un error al guardar los cambios.");
-    } else {
+      .eq("id", id).select("id").single();
+      if (error || !saved) throw new Error("No se pudieron guardar los cambios del arquetipo. Vuelve a intentarlo.");
+      setArquetipo({ ...arquetipo, imagen_url: imageUrl });
+      setImageFile(null);
+      uploadedImage.current = null;
       setMensajeExito("✅ Cambios guardados correctamente.");
-      setTimeout(() => {
+      redirectTimer.current = setTimeout(() => {
         router.push("/admin/mujer-chakana");
       }, 2000);
+    } catch (error) {
+      setMensajeError(error instanceof Error ? error.message : "No se pudieron guardar los cambios. Inténtalo de nuevo.");
+    } finally {
+      saving.current = false;
+      setGuardando(false);
+      setSaveStage("");
     }
   };
 
@@ -122,6 +150,8 @@ export default function EditarArquetipoPage() {
       )}
 
       <form onSubmit={handleUpdate} className="space-y-6">
+        <fieldset disabled={guardando || Boolean(mensajeExito)} className="space-y-6">
+        <ArchetypeImagePicker currentUrl={arquetipo.imagen_url} name={arquetipo.arquetipo} file={imageFile} disabled={guardando || Boolean(mensajeExito)} onChange={file => { setImageFile(file); uploadedImage.current = null; setMensajeError(null); }} />
         {[
           {
             label: "Nombre del Arquetipo *",
@@ -129,11 +159,6 @@ export default function EditarArquetipoPage() {
             placeholder: "Ej. La Sabia",
           },
           { label: "Elemento *", key: "elemento", isSelect: true },
-          {
-            label: "Imagen URL",
-            key: "imagen_url",
-            placeholder: "https://...",
-          },
           { label: "Audio URL", key: "audio_url", placeholder: "https://..." },
           {
             label: "Ritual PDF URL",
@@ -163,6 +188,7 @@ export default function EditarArquetipoPage() {
                 <option value="Tierra">Tierra</option>
                 <option value="Fuego">Fuego</option>
                 <option value="Aire">Aire</option>
+                <option value="Cielo">Cielo</option>
               </select>
             ) : (
               <input
@@ -182,8 +208,9 @@ export default function EditarArquetipoPage() {
 
         {/* Descripción (textarea) */}
         <div className="flex flex-col gap-2">
-          <label className="font-semibold text-pink-700">Descripción *</label>
+          <label htmlFor="descripcion" className="font-semibold text-pink-700">Descripción *</label>
           <textarea
+            id="descripcion"
             required
             rows={5}
             value={arquetipo.descripcion}
@@ -203,9 +230,11 @@ export default function EditarArquetipoPage() {
               guardando ? "opacity-50 cursor-not-allowed" : "hover:bg-pink-800"
             }`}
           >
-            {guardando ? "Guardando..." : "Guardar cambios"}
+            {guardando ? saveStage : "Guardar cambios"}
           </button>
         </div>
+        <p className="sr-only" role="status" aria-live="polite">{saveStage}</p>
+        </fieldset>
       </form>
     </main>
   );
