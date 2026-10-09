@@ -2,6 +2,10 @@
 import type { NextConfig } from "next";
 import withPWA from "next-pwa";
 
+const supabaseImageHost = process.env.NEXT_PUBLIC_SUPABASE_URL
+  ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
+  : null;
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
@@ -10,9 +14,24 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    domains: [
-      "onlnbinftmtdbawocixf.supabase.co",
-      "elsaltoweb.es", // 👈 agrega este dominio
+    remotePatterns: [
+      ...(supabaseImageHost
+        ? [{
+            protocol: "https" as const,
+            hostname: supabaseImageHost,
+            pathname: "/storage/v1/object/public/**",
+          }]
+        : []),
+      {
+        protocol: "https",
+        hostname: "onlnbinftmtdbawocixf.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+      {
+        protocol: "https",
+        hostname: "elsaltoweb.es",
+        pathname: "/**",
+      },
     ],
   },
 };
