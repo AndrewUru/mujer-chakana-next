@@ -1,8 +1,9 @@
 ﻿"use client";
 
-import { useId, useMemo, useState } from "react";
+import { Suspense, useId, useMemo, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { ArrowUpRight, BookOpen, Check, Headphones, Lock, Play, Search, SlidersHorizontal, Sparkles, X } from "lucide-react";
 import styles from "./RecursosList.module.css";
 
@@ -20,6 +21,8 @@ type Recurso = {
   tipo_suscripcion: Tier | Tier[];
 };
 type Format = "audio" | "pdf" | "video" | "otro";
+type Access = "todos" | "disponibles" | "exclusivos";
+type Filters = { q: string; formato: Format | "todos"; acceso: Access };
 const formats = {
   audio: { label: "Audios", singular: "Audio", action: "Explorar audio", icon: Headphones },
   pdf: { label: "Guías PDF", singular: "Guía PDF", action: "Abrir guía", icon: BookOpen },
@@ -32,11 +35,30 @@ function getFormat(value: string): Format {
   return type === "audio" || type === "pdf" || type === "video" ? type : "otro";
 }
 
-export default function RecursosList({ recursos, isSubscriber }: { recursos: Recurso[]; isSubscriber: boolean }) {
+export default function RecursosList(props: { recursos: Recurso[]; isSubscriber: boolean }) {
+  return <Suspense fallback={<p role="status">Preparando tus filtros…</p>}><ResourceLibrary {...props} /></Suspense>;
+}
+
+function ResourceLibrary({ recursos, isSubscriber }: { recursos: Recurso[]; isSubscriber: boolean }) {
   const searchId = useId();
-  const [query, setQuery] = useState("");
-  const [format, setFormat] = useState<Format | "todos">("todos");
-  const [access, setAccess] = useState("todos");
+  const searchRef = useRef<HTMLInputElement>(null);
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q") ?? "";
+  const requestedFormat = searchParams.get("formato");
+  const format = requestedFormat === "audio" || requestedFormat === "pdf" || requestedFormat === "video" || requestedFormat === "otro" ? requestedFormat : "todos";
+  const requestedAccess = searchParams.get("acceso");
+  const access = requestedAccess === "disponibles" || requestedAccess === "exclusivos" ? requestedAccess : "todos";
+  const normalizedQuery = normalize(query);
+
+  function updateFilters(changes: Partial<Filters>) {
+    const url = new URL(window.location.href);
+    Object.entries(changes).forEach(([key, value]) => {
+      if (value === "" || (key !== "q" && value === "todos")) url.searchParams.delete(key);
+      else url.searchParams.set(key, value);
+    });
+    // Keep one history entry for the library and avoid refetching on each keystroke.
+    window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+  }
   const library = useMemo(() => Array.from(new Map(recursos.map(resource => [resource.id, resource])).values()).map(resource => {
     const tiers = (Array.isArray(resource.tipo_suscripcion) ? resource.tipo_suscripcion : [resource.tipo_suscripcion]).map(tier => typeof tier === "string" ? normalize(tier) : "");
     const free = tiers.includes("gratuito");
@@ -53,10 +75,13 @@ export default function RecursosList({ recursos, isSubscriber }: { recursos: Rec
   const visible = library.filter(resource =>
     (format === "todos" || resource.format === format) &&
     (access === "todos" || (access === "disponibles" ? resource.available : !resource.available && resource.knownAccess)) &&
-    normalize([resource.titulo, resource.descripcion, resource.fase, resource.arquetipo, resource.elemento].filter(Boolean).join(" ")).includes(normalize(query))
+    normalize([resource.titulo, resource.descripcion, resource.fase, resource.arquetipo, resource.elemento].filter(Boolean).join(" ")).includes(normalizedQuery)
   );
   const hasFilters = query !== "" || format !== "todos" || access !== "todos";
-  const reset = () => { setQuery(""); setFormat("todos"); setAccess("todos"); };
+  const reset = () => {
+    updateFilters({ q: "", formato: "todos", acceso: "todos" });
+    searchRef.current?.focus();
+  };
 
   return (
     <div className={styles.library}>
@@ -69,13 +94,13 @@ export default function RecursosList({ recursos, isSubscriber }: { recursos: Rec
           <div className={styles.search}>
             <Search size={18} aria-hidden="true" />
             <label className={styles.srOnly} htmlFor={searchId}>Buscar en la biblioteca</label>
-            <input id={searchId} type="search" placeholder="¿Qué necesitas hoy?" value={query} onChange={event => setQuery(event.target.value)} />
-            {query && <button type="button" onClick={() => setQuery("")} aria-label="Borrar búsqueda"><X size={16} /></button>}
+            <input ref={searchRef} id={searchId} type="search" placeholder="¿Qué necesitas hoy?" value={query} onChange={event => updateFilters({ q: event.target.value })} />
+            {query && <button type="button" onClick={() => { updateFilters({ q: "" }); searchRef.current?.focus(); }} aria-label="Borrar búsqueda"><X size={16} aria-hidden="true" /></button>}
           </div>
           <label className={styles.access}>
             <SlidersHorizontal size={16} aria-hidden="true" />
             <span className={styles.srOnly}>Filtrar por acceso</span>
-            <select value={access} onChange={event => setAccess(event.target.value)}>
+            <select value={access} onChange={event => updateFilters({ acceso: event.target.value as Access })}>
               <option value="todos">Todo el contenido</option>
               <option value="disponibles">Disponible para mí</option>
               <option value="exclusivos">Por desbloquear</option>
@@ -84,13 +109,16 @@ export default function RecursosList({ recursos, isSubscriber }: { recursos: Rec
         </div>
         <div className={styles.filterRow}>
           <div className={styles.filters} role="group" aria-label="Filtrar por formato">
-            <button type="button" aria-pressed={format === "todos"} onClick={() => setFormat("todos")}>Todo <span>{library.length}</span></button>
+            <button type="button" aria-pressed={format === "todos"} onClick={() => updateFilters({ formato: "todos" })}>Todo <span>{library.length}</span></button>
             {(Object.keys(formats) as Format[]).filter(key => library.some(resource => resource.format === key)).map(key => {
               const Icon = formats[key].icon;
-              return <button key={key} type="button" aria-pressed={format === key} onClick={() => setFormat(key)}><Icon size={14} aria-hidden="true" />{formats[key].label}</button>;
+              return <button key={key} type="button" aria-pressed={format === key} onClick={() => updateFilters({ formato: key })}><Icon size={14} aria-hidden="true" />{formats[key].label}</button>;
             })}
           </div>
-          <span className={styles.resultCount} role="status" aria-live="polite">{visible.length} {visible.length === 1 ? "recurso" : "recursos"}</span>
+          <div className={styles.filterSummary}>
+            <span className={styles.resultCount} role="status" aria-live="polite">{visible.length} {visible.length === 1 ? "recurso" : "recursos"}</span>
+            {hasFilters && <button type="button" className={styles.reset} onClick={reset}><X size={16} aria-hidden="true" /> Limpiar filtros</button>}
+          </div>
         </div>
       </>}
       <div className={styles.grid}>
