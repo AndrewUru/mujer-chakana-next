@@ -23,7 +23,7 @@ export default function SuscripcionPage() {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        router.push("/auth/login");
+        setLoading(false);
         return;
       }
 
@@ -48,6 +48,7 @@ export default function SuscripcionPage() {
   }, [router]);
 
   useEffect(() => {
+    if (!userId || loading) return;
     const loadPayPalScript = () => {
       return new Promise((resolve) => {
         if (document.getElementById("paypal-sdk")) {
@@ -65,7 +66,7 @@ export default function SuscripcionPage() {
     };
 
     loadPayPalScript().then(() => setSdkReady(true));
-  }, []);
+  }, [userId, loading]);
 
   return (
     <main className={styles.page}>
@@ -74,12 +75,10 @@ export default function SuscripcionPage() {
         <Link href="/dashboard" className={styles.back}><ArrowLeft size={15} /> Volver a mi espacio</Link>
         <header className={styles.hero}><p className={styles.eyebrow}>Mujer Chakana / Membresía</p><h1>Dale espacio<br /><em>a tu profundidad.</em></h1><p>Rituales, audios y recursos para acompañar cada vuelta. Elige cómo quieres continuar tu recorrido.</p></header>
         <div className={styles.benefits}><span><BookOpen size={20} /> Rituales en PDF</span><span><Headphones size={20} /> Audios diarios exclusivos</span><span><Sparkles size={20} /> Recursos desbloqueados</span></div>
-        {loading ? <p className={styles.loading} role="status">Preparando tus opciones...</p> : (
           <div className={styles.plans}>
-            <section className={styles.plan} aria-labelledby="monthly-title"><p className={styles.eyebrow}>Un mes a la vez</p><h2 id="monthly-title">A tu ritmo.</h2><p className={styles.price}>2,99 <span>€ / mes</span></p><p className={styles.description}>Una invitación mensual a observar, sentir y conectar contigo.</p><div className={styles.billing}>Suscripción mensual</div>{sdkReady ? <PayPalSubscriptionButton planId={PAYPAL_PLANS.mensual.id} userId={userId} /> : <p className={styles.loading} role="status">Cargando PayPal...</p>}</section>
-            <section className={`${styles.plan} ${styles.annual}`} aria-labelledby="annual-title"><span className={styles.badge}>Tu recorrido completo</span><p className={styles.eyebrow}>Un año para ti</p><h2 id="annual-title">Vuelta tras vuelta.</h2><p className={styles.price}>29,99 <span>€ / año</span></p><p className={styles.description}>Un año de acceso para sostener tu práctica y explorar tus ciclos.</p><div className={styles.billing}>Suscripción anual</div>{sdkReady ? <PayPalSubscriptionButton planId={PAYPAL_PLANS.anual.id} userId={userId} /> : <p className={styles.loading} role="status">Cargando PayPal...</p>}</section>
+            <section className={styles.plan} aria-labelledby="monthly-title"><p className={styles.eyebrow}>Un mes a la vez</p><h2 id="monthly-title">A tu ritmo.</h2><p className={styles.price}>2,99 <span>€ / mes</span></p><p className={styles.description}>Una invitación mensual a observar, sentir y conectar contigo.</p><div className={styles.billing}>Suscripción mensual</div>{loading ? <p className={styles.loading} role="status">Comprobando tu cuenta…</p> : !userId ? <Link href="/auth/login" className={styles.join}>Entrar para suscribirme</Link> : sdkReady ? <PayPalSubscriptionButton planId={PAYPAL_PLANS.mensual.id} userId={userId} /> : <p className={styles.loading} role="status">Cargando PayPal...</p>}</section>
+            <section className={`${styles.plan} ${styles.annual}`} aria-labelledby="annual-title"><span className={styles.badge}>Tu recorrido completo</span><p className={styles.eyebrow}>Un año para ti</p><h2 id="annual-title">Vuelta tras vuelta.</h2><p className={styles.price}>29,99 <span>€ / año</span></p><p className={styles.description}>Un año de acceso para sostener tu práctica y explorar tus ciclos.</p><div className={styles.billing}>Suscripción anual</div>{loading ? <p className={styles.loading} role="status">Comprobando tu cuenta…</p> : !userId ? <Link href="/auth/login" className={styles.join}>Entrar para suscribirme</Link> : sdkReady ? <PayPalSubscriptionButton planId={PAYPAL_PLANS.anual.id} userId={userId} /> : <p className={styles.loading} role="status">Cargando PayPal...</p>}</section>
           </div>
-        )}
         <p className={styles.note}>Cancela cuando quieras. Pagos procesados con PayPal.</p>
       </div>
     </main>

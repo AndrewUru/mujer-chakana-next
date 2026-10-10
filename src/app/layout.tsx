@@ -1,7 +1,8 @@
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import CookieConsent from "@/components/CookieConsent";
-import { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo";
 import { Cormorant_Garamond, Nunito_Sans } from "next/font/google";
 import AmbientSceneLazy from "@/components/AmbientSceneLazy";
 import PageTransition from "@/components/PageTransition";
@@ -19,83 +20,17 @@ const displayFont = Cormorant_Garamond({
   weight: ["600", "700"],
 });
 
-// Metadatos optimizados usando la nueva API de Next.js 13+
 export const metadata: Metadata = {
-  title: {
-    default: "Ginergética | Ciclo Lunar y Autoexploración",
-    template: "%s | Ginergética",
-  },
-  description:
-    "Ginergética: Registra tu ciclo, conecta con las fases lunares y descubre tu Ginergía. Una herramienta espiritual y práctica para mujeres cíclicas.",
-  keywords: [
-    "Ginergética",
-    "ciclo menstrual",
-    "fases lunares",
-    "ginergía",
-    "autoconocimiento femenino",
-    "moonboard",
-    "ciclo lunar",
-    "autoexploración",
-    "espiritualidad femenina",
-  ],
-  authors: [{ name: "Ginergía | Ginergética" }],
-  creator: "Ginergía | Ginergética",
-  publisher: "Ginergía | Ginergética",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  metadataBase: new URL("https://ginergetica.com"),
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    type: "website",
-    locale: "es_ES",
-    url: "https://ginergetica.com",
-    title: "Ginergética | Ciclo Lunar y Autoexploración",
-    description:
-      "Registra tu ciclo y sincronízate con la luna. Autoexploración espiritual y práctica.",
-    siteName: "Ginergética",
-    images: [
-      {
-        url: "https://elsaltoweb.es/wp-content/uploads/2025/04/mujer-chakana.png",
-        width: 1200,
-        height: 630,
-        alt: "Ginergetica - Ciclo Lunar y Autoexploración",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Ginergética",
-    description: "Autoexploración femenina con sincronía lunar y ginergía.",
-    images: [
-      "https://elsaltoweb.es/wp-content/uploads/2025/04/mujer-chakana.png",
-    ],
-    creator: "@ginergetica",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-  verification: {
-    google: "tu-google-verification-code",
-  },
-  category: "health",
-  icons: {
-    icon: "/logo_chakana.png",
-    apple: "/logo_chakana.png",
-  },
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_NAME, template: "%s | Ginergética" },
+  description: SITE_DESCRIPTION,
+  formatDetection: { email: false, address: false, telephone: false },
+  robots: { index: true, follow: true },
+  ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
+  icons: { icon: "/logo_chakana.png", apple: "/logo_chakana.png" },
 };
+
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#e91e63" };
 
 export default function RootLayout({
   children,
@@ -108,12 +43,10 @@ export default function RootLayout({
       className={`${bodyFont.variable} ${displayFont.variable}`}
     >
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         {/* PWA / App */}
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/logo_chakana.png" />
-        <meta name="theme-color" content="#e91e63" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Ginergética" />

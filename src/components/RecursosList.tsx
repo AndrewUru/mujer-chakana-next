@@ -12,7 +12,7 @@ type Recurso = {
   id: string;
   tipo: string;
   titulo: string;
-  url: string;
+  url?: string;
   descripcion: string;
   imagen_url?: string;
   fase?: string;

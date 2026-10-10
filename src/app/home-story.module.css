@@ -1156,6 +1156,10 @@ button.primaryAction {
   }
 }
 
+.footerLinks { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.25rem; }
+.footerLinks a { display: inline-flex; align-items: center; min-height: 44px; text-underline-offset: 4px; }
+.footerLinks a:hover { text-decoration: underline; }
+
 @media (prefers-reduced-motion: reduce) {
   .story {
     scroll-snap-type: none;

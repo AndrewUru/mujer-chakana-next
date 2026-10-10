@@ -9,6 +9,21 @@ const supabaseImageHost = process.env.NEXT_PUBLIC_SUPABASE_URL
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
+  // Resolve metadata before sending headers, including notFound() status codes.
+  htmlLimitedBots: /.*/,
+
+  async redirects() {
+    return [
+      { source: "/register", destination: "/auth/register", permanent: true },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "ginergetica.com" }],
+        destination: "https://www.ginergetica.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
+
   experimental: {
     serverActions: {},
   },
