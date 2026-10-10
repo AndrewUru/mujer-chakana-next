@@ -31,7 +31,7 @@ export default function RecursosPage({ initialResources }: { initialResources: R
       setError(false);
       try {
         const [resources, subscriber] = await Promise.all([
-          supabase.from("recursos").select("id,tipo,titulo,descripcion,tipo_suscripcion,imagen_url,fase,arquetipo,elemento").eq("activo", true).order("creado_en", { ascending: false }),
+          supabase.from("recursos").select("*").eq("activo", true).order("creado_en", { ascending: false }),
           (async () => {
             const { data: { user }, error: authError } = await supabase.auth.getUser();
             if (!user) return false;

@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!isResourceId(id)) notFound();
   const resource = await getPublicResource(id);
   if (!resource) return { ...privateMetadata, title: "Recurso de tu biblioteca" };
-  return publicMetadata(resource.titulo, resource.descripcion || "Explora este recurso de autoconocimiento y acompaña tu práctica a tu ritmo en Ginergética.", `/recursos/${id}`);
+  return publicMetadata(resource.titulo, resource.descripcion || "Explora este recurso de autoconocimiento y acompaña tu práctica a tu ritmo en Ginergética.", `/recursos/${resource.id}`);
 }
 
 export default async function RecursoPage({ params }: Props) {
