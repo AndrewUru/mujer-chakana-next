@@ -119,8 +119,8 @@ export default function CicloPage() {
                 {items.map((day, index) => (
                   <article key={day.id} className={`${styles.card} ${index === 0 && sectionIndex % 2 === 0 ? styles.cardFeatured : ""}`}>
                     <div className={styles.cardVisual}>
-                      {day.dia_ciclo ? (
-                        <Image src={`/arquetipos/${day.dia_ciclo}.png`} alt={`Arquetipo ${day.arquetipo}`} fill sizes="(max-width: 720px) 88vw, (max-width: 1100px) 45vw, 28vw" className={styles.cardImage} style={{ objectFit: "contain" }} />
+                      {day.imagen_url ? (
+                        <Image src={day.imagen_url} alt={`Arquetipo ${day.arquetipo}`} fill sizes="(max-width: 720px) 88vw, (max-width: 1100px) 45vw, 28vw" className={styles.cardImage} style={{ objectFit: "contain" }} />
                       ) : (
                         <div className={styles.imageFallback} role="img" aria-label={`Arquetipo ${day.arquetipo}: imagen no disponible`}>
                           <Sparkles aria-hidden="true" />
