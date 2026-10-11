@@ -27,7 +27,10 @@ export const metadata: Metadata = {
   formatDetection: { email: false, address: false, telephone: false },
   robots: { index: true, follow: true },
   ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
-  icons: { icon: "/logo_chakana.png", apple: "/logo_chakana.png" },
+  icons: {
+    icon: { url: "/favicon.svg", type: "image/svg+xml", sizes: "any" },
+    apple: "/logo_chakana.png",
+  },
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#e91e63" };
