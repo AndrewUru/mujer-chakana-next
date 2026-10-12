@@ -1,4 +1,5 @@
 import "./globals.css";
+import { CartProvider } from "@/components/shop/CartProvider";
 import Navbar from "@/components/Navbar";
 import CookieConsent from "@/components/CookieConsent";
 import type { Metadata, Viewport } from "next";
@@ -77,14 +78,14 @@ export default function RootLayout({
         <AmbientSceneLazy />
 
         {/* Contenido principal */}
-        <PageTransition>
+        <CartProvider><PageTransition>
           <div className="relative z-20 flex flex-col min-h-screen">
             <div id="main-content" className="app-main flex-1" tabIndex={-1}>
               {children}
             </div>
             <Navbar />
           </div>
-        </PageTransition>
+        </PageTransition></CartProvider>
 
         {/* Componentes de terceros */}
         <CookieConsent />

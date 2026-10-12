@@ -12,11 +12,14 @@ import {
   LogOut,
   Moon,
   Settings,
+  Store,
+  ShoppingBag,
 } from "lucide-react";
 import Image from "next/image";
 import type { Session } from "@supabase/supabase-js";
 import { preparePageTransition, usePageTransition } from "./PageTransition";
 
+import { useCart } from "./shop/CartProvider";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
@@ -25,6 +28,7 @@ export default function Navbar() {
   >("loading");
   const [avatar, setAvatar] = useState<string | null>(null);
   const pathname = usePathname();
+  const cart = useCart();
   const router = useRouter();
 
   useEffect(() => {
@@ -152,6 +156,8 @@ export default function Navbar() {
             <NavItem href="/auth/login" icon={<LogIn />} label="Entrar" />
           </>
         )}
+        <NavItem href="/tienda" icon={<Store />} label="Tienda" active={pathname.startsWith("/tienda")} />
+        <NavItem href="/carrito" icon={<ShoppingBag />} label={`Carrito${cart.count ? ` (${cart.count})` : ""}`} active={pathname === "/carrito"} />
       </div>
     </nav>
   );

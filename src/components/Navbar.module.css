@@ -3,7 +3,7 @@
   z-index: 50;
   bottom: calc(1.25rem + env(safe-area-inset-bottom));
   left: 50%;
-  width: min(660px, calc(100% - 2.5rem));
+  width: min(820px, calc(100% - 2.5rem));
   transform: translateX(-50%);
   padding: .5rem;
   border: 1px solid #e8b1c63d;
@@ -14,11 +14,11 @@
   -webkit-backdrop-filter: blur(24px);
   color: #e5c5d2;
 }
-.items { display: flex; align-items: stretch; gap: .4rem; }
+.items { display: flex; align-items: stretch; gap: .4rem; overflow-x: auto; scrollbar-width: thin; }
 .item {
   position: relative;
   flex: 1 1 0;
-  min-width: 0;
+  min-width: 44px;
   min-height: 60px;
   display: flex;
   align-items: center;

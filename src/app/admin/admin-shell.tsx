@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowUpRight, BookOpen, Flower2, Moon, Users } from "lucide-react";
+import { ArrowUpRight, BookOpen, Flower2, Moon, Users, Store } from "lucide-react";
 import "./admin.css";
 
 const sections = [
+  { href: "/admin/tienda", label: "Tienda", icon: Store },
   { href: "/admin", label: "Comunidad", icon: Users },
   { href: "/admin/mujer-chakana", label: "Mujer Chakana", icon: Flower2 },
   { href: "/admin/recursos", label: "Recursos", icon: BookOpen },
