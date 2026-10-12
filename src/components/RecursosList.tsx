@@ -4,7 +4,8 @@ import { Suspense, useId, useMemo, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { ArrowUpRight, BookOpen, Check, Headphones, Lock, Play, Search, SlidersHorizontal, Sparkles, X } from "lucide-react";
+import { ArrowUpRight, BookOpen, Check, Headphones, Lock, Play, Search, SlidersHorizontal, Sparkles, Heart, X } from "lucide-react";
+import { useResourceFavorites } from "./useResourceFavorites";
 import styles from "./RecursosList.module.css";
 
 type Tier = "gratuito" | "mensual" | "anual";
@@ -22,7 +23,7 @@ type Recurso = {
 };
 type Format = "audio" | "pdf" | "video" | "otro";
 type Access = "todos" | "disponibles" | "exclusivos";
-type Filters = { q: string; formato: Format | "todos"; acceso: Access };
+type Filters = { q: string; formato: Format | "todos"; acceso: Access; favoritos: string };
 const formats = {
   audio: { label: "Audios", singular: "Audio", action: "Explorar audio", icon: Headphones },
   pdf: { label: "Guías PDF", singular: "Guía PDF", action: "Abrir guía", icon: BookOpen },
@@ -40,9 +41,11 @@ export default function RecursosList(props: { recursos: Recurso[]; isSubscriber:
 }
 
 function ResourceLibrary({ recursos, isSubscriber }: { recursos: Recurso[]; isSubscriber: boolean }) {
+  const favorites = useResourceFavorites();
   const searchId = useId();
   const searchRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
+  const onlyFavorites = searchParams.get("favoritos") === "si";
   const query = searchParams.get("q") ?? "";
   const requestedFormat = searchParams.get("formato");
   const format = requestedFormat === "audio" || requestedFormat === "pdf" || requestedFormat === "video" || requestedFormat === "otro" ? requestedFormat : "todos";
@@ -73,13 +76,14 @@ function ResourceLibrary({ recursos, isSubscriber }: { recursos: Recurso[]; isSu
   }), [recursos, isSubscriber]);
   const availableCount = library.filter(resource => resource.available).length;
   const visible = library.filter(resource =>
+    (!onlyFavorites || (favorites.ready && favorites.ids.includes(String(resource.id)))) &&
     (format === "todos" || resource.format === format) &&
     (access === "todos" || (access === "disponibles" ? resource.available : !resource.available && resource.knownAccess)) &&
     normalize([resource.titulo, resource.descripcion, resource.fase, resource.arquetipo, resource.elemento].filter(Boolean).join(" ")).includes(normalizedQuery)
   );
-  const hasFilters = query !== "" || format !== "todos" || access !== "todos";
+  const hasFilters = onlyFavorites || query !== "" || format !== "todos" || access !== "todos";
   const reset = () => {
-    updateFilters({ q: "", formato: "todos", acceso: "todos" });
+    updateFilters({ q: "", formato: "todos", acceso: "todos", favoritos: "" });
     searchRef.current?.focus();
   };
 
@@ -89,6 +93,11 @@ function ResourceLibrary({ recursos, isSubscriber }: { recursos: Recurso[]; isSu
         <span className={styles.eyebrow}><Sparkles size={14} aria-hidden="true" /> Pequeñas pausas, nuevas perspectivas</span>
         <span className={styles.inventory}>{availableCount} de {library.length} disponibles para ti</span>
       </div>
+      <div className={styles.favoriteTools}>
+        <button type="button" aria-pressed={onlyFavorites} disabled={!favorites.ready} onClick={() => updateFilters({ favoritos: onlyFavorites ? "" : "si" })}><Heart size={16} aria-hidden="true" /> Mis favoritos ({library.filter(resource => favorites.ids.includes(String(resource.id))).length})</button>
+        <p>{favorites.userId ? "Guardados en este navegador para tu cuenta." : <Link href="/auth/login">Inicia sesión para guardar tus favoritos</Link>}</p>
+      </div>
+      {favorites.error && <p role="alert">{favorites.error}</p>}
       {library.length > 0 && <>
         <div className={styles.toolbar}>
           <div className={styles.search}>
@@ -137,6 +146,7 @@ function ResourceLibrary({ recursos, isSubscriber }: { recursos: Recurso[]; isSu
             <div className={styles.body}>
               <div className={styles.metadata}><span>{resource.plan}</span><span>{resource.available ? "Disponible" : resource.knownAccess ? "Exclusivo" : "Próximamente"}</span></div>
               <h3>{resource.titulo}</h3>
+              {favorites.userId && <button className={styles.favoriteButton} type="button" aria-pressed={favorites.ids.includes(String(resource.id))} aria-label={`${favorites.ids.includes(String(resource.id)) ? "Quitar de" : "Añadir a"} favoritos: ${resource.titulo}`} onClick={() => favorites.toggle(String(resource.id))}><Heart size={16} aria-hidden="true" fill={favorites.ids.includes(String(resource.id)) ? "currentColor" : "none"} />{favorites.ids.includes(String(resource.id)) ? "Guardado" : "Guardar"}</button>}
               <p>{resource.descripcion || "Un espacio para acompañar tu práctica y volver a ti."}</p>
               {[resource.fase, resource.arquetipo, resource.elemento].some(Boolean) && <div className={styles.tags}>{[resource.fase, resource.arquetipo, resource.elemento].filter(Boolean).map((tag, index) => <span key={index}>{tag}</span>)}</div>}
               {resource.knownAccess ? <Link className={styles.cardLink} href={resource.available ? `/recursos/${resource.id}` : "/suscripcion"} aria-label={`${resource.available ? meta.action : "Conocer planes"}: ${resource.titulo}`}>
@@ -149,8 +159,8 @@ function ResourceLibrary({ recursos, isSubscriber }: { recursos: Recurso[]; isSu
       </div>
       {visible.length === 0 && <div className={styles.empty}>
         <BookOpen size={32} strokeWidth={1} aria-hidden="true" />
-        <h3>{library.length ? "Probemos otro camino" : "Tu biblioteca está creciendo"}</h3>
-        <p>{library.length ? "No hay recursos que coincidan con esta selección. Prueba otra palabra o explora todos los formatos." : "Estamos preparando audios, guías y nuevas prácticas para acompañarte. Vuelve pronto."}</p>
+        <h3>{onlyFavorites ? "Tus próximas pausas, aquí" : library.length ? "Probemos otro camino" : "Tu biblioteca está creciendo"}</h3>
+        <p>{onlyFavorites ? "Guarda recursos con el corazón para encontrarlos aquí. Si ya tienes favoritos, prueba a limpiar los otros filtros." : library.length ? "No hay recursos que coincidan con esta selección. Prueba otra palabra o explora todos los formatos." : "Estamos preparando audios, guías y nuevas prácticas para acompañarte. Vuelve pronto."}</p>
         {hasFilters && <button type="button" onClick={reset}>Ver todos los recursos <ArrowUpRight size={16} aria-hidden="true" /></button>}
       </div>}
     </div>

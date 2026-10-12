@@ -79,3 +79,5 @@
 }
 @media (prefers-reduced-motion: reduce) { .library *, .library *::before, .library *::after { transition: none !important; } .card:hover, .card:focus-within { transform: none; } }
 .cover { object-fit: cover; opacity: .45; z-index: -1; } .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: -8px 0 20px; } .tags span { border: 1px solid #ffffff24; border-radius: 99px; padding: 4px 9px; color: #d4c8dc; font-size: 12px; }
+
+.favoriteTools{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:12px 0 20px}.favoriteTools p{font-size:12px;color:#cfc3d3}.favoriteTools button,.favoriteButton{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 16px;border:1px solid #ffffff40;border-radius:99px;color:#e7d8bc;background:transparent;cursor:pointer}.favoriteTools button[aria-pressed="true"],.favoriteButton[aria-pressed="true"]{background:#e7d8bc20;border-color:#e7d8bc}.favoriteButton{align-self:flex-start;margin:0 0 16px;font-size:13px}.favoriteTools button:disabled{opacity:.5;cursor:wait}
