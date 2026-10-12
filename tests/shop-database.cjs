@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Standalone CommonJS database harness, outside the application bundle. */
 // Integration test against PostgreSQL in WASM, isolated from the connected project.
 // Run with PGLITE_MODULE pointing to an installed @electric-sql/pglite package.
 const assert = require('node:assert/strict');

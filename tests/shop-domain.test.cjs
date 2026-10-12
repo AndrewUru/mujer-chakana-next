@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Standalone CommonJS harness compiles TypeScript without a test-runner dependency. */
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- CommonJS module hooks render the real TypeScript components without an extra bundler. */
 // Visual component harness: fixtures only, never a fallback for the live catalog.
 const fs = require('node:fs');
 const path = require('node:path');
@@ -17,7 +18,7 @@ function load(file) {
   loaded.require=id=>{
     if(id.endsWith('.css')) return {__esModule:true,default:new Proxy({},{get:(_,key)=>String(key)})};
     if(id==='next/link') return {__esModule:true,default:({children,...props})=>React.createElement('a',props,children)};
-    if(id==='next/image') return {__esModule:true,default:({fill,priority,sizes,...props})=>React.createElement('img',{...props,style:fill?{position:'absolute',width:'100%',height:'100%'}:undefined})};
+    if(id==='next/image') return {__esModule:true,default:({fill,priority,sizes,...props})=>React.createElement('img',{...props,sizes,loading:priority?'eager':'lazy',style:fill?{position:'absolute',width:'100%',height:'100%'}:undefined})};
     if(id.startsWith('@/')||id.startsWith('.')){
       const base=id.startsWith('@/')?path.resolve('src',id.slice(2)):path.resolve(path.dirname(filename),id);
       const target=[base,base+'.tsx',base+'.ts'].find(candidate=>fs.existsSync(candidate)&&fs.statSync(candidate).isFile());

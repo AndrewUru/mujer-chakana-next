@@ -170,3 +170,12 @@ política heredada permisiva, guardado atómico, conflictos, duplicación y publ
 El esquema auth/storage del test es un arnés mínimo, no una instancia Supabase
 real. La verificación remota final requiere instalar la migración y una sesión
 admin real: crear → subir → guardar → publicar → comprobar tienda → carrito.
+
+`node tests/shop-responsive.cjs` renderiza componentes reales con fixtures de
+demostración, en un navegador aislado, y comprueba anchos de 375 y 1280 px. Guarda
+capturas en la carpeta temporal `chakana-shop-review`. Utiliza fuentes de reserva
+para el arnés; no sustituye la comprobación final de la app con una sesión real.
+
+En la revisión del entorno conectado, la consulta a `shop_products` devolvió
+HTTP 404 / `PGRST205`: la migración aún no está instalada. Las pruebas PostgreSQL
+aisladas pasan; esto no acredita la instalación ni las políticas en producción.
