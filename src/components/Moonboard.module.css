@@ -141,3 +141,5 @@
 @media (prefers-reduced-motion: reduce) {
   .board button { transition: none; }
 }
+
+.fullscreen{display:inline-flex;align-items:center;justify-self:end;gap:10px;min-height:44px;padding:12px 20px;border:1px solid var(--board-line);border-radius:99px;color:var(--board-ink);font-size:12px;text-decoration:none}.fullMap{border-top:1px solid var(--board-line)}.fullMap>summary{cursor:pointer;padding:22px 30px;min-height:48px;color:var(--board-accent);font-size:12px}.fullMap>summary:focus-visible{outline:2px solid var(--board-accent);outline-offset:-6px}@media(max-width:960px){.fullscreen{justify-self:start}}

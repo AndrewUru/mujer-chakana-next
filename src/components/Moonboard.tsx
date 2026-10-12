@@ -6,23 +6,26 @@ import Image from "next/image";
 import Link from "next/link";
 import { getLunarImageForDate } from "@/lib/lunarImages";
 import LunarModal from "./LunarModal";
+import MoonboardObservatory from "./moonboard/MoonboardObservatory";
+import JourneyLink from "./JourneyLink";
 import styles from "./Moonboard.module.css";
 
 const TOTAL_DAYS = 28;
 const DAY_MS = 86_400_000;
 const WEEK_NAMES = ["Descenso", "Impulso", "Expansión", "Integración"];
 
-interface MoonboardProps { startDate: Date | null; immersive?: boolean; }
+interface MoonboardProps { startDate: Date | null; immersive?: boolean; standalone?: boolean; motionPaused?: boolean; }
 
-export default function Moonboard({ startDate, immersive = false }: MoonboardProps) {
+export default function Moonboard({ startDate, immersive = false, standalone = false, motionPaused = false }: MoonboardProps) {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const today = useMemo(() => new Date(), []);
 
   const cycle = useMemo(() => {
-    if (!startDate) return null;
+    if (!startDate || !Number.isFinite(startDate.getTime())) return null;
     const normalizedStart = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-    const normalizedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const elapsed = Math.floor((normalizedToday.getTime() - normalizedStart.getTime()) / DAY_MS);
+    // Count calendar days, not 24-hour intervals: daylight-saving changes are not cycle days.
+    const elapsed = Math.floor((Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) - Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())) / DAY_MS);
+    if (elapsed < 0) return null;
     const completed = Math.floor(elapsed / TOTAL_DAYS);
     const currentDay = ((elapsed % TOTAL_DAYS) + TOTAL_DAYS) % TOTAL_DAYS + 1;
     const currentStart = new Date(normalizedStart);
@@ -49,42 +52,28 @@ export default function Moonboard({ startDate, immersive = false }: MoonboardPro
     return date;
   }, [cycle, selectedDay]);
 
-  const todayMoon = getLunarImageForDate(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
 
   return (
     <>
-      <section className={`${styles.board} ${immersive ? styles.immersive : ""}`} aria-labelledby="moonboard-title">
-        <header className={styles.header}>
+      <section className={`${styles.board} ${immersive ? styles.immersive : ""}`} aria-labelledby={standalone ? undefined : "moonboard-title"} aria-label={standalone ? "Tu mapa lunar" : undefined}>
+        {!standalone && <header className={styles.header}>
           <div className={styles.copy}>
             <span><Moon size={15} aria-hidden="true" /> Tu mapa lunar</span>
             <h2 id="moonboard-title">Cada luna es una puerta.<br /><em>Abre la tuya.</em></h2>
             <p>Descubre la fase que acompaña cada día y encuentra una pausa para volver a ti.</p>
           </div>
-          {cycle && (
-            <button
-              type="button"
-              className={styles.todayCard}
-              onClick={() => openDay(cycle.currentDay)}
-              aria-label={`Ver mi luna de hoy, día ${cycle.currentDay}, ${todayMoon.name}`}
-              aria-haspopup="dialog"
-            >
-              <span className={styles.todayVisual} aria-hidden="true">
-                <Image src={todayMoon.src} alt="" width={120} height={120} sizes="(max-width: 600px) 80px, 100px" />
-              </span>
-              <span className={styles.todayCopy}>
-                <span className={styles.todayEyebrow}>Empieza por hoy · Día {cycle.currentDay}</span>
-                <strong>{todayMoon.name}</strong>
-                <span className={styles.todayAction}>Ver mi luna de hoy <ArrowUpRight size={18} aria-hidden="true" /></span>
-              </span>
-            </button>
-          )}
-        </header>
+          {!standalone && <JourneyLink href="/moonboard" label="Moonboard" className={styles.fullscreen}>Abrir el observatorio <ArrowUpRight size={17} aria-hidden="true" /></JourneyLink>}
+
+        </header>}
 
         {!cycle ? (
           <div className={styles.noDate}>
             <CalendarRange aria-hidden="true" /><div><h3>Tu mapa necesita un punto de partida</h3><p>Configura la fecha de inicio para activar los 28 días de esta vuelta.</p><Link href="/setup">Configurar mi ciclo <ArrowUpRight size={16} aria-hidden="true" /></Link></div>
           </div>
         ) : (
+          <>
+          <MoonboardObservatory key={cycle.currentStart.getTime()} currentDay={cycle.currentDay} currentStart={cycle.currentStart} onOpen={openDay} motionPaused={motionPaused || selectedDay !== null} />
+          <details className={styles.fullMap}><summary>Explorar el mapa completo de 28 días</summary>
           <div className={styles.map}>
             <div className={styles.mapMeta}>
               <div><h3>Explora tus días</h3><p>Toca una luna disponible para abrir su lectura.</p></div>
@@ -117,6 +106,8 @@ export default function Moonboard({ startDate, immersive = false }: MoonboardPro
 
             <p className={styles.mapNote}><Lock size={13} aria-hidden="true" /> Los próximos días se abren a medida que avanzas en tu ciclo.</p>
           </div>
+          </details>
+          </>
         )}
       </section>
 

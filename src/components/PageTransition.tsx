@@ -23,6 +23,7 @@ export function preparePageTransition() {
 }
 
 const SCENES: Record<string, { image: string; accent: string; word: string }> = {
+  "/moonboard": { image: "/cielo-ui.webp", accent: "#c6c2e8", word: "Abre tu luna" },
   "/dashboard": { image: "/mujer-chakana.webp", accent: "#f7b5c8", word: "Volver a ti" },
   "/ciclo": { image: "/fuego-ui.webp", accent: "#ffc37a", word: "Reconocer" },
   "/registros": { image: "/agua-ui.webp", accent: "#88e6ef", word: "Escuchar" },
