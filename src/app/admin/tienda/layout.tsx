@@ -10,12 +10,18 @@ export default function ShopAdminLayout({ children }: { children: React.ReactNod
   const [error, setError] = useState("");
   useEffect(() => {
     let active = true;
+    let revision = 0;
     async function check() {
-      try { await requireShopAdmin(); if (active) { setAccess(true); setError(""); } }
-      catch (failure) { if (active) { setAccess(false); setError(shopError(failure)); } }
+      const current = ++revision;
+      try { await requireShopAdmin(); if (active && current === revision) { setAccess(true); setError(""); } }
+      catch (failure) { if (active && current === revision) { setAccess(false); setError(shopError(failure)); } }
     }
     void check();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => { setAccess(false); setTimeout(() => { if (active) void check(); }, 0); });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(event => {
+      if (event === "SIGNED_OUT") { revision++; setAccess(false); }
+      // A normal token refresh must not unmount an editor with unsaved changes.
+      setTimeout(() => { if (active) void check(); }, 0);
+    });
     return () => { active = false; subscription.unsubscribe(); };
   }, []);
   if (error) return <main className="admin-page"><h1>Administración de la tienda</h1><p role="alert" className="admin-notice error">{error}</p><Link className="admin-button" href="/auth/login">Ir a iniciar sesión</Link></main>;

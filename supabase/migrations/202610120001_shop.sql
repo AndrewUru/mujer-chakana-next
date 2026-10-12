@@ -168,12 +168,12 @@ grant execute on function public.shop_create_product(), public.shop_save_product
 insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
 values('shop-products','shop-products',true,8388608,array['image/jpeg','image/png','image/webp']);
 create policy shop_storage_admin_read on storage.objects for select to authenticated using(bucket_id='shop-products' and public.shop_is_admin());
-create policy shop_storage_admin_insert on storage.objects for insert to authenticated with check(bucket_id='shop-products' and public.shop_is_admin() and exists(select 1 from public.shop_products where id::text=(storage.foldername(name))[1]));
+create policy shop_storage_admin_insert on storage.objects for insert to authenticated with check(bucket_id='shop-products' and public.shop_is_admin() and exists(select 1 from public.shop_products where id::text=(storage.foldername(storage.objects.name))[1]));
 create policy shop_storage_admin_update on storage.objects for update to authenticated using(bucket_id='shop-products' and public.shop_is_admin()) with check(bucket_id='shop-products' and public.shop_is_admin());
-create policy shop_storage_admin_delete on storage.objects for delete to authenticated using(bucket_id='shop-products' and public.shop_is_admin() and not exists(select 1 from public.shop_images where storage_path=name));
+create policy shop_storage_admin_delete on storage.objects for delete to authenticated using(bucket_id='shop-products' and public.shop_is_admin() and not exists(select 1 from public.shop_images where storage_path=storage.objects.name));
 -- Restrictive guards prevent legacy permissive policies from granting writes here.
-create policy shop_storage_insert_guard on storage.objects as restrictive for insert to public with check(bucket_id <> 'shop-products' or (public.shop_is_admin() and exists(select 1 from public.shop_products where id::text=(storage.foldername(name))[1])));
+create policy shop_storage_insert_guard on storage.objects as restrictive for insert to public with check(bucket_id <> 'shop-products' or (public.shop_is_admin() and exists(select 1 from public.shop_products where id::text=(storage.foldername(storage.objects.name))[1])));
 create policy shop_storage_update_guard on storage.objects as restrictive for update to public using(bucket_id <> 'shop-products' or public.shop_is_admin()) with check(bucket_id <> 'shop-products' or public.shop_is_admin());
-create policy shop_storage_delete_guard on storage.objects as restrictive for delete to public using(bucket_id <> 'shop-products' or (public.shop_is_admin() and not exists(select 1 from public.shop_images where storage_path=name)));
+create policy shop_storage_delete_guard on storage.objects as restrictive for delete to public using(bucket_id <> 'shop-products' or (public.shop_is_admin() and not exists(select 1 from public.shop_images where storage_path=storage.objects.name)));
 
 commit;
