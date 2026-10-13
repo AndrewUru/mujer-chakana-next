@@ -64,7 +64,11 @@ const token = [Buffer.from(JSON.stringify({alg:'HS256',typ:'JWT'})).toString('ba
       console.log('Layout captured');
       if(width===1280){
         const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'Guardar postal lunar'}).click();
-        const download=await downloading;await download.saveAs(path.join(output,'lunar-card.png'));
+        console.log('Download requested');
+        const download=await downloading;
+        console.log('Download received');
+        await download.saveAs(path.join(output,'lunar-card.png'));
+        console.log('Download saved');
         assert.equal(download.suggestedFilename(),'mi-luna-mujer-chakana.png');
       }
       await page.getByText('Explorar el mapa completo de 28 días',{exact:true}).click();
