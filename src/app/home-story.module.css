@@ -13,7 +13,7 @@
   inset: 0;
   z-index: 0;
   width: 100%;
-  height: 100svh;
+  height: 100%;
   overflow: hidden;
   background: #160711;
 }
@@ -1159,6 +1159,32 @@ button.primaryAction {
 .footerLinks { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.25rem; }
 .footerLinks a { display: inline-flex; align-items: center; min-height: 44px; text-underline-offset: 4px; }
 .footerLinks a:hover { text-decoration: underline; }
+
+/* A complete opening screen, with room for browser chrome and safe areas.
+   Keep a minimum height (not clipping) so larger accessibility text can reflow. */
+@media (max-width: 600px) {
+  .opening {
+    box-sizing: border-box;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding-top: max(4.5rem, calc(env(safe-area-inset-top) + 3.5rem));
+    padding-bottom: max(4.5rem, calc(env(safe-area-inset-bottom) + 3.5rem));
+  }
+
+  .opening .eyebrow { margin-bottom: 1rem; font-size: .56rem; letter-spacing: .12em; }
+  .opening .heroCopy h1 { max-width: 15ch; font-size: clamp(2.4rem, min(11vw, 6.8svh), 3.6rem); line-height: .98; }
+  .opening .lead { margin-block: 1rem; font-size: .9rem; line-height: 1.45; }
+  .opening .heroActions { margin-top: 1.25rem; gap: .5rem; }
+  .opening .primaryAction, .opening .secondaryAction { min-height: 2.75rem; padding: .65rem 1rem; }
+  .opening .secondaryAction { border-color: transparent; background: transparent; }
+}
+
+@media (max-width: 600px) and (max-height: 650px) {
+  .opening .eyebrow { margin-bottom: .65rem; }
+  .opening .heroCopy h1 { font-size: clamp(2rem, 10vw, 2.6rem); }
+  .opening .lead { margin-block: .75rem; font-size: .85rem; }
+  .opening .heroActions { margin-top: .75rem; gap: .25rem; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .story {

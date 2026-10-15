@@ -154,13 +154,13 @@ function StoryChapter({
     <section
       ref={ref}
       id={`scene-${scene.id}`}
-      className={`${styles.chapter} ${alignmentClass}`}
+      className={`${styles.chapter} ${alignmentClass} ${index === 0 ? styles.opening : ""}`}
       aria-labelledby={`title-${scene.id}`}
     >
       <motion.div
         className={styles.chapterInner}
-        initial={reduceMotion ? false : { opacity: 0, y: 48 }}
-        whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+        initial={reduceMotion || index === 0 ? false : { opacity: 0, y: 48 }}
+        whileInView={reduceMotion || index === 0 ? undefined : { opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.38 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       >
@@ -396,7 +396,7 @@ export default function Home() {
       style={{ "--scene-accent": scene.accent } as CSSProperties}
     >
       <div className={styles.stage} aria-hidden="true">
-        <AnimatePresence mode="sync">
+        <AnimatePresence mode="sync" initial={false}>
           <motion.div
             key={scene.id}
             className={styles.stageScene}
