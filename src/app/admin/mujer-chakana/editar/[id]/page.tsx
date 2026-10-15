@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ArchetypeImagePicker from "@/components/ArchetypeImagePicker";
+import ArchetypeResourcePicker from "@/components/ArchetypeResourcePicker";
+import { uploadArchetypeResource, type ResourceKind } from "@/lib/archetypeResources";
 import { uploadArchetypeImage } from "@/lib/archetypeImages";
 
 export default function EditarArquetipoPage() {
@@ -27,6 +29,8 @@ export default function EditarArquetipoPage() {
   const [mensajeError, setMensajeError] = useState<string | null>(null);
   const [guardando, setGuardando] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [resourceFiles, setResourceFiles] = useState<Record<ResourceKind, File | null>>({ audio: null, pdf: null });
+  const uploadedResources = useRef<Partial<Record<ResourceKind, { file: File; url: string }>>>({});
   const [saveStage, setSaveStage] = useState("");
   const uploadedImage = useRef<{ file: File; url: string } | null>(null);
   const saving = useRef(false);
@@ -81,19 +85,33 @@ export default function EditarArquetipoPage() {
         }
         imageUrl = uploadedImage.current.url;
       }
+      const resourceUrls = { audio: arquetipo.audio_url, pdf: arquetipo.ritual_pdf };
+      for (const kind of ["audio", "pdf"] as const) {
+        const file = resourceFiles[kind];
+        if (!file) continue;
+        setSaveStage(kind === "audio" ? "Subiendo audio…" : "Subiendo PDF…");
+        let uploaded = uploadedResources.current[kind];
+        if (uploaded?.file !== file) {
+          uploaded = { file, url: await uploadArchetypeResource(id, file, kind) };
+          uploadedResources.current[kind] = uploaded;
+        }
+        resourceUrls[kind] = uploaded.url;
+      }
       setSaveStage("Guardando cambios…");
       const { data: saved, error } = await supabase.from("mujer_chakana").update({
         arquetipo: arquetipo.arquetipo,
         descripcion: arquetipo.descripcion,
         elemento: arquetipo.elemento,
         imagen_url: imageUrl,
-        audio_url: arquetipo.audio_url,
-        ritual_pdf: arquetipo.ritual_pdf,
+        audio_url: resourceUrls.audio,
+        ritual_pdf: resourceUrls.pdf,
         tip_extra: arquetipo.tip_extra,
       })
       .eq("id", id).select("id").single();
       if (error || !saved) throw new Error("No se pudieron guardar los cambios del arquetipo. Vuelve a intentarlo.");
-      setArquetipo({ ...arquetipo, imagen_url: imageUrl });
+      setArquetipo({ ...arquetipo, imagen_url: imageUrl, audio_url: resourceUrls.audio, ritual_pdf: resourceUrls.pdf });
+      setResourceFiles({ audio: null, pdf: null });
+      uploadedResources.current = {};
       setImageFile(null);
       uploadedImage.current = null;
       setMensajeExito("✅ Cambios guardados correctamente.");
@@ -152,6 +170,18 @@ export default function EditarArquetipoPage() {
       <form onSubmit={handleUpdate} className="space-y-6">
         <fieldset disabled={guardando || Boolean(mensajeExito)} className="space-y-6">
         <ArchetypeImagePicker currentUrl={arquetipo.imagen_url} name={arquetipo.arquetipo} file={imageFile} disabled={guardando || Boolean(mensajeExito)} onChange={file => { setImageFile(file); uploadedImage.current = null; setMensajeError(null); }} />
+        {(["audio", "pdf"] as const).map(kind => <ArchetypeResourcePicker
+          key={kind}
+          kind={kind}
+          currentUrl={kind === "audio" ? arquetipo.audio_url : arquetipo.ritual_pdf}
+          file={resourceFiles[kind]}
+          disabled={guardando || Boolean(mensajeExito)}
+          onChange={file => {
+            setResourceFiles(previous => ({ ...previous, [kind]: file }));
+            delete uploadedResources.current[kind];
+            setMensajeError(null);
+          }}
+        />)}
         {[
           {
             label: "Nombre del Arquetipo *",
@@ -159,12 +189,6 @@ export default function EditarArquetipoPage() {
             placeholder: "Ej. La Sabia",
           },
           { label: "Elemento *", key: "elemento", isSelect: true },
-          { label: "Audio URL", key: "audio_url", placeholder: "https://..." },
-          {
-            label: "Ritual PDF URL",
-            key: "ritual_pdf",
-            placeholder: "https://...",
-          },
           {
             label: "Tip Extra (opcional)",
             key: "tip_extra",
