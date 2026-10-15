@@ -10,6 +10,8 @@ const AmbientChakanaScene = dynamic(
 
 export default function AmbientSceneLazy() {
   const pathname = usePathname();
+  // The landing already owns a full-screen backdrop; avoid a hidden WebGL loop.
+  if (pathname === "/") return null;
   if (pathname === "/dashboard" || pathname === "/moonboard" || pathname === "/manual" || pathname === "/recursos" || pathname.startsWith("/recursos/") || pathname.startsWith("/tienda") || pathname === "/carrito" || pathname.startsWith("/admin/tienda")) return null;
   return <AmbientChakanaScene />;
 }

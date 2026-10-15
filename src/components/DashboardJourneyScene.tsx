@@ -30,14 +30,14 @@ export default function DashboardJourneyScene({ scene: chapter, color, paused, p
     canvas.dataset.renderer = "threejs";
     canvas.hidden = false;
     renderer.setClearColor(0x000000, 0);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 720 ? 1.25 : 1.75));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 720 ? 1 : 1.25));
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(48, 1, .1, 50);
     camera.position.z = 8;
     const group = new THREE.Group();
     scene.add(group);
     const mobile = window.innerWidth < 720;
-    const count = mobile ? 750 : 1600;
+    const count = mobile ? 400 : 900;
     const positions = new Float32Array(count * 3);
     const seeds = new Float32Array(count);
     for (let i = 0; i < count; i++) {
@@ -113,11 +113,18 @@ export default function DashboardJourneyScene({ scene: chapter, color, paused, p
     const targetColor = new THREE.Color(color);
     let frame = 0;
     let lastTime = 0;
+    let scrolling = false;
+    let scrollTimer: ReturnType<typeof setTimeout> | undefined;
     let lost = false;
     const render = (now: number) => {
       frame = 0;
-      if (lost || document.hidden) return;
+      if (lost || document.hidden || scrolling) return;
       const current = settings.current;
+      // Ambient decoration needs only 30 fps, leaving time for scrolling and UI.
+      if (!current.paused && lastTime && now - lastTime < 1000 / 30) {
+        frame = requestAnimationFrame(render);
+        return;
+      }
       const dt = lastTime ? Math.min((now - lastTime) / 1000, .05) : 0;
       lastTime = now;
       const blend = current.paused ? 1 : 1 - Math.exp(-dt * 2.5);
@@ -136,7 +143,15 @@ export default function DashboardJourneyScene({ scene: chapter, color, paused, p
       renderer.render(scene, camera);
       if (!current.paused) frame = requestAnimationFrame(render);
     };
-    const schedule = () => { if (!frame && !lost && !document.hidden) { lastTime = 0; frame = requestAnimationFrame(render); } };
+    const schedule = () => { if (!frame && !lost && !document.hidden && !scrolling) { lastTime = 0; frame = requestAnimationFrame(render); } };
+    // Keep the last frame visible throughout a scroll gesture, including inertia.
+    const scroll = () => {
+      scrolling = true;
+      cancelAnimationFrame(frame);
+      frame = 0;
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => { scrolling = false; schedule(); }, 160);
+    };
     redraw.current = schedule;
     const resize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
@@ -151,6 +166,7 @@ export default function DashboardJourneyScene({ scene: chapter, color, paused, p
     const visibility = () => { cancelAnimationFrame(frame); frame = 0; if (!document.hidden) schedule(); };
     const contextLost = (event: Event) => { event.preventDefault(); lost = true; cancelAnimationFrame(frame); canvas.hidden = true; canvas.dataset.renderer = "fallback"; };
     window.addEventListener("resize", resize);
+    window.addEventListener("scroll", scroll, { passive: true });
     window.addEventListener("pointermove", move, { passive: true });
     document.addEventListener("visibilitychange", visibility);
     canvas.addEventListener("webglcontextlost", contextLost);
@@ -158,6 +174,8 @@ export default function DashboardJourneyScene({ scene: chapter, color, paused, p
     return () => {
       redraw.current = null;
       cancelAnimationFrame(frame);
+      clearTimeout(scrollTimer);
+      window.removeEventListener("scroll", scroll);
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", move);
       document.removeEventListener("visibilitychange", visibility);
