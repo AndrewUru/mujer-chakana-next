@@ -44,7 +44,7 @@ function describeLevel(label: string, value: number) {
 
 export default function NuevoRegistro({ userId, nombre, dia_ciclo, ciclo_actual, arquetipo, immersive = false }: Props) {
   const reduceMotion = useReducedMotion();
-  const { addToast } = useToast();
+  const { addToast, removeToast } = useToast();
   const [emociones, setEmociones] = useState("");
   const [selectedFeelings, setSelectedFeelings] = useState<string[]>([]);
   const [energia, setEnergia] = useState(3);
@@ -87,7 +87,7 @@ export default function NuevoRegistro({ userId, nombre, dia_ciclo, ciclo_actual,
     }
 
     setCargando(true);
-    addToast("loading", "Guardando tu huella y preparando la reflexión...");
+    const loadingToast = addToast("loading", "Guardando tu huella y preparando la reflexión...");
     const fecha = new Date().toISOString().split("T")[0];
 
     try {
@@ -122,7 +122,7 @@ export default function NuevoRegistro({ userId, nombre, dia_ciclo, ciclo_actual,
     } catch (error) {
       console.error("Error en handleGuardar:", error);
       addToast("error", error instanceof Error ? error.message : "Ocurrió un error inesperado.");
-    } finally { setCargando(false); }
+    } finally { removeToast(loadingToast); setCargando(false); }
   }
 
   return (

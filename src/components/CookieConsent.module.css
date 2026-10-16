@@ -1,0 +1,140 @@
+/* Aviso compacto con el mismo lenguaje que el dock de navegación. */
+.banner {
+  --gap: calc(1.25rem + env(safe-area-inset-bottom));
+  position: fixed;
+  z-index: 60;
+  bottom: var(--gap);
+  left: 50%;
+  width: min(46rem, calc(100% - 2.5rem));
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: .75rem .75rem .75rem 1.25rem;
+  border: 1px solid #e8b1c63d;
+  border-radius: 1.25rem;
+  background: linear-gradient(120deg, #38202ef7, #1f111df7);
+  box-shadow: 0 16px 55px #0d030b66, inset 0 1px 0 #ffe5ee0d;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  color: #e5c5d2;
+  transform: translateX(-50%);
+  animation: rise .5s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.banner[data-state="leaving"] {
+  animation: sink .24s cubic-bezier(.4, 0, 1, 1) both;
+}
+
+/* Con el dock visible, el aviso se apoya encima en lugar de taparlo. */
+:global(body:has(nav[aria-label="Navegación principal"])) .banner {
+  bottom: calc(var(--nav-height) + 1.75rem + env(safe-area-inset-bottom));
+}
+
+.text {
+  flex: 1;
+  margin: 0;
+  font-size: .8rem;
+  line-height: 1.55;
+}
+
+.text strong {
+  color: #fff1f6;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.text a {
+  color: #f7b5c8;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: .5rem;
+}
+
+/* Misma talla para aceptar y rechazar: elegir debe costar lo mismo. */
+.primary,
+.secondary {
+  min-height: 44px;
+  padding: 0 1.1rem;
+  border: 1px solid transparent;
+  border-radius: .9rem;
+  font-size: .78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primary {
+  background: #f7b5c8;
+  color: #29101f;
+}
+
+.primary:hover {
+  background: #fbc8d7;
+}
+
+.secondary {
+  border-color: #f2b8d040;
+  background: transparent;
+  color: #f3dbe5;
+}
+
+.secondary:hover {
+  background: #f2b8d014;
+}
+
+.banner :is(a, button):focus-visible {
+  outline: 2px solid #f5c3d8;
+  outline-offset: 2px;
+}
+
+/* Variante papel junto al dock claro de la tienda. */
+:global(body:has(nav[data-tone="paper"])) .banner {
+  border-color: #c8bdae;
+  background: #f5f1e9f7;
+  box-shadow: 0 10px 40px #493b311f, inset 0 1px 0 #ffffff;
+  color: #74665b;
+}
+
+:global(body:has(nav[data-tone="paper"])) .text strong { color: #493b31; }
+:global(body:has(nav[data-tone="paper"])) .text a { color: #775442; }
+:global(body:has(nav[data-tone="paper"])) .primary { background: #493b31; color: #faf5ec; }
+:global(body:has(nav[data-tone="paper"])) .primary:hover { background: #685140; }
+:global(body:has(nav[data-tone="paper"])) .secondary { border-color: #c8bdae; color: #493b31; }
+:global(body:has(nav[data-tone="paper"])) .secondary:hover { background: #eae3d8; }
+:global(body:has(nav[data-tone="paper"])) .banner :is(a, button):focus-visible { outline-color: #775442; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translate(-50%, 1rem); }
+}
+
+@keyframes sink {
+  to { opacity: 0; transform: translate(-50%, .75rem); }
+}
+
+@media (max-width: 640px) {
+  .banner {
+    --gap: calc(.65rem + env(safe-area-inset-bottom));
+    width: calc(100% - 1.25rem);
+    flex-direction: column;
+    align-items: stretch;
+    gap: .75rem;
+    padding: 1rem;
+  }
+
+  .text { font-size: .78rem; }
+  .actions > * { flex: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .banner { animation-name: fadeIn; }
+  .banner[data-state="leaving"] { animation-name: fadeOut; }
+
+  @keyframes fadeIn { from { opacity: 0; } }
+  @keyframes fadeOut { to { opacity: 0; } }
+}

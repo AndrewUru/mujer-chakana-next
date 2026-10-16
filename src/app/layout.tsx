@@ -5,7 +5,6 @@ import CookieConsent from "@/components/CookieConsent";
 import type { Metadata, Viewport } from "next";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo";
 import { Cormorant_Garamond, Nunito_Sans } from "next/font/google";
-import AmbientSceneLazy from "@/components/AmbientSceneLazy";
 import PageTransition from "@/components/PageTransition";
 
 const bodyFont = Nunito_Sans({
@@ -14,11 +13,13 @@ const bodyFont = Nunito_Sans({
   display: "swap",
 });
 
+// Los estilos usan 400–700 y cursiva; sin cargarlos el navegador los sintetiza.
 const displayFont = Cormorant_Garamond({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
-  weight: ["600", "700"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -75,7 +76,6 @@ export default function RootLayout({
           className="fixed inset-0 z-10 bg-[radial-gradient(circle_at_18%_12%,rgba(255,255,255,0.86),transparent_34rem),radial-gradient(circle_at_88%_16%,rgba(255,249,237,0.88),transparent_32rem),linear-gradient(135deg,rgba(255,250,253,0.9),rgba(255,243,248,0.78)_48%,rgba(255,250,239,0.84))]"
           aria-hidden="true"
         />
-        <AmbientSceneLazy />
 
         {/* Contenido principal */}
         <CartProvider><PageTransition>

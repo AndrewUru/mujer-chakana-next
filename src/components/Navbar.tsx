@@ -83,11 +83,13 @@ export default function Navbar() {
   if (hideNavigation || authStatus === "loading") return null;
 
   const loggedIn = authStatus === "authenticated";
+  const onShop = pathname.startsWith("/tienda") || pathname === "/carrito";
 
   return (
     <nav
       aria-label="Navegación principal"
-      className={styles.dock}
+      className={`${styles.dock} ${onShop ? styles.gardenDock : ""}`}
+      data-tone={onShop ? "paper" : "night"}
     >
       <div className={styles.items}>
         {loggedIn ? (

@@ -51,6 +51,7 @@ h1,
 h2,
 h3 {
   font-family: var(--font-display), Georgia, serif;
+  font-weight: 600;
   text-wrap: balance;
 }
 
@@ -93,12 +94,13 @@ body::before {
   padding: 0.75rem 1rem;
   color: white;
   font-weight: 800;
-  box-shadow: 0 12px 30px rgba(76, 5, 25, 0.25);
   transition: transform 160ms ease;
 }
 
+/* La sombra solo al enfocar: oculto, su difuminado asomaba en la esquina. */
 .skip-link:focus {
   transform: translateY(0);
+  box-shadow: 0 12px 30px rgba(76, 5, 25, 0.25);
 }
 
 a:focus-visible,
@@ -151,6 +153,11 @@ select:focus-visible {
   padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
 }
 
+/* Sin dock (inicio, acceso, bienvenida, política) ese hueco dejaba ver el fondo claro. */
+body:not(:has(nav[aria-label="Navegación principal"])) .app-main {
+  padding-bottom: 0;
+}
+
 .app-page {
   width: 100%;
   min-height: 100%;
@@ -178,17 +185,12 @@ select:focus-visible {
   box-shadow: 0 0 0 4px var(--app-focus);
 }
 
-/* Botones */
+/* Botones: solo la base. El movimiento al pasar el cursor lo decide cada componente;
+   el foco de teclado usa el contorno común de :focus-visible. */
 button {
-  @apply font-semibold transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-pink-300;
-}
-
-button:hover {
-  transform: translateY(-1px);
-}
-
-button:disabled {
-  transform: none;
+  font-weight: 600;
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
 /* Inputs y textareas */
