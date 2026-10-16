@@ -129,7 +129,7 @@ export default function RegistrosDiario({ registros, fechaInicio, arquetipos, on
                         ) : null}
                       </div>
 
-                      <div className={styles.menu} ref={menuAbierto === registro.id ? menuRef : undefined}>
+                      <div className={styles.menu} data-menu ref={menuAbierto === registro.id ? menuRef : undefined}>
                         <button
                           type="button"
                           aria-haspopup="menu"
@@ -146,7 +146,7 @@ export default function RegistrosDiario({ registros, fechaInicio, arquetipos, on
                               role="menuitem"
                               autoFocus
                               onClick={(event) => {
-                                const trigger = event.currentTarget.closest(`.${styles.menu}`)?.querySelector<HTMLButtonElement>("button[aria-haspopup]") ?? null;
+                                const trigger = event.currentTarget.closest("[data-menu]")?.querySelector<HTMLButtonElement>("button[aria-haspopup]") ?? null;
                                 setMenuAbierto(null);
                                 onDelete(registro.id, trigger);
                               }}

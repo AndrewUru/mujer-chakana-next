@@ -1,22 +1,19 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, BookOpen, Trash2 } from "lucide-react";
+import { ArrowUpRight, BookOpen } from "lucide-react";
 import styles from "./registros.module.css";
 import RitmoPorFase from "@/components/RitmoPorFase";
+import RegistrosDiario, { type DiaArquetipo, type RegistroDiario } from "@/components/RegistrosDiario";
 import { supabase } from "@/lib/supabaseClient";
-import { cicloEnFecha } from "@/lib/cicloUtils";
 
-const ELEMENT_COLORS: Record<string, string> = {
-  agua: "#88e6ef", fuego: "#ffc37a", tierra: "#e6c07a", aire: "#ffe0b0", cielo: "#ffe0b0",
-};
-const elementColor = (elemento?: string) =>
-  ELEMENT_COLORS[(elemento ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim()] ?? "#eab1c8";
-
-type DiaArquetipo = { arquetipo: string; elemento: string };
+// La fecha se guarda como AAAA-MM-DD (UTC): agruparla en UTC evita que el día 1
+// de cada mes caiga en el mes anterior en husos horarios de América.
+const mesDe = (fecha: string) =>
+  new Date(fecha).toLocaleString("es-ES", { month: "long", year: "numeric", timeZone: "UTC" });
 
 // ---- Modal de confirmación ----
 
@@ -46,16 +43,7 @@ function ConfirmModal({
 
 // ---- Página principal ----
 
-interface Registro {
-  id: string;
-  fecha: string;
-  emociones?: string;
-  energia?: number;
-  creatividad?: number;
-  espiritualidad?: number;
-  notas?: string;
-  mensaje?: string;
-}
+type Registro = RegistroDiario;
 
 export default function RegistroPage() {
   const [registros, setRegistros] = useState<Registro[]>([]);
@@ -109,33 +97,25 @@ export default function RegistroPage() {
   }, [router]);
 
   // Agrupa meses disponibles
-  const mesesDisponibles = Array.from(
-    new Set(
-      registros.map((r) =>
-        new Date(r.fecha).toLocaleString("es-ES", {
-          month: "long",
-          year: "numeric",
-        })
-      )
-    )
-  );
+  const mesesDisponibles = Array.from(new Set(registros.map((r) => mesDe(r.fecha))));
 
   // Filtrar por mes
   const registrosFiltrados =
     mesSeleccionado === "todos"
       ? registros
-      : registros.filter(
-          (r) =>
-            new Date(r.fecha).toLocaleString("es-ES", {
-              month: "long",
-              year: "numeric",
-            }) === mesSeleccionado
-        );
+      : registros.filter((r) => mesDe(r.fecha) === mesSeleccionado);
 
   // ----- Pedir confirmación antes de eliminar -----
-  function pedirConfirmacion(id: string) {
+  // Si se cancela, el foco vuelve al menú del registro desde el que se abrió.
+  const volverFoco = useRef<HTMLButtonElement | null>(null);
+  function pedirConfirmacion(id: string, trigger: HTMLButtonElement | null) {
+    volverFoco.current = trigger;
     setRegistroAEliminar(id);
     setMostrandoConfirmacion(true);
+  }
+  function cancelarEliminacion() {
+    setMostrandoConfirmacion(false);
+    requestAnimationFrame(() => volverFoco.current?.focus());
   }
 
   // ----- Eliminar registro -----
@@ -171,30 +151,10 @@ export default function RegistroPage() {
         {errorMessage && <p className={styles.error} role="alert">{errorMessage}</p>}
         {loading ? <div className={styles.empty} role="status">Abriendo tu diario...</div> : registrosFiltrados.length === 0 ? (
           <div className={styles.empty}><BookOpen size={32} /><h2>{registros.length ? "Este mes espera tus palabras." : "Tu historia empieza con un día."}</h2><p>{registros.length ? "Prueba otro mes para volver a tus registros." : "Registra cómo te sientes desde tu espacio personal."}</p><Link href="/dashboard">Ir a mi espacio <ArrowUpRight size={16} /></Link></div>
-        ) : <div className={styles.grid}>{registrosFiltrados.map(registro => {
-          const ciclo = fechaInicio ? cicloEnFecha(fechaInicio, registro.fecha) : null;
-          const arquetipo = ciclo ? arquetipos[ciclo.dia] : undefined;
-          return (
-          <article className={styles.card} key={registro.id}>
-            <header className={styles.cardHeader}><div><p>{new Date(registro.fecha).toLocaleDateString("es-ES", { month: "long", year: "numeric" })}</p><h2>{new Date(registro.fecha).toLocaleDateString("es-ES", { day: "2-digit", weekday: "long" })}</h2></div><button type="button" onClick={() => pedirConfirmacion(registro.id)} aria-label={`Eliminar registro del ${new Date(registro.fecha).toLocaleDateString("es-ES")}`}><Trash2 size={16} /></button></header>
-            {fechaInicio && (ciclo ? (
-              <p className={styles.cycle} style={{ "--element": elementColor(arquetipo?.elemento) } as CSSProperties}>
-                <span className={styles.cycleDay}>Día {ciclo.dia}<small> de 28</small></span>
-                <span className={styles.cycleMeta}><strong>{ciclo.fase}{arquetipo ? ` · ${arquetipo.arquetipo.replace(/^\d+\s*/, "")}` : ""}</strong>Vuelta {ciclo.vuelta}{arquetipo?.elemento ? ` · ${arquetipo.elemento}` : ""}</span>
-              </p>
-            ) : (
-              <p className={`${styles.cycle} ${styles.cycleBefore}`}>Antes de tu fecha de inicio actual</p>
-            ))}
-            <p className={styles.eyebrow}>Así me sentía</p><p className={styles.emotions}>{registro.emociones || "Emociones sin registrar"}</p>
-            <dl className={styles.metrics}>{[["Energía",registro.energia],["Creatividad",registro.creatividad],["Espiritualidad",registro.espiritualidad]].map(([label,value]) => <div key={label}><dt>{label}</dt><dd>{value ?? "—"}</dd></div>)}</dl>
-            {registro.notas && <blockquote>{registro.notas}</blockquote>}
-            {registro.mensaje && <div className={styles.reflection}><span>Reflexión del día</span><p>{registro.mensaje}</p></div>}
-          </article>
-          );
-        })}</div>}
+        ) : <RegistrosDiario registros={registrosFiltrados} fechaInicio={fechaInicio} arquetipos={arquetipos} onDelete={pedirConfirmacion} />}
         <aside className={styles.support}><span>Acompañar tu recorrido</span><p>Las suscriptoras pueden solicitar una videoconsulta personalizada con Samari Luz para profundizar en su camino.</p></aside>
       </div>
-      {mostrandoConfirmacion && registroAEliminar && <ConfirmModal mensaje="Esta acción no se puede deshacer. Puedes conservarlo y volver a leerlo cuando quieras." onConfirmar={() => eliminarRegistro(registroAEliminar)} onCancelar={() => setMostrandoConfirmacion(false)} />}
+      {mostrandoConfirmacion && registroAEliminar && <ConfirmModal mensaje="Esta acción no se puede deshacer. Puedes conservarlo y volver a leerlo cuando quieras." onConfirmar={() => eliminarRegistro(registroAEliminar)} onCancelar={cancelarEliminacion} />}
     </main>
   );
 }
