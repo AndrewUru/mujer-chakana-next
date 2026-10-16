@@ -18,6 +18,7 @@ import { useToast } from "@/components/Toast";
 import ArquetiposPanel from "@/components/ArquetiposPanel";
 import { GlassCard, PrimaryAction } from "@/components/ui/AppPrimitives";
 import { EstadoCiclo, Recurso } from "@/types/index";
+import { faseDelDia } from "@/lib/cicloUtils";
 import styles from "./dashboard.module.css";
 import { DURATION, enter } from "@/lib/motion";
 
@@ -39,7 +40,7 @@ const CHAPTERS: Record<DashboardPanel, { title: string; line: string; note: stri
 };
 const normalizeElement=(value?:string|null)=>(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
 const getCycleDay=(startDate:Date)=>(((Math.floor((Date.now()-startDate.getTime())/86400000)%28)+28)%28)+1;
-const getCyclePhase=(day:number)=>day<=7?"Menstrual":day<=14?"Folicular":day<=21?"Ovulatoria":"Lútea";
+const getCyclePhase=faseDelDia;
 
 export default function DashboardPage() {
  const router=useRouter();
