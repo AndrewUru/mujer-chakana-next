@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, BookOpen, Trash2 } from "lucide-react";
 import styles from "./registros.module.css";
-import MiEvolucion from "@/components/MiEvolucion";
+import RitmoPorFase from "@/components/RitmoPorFase";
 import { supabase } from "@/lib/supabaseClient";
 import { cicloEnFecha } from "@/lib/cicloUtils";
 
@@ -167,7 +167,7 @@ export default function RegistroPage() {
           <p aria-live="polite"><strong>{loading ? "—" : registrosFiltrados.length}</strong> {registrosFiltrados.length === 1 ? "momento guardado" : "momentos guardados"}</p>
           <label>Explorar por mes<select onChange={(e) => setMesSeleccionado(e.target.value)} value={mesSeleccionado}><option value="todos">Todos los meses</option>{mesesDisponibles.map(mes => <option key={mes} value={mes}>{mes}</option>)}</select></label>
         </div>
-        {!loading && !errorMessage && <MiEvolucion registros={registrosFiltrados} periodo={mesSeleccionado} />}
+        {!loading && !errorMessage && <RitmoPorFase registros={registrosFiltrados} periodo={mesSeleccionado} fechaInicio={fechaInicio} />}
         {errorMessage && <p className={styles.error} role="alert">{errorMessage}</p>}
         {loading ? <div className={styles.empty} role="status">Abriendo tu diario...</div> : registrosFiltrados.length === 0 ? (
           <div className={styles.empty}><BookOpen size={32} /><h2>{registros.length ? "Este mes espera tus palabras." : "Tu historia empieza con un día."}</h2><p>{registros.length ? "Prueba otro mes para volver a tus registros." : "Registra cómo te sientes desde tu espacio personal."}</p><Link href="/dashboard">Ir a mi espacio <ArrowUpRight size={16} /></Link></div>
