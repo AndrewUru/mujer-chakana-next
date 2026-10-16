@@ -84,7 +84,6 @@
   display: block;
   color: #f6dce7;
   font: 600 1.35rem/1.15 var(--font-display), Georgia, serif;
-  text-transform: capitalize;
 }
 
 .context {

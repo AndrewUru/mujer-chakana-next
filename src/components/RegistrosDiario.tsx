@@ -25,6 +25,8 @@ const elementColor = (elemento?: string) =>
   ELEMENT_COLORS[(elemento ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim()] ?? "#eab1c8";
 
 const DIA_MS = 86_400_000;
+// En español solo va en mayúscula la primera letra ("Viernes, 16 de octubre").
+const capitalizar = (texto: string) => texto.charAt(0).toUpperCase() + texto.slice(1);
 const fechaCorta = (time: number) =>
   new Date(time).toLocaleDateString("es-ES", { day: "numeric", month: "short", timeZone: "UTC" });
 
@@ -119,7 +121,7 @@ export default function RegistrosDiario({ registros, fechaInicio, arquetipos, on
                     <header className={styles.entryHeader}>
                       <div>
                         <time dateTime={registro.fecha.slice(0, 10)}>
-                          {fecha.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" })}
+                          {capitalizar(fecha.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }))}
                         </time>
                         {ciclo ? (
                           <p className={styles.context}>
