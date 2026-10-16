@@ -218,7 +218,31 @@ form {
   transform: scale(1.1);
 }
 
+/* Navegación rápida (View Transitions): la página sale con un fundido breve y la
+   nueva entra subiendo; el dock lleva su propio nombre y permanece quieto. */
+::view-transition-old(root) {
+  animation: page-out var(--dur-fast) var(--ease-in) both;
+}
+
+::view-transition-new(root) {
+  animation: page-in var(--dur-base) var(--ease-out) both;
+}
+
+@keyframes page-out {
+  to { opacity: 0; }
+}
+
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(12px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+
   html {
     scroll-behavior: auto;
   }

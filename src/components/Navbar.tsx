@@ -2,22 +2,20 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import {
   BookOpen,
   Home,
   Library,
   LogIn,
-  LogOut,
   Moon,
-  Settings,
   Store,
-  ShoppingBag,
+  UserRound,
 } from "lucide-react";
 import Image from "next/image";
 import type { Session } from "@supabase/supabase-js";
-import { preparePageTransition, usePageTransition } from "./PageTransition";
+import { usePageTransition } from "./PageTransition";
 
 import { useCart } from "./shop/CartProvider";
 import styles from "./Navbar.module.css";
@@ -29,7 +27,6 @@ export default function Navbar() {
   const [avatar, setAvatar] = useState<string | null>(null);
   const pathname = usePathname();
   const cart = useCart();
-  const router = useRouter();
 
   useEffect(() => {
     let mounted = true;
@@ -67,11 +64,6 @@ export default function Navbar() {
       subscription.unsubscribe();
     };
   }, []);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.replace("/auth/login");
-  };
 
   const hideNavigation =
     pathname === "/" ||
@@ -112,33 +104,6 @@ export default function Navbar() {
               label="Registros"
               active={pathname.startsWith("/registros")}
             />
-            <NavItem
-              href="/setup"
-              icon={<Settings />}
-              label="Perfil"
-              active={pathname.startsWith("/setup")}
-            />
-            <button
-              type="button"
-              onClick={handleLogout}
-              className={`${styles.item} ${styles.logout}`}
-              aria-label="Cerrar sesión"
-            >
-              {avatar ? (
-                <Image
-                  src={avatar}
-                  alt=""
-                  width={32}
-                  height={32}
-                  className={styles.avatar}
-                />
-              ) : (
-                <span className={styles.icon}>
-                  <LogOut className="h-5 w-5" />
-                </span>
-              )}
-              <span className={styles.label}>Salir</span>
-            </button>
           </>
         ) : (
           <>
@@ -155,11 +120,31 @@ export default function Navbar() {
               label="Guía"
               active={pathname.startsWith("/manual")}
             />
-            <NavItem href="/auth/login" icon={<LogIn />} label="Entrar" />
           </>
         )}
-        <NavItem href="/tienda" icon={<Store />} label="Tienda" active={pathname.startsWith("/tienda")} />
-        <NavItem href="/carrito" icon={<ShoppingBag />} label={`Carrito${cart.count ? ` (${cart.count})` : ""}`} active={pathname === "/carrito"} />
+        <NavItem
+          href="/tienda"
+          icon={<Store />}
+          label="Tienda"
+          badge={cart.count}
+          active={onShop}
+        />
+        {loggedIn ? (
+          <NavItem
+            href="/setup"
+            icon={
+              avatar ? (
+                <Image src={avatar} alt="" width={32} height={32} className={styles.avatar} />
+              ) : (
+                <UserRound />
+              )
+            }
+            label="Perfil"
+            active={pathname.startsWith("/setup")}
+          />
+        ) : (
+          <NavItem href="/auth/login" icon={<LogIn />} label="Entrar" />
+        )}
       </div>
     </nav>
   );
@@ -169,11 +154,13 @@ function NavItem({
   href,
   icon,
   label,
+  badge = 0,
   active = false,
 }: {
   href: string;
   icon: React.ReactNode;
   label: string;
+  badge?: number;
   active?: boolean;
 }) {
   const navigate = usePageTransition();
@@ -181,16 +168,17 @@ function NavItem({
   return (
     <Link
       href={href}
-      onPointerEnter={preparePageTransition}
-      onFocus={preparePageTransition}
       onNavigate={(event) => {
         if (navigate?.(href, label)) event.preventDefault();
       }}
       aria-current={active ? "page" : undefined}
-      aria-label={label}
+      aria-label={badge ? `${label}, ${badge} en el carrito` : undefined}
       className={`${styles.item} ${active ? styles.active : ""}`}
     >
-      <span className={styles.icon} aria-hidden="true">{icon}</span>
+      <span className={styles.icon} aria-hidden="true">
+        {icon}
+        {badge > 0 && <span className={styles.badge}>{badge > 9 ? "9+" : badge}</span>}
+      </span>
       <span className={styles.label}>{label}</span>
     </Link>
   );

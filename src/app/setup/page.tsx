@@ -7,7 +7,7 @@ import SetupPerfil from "@/components/SetupPerfil";
 import Link from "next/link";
 import Image from "next/image";
 
-import { ArrowUpRight, BookOpen, CalendarDays } from "lucide-react";
+import { ArrowUpRight, BookOpen, CalendarDays, LogOut } from "lucide-react";
 import styles from "./setup.module.css";
 
 export default function SetupPage() {
@@ -56,6 +56,13 @@ export default function SetupPage() {
     fetchUserAndPerfil();
   }, [router]);
 
+  const [signingOut, setSigningOut] = useState(false);
+  async function handleLogout() {
+    setSigningOut(true);
+    await supabase.auth.signOut();
+    router.replace("/auth/login");
+  }
+
   return (
     <main className={styles.page}>
       <Image src="/tierra-ui.webp" alt="" fill priority sizes="100vw" className={styles.backdrop} />
@@ -82,6 +89,15 @@ export default function SetupPage() {
               </div>
             </div>
           ) : <p className={styles.intro}>Completa tus datos para preparar tu espacio personal.</p>}
+          {!loading && (
+            <div className={styles.session}>
+              <div><span>Tu sesión</span><p>Tus registros te esperan cuando vuelvas.</p></div>
+              <button type="button" onClick={handleLogout} disabled={signingOut}>
+                <LogOut size={16} aria-hidden="true" />
+                {signingOut ? "Cerrando…" : "Cerrar sesión"}
+              </button>
+            </div>
+          )}
           <p className={styles.footnote}>Cada vuelta es distinta. Este es tu punto de partida.</p>
         </section>
         <section className={styles.panel} aria-labelledby="profile-title">

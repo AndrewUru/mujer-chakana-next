@@ -3,7 +3,7 @@
 import { MotionConfig, motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
-import { createContext, useCallback, useContext, useEffect, useRef, useState, useSyncExternalStore, useTransition, type CSSProperties, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore, useTransition, type CSSProperties, type ReactNode } from "react";
 import styles from "./PageTransition.module.css";
 import { DURATION, enter } from "@/lib/motion";
 
@@ -33,8 +33,18 @@ const SCENES: Record<string, { image: string; accent: string; word: string }> = 
   "/manual": { image: "/tierra-ui.webp", accent: "#e6c07a", word: "Integrar" },
 };
 
+// La vista rápida no espera más que esto a la nueva ruta: mientras dura,
+// el navegador congela la pantalla en la instantánea anterior.
+const QUICK_TRANSITION_TIMEOUT = 1500;
+
 type Journey = { href: string; label: string; phase: "covering" | "navigating" | "revealing" };
-const NavigationContext = createContext<((href: string, label: string) => boolean) | null>(null);
+/**
+ * "quick": fundido breve con la View Transitions API, para la navegación diaria.
+ * "cinematic": el portal a pantalla completa, reservado a momentos especiales.
+ * Devuelve false cuando el enlace debe navegar por sí mismo.
+ */
+type Navigate = (href: string, label: string, mode?: "quick" | "cinematic") => boolean;
+const NavigationContext = createContext<Navigate | null>(null);
 
 export function usePageTransition() {
   return useContext(NavigationContext);
@@ -49,10 +59,37 @@ export default function PageTransition({ children }: { children: ReactNode }) {
   const locked = useRef(false);
   const pushed = useRef(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const settleQuick = useRef<(() => void) | null>(null);
 
-  const navigate = useCallback((href: string, label: string) => {
+  // La nueva ruta ya está en el DOM: la vista rápida puede capturarla.
+  useLayoutEffect(() => {
+    settleQuick.current?.();
+  }, [pathname]);
+
+  const navigate = useCallback<Navigate>((href, label, mode = "quick") => {
     if (locked.current || href === pathname) return true;
     if (reduceMotion) return false;
+
+    if (mode === "quick") {
+      if (!document.startViewTransition) return false;
+      locked.current = true;
+      const transition = document.startViewTransition(() => new Promise<void>((resolve) => {
+        const settle = () => {
+          window.clearTimeout(timer);
+          settleQuick.current = null;
+          resolve();
+        };
+        const timer = window.setTimeout(settle, QUICK_TRANSITION_TIMEOUT);
+        settleQuick.current = settle;
+        router.push(href);
+      }));
+      void transition.finished.finally(() => {
+        locked.current = false;
+        document.getElementById("main-content")?.focus({ preventScroll: true });
+      });
+      return true;
+    }
+
     locked.current = true;
     pushed.current = false;
     router.prefetch(href);

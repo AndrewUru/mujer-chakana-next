@@ -13,6 +13,7 @@
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   color: #e5c5d2;
+  view-transition-name: dock;
 }
 .items { display: flex; align-items: stretch; gap: .4rem; overflow-x: auto; scrollbar-width: thin; }
 .item {
@@ -33,7 +34,9 @@
   cursor: pointer;
   transition: color .18s ease, background .18s ease, border-color .18s ease;
 }
-.icon { display: grid; place-items: center; flex-shrink: 0; width: 26px; height: 26px; }
+.icon { position: relative; display: grid; place-items: center; flex-shrink: 0; width: 26px; height: 26px; }
+.badge { position: absolute; top: -5px; right: -9px; min-width: 17px; height: 17px; padding: 0 4px; display: grid; place-items: center; border-radius: 99px; background: var(--color-blush); color: var(--color-blush-deep); font-size: .62rem; font-weight: 800; line-height: 1; box-shadow: 0 0 0 2px #2a1424; }
+.gardenDock .badge { background: #493b31; color: #faf5ec; box-shadow: 0 0 0 2px #f5f1e9; }
 .icon svg { width: 21px; height: 21px; stroke-width: 1.6; }
 .label { font-size: .72rem; font-weight: 700; line-height: 1.2; }
 .item:hover { color: #fff1f6; background: #f2b8d00d; border-color: #f2b8d026; }
@@ -41,7 +44,6 @@
 .active::after { content: ""; position: absolute; bottom: .35rem; left: calc(50% - .6rem); width: 1.2rem; height: 2px; border-radius: 2px; background: #edb3cc; box-shadow: 0 0 10px #edb3cc50; }
 .item:focus-visible { outline: 2px solid #f5c3d8; outline-offset: 2px; }
 .avatar { width: 27px; height: 27px; flex-shrink: 0; border-radius: 50%; border: 1px solid #e8b1c670; object-fit: cover; }
-.logout { margin-left: .25rem; }
 /* Variante papel para la tienda y el carrito (paleta de shop.module.css). */
 .gardenDock { background: #f5f1e9f2; border-color: #c8bdae; box-shadow: 0 10px 40px #493b311f, inset 0 1px 0 #ffffff; color: #74665b; }
 .gardenDock .item { color: #74665b; }
@@ -56,7 +58,6 @@
   .label { font-size: .6rem; }
   .icon { width: 25px; height: 25px; }
   .avatar { width: 25px; height: 25px; }
-  .logout { margin-left: 0; }
   .active::after { bottom: .2rem; width: .8rem; left: calc(50% - .4rem); }
 }
 @media(prefers-reduced-motion:reduce) { .item { transition: none; } }
