@@ -18,6 +18,10 @@ interface Props {
   dia_ciclo: number;
   ciclo_actual: number;
   arquetipo: string;
+  /** El registro ya está guardado; la reflexión de Samari llega después. */
+  onSaved?: () => void;
+  /** Reflexión final (o el texto de respaldo). Si se usa, no se muestra en línea. */
+  onReflection?: (text: string) => void;
 }
 
 interface SliderConfig {
@@ -43,7 +47,7 @@ function describeLevel(label: string, value: number) {
   return `${label} expansiva: canalízala con intención.`;
 }
 
-export default function NuevoRegistro({ userId, nombre, dia_ciclo, ciclo_actual, arquetipo, immersive = false }: Props) {
+export default function NuevoRegistro({ userId, nombre, dia_ciclo, ciclo_actual, arquetipo, immersive = false, onSaved, onReflection }: Props) {
   const reduceMotion = useReducedMotion();
   const { addToast, removeToast } = useToast();
   const [emociones, setEmociones] = useState("");
@@ -99,6 +103,7 @@ export default function NuevoRegistro({ userId, nombre, dia_ciclo, ciclo_actual,
         fecha, emociones: combinedEmotions, energia, creatividad, espiritualidad, notas, user_id: userId,
       }]).select("id").single();
       if (error || !registro) throw new Error("No se pudo guardar el registro.");
+      onSaved?.();
 
       let finalMessage = "Tu registro quedó guardado. Samari retomará la reflexión cuando vuelva a estar disponible.";
       try {
@@ -111,12 +116,16 @@ export default function NuevoRegistro({ userId, nombre, dia_ciclo, ciclo_actual,
         const data = await response.json();
         finalMessage = data.mensaje || finalMessage;
         if (data.mensaje) await supabase.from("registros").update({ mensaje: data.mensaje }).eq("id", registro.id);
-        addToast("success", "Registro guardado y reflexión generada");
+        if (!onReflection) addToast("success", "Registro guardado y reflexión generada");
       } catch (reflectionError) {
         console.error("Error generando la reflexión:", reflectionError);
-        addToast("info", "Tu registro está guardado, aunque Samari no pudo responder ahora.");
+        if (!onReflection) addToast("info", "Tu registro está guardado, aunque Samari no pudo responder ahora.");
       }
 
+      if (onReflection) {
+        onReflection(finalMessage);
+        return;
+      }
       setMensaje(finalMessage);
       setEmociones(""); setSelectedFeelings([]); setNotas(""); setSuccess(true);
       window.setTimeout(() => setSuccess(false), 3000);

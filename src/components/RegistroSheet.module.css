@@ -1,0 +1,328 @@
+/* Hoja inferior para la bitácora del día. */
+.sheet {
+  position: fixed;
+  inset: auto 0 0;
+  width: min(78rem, 100%);
+  max-width: 100%;
+  height: min(92svh, 62rem);
+  max-height: none;
+  margin: 0 auto;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-bottom: 0;
+  border-radius: 1.75rem 1.75rem 0 0;
+  background: linear-gradient(180deg, #06202b, #0f0a16 70%);
+  color: var(--color-ink);
+  box-shadow: 0 -30px 80px rgb(0 0 0 / 0.45);
+  overflow: hidden;
+}
+
+.sheet[open] {
+  display: flex;
+  flex-direction: column;
+  animation: sheet-in var(--dur-slow) var(--ease-out);
+}
+
+.sheet::backdrop {
+  background: rgb(9 3 9 / 0.72);
+  backdrop-filter: blur(6px);
+  animation: fade-in var(--dur-base) ease;
+}
+
+.sheet[data-closing] {
+  animation: sheet-out var(--dur-base) var(--ease-in) forwards;
+}
+
+.sheet[data-closing]::backdrop {
+  animation: fade-out var(--dur-base) ease forwards;
+}
+
+.bar {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 1rem .6rem clamp(1.25rem, 4vw, 3rem);
+}
+
+.handle {
+  position: absolute;
+  top: .55rem;
+  left: 50%;
+  width: 2.5rem;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--line-strong);
+  transform: translateX(-50%);
+}
+
+.bar p {
+  margin: 0;
+  color: var(--color-agua);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.bar button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-soft);
+  cursor: pointer;
+}
+
+.bar button:hover {
+  background: rgb(255 255 255 / 0.08);
+  color: var(--color-ink);
+}
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* La bitácora vive dentro de la hoja: sin marco propio. */
+.body > form {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  backdrop-filter: none;
+}
+
+.body > form aside {
+  top: 1rem;
+}
+
+/* La barra ya nombra la bitácora y el día: sin subtítulo repetido. */
+.body > form > header {
+  padding-top: .75rem;
+}
+
+.body > form > header > div:first-child > p:first-child {
+  display: none;
+}
+
+/* ── Microrritual de cierre ── */
+.ritual {
+  --ritual-accent: var(--color-blush);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: center;
+  max-width: 64rem;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: clamp(2rem, 6vw, 4rem) clamp(1.25rem, 5vw, 3rem);
+}
+
+.ring {
+  position: relative;
+  width: clamp(11rem, 26vw, 17rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  animation: glow 5s ease-in-out infinite;
+}
+
+.ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.track,
+.progress {
+  fill: none;
+  stroke-width: 2;
+}
+
+.track {
+  stroke: var(--line);
+}
+
+.progress {
+  stroke: var(--ritual-accent);
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px var(--ritual-accent));
+}
+
+.ringCenter {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+}
+
+.ringCenter strong {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(4rem, 9vw, 6rem);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.ringCenter span {
+  color: var(--text-muted);
+  font-size: .72rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  color: var(--ritual-accent);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.ritualCopy h2 {
+  margin: 0;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -.03em;
+}
+
+.ritualCopy h2:focus {
+  outline: none;
+}
+
+.ritualCopy h2 em {
+  color: var(--ritual-accent);
+  font-weight: 400;
+}
+
+.reflection {
+  min-height: 7rem;
+  margin-top: 2rem;
+  padding: 1.4rem 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  background: var(--surface);
+}
+
+.reflectionLabel {
+  display: block;
+  margin-bottom: .75rem;
+  color: var(--ritual-accent);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.reflection p {
+  margin: 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.2rem, 2.2vw, 1.55rem);
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.reflection p span {
+  display: inline-block;
+  white-space: pre;
+}
+
+.reflection .listening {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  color: var(--text-soft);
+  font-family: var(--font-body), sans-serif;
+  font-size: .95rem;
+}
+
+.listening span {
+  width: .6rem;
+  height: .6rem;
+  border-radius: 50%;
+  background: var(--ritual-accent);
+  animation: breathe 2.5s ease-in-out infinite;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin-top: 1.75rem;
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  min-height: 48px;
+  padding: 0 1.3rem;
+  border-radius: 99px;
+  font-size: .85rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primary {
+  border: 0;
+  background: var(--ritual-accent);
+  color: var(--color-blush-deep);
+}
+
+.secondary {
+  border: 1px solid var(--line-strong);
+  color: var(--color-ink);
+}
+
+.secondary:hover {
+  background: rgb(255 255 255 / 0.06);
+}
+
+.sheet :is(a, button):focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+@keyframes sheet-in { from { transform: translateY(100%); } }
+@keyframes sheet-out { to { transform: translateY(100%); } }
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes fade-out { to { opacity: 0; } }
+@keyframes breathe { 50% { opacity: .35; transform: scale(.8); } }
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  45% { box-shadow: 0 0 60px -10px color-mix(in srgb, var(--ritual-accent) 45%, transparent); }
+}
+
+@media (max-width: 720px) {
+  .sheet {
+    height: 94svh;
+    border-radius: 1.4rem 1.4rem 0 0;
+  }
+
+  .ritual {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    align-content: start;
+    gap: 2rem;
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet[open],
+  .sheet::backdrop,
+  .ring,
+  .listening span {
+    animation: none;
+  }
+}

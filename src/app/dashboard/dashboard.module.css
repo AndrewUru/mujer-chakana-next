@@ -76,10 +76,8 @@
 .loadingState { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1rem; min-height: 100svh; background: radial-gradient(ellipse at center,#422038,#160711); color: #fff8f3; }
 .loadingState p { font-family: var(--font-display),Georgia,serif; font-size: 2rem; }
 .loadingState small { color: #ffffff70; font-size: .7rem; }
-.loadingMoon { color: #f7b5c8; animation: breathe 2s ease-in-out infinite; }
 @keyframes orbitTurn { to { transform: rotate(360deg); } }
 @keyframes driftDown { 50% { transform: translateY(5px); } }
-@keyframes breathe { 50% { opacity: .4; transform: scale(.9); } }
 .journey[data-motion="paused"] .cyclePortal::after, .journey[data-motion="paused"] .introFooter button svg { animation-play-state: paused; }
 @media(max-width:1100px) { .sceneNav { right: .6rem; } .navLabel { display: none; } .intro { padding-inline: 5vw; gap: 2rem; } .chapter { padding-inline: 6vw; } .sceneCounter { display: none; } }
 @media(max-width:720px) {
@@ -94,7 +92,7 @@
  .chapter { padding: 9.5rem 1.25rem 8rem; } .chapterHeading { margin-bottom: 2rem; } .chapterHeading h2 { font-size: clamp(3.2rem,12vw,4.6rem); } .chapterNote { font-size: .8rem; } .chapterFooter { gap: .8rem; } .chapterFooter a,.chapterFooter button { font-size: .62rem; }
  .stageScene img { object-position: 60% center !important; } .sigil { width: 110vw; right: -60vw; }
 }
-@media(prefers-reduced-motion:reduce) { .journey *, .journey *::after,.loadingMoon { animation: none !important; transition: none !important; } }
+@media(prefers-reduced-motion:reduce) { .journey *, .journey *::after { animation: none !important; transition: none !important; } }
 .archetypeContent > section { border: 1px solid #ffffff25; background: #24090870; box-shadow: none; padding: clamp(2rem,5vw,4rem); }
 .archetypeContent :is(h2,p) { color: #fff8f3; }
 .archetypeContent p { opacity: .72; }
@@ -103,3 +101,35 @@
 .resourcesContent :is(h2,h3) { color: #fff8f3; }
 .resourcesContent :is(p,a) { color: #fff8f3b8; }
 .resourcesContent a:hover { background: #ffffff12; }
+
+/* Esqueleto de carga: misma composición que el umbral, respiración lenta. */
+.skeleton { min-height: 100svh; padding: 1.5rem clamp(1rem,4vw,4rem); color: #fff8f3; background: radial-gradient(ellipse at 70% 40%, #3a1830, #160711 70%); }
+.skeleton i { display: block; border-radius: 99px; background: #ffffff14; animation: skBreath 4s ease-in-out infinite; }
+.skeletonChrome { display: flex; justify-content: space-between; }
+.skeletonChrome i:first-child { width: 10rem; height: 2.9rem; }
+.skeletonChrome i:last-child { width: 8rem; height: 2.8rem; }
+.skeletonHero { display: grid; grid-template-columns: 1.3fr .7fr; align-items: center; gap: 4rem; min-height: calc(100svh - 8rem); padding: 0 clamp(1rem,4vw,5rem); }
+.skeletonCopy { display: grid; gap: 1.1rem; max-width: 46rem; }
+.skeletonCopy > div { display: flex; gap: .85rem; margin-top: 1rem; }
+.skEyebrow { width: 14rem; height: .7rem; }
+.skTitle { width: 90%; height: clamp(4rem,7vw,7rem); border-radius: 1.2rem !important; }
+.skTitleShort { width: 55%; height: clamp(4rem,7vw,7rem); border-radius: 1.2rem !important; animation-delay: .2s !important; }
+.skLine { width: 70%; height: .9rem; margin-top: 1rem; animation-delay: .4s !important; }
+.skLineShort { width: 45%; height: .9rem; animation-delay: .5s !important; }
+.skButton { width: 12rem; height: 3.2rem; animation-delay: .6s !important; }
+.skeletonPortal { display: grid; place-items: center; width: clamp(13rem,23vw,22rem); aspect-ratio: 1; justify-self: center; border: 1px solid #ffffff14; border-radius: 50%; color: #f7b5c8; }
+.skeletonPortal svg { width: 2.4rem; height: 2.4rem; animation: skBreath 4s ease-in-out infinite; }
+@keyframes skBreath { 0%, 100% { opacity: .45; } 40% { opacity: 1; } }
+@media (max-width: 720px) {
+  .skeletonHero { display: flex; flex-direction: column; align-items: flex-start; gap: 3rem; padding: 6rem .5rem 0; }
+  .skeletonCopy { width: 100%; } .skButton { width: 9rem; } .skeletonPortal { width: 12rem; align-self: center; }
+}
+@media (prefers-reduced-motion: reduce) { .skeleton i, .skeletonPortal svg { animation: none; } }
+
+/* Invitación a la bitácora (el formulario vive en la hoja inferior). */
+.registroInvite { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 2rem; padding: clamp(1.5rem,4vw,3rem); border: 1px solid #ffffff24; border-radius: 2rem; background: #031b2866; }
+.registroInvite h3 { margin: .9rem 0 .6rem; font-family: var(--font-display),Georgia,serif; font-size: clamp(2rem,3.4vw,3rem); font-weight: 400; line-height: 1; }
+.registroInvite p:not(.inviteStatus) { max-width: 34rem; margin: 0; color: #fff8f3b8; font-size: .9rem; line-height: 1.7; }
+.inviteStatus { display: inline-flex; align-items: center; gap: .45rem; margin: 0; color: var(--scene-accent); font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.inviteActions { display: flex; flex-wrap: wrap; gap: .75rem; }
+@media (max-width: 720px) { .registroInvite { grid-template-columns: 1fr; align-items: start; } }

@@ -5,14 +5,14 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
-import { ArrowDown, ArrowRight, BookOpen, CalendarDays, Flower2, Leaf, Moon, PenLine, Pause, Play, Settings, Sparkles } from "lucide-react";
+import { ArrowDown, ArrowRight, BookOpen, CalendarDays, CheckCircle2, Flower2, Leaf, Moon, PenLine, Pause, Play, Settings, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import JourneyLink from "@/components/JourneyLink";
 import Moonboard from "@/components/Moonboard";
 import RecursosList from "@/components/RecursosList";
 import CicloResumen from "@/components/CicloResumen";
-import NuevoRegistro from "@/components/NuevoRegistro";
+import RegistroSheet from "@/components/RegistroSheet";
 import QuickNav from "@/components/QuickNav";
 import { useToast } from "@/components/Toast";
 import ArquetiposPanel from "@/components/ArquetiposPanel";
@@ -63,6 +63,11 @@ export default function DashboardPage() {
  const [loading,setLoading]=useState(true);
  const [loadingMessage,setLoadingMessage]=useState("Abriendo tu espacio personal…");
  const [loadError,setLoadError]=useState(false);
+ const [registeredToday,setRegisteredToday]=useState(false);
+ // La hoja se monta al abrirla por primera vez y se conserva (con su borrador) hasta guardar.
+ const [sheet,setSheet]=useState({mounted:false,open:false,key:0,saved:false});
+ const openSheet=()=>setSheet(current=>({...current,mounted:true,open:true}));
+ const closeSheet=()=>setSheet(current=>current.saved?{mounted:false,open:false,key:current.key+1,saved:false}:{...current,open:false});
  function goToScene(id:SceneId) {
    const target=document.getElementById('journey-'+id);
    target?.scrollIntoView({behavior:still?"instant":"smooth",block:"start"});
@@ -111,11 +116,21 @@ export default function DashboardPage() {
       .select("*")
       .eq("activo", true);
 
-    const [{ data: perfilData }, { data: recursos }] = await Promise.all([
+    // Misma fecha (UTC) con la que NuevoRegistro guarda cada registro.
+    const registroHoyPromise = supabase
+      .from("registros")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("fecha", new Date().toISOString().split("T")[0])
+      .limit(1);
+
+    const [{ data: perfilData }, { data: recursos }, { data: registroHoy }] = await Promise.all([
       perfilPromise,
       recursosPromise,
+      registroHoyPromise,
     ]);
 
+    setRegisteredToday(Boolean(registroHoy?.length));
     setUserName(perfilData?.display_name || "");
     setPerfil(perfilData ?? null);
     setRecursosData(recursos || []);
@@ -242,14 +257,21 @@ export default function DashboardPage() {
         return <Moonboard startDate={fechaInicioCiclo} immersive motionPaused={still} />;
       case "registro":
         return userId && estadoCiclo && fechaInicioCiclo ? (
-          <NuevoRegistro
-            immersive
-            userId={userId}
-            nombre={userName ?? "Exploradora"}
-            dia_ciclo={day}
-            ciclo_actual={cicloActual}
-            arquetipo={estadoCiclo.arquetipo ?? "Guia"}
-          />
+          <div className={styles.registroInvite}>
+            <div>
+              <p className={styles.inviteStatus}>
+                {registeredToday ? <><CheckCircle2 size={15} aria-hidden="true"/> Hoy ya dejaste tu huella</> : <>Día {String(day).padStart(2, "0")} · aún sin registrar</>}
+              </p>
+              <h3>Nombrar, medir, dejar señal.</h3>
+              <p>Tres pasos breves y Samari te devuelve un reflejo de tu día. Puedes volver a escribir tantas veces como lo necesites.</p>
+            </div>
+            <div className={styles.inviteActions}>
+              <button type="button" className={styles.primaryAction} onClick={openSheet}>
+                <PenLine size={16}/> {registeredToday ? "Añadir otra huella" : "Abrir mi bitácora"}
+              </button>
+              <Link className={styles.secondaryAction} href="/registros">Ver mis registros <ArrowRight size={16}/></Link>
+            </div>
+          </div>
         ) : (
           <GlassCard className="text-center">
             <PenLine className="mx-auto h-10 w-10 text-blush" />
@@ -315,7 +337,15 @@ export default function DashboardPage() {
  const scene=scenes[activeScene];
  const navigation=[{id:"inicio" as SceneId,label:"Tu umbral",Icon:Sparkles},...dashboardPanels];
  const sceneIndex=navigation.findIndex(item=>item.id===activeScene);
- if(loading)return <div className={styles.loadingState}><Moon className={styles.loadingMoon}/><p>{loadingMessage}</p><small>Un momento para volver a ti</small></div>;
+ // El esqueleto reproduce la composición del umbral para que la llegada no salte.
+ if(loading)return <div className={styles.skeleton} role="status" aria-live="polite">
+   <span className="sr-only">{loadingMessage}</span>
+   <div className={styles.skeletonChrome} aria-hidden="true"><i/><i/></div>
+   <div className={styles.skeletonHero} aria-hidden="true">
+     <div className={styles.skeletonCopy}><i className={styles.skEyebrow}/><i className={styles.skTitle}/><i className={styles.skTitleShort}/><i className={styles.skLine}/><i className={styles.skLineShort}/><div><i className={styles.skButton}/><i className={styles.skButton}/></div></div>
+     <div className={styles.skeletonPortal}><Moon/></div>
+   </div>
+ </div>;
  if(loadError)return <div className={styles.loadingState}><p>No pudimos abrir tu espacio.</p><button onClick={()=>void loadData()} className={styles.primaryAction}>Volver a intentar</button></div>;
  return <div ref={rootRef} className={styles.journey} data-motion={still?"paused":"active"} data-active-scene={activeScene} style={{"--scene-accent":scene.accent} as CSSProperties}>
    <div className={styles.stage} aria-hidden="true"><AnimatePresence initial={false}><motion.div key={scene.image+scene.tint} className={styles.stageScene} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={enter(still?0:DURATION.slow)}><Image src={scene.image} alt="" fill sizes="100vw" priority={activeScene==="inicio"} style={{objectPosition:activeScene==="inicio"?"center 28%":"center"}}/><div className={styles.stageTint} style={{background:scene.tint}}/></motion.div></AnimatePresence><div className={styles.vignette}/><div className={styles.grain}/><div className={styles.sigil}/><DashboardJourneyScene scene={sceneIndex} color={scene.accent} paused={still || activeScene === "moonboard"} progress={scrollYProgress}/><div className={styles.motes}>{Array.from({length:8},(_,i)=><i key={i} style={{"--i":i} as CSSProperties}/>)}</div></div>
@@ -324,7 +354,7 @@ export default function DashboardPage() {
    <nav className={styles.sceneNav} aria-label="Capítulos de tu experiencia">{navigation.map(({id,label},index)=><button key={id} onClick={()=>goToScene(id)} aria-current={activeScene===id?"step":undefined} aria-label={label}><span className={styles.navLabel}>{label}</span><span className={styles.navDot}/><small>0{index}</small></button>)}</nav>
    <div className={styles.sceneCounter} aria-hidden="true"><strong>0{sceneIndex}</strong><span>/ 05</span><i/>{navigation[sceneIndex].label}</div>
    <section id="journey-inicio" data-scene-id="inicio" className={styles.intro} tabIndex={-1} aria-labelledby="journey-title">
-     <motion.div className={styles.introCopy} initial={still?false:{opacity:0,y:35}} animate={{opacity:1,y:0}} transition={enter(DURATION.reveal)}><p className={styles.eyebrow}>{fechaActual} · TU UMBRAL</p><h1 id="journey-title">Vuelve a ti,<br/><em>{firstName}.</em></h1><p className={styles.introDescription}>{estadoCiclo?<>Hoy te acompaña <strong>{estadoCiclo.arquetipo}</strong>.<br/>{descripcionCorta}</>:"Cada recorrido comienza por escucharte. Configura tu ciclo y abre tu espacio personal."}</p><div className={styles.introActions}>{fechaInicioCiclo?<button className={styles.primaryAction} onClick={()=>goToScene("registro")}><PenLine size={16}/> Registrar cómo estoy <ArrowRight size={16}/></button>:<Link className={styles.primaryAction} href="/setup">Configurar mi ciclo <ArrowRight size={16}/></Link>}<JourneyLink className={styles.secondaryAction} href="/moonboard" label="Moonboard">Explorar mi Moonboard <ArrowRight size={16}/></JourneyLink></div></motion.div>
+     <motion.div className={styles.introCopy} initial={still?false:{opacity:0,y:35}} animate={{opacity:1,y:0}} transition={enter(DURATION.reveal)}><p className={styles.eyebrow}>{fechaActual} · TU UMBRAL</p><h1 id="journey-title">Vuelve a ti,<br/><em>{firstName}.</em></h1><p className={styles.introDescription}>{estadoCiclo?<>Hoy te acompaña <strong>{estadoCiclo.arquetipo}</strong>.<br/>{descripcionCorta}</>:"Cada recorrido comienza por escucharte. Configura tu ciclo y abre tu espacio personal."}</p><div className={styles.introActions}>{fechaInicioCiclo?<button className={styles.primaryAction} onClick={estadoCiclo&&userId?openSheet:()=>goToScene("registro")}>{registeredToday?<CheckCircle2 size={16}/>:<PenLine size={16}/>} {registeredToday?"Añadir otra huella":"Registrar cómo estoy"} <ArrowRight size={16}/></button>:<Link className={styles.primaryAction} href="/setup">Configurar mi ciclo <ArrowRight size={16}/></Link>}<JourneyLink className={styles.secondaryAction} href="/moonboard" label="Moonboard">Explorar mi Moonboard <ArrowRight size={16}/></JourneyLink></div></motion.div>
      {fechaInicioCiclo&&<button className={styles.cyclePortal} onClick={()=>goToScene("moonboard")} aria-label={"Día "+day+" de 28. Explorar mi Moonboard"}><svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="97" className={styles.portalTrack}/><motion.circle cx="100" cy="100" r="97" className={styles.portalProgress} initial={still?false:{pathLength:0}} animate={{pathLength:day/28}} transition={{duration:still?0:2,delay:.3}}/></svg><small>ESTÁS AQUÍ</small><strong>{day}</strong><span>{getCyclePhase(day)} · de 28 días</span><em>Abre tu constelación <ArrowRight size={13}/></em></button>}
      <div className={styles.introFooter}><span><Leaf size={14}/>{estadoCiclo?.elemento||"Tu propio ritmo"}{fechaInicioCiclo?" · Ciclo "+cicloActual:""}</span><button onClick={()=>goToScene("ciclo")}>Desliza y entra en tu recorrido <ArrowDown size={16}/></button><small>01 — 05 · A TU RITMO</small></div>
    </section>
@@ -333,6 +363,7 @@ export default function DashboardPage() {
      <motion.div className={styles.chapterContent} initial={still?false:{opacity:0,y:30}} whileInView={{opacity:1,y:0}} viewport={{once:true,amount:.08}} transition={{...enter(DURATION.reveal),delay:.1}}>{renderContent(id)}</motion.div>
      <div className={styles.chapterFooter}><Link href="/manual"><BookOpen size={14}/> Abrir guía</Link>{index<dashboardPanels.length-1?<button onClick={()=>goToScene(dashboardPanels[index+1].id)}>Siguiente · {dashboardPanels[index+1].label}<ArrowDown size={15}/></button>:<button onClick={()=>goToScene("inicio")}>Volver a mi umbral <ArrowRight size={15}/></button>}</div>
    </section>)}
+   {sheet.mounted&&userId&&estadoCiclo&&<RegistroSheet key={sheet.key} open={sheet.open} accent={elementScene.accent} onClose={closeSheet} onSaved={()=>{setRegisteredToday(true);setSheet(current=>({...current,saved:true}));}} userId={userId} nombre={userName||"Exploradora"} dia_ciclo={day} ciclo_actual={cicloActual} arquetipo={estadoCiclo.arquetipo??"Guia"}/>}
    <QuickNav currentDay={day} userName={userName||""}/><ToastContainer/>
  </div>;
 }

@@ -50,6 +50,9 @@ body {
   color: var(--color-ink);
   font-family: var(--font-body), "Segoe UI", sans-serif;
   background: var(--color-night);
+  /* Cormorant usa cifras de estilo antiguo (3, 4, 5, 7, 9 bajan de la línea):
+     en números grandes se desalinean y pisan el texto de debajo. */
+  font-variant-numeric: lining-nums;
 }
 
 h1,
@@ -67,6 +70,11 @@ p {
 html,
 body {
   overflow-x: hidden;
+}
+
+/* Con un diálogo modal abierto (hojas, confirmaciones), el fondo no se desplaza. */
+html:has(dialog:modal) {
+  overflow: hidden;
 }
 
 ::selection {

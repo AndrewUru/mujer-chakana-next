@@ -111,7 +111,7 @@
 .moonData { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.75rem 0 0; padding-top: 1.5rem; border-top: 1px solid var(--lunar-line); text-align: center; }
 .moonData > div + div { border-left: 1px solid var(--lunar-line); }
 .moonData dt { color: var(--lunar-muted); font-size: .65rem; }
-.moonData dd { margin: .2rem 0 0; color: var(--lunar-accent); font-family: var(--font-display), Georgia, serif; font-size: 2.4rem; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.moonData dd { margin: .2rem 0 0; color: var(--lunar-accent); font-family: var(--font-display), Georgia, serif; font-size: 2.4rem; font-variant-numeric: lining-nums tabular-nums; line-height: 1.2; }
 .moonData dd span { margin-left: .3rem; font-family: var(--font-body), sans-serif; font-size: .7rem; }
 
 .reading { grid-column: 2; min-width: 0; }
