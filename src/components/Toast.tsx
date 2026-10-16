@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle, AlertCircle, Info, X, Loader2 } from "lucide-react";
 import { useEffect, useSyncExternalStore } from "react";
+import { enter } from "@/lib/motion";
 
 export type ToastType = "success" | "error" | "info" | "loading";
 
@@ -39,17 +40,17 @@ export function removeToast(id: string) {
 }
 
 const icons = {
-  success: <CheckCircle className="w-5 h-5 text-green-500" />,
-  error: <AlertCircle className="w-5 h-5 text-red-500" />,
-  info: <Info className="w-5 h-5 text-blue-500" />,
-  loading: <Loader2 className="w-5 h-5 text-pink-500 animate-spin" />,
+  success: <CheckCircle className="w-5 h-5 text-success" />,
+  error: <AlertCircle className="w-5 h-5 text-danger" />,
+  info: <Info className="w-5 h-5 text-cielo" />,
+  loading: <Loader2 className="w-5 h-5 text-blush animate-spin" />,
 };
 
-const colors = {
-  success: "bg-green-50 border-green-200 text-green-800",
-  error: "bg-red-50 border-red-200 text-red-800",
-  info: "bg-blue-50 border-blue-200 text-blue-800",
-  loading: "bg-pink-50 border-pink-200 text-pink-800",
+const accents = {
+  success: "border-success/30",
+  error: "border-danger/40",
+  info: "border-cielo/25",
+  loading: "border-blush/30",
 };
 
 function Toast({ id, type, message, duration = 5000 }: ToastItem & { duration?: number }) {
@@ -65,8 +66,8 @@ function Toast({ id, type, message, duration = 5000 }: ToastItem & { duration?: 
       initial={{ opacity: 0, y: -16, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -16, scale: 0.96 }}
-      transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-      className={`pointer-events-auto w-full p-4 rounded-lg shadow-lg border backdrop-blur-sm ${colors[type]}`}
+      transition={enter()}
+      className={`pointer-events-auto w-full rounded-2xl border bg-plum/95 p-4 text-ink shadow-[0_16px_55px_rgb(13_3_11/0.45)] backdrop-blur-xl ${accents[type]}`}
       role={type === "error" ? "alert" : "status"}
     >
       <div className="flex items-start gap-3">
@@ -78,7 +79,7 @@ function Toast({ id, type, message, duration = 5000 }: ToastItem & { duration?: 
           <button
             type="button"
             onClick={() => removeToast(id)}
-            className="flex-shrink-0 ml-2 p-1 rounded-full hover:bg-black/10"
+            className="-m-1 ml-1 grid h-8 w-8 flex-shrink-0 place-items-center rounded-full text-ink/70 hover:bg-white/10 hover:text-ink"
             aria-label="Cerrar notificación"
           >
             <X className="w-4 h-4" />

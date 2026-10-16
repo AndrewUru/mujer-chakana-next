@@ -19,6 +19,7 @@ import ArquetiposPanel from "@/components/ArquetiposPanel";
 import { GlassCard, PrimaryAction } from "@/components/ui/AppPrimitives";
 import { EstadoCiclo, Recurso } from "@/types/index";
 import styles from "./dashboard.module.css";
+import { DURATION, enter } from "@/lib/motion";
 
 const TOTAL_CYCLE_DAYS = 28;
 const DashboardJourneyScene = dynamic(() => import("@/components/DashboardJourneyScene"), { ssr: false });
@@ -224,11 +225,11 @@ export default function DashboardPage() {
           </div>
         ) : (
           <GlassCard className="text-center">
-            <Sparkles className="mx-auto h-10 w-10 text-rose-500" />
-            <h2 className="mt-4 text-2xl font-semibold text-rose-950">
+            <Sparkles className="mx-auto h-10 w-10 text-blush" />
+            <h2 className="mt-4 text-2xl font-semibold text-ink">
               Configura tu fecha de inicio
             </h2>
-            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-rose-800/72">
+            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-ink/75">
               Necesitamos tu fecha de inicio para calcular el día del ciclo y
               activar la guía diaria.
             </p>
@@ -251,11 +252,11 @@ export default function DashboardPage() {
           />
         ) : (
           <GlassCard className="text-center">
-            <PenLine className="mx-auto h-10 w-10 text-rose-500" />
-            <h2 className="mt-4 text-2xl font-semibold text-rose-950">
+            <PenLine className="mx-auto h-10 w-10 text-blush" />
+            <h2 className="mt-4 text-2xl font-semibold text-ink">
               Tu registro se activa con el ciclo
             </h2>
-            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-rose-800/72">
+            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-ink/75">
               Configura tu fecha de inicio para registrar emociones y recibir
               reflexiones diarias.
             </p>
@@ -278,17 +279,17 @@ export default function DashboardPage() {
             <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="app-kicker">Recursos</p>
-                <h2 className="mt-2 text-2xl font-semibold text-rose-950 sm:text-3xl">
+                <h2 className="mt-2 text-2xl font-semibold text-ink sm:text-3xl">
                   Biblioteca para tu proceso
                 </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-rose-800/72">
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/75">
                   Rituales, audios y guías para acompañar el momento del ciclo
                   que estas transitando.
                 </p>
               </div>
               <Link
                 href="/recursos"
-                className="app-focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-2xl border border-white/70 bg-white/46 px-4 py-2 text-sm font-semibold text-rose-800 transition hover:bg-white/72"
+                className="app-focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-ink transition hover:bg-white/10"
               >
                 Ver todos
               </Link>
@@ -317,19 +318,19 @@ export default function DashboardPage() {
  if(loading)return <div className={styles.loadingState}><Moon className={styles.loadingMoon}/><p>{loadingMessage}</p><small>Un momento para volver a ti</small></div>;
  if(loadError)return <div className={styles.loadingState}><p>No pudimos abrir tu espacio.</p><button onClick={()=>void loadData()} className={styles.primaryAction}>Volver a intentar</button></div>;
  return <div ref={rootRef} className={styles.journey} data-motion={still?"paused":"active"} data-active-scene={activeScene} style={{"--scene-accent":scene.accent} as CSSProperties}>
-   <div className={styles.stage} aria-hidden="true"><AnimatePresence initial={false}><motion.div key={scene.image+scene.tint} className={styles.stageScene} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:still?0:0.45,ease:"easeOut"}}><Image src={scene.image} alt="" fill sizes="100vw" priority={activeScene==="inicio"} style={{objectPosition:activeScene==="inicio"?"center 28%":"center"}}/><div className={styles.stageTint} style={{background:scene.tint}}/></motion.div></AnimatePresence><div className={styles.vignette}/><div className={styles.grain}/><div className={styles.sigil}/><DashboardJourneyScene scene={sceneIndex} color={scene.accent} paused={still || activeScene === "moonboard"} progress={scrollYProgress}/><div className={styles.motes}>{Array.from({length:8},(_,i)=><i key={i} style={{"--i":i} as CSSProperties}/>)}</div></div>
+   <div className={styles.stage} aria-hidden="true"><AnimatePresence initial={false}><motion.div key={scene.image+scene.tint} className={styles.stageScene} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={enter(still?0:DURATION.slow)}><Image src={scene.image} alt="" fill sizes="100vw" priority={activeScene==="inicio"} style={{objectPosition:activeScene==="inicio"?"center 28%":"center"}}/><div className={styles.stageTint} style={{background:scene.tint}}/></motion.div></AnimatePresence><div className={styles.vignette}/><div className={styles.grain}/><div className={styles.sigil}/><DashboardJourneyScene scene={sceneIndex} color={scene.accent} paused={still || activeScene === "moonboard"} progress={scrollYProgress}/><div className={styles.motes}>{Array.from({length:8},(_,i)=><i key={i} style={{"--i":i} as CSSProperties}/>)}</div></div>
    <motion.div className={styles.progress} style={{scaleX:still?scrollYProgress:smoothProgress}}/>
    <header className={styles.chrome}><Link href="/dashboard" className={styles.brand}><Flower2 size={22}/>Ginergética</Link><div className={styles.chromeMeta}><span>{isSubscriber?"Círculo activo":"Plan gratuito"}</span>{!reduceMotion&&<button onClick={()=>setMotionPaused(value=>!value)} aria-label={motionPaused?"Activar movimiento ambiental":"Pausar movimiento ambiental"} aria-pressed={motionPaused}>{motionPaused?<Play size={16}/>:<Pause size={16}/>}</button>}<Link href="/setup" aria-label="Configurar mi ciclo"><Settings size={17}/></Link></div></header>
    <nav className={styles.sceneNav} aria-label="Capítulos de tu experiencia">{navigation.map(({id,label},index)=><button key={id} onClick={()=>goToScene(id)} aria-current={activeScene===id?"step":undefined} aria-label={label}><span className={styles.navLabel}>{label}</span><span className={styles.navDot}/><small>0{index}</small></button>)}</nav>
    <div className={styles.sceneCounter} aria-hidden="true"><strong>0{sceneIndex}</strong><span>/ 05</span><i/>{navigation[sceneIndex].label}</div>
    <section id="journey-inicio" data-scene-id="inicio" className={styles.intro} tabIndex={-1} aria-labelledby="journey-title">
-     <motion.div className={styles.introCopy} initial={still?false:{opacity:0,y:35}} animate={{opacity:1,y:0}} transition={{duration:.9}}><p className={styles.eyebrow}>{fechaActual} · TU UMBRAL</p><h1 id="journey-title">Vuelve a ti,<br/><em>{firstName}.</em></h1><p className={styles.introDescription}>{estadoCiclo?<>Hoy te acompaña <strong>{estadoCiclo.arquetipo}</strong>.<br/>{descripcionCorta}</>:"Cada recorrido comienza por escucharte. Configura tu ciclo y abre tu espacio personal."}</p><div className={styles.introActions}>{fechaInicioCiclo?<button className={styles.primaryAction} onClick={()=>goToScene("registro")}><PenLine size={16}/> Registrar cómo estoy <ArrowRight size={16}/></button>:<Link className={styles.primaryAction} href="/setup">Configurar mi ciclo <ArrowRight size={16}/></Link>}<JourneyLink className={styles.secondaryAction} href="/moonboard" label="Moonboard">Explorar mi Moonboard <ArrowRight size={16}/></JourneyLink></div></motion.div>
+     <motion.div className={styles.introCopy} initial={still?false:{opacity:0,y:35}} animate={{opacity:1,y:0}} transition={enter(DURATION.reveal)}><p className={styles.eyebrow}>{fechaActual} · TU UMBRAL</p><h1 id="journey-title">Vuelve a ti,<br/><em>{firstName}.</em></h1><p className={styles.introDescription}>{estadoCiclo?<>Hoy te acompaña <strong>{estadoCiclo.arquetipo}</strong>.<br/>{descripcionCorta}</>:"Cada recorrido comienza por escucharte. Configura tu ciclo y abre tu espacio personal."}</p><div className={styles.introActions}>{fechaInicioCiclo?<button className={styles.primaryAction} onClick={()=>goToScene("registro")}><PenLine size={16}/> Registrar cómo estoy <ArrowRight size={16}/></button>:<Link className={styles.primaryAction} href="/setup">Configurar mi ciclo <ArrowRight size={16}/></Link>}<JourneyLink className={styles.secondaryAction} href="/moonboard" label="Moonboard">Explorar mi Moonboard <ArrowRight size={16}/></JourneyLink></div></motion.div>
      {fechaInicioCiclo&&<button className={styles.cyclePortal} onClick={()=>goToScene("moonboard")} aria-label={"Día "+day+" de 28. Explorar mi Moonboard"}><svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="97" className={styles.portalTrack}/><motion.circle cx="100" cy="100" r="97" className={styles.portalProgress} initial={still?false:{pathLength:0}} animate={{pathLength:day/28}} transition={{duration:still?0:2,delay:.3}}/></svg><small>ESTÁS AQUÍ</small><strong>{day}</strong><span>{getCyclePhase(day)} · de 28 días</span><em>Abre tu constelación <ArrowRight size={13}/></em></button>}
      <div className={styles.introFooter}><span><Leaf size={14}/>{estadoCiclo?.elemento||"Tu propio ritmo"}{fechaInicioCiclo?" · Ciclo "+cicloActual:""}</span><button onClick={()=>goToScene("ciclo")}>Desliza y entra en tu recorrido <ArrowDown size={16}/></button><small>01 — 05 · A TU RITMO</small></div>
    </section>
    {dashboardPanels.map(({id,label},index)=><section key={id} id={"journey-"+id} data-scene-id={id} className={styles.chapter} tabIndex={-1} aria-labelledby={"chapter-title-"+id}>
-     <motion.header className={styles.chapterHeading} initial={still?false:{opacity:0,y:40}} whileInView={{opacity:1,y:0}} viewport={{once:true,amount:.3}} transition={{duration:.8}}><p className={styles.eyebrow}>0{index+1} / {label}</p><h2 id={"chapter-title-"+id}>{CHAPTERS[id].title}<br/><em>{CHAPTERS[id].line}</em></h2><p className={styles.chapterNote}>{CHAPTERS[id].note}</p></motion.header>
-     <motion.div className={styles.chapterContent} initial={still?false:{opacity:0,y:30}} whileInView={{opacity:1,y:0}} viewport={{once:true,amount:.08}} transition={{duration:.7,delay:.1}}>{renderContent(id)}</motion.div>
+     <motion.header className={styles.chapterHeading} initial={still?false:{opacity:0,y:40}} whileInView={{opacity:1,y:0}} viewport={{once:true,amount:.3}} transition={enter(DURATION.reveal)}><p className={styles.eyebrow}>0{index+1} / {label}</p><h2 id={"chapter-title-"+id}>{CHAPTERS[id].title}<br/><em>{CHAPTERS[id].line}</em></h2><p className={styles.chapterNote}>{CHAPTERS[id].note}</p></motion.header>
+     <motion.div className={styles.chapterContent} initial={still?false:{opacity:0,y:30}} whileInView={{opacity:1,y:0}} viewport={{once:true,amount:.08}} transition={{...enter(DURATION.reveal),delay:.1}}>{renderContent(id)}</motion.div>
      <div className={styles.chapterFooter}><Link href="/manual"><BookOpen size={14}/> Abrir guía</Link>{index<dashboardPanels.length-1?<button onClick={()=>goToScene(dashboardPanels[index+1].id)}>Siguiente · {dashboardPanels[index+1].label}<ArrowDown size={15}/></button>:<button onClick={()=>goToScene("inicio")}>Volver a mi umbral <ArrowRight size={15}/></button>}</div>
    </section>)}
    <QuickNav currentDay={day} userName={userName||""}/><ToastContainer/>

@@ -3,7 +3,6 @@
   --muted: #74656b;
   --gold: #dec498;
   min-height: 100svh;
-  margin-bottom: calc(-1 * (var(--nav-height) + env(safe-area-inset-bottom)));
   padding-bottom: calc(32px + var(--nav-height) + env(safe-area-inset-bottom));
   background: radial-gradient(ellipse at 0 10%, #51323e45, transparent 50%), #21191f;
   color: #fcf5ec;

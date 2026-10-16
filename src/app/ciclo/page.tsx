@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
+import { DURATION, enter } from "@/lib/motion";
 import { AlertTriangle, ArrowDown, ArrowUpRight, AudioLines, FileText, Sparkles } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import styles from "./ciclo.module.css";
@@ -87,11 +88,11 @@ export default function CicloPage() {
           <Link href="/dashboard">Mujer Chakana · Observatorio</Link><span>Archivo vivo / 01—28</span>
         </div>
         <div className={styles.heroGrid}>
-          <motion.div className={styles.heroCopy} initial={reduceMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7 }}>
+          <motion.div className={styles.heroCopy} initial={reduceMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={enter(DURATION.reveal)}>
             <p>Atlas cíclico</p><h1>Veintiocho voces.<em>Una sola vuelta.</em></h1>
             <div className={styles.heroIntro}><span>01</span><p>No vienes a elegir un arquetipo. Vienes a reconocer cuál de ellos ya está hablando en ti.</p></div>
           </motion.div>
-          <motion.div className={styles.orbit} initial={reduceMotion ? false : { opacity: 0, scale: .82 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: .9, delay: .15 }} aria-hidden="true">
+          <motion.div className={styles.orbit} initial={reduceMotion ? false : { opacity: 0, scale: .82 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...enter(DURATION.reveal), delay: .15 }} aria-hidden="true">
             <div className={styles.orbitRing}>{Array.from({ length: 28 }, (_, index) => <i key={index} style={{ "--index": index } as CSSProperties} />)}</div>
             <strong>28</strong><span>días para volver a ti</span>
           </motion.div>
@@ -109,7 +110,7 @@ export default function CicloPage() {
           const meta = WEEK_META[weekNumber] ?? { name: `Semana ${week}`, action: "Observar", copy: "Escucha el ritmo de esta etapa." };
           const elements = Array.from(new Set(items.map((item) => item.elemento)));
           return (
-            <motion.section id={`semana-${week}`} key={week} className={styles.chapter} initial={reduceMotion ? false : { opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: .65 }}>
+            <motion.section id={`semana-${week}`} key={week} className={styles.chapter} initial={reduceMotion ? false : { opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={enter(DURATION.reveal)}>
               <div className={styles.chapterHeading}>
                 <span className={styles.chapterNumber}>0{week}</span>
                 <div><p>Umbral {week} · {elements.join(" / ")}</p><h2>{meta.name}</h2></div>

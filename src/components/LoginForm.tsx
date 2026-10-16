@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { DURATION, enter } from "@/lib/motion";
 import Link from "next/link";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -130,7 +131,7 @@ export default function LoginForm() {
       onSubmit={handleSubmit}
       initial={reduceMotion ? false : { opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      transition={enter(DURATION.slow)}
       className="flex flex-col gap-5"
       aria-label="Formulario de inicio de sesión"
     >
@@ -251,7 +252,7 @@ export default function LoginForm() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 12 }}
-            transition={{ duration: 0.3 }}
+            transition={enter()}
             className="flex items-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 shadow"
             role="alert"
             aria-live="assertive"

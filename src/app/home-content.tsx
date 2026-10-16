@@ -33,6 +33,7 @@ import {
   Wind,
 } from "lucide-react";
 import styles from "./home-story.module.css";
+import { DURATION, enter } from "@/lib/motion";
 
 interface StoryScene {
   id: string;
@@ -162,7 +163,7 @@ function StoryChapter({
         initial={reduceMotion || index === 0 ? false : { opacity: 0, y: 48 }}
         whileInView={reduceMotion || index === 0 ? undefined : { opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.38 }}
-        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        transition={enter(DURATION.reveal)}
       >
         {children}
       </motion.div>
@@ -291,7 +292,7 @@ function OracleMoment() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.3 }}
+              transition={enter()}
             >
               {reading || "Escuchando el espacio entre tus palabras…"}
               {isListening && reading ? <span className={styles.oracleCursor} /> : null}
@@ -403,7 +404,7 @@ export default function Home() {
             initial={reduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.45, ease: "easeOut" }}
+            transition={enter(reduceMotion ? 0 : DURATION.slow)}
           >
             <Image
               src={scene.image}

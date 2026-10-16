@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#e91e63" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#190b17" };
 
 export default function RootLayout({
   children,
@@ -57,25 +57,10 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Ginergética" />
 
       </head>
-      <body className="relative min-h-screen text-pink-900 antialiased">
+      <body className="relative min-h-screen antialiased">
         <a className="skip-link" href="#main-content">
           Saltar al contenido
         </a>
-        {/* Capa de la imagen de fondo optimizada */}
-        <div
-          className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-[0.18] mix-blend-multiply blur-[0.2px] saturate-[0.72]"
-          style={{
-            backgroundImage: "url('/mujer-chakana.webp')",
-            backgroundAttachment: "fixed",
-          }}
-          aria-hidden="true"
-        />
-
-        {/* Capa luminosa para suavizar la ilustraciÃ³n de fondo */}
-        <div
-          className="fixed inset-0 z-10 bg-[radial-gradient(circle_at_18%_12%,rgba(255,255,255,0.86),transparent_34rem),radial-gradient(circle_at_88%_16%,rgba(255,249,237,0.88),transparent_32rem),linear-gradient(135deg,rgba(255,250,253,0.9),rgba(255,243,248,0.78)_48%,rgba(255,250,239,0.84))]"
-          aria-hidden="true"
-        />
 
         {/* Contenido principal */}
         <CartProvider><PageTransition>

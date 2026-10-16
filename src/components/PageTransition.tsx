@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useRef, useState, useSyncExternalStore, useTransition, type CSSProperties, type ReactNode } from "react";
 import styles from "./PageTransition.module.css";
+import { DURATION, enter } from "@/lib/motion";
 
 const PortalScene = dynamic(() => import("./NavigationPortalScene"), { ssr: false });
 const MOTION_QUERY = "(prefers-reduced-motion: reduce)";
@@ -103,7 +104,7 @@ export default function PageTransition({ children }: { children: ReactNode }) {
             data-page-transition={journey.phase}
             initial={{ opacity: 0 }}
             animate={{ opacity: journey.phase === "revealing" ? 0 : 1 }}
-            transition={{ duration: reduceMotion ? 0 : journey.phase === "revealing" ? .6 : .45, ease: [.22, 1, .36, 1] }}
+            transition={enter(reduceMotion ? 0 : journey.phase === "revealing" ? DURATION.slow : DURATION.base)}
             onAnimationComplete={() => {
               if (journey.phase === "covering" && !pushed.current) {
                 pushed.current = true;

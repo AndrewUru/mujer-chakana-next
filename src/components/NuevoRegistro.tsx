@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type CSSProperties, type FormEvent } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { DURATION, enter } from "@/lib/motion";
 import {
   CheckCircle, Feather, Flame, Heart, HeartHandshake, Leaf, MoonStar,
   Palette, Send, Sparkles, Sun, Zap, type LucideIcon,
@@ -126,7 +127,7 @@ export default function NuevoRegistro({ userId, nombre, dia_ciclo, ciclo_actual,
   }
 
   return (
-    <motion.form className={`${styles.journal} ${immersive ? styles.immersive : ""}`} onSubmit={handleGuardar} initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .55 }}>
+    <motion.form className={`${styles.journal} ${immersive ? styles.immersive : ""}`} onSubmit={handleGuardar} initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(DURATION.slow)}>
       <header className={styles.header}>
         <div><p>Bitácora ritual · Día {String(dia_ciclo).padStart(2, "0")}</p><h2>Deja una huella de cómo estás.</h2><span>Hola, {nombre}. No hace falta explicarlo todo; basta con nombrar lo verdadero.</span></div>
         <div className={styles.context}><small>{today}</small><strong>{arquetipo}</strong><span>Vuelta {ciclo_actual}</span></div>

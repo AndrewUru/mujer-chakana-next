@@ -70,8 +70,8 @@
 .chapterFooter button { color: var(--scene-accent); }
 .chapter:focus,.intro:focus { outline: none; }
 .journey :is(a,button):focus-visible { outline: 2px solid var(--scene-accent); outline-offset: 5px; }
-.chapterContent :global(.glass-panel) { color: #fff8f3; background: #0a061b66; border-color: #ffffff26; box-shadow: none; backdrop-filter: none; }
-.chapterContent :global(.glass-panel) :is(h2,p) { color: inherit; }
+/* Más opaca que .app-surface: el contenido flota sobre fotografías. */
+.chapterContent :global(.app-surface) { background: #0a061b66; border-color: #ffffff26; }
 .cycleContent { min-width: 0; }
 .loadingState { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1rem; min-height: 100svh; background: radial-gradient(ellipse at center,#422038,#160711); color: #fff8f3; }
 .loadingState p { font-family: var(--font-display),Georgia,serif; font-size: 2rem; }
@@ -100,7 +100,6 @@
 .archetypeContent p { opacity: .72; }
 .archetypeContent :is(button,a,svg) { color: var(--scene-accent); }
 .archetypeContent button { background: #ffffff0c; border: 1px solid #ffffff30; }
-.resourcesContent :global(.glass-soft), .resourcesContent :global(.glass-panel) { background: #ffffff08; color: #fff8f3bc; border: 1px solid #ffffff20; box-shadow: none; }
 .resourcesContent :is(h2,h3) { color: #fff8f3; }
 .resourcesContent :is(p,a) { color: #fff8f3b8; }
 .resourcesContent a:hover { background: #ffffff12; }

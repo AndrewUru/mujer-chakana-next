@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { motion, useReducedMotion, useScroll } from "framer-motion";
+import { DURATION, enter } from "@/lib/motion";
 import { ArrowDown, ArrowLeft, ArrowUpRight, BookOpen, Flower2, Pause, Play, RefreshCcw } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import RecursosList from "@/components/RecursosList";
@@ -72,7 +73,7 @@ export default function RecursosPage({ initialResources }: { initialResources: R
     </header>
     <div className={styles.content}>
       <section className={styles.hero} aria-labelledby="library-title">
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0 : .7 }}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(reduced ? 0 : DURATION.reveal)}>
           <p className={styles.eyebrow}>LA BIBLIOTECA · UN ESPACIO PARA NUTRIRTE</p>
           <h1 id="library-title">Vuelve a ti.<br /><em>De mil maneras.</em></h1>
           <p className={styles.lead}>Audios, vídeos y guías en PDF para explorar tu ciclo y acompañar tu práctica de autoconocimiento. Encuentra lo que necesitas hoy.</p>

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, type MotionProps } from "framer-motion";
+import { DURATION, enter } from "@/lib/motion";
 import { GalleryThumbnails, Loader2, Sparkles } from "lucide-react";
 import Link from "next/link";
 
@@ -14,7 +15,7 @@ interface ArquetiposPanelProps extends MotionProps {
 const motionDefaults: MotionProps = {
   initial: { opacity: 0, y: 30 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.7, delay: 0.3 },
+  transition: { ...enter(DURATION.reveal), delay: 0.3 },
 };
 
 export default function ArquetiposPanel({

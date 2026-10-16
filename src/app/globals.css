@@ -1,50 +1,55 @@
 @import "tailwindcss";
 
+/* ── Tokens de color ──────────────────────────────────────────────
+   Registrados en Tailwind (text-ink, bg-night, border-line/…) y
+   disponibles en CSS como var(--color-*). */
+@theme {
+  --color-night: #190b17;
+  --color-plum: #2a1424;
+  --color-ink: #fff8f3;
+  --color-blush: #f7b5c8;
+  --color-blush-deep: #29101f;
+  --color-agua: #88e6ef;
+  --color-fuego: #ffc37a;
+  --color-tierra: #e6c07a;
+  --color-cielo: #ffe0b0;
+  --color-luna: #c6c2e8;
+  --color-success: #9fe0bf;
+  --color-danger: #f5a3b5;
+  --color-paper: #f5f1e9;
+  --color-sepia: #493b31;
+}
+
 :root {
-  /* Paleta Mujer Chakana */
-  --chakra-pink: #fbb6ce;
-  --chakra-rose: #f43f5e;
-  --chakra-indigo: #5b21b6;
-  --chakra-earth: #5c4033;
-  --chakra-water: #264653;
-  --chakra-fire: #b02e0c;
-  --chakra-air: #3a506b;
-  --glass-surface: rgba(255, 255, 255, 0.7);
-  --glass-surface-strong: rgba(255, 255, 255, 0.82);
-  --glass-surface-soft: rgba(255, 255, 255, 0.5);
-  --glass-tint-rose: rgba(255, 238, 244, 0.5);
-  --glass-border: rgba(255, 255, 255, 0.68);
-  --glass-border-rose: rgba(244, 139, 177, 0.24);
-  --glass-shadow: 0 24px 60px rgba(143, 21, 85, 0.1),
-    0 8px 24px rgba(91, 33, 182, 0.06);
-  --glass-shadow-soft: 0 12px 30px rgba(143, 21, 85, 0.08);
-  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.74),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.24);
-  --glass-blur: blur(22px) saturate(145%);
-  --app-ink: #4a1431;
-  --app-muted: rgba(105, 31, 68, 0.68);
-  --app-surface: rgba(255, 255, 255, 0.72);
-  --app-surface-soft: rgba(255, 255, 255, 0.48);
-  --app-focus: rgba(244, 63, 94, 0.34);
+  /* Texto y superficies sobre fondo nocturno. */
+  --text-soft: rgb(255 248 243 / 0.76);
+  --text-muted: rgb(255 248 243 / 0.62);
+  --surface: rgb(255 255 255 / 0.04);
+  --surface-raised: rgb(42 20 36 / 0.92);
+  --line: rgb(255 255 255 / 0.12);
+  --line-strong: rgb(255 255 255 / 0.22);
+
+  /* ── Tokens de movimiento (espejo en src/lib/motion.ts) ── */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --dur-fast: 150ms;
+  --dur-base: 300ms;
+  --dur-slow: 600ms;
+  --dur-reveal: 800ms;
+
   --nav-height: 5.75rem;
 }
 
-/* Body global */
 html {
   min-height: 100%;
-  background: #fff7fb;
+  background: var(--color-night);
 }
 
 body {
   min-height: 100vh;
-  color: var(--app-ink);
+  color: var(--color-ink);
   font-family: var(--font-body), "Segoe UI", sans-serif;
-  background:
-    radial-gradient(circle at 12% 8%, rgba(255, 227, 237, 0.72), transparent 30rem),
-    radial-gradient(circle at 86% 12%, rgba(255, 246, 226, 0.78), transparent 32rem),
-    radial-gradient(circle at 18% 86%, rgba(232, 246, 255, 0.58), transparent 28rem),
-    linear-gradient(135deg, #fffafd 0%, #fff5f8 42%, #fffaf0 100%);
-  background-attachment: fixed;
+  background: var(--color-night);
 }
 
 h1,
@@ -64,23 +69,9 @@ body {
   overflow-x: hidden;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.32) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.24) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.48), transparent 72%);
-}
-
-/* Textos */
 ::selection {
-  color: white;
-  background: rgba(244, 63, 94, 0.78);
+  color: var(--color-blush-deep);
+  background: var(--color-blush);
 }
 
 .skip-link {
@@ -90,17 +81,17 @@ body::before {
   z-index: 100;
   transform: translateY(-150%);
   border-radius: 0.875rem;
-  background: #9f1239;
+  background: var(--color-blush);
   padding: 0.75rem 1rem;
-  color: white;
+  color: var(--color-blush-deep);
   font-weight: 800;
-  transition: transform 160ms ease;
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 
 /* La sombra solo al enfocar: oculto, su difuminado asomaba en la esquina. */
 .skip-link:focus {
   transform: translateY(0);
-  box-shadow: 0 12px 30px rgba(76, 5, 25, 0.25);
+  box-shadow: 0 12px 30px rgb(0 0 0 / 0.35);
 }
 
 a:focus-visible,
@@ -108,69 +99,19 @@ button:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 3px solid rgba(225, 29, 72, 0.46);
+  outline: 2px solid var(--color-blush);
   outline-offset: 3px;
 }
 
-/* Superficies glass reutilizables */
-.glass,
-.glass-card,
-.glass-panel,
-.glass-shell {
-  border: 1px solid var(--glass-border);
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.34)),
-    var(--glass-surface);
-  box-shadow: var(--glass-shadow), var(--glass-inset);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-}
-
-.glass-card,
-.glass-panel {
-  border-color: var(--glass-border-rose);
-}
-
-.glass-soft {
-  border: 1px solid rgba(255, 255, 255, 0.36);
-  background: var(--glass-surface-soft);
-  box-shadow: var(--glass-shadow-soft), var(--glass-inset);
-  -webkit-backdrop-filter: blur(16px) saturate(135%);
-  backdrop-filter: blur(16px) saturate(135%);
-}
-
-.glass-dark {
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background:
-    linear-gradient(135deg, rgba(91, 33, 182, 0.55), rgba(143, 21, 85, 0.38)),
-    rgba(38, 70, 83, 0.34);
-  box-shadow: 0 24px 70px rgba(38, 70, 83, 0.26), var(--glass-inset);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
-  backdrop-filter: blur(24px) saturate(150%);
-}
-
-.app-main {
-  padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
-}
-
-/* Sin dock (inicio, acceso, bienvenida, política) ese hueco dejaba ver el fondo claro. */
-body:not(:has(nav[aria-label="Navegación principal"])) .app-main {
-  padding-bottom: 0;
-}
-
-.app-page {
-  width: 100%;
-  min-height: 100%;
-}
-
-.app-container {
-  width: 100%;
-  max-width: 82rem;
-  margin-inline: auto;
+/* Superficie base para tarjetas sobre fondo nocturno. */
+.app-surface {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--color-ink);
 }
 
 .app-kicker {
-  color: var(--app-muted);
+  color: var(--color-blush);
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.18em;
@@ -182,52 +123,50 @@ body:not(:has(nav[aria-label="Navegación principal"])) .app-main {
 }
 
 .app-focus-ring:focus-visible {
-  box-shadow: 0 0 0 4px var(--app-focus);
+  box-shadow: 0 0 0 3px var(--color-blush);
 }
 
 /* Botones: solo la base. El movimiento al pasar el cursor lo decide cada componente;
    el foco de teclado usa el contorno común de :focus-visible. */
 button {
   font-weight: 600;
-  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease,
-    box-shadow 0.2s ease, opacity 0.2s ease;
+  transition: color var(--dur-fast) ease, background-color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease, box-shadow var(--dur-fast) ease,
+    opacity var(--dur-fast) ease;
 }
 
-/* Inputs y textareas */
+/* Inputs: estilo claro heredado. Las páginas oscuras lo sobrescriben;
+   pendiente de migrar junto con audios, rituales y admin. */
 input,
 textarea,
 select {
-  @apply border border-pink-200 rounded-lg focus:ring-2 focus:ring-pink-300 focus:outline-none transition p-3;
+  @apply border rounded-lg focus:ring-2 focus:ring-pink-300 focus:outline-none transition p-3;
   color: #5c0531;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0.42)),
-    var(--glass-surface-strong);
-  border-color: var(--glass-border-rose);
-  box-shadow: var(--glass-inset), 0 8px 22px rgba(143, 21, 85, 0.08);
-  -webkit-backdrop-filter: blur(16px) saturate(135%);
-  backdrop-filter: blur(16px) saturate(135%);
+    linear-gradient(135deg, rgb(255 255 255 / 0.76), rgb(255 255 255 / 0.42)),
+    rgb(255 255 255 / 0.82);
+  border-color: rgb(244 139 177 / 0.24);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.74), 0 8px 22px rgb(143 21 85 / 0.08);
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: rgba(143, 21, 85, 0.46);
+  color: rgb(143 21 85 / 0.46);
 }
 
 input:focus,
 textarea:focus,
 select:focus {
-  border-color: rgba(244, 63, 94, 0.56);
-  background: rgba(255, 255, 255, 0.82);
-  box-shadow: 0 0 0 4px rgba(251, 182, 206, 0.32),
-    0 14px 32px rgba(143, 21, 85, 0.12), var(--glass-inset);
+  border-color: rgb(244 63 94 / 0.56);
+  background: rgb(255 255 255 / 0.82);
+  box-shadow: 0 0 0 4px rgb(251 182 206 / 0.32), 0 14px 32px rgb(143 21 85 / 0.12);
 }
 
-/* Formularios */
 form {
   @apply space-y-6;
 }
 
-/* Estilos personalizados para sliders de audio */
+/* Sliders de audio */
 .slider {
   -webkit-appearance: none;
   appearance: none;
@@ -236,111 +175,47 @@ form {
 }
 
 .slider::-webkit-slider-track {
-  background: linear-gradient(
-    90deg,
-    rgba(251, 182, 206, 0.55),
-    rgba(255, 255, 255, 0.34)
-  );
   height: 8px;
   border-radius: 4px;
-  box-shadow: var(--glass-inset);
+  background: linear-gradient(90deg, rgb(247 181 200 / 0.55), rgb(255 255 255 / 0.2));
 }
 
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  height: 20px;
   width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background:
-    radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.85), transparent 36%),
-    linear-gradient(135deg, #fb7185, #be123c);
+  background: var(--color-blush);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(225, 29, 72, 0.3);
-  transition: all 0.2s ease;
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 
 .slider::-webkit-slider-thumb:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.4);
 }
 
 .slider::-moz-range-track {
-  background: linear-gradient(
-    90deg,
-    rgba(251, 182, 206, 0.55),
-    rgba(255, 255, 255, 0.34)
-  );
   height: 8px;
-  border-radius: 4px;
   border: none;
-  box-shadow: var(--glass-inset);
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgb(247 181 200 / 0.55), rgb(255 255 255 / 0.2));
 }
 
 .slider::-moz-range-thumb {
-  height: 20px;
   width: 20px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.85), transparent 36%),
-    linear-gradient(135deg, #fb7185, #be123c);
-  cursor: pointer;
+  height: 20px;
   border: none;
-  box-shadow: 0 2px 8px rgba(225, 29, 72, 0.3);
-  transition: all 0.2s ease;
+  border-radius: 50%;
+  background: var(--color-blush);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 
 .slider::-moz-range-thumb:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.4);
-}
-
-/* Clases especiales para exportar / imprimir */
-.printable * {
-  background-color: white !important;
-  color: black !important;
-  font-family: sans-serif !important;
-}
-
-.export-pdf * {
-  background-color: white !important;
-  color: black !important;
-  font-family: sans-serif !important;
-  box-shadow: none !important;
-  border-color: #ccc !important;
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes star {
-  0% {
-    opacity: 0;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.5);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1);
-  }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-.animate-star {
-  animation: star 2s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
