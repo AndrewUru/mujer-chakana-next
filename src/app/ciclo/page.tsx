@@ -10,7 +10,7 @@ import { AlertTriangle, ArrowDown, ArrowUpRight, AudioLines, FileText, Sparkles 
 import { supabase } from "@/lib/supabaseClient";
 import styles from "./ciclo.module.css";
 
-interface MujerChakanaData {
+interface ArquetipoDia {
   id: number;
   dia_ciclo: number;
   semana: number;
@@ -33,7 +33,7 @@ const WEEK_META: Record<number, { name: string; action: string; copy: string }> 
 export default function CicloPage() {
   const router = useRouter();
   const reduceMotion = useReducedMotion();
-  const [ciclo, setCiclo] = useState<MujerChakanaData[]>([]);
+  const [ciclo, setCiclo] = useState<ArquetipoDia[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export default function CicloPage() {
   }, [router]);
 
   const sections = useMemo(() => {
-    const grouped = ciclo.reduce<Record<number, MujerChakanaData[]>>((result, item) => {
+    const grouped = ciclo.reduce<Record<number, ArquetipoDia[]>>((result, item) => {
       (result[item.semana] ??= []).push(item);
       return result;
     }, {});
@@ -85,7 +85,7 @@ export default function CicloPage() {
       <header className={styles.hero}>
         <div className={styles.heroTexture} aria-hidden="true" />
         <div className={styles.heroTopline}>
-          <Link href="/dashboard">Mujer Chakana · Observatorio</Link><span>Archivo vivo / 01—28</span>
+          <Link href="/dashboard">Ginergética · Observatorio</Link><span>Archivo vivo / 01—28</span>
         </div>
         <div className={styles.heroGrid}>
           <motion.div className={styles.heroCopy} initial={reduceMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={enter(DURATION.reveal)}>

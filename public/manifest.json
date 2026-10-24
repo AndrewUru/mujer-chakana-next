@@ -1,7 +1,7 @@
 {
   "name": "GINERGETICA",
   "short_name": "Ginergética",
-  "description": "Ciclos femeninos guiados por la Chakana",
+  "description": "Ciclo lunar y autoconocimiento femenino",
   "lang": "es",
   "start_url": "/",
   "display": "standalone",
@@ -9,12 +9,12 @@
   "theme_color": "#190b17",
   "icons": [
     {
-      "src": "/logo_chakana.png",
+      "src": "/logo.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/logo_chakana.png",
+      "src": "/logo.png",
       "sizes": "512x512",
       "type": "image/png"
     }

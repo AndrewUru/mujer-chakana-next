@@ -14,7 +14,7 @@ export async function downloadLunarCard(date: Date) {
     ctx.beginPath(); ctx.arc(50 + ((i * 137) % 980), 100 + ((i * 211) % 1050), i % 3 === 0 ? 1.5 : .8, 0, Math.PI * 2); ctx.fill();
   }
   ctx.textAlign = "center"; ctx.fillStyle = "#c6c2e8"; ctx.font = "16px sans-serif";
-  ctx.fillText("MUJER CHAKANA / MI CIELO LUNAR", 540, 100);
+  ctx.fillText("GINERGÉTICA / MI CIELO LUNAR", 540, 100);
   ctx.fillStyle = "#f7eee4"; ctx.font = `600 88px ${font}`;
   ctx.fillText("Una pausa bajo", 540, 235); ctx.fillText("la misma luna.", 540, 330);
   ctx.strokeStyle = "#c6c2e830"; ctx.lineWidth = 1;
@@ -26,6 +26,6 @@ export async function downloadLunarCard(date: Date) {
   ctx.font = "17px sans-serif"; ctx.fillText("Descubre tu luna en ginergetica.com", 540, 1270);
   const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(value => value ? resolve(value) : reject(new Error("No pudimos crear la imagen.")), "image/png"));
   const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a"); anchor.href = url; anchor.download = "mi-luna-mujer-chakana.png"; anchor.click();
+  const anchor = document.createElement("a"); anchor.href = url; anchor.download = "mi-luna-ginergetica.png"; anchor.click();
   setTimeout(() => URL.revokeObjectURL(url), 30000);
 }

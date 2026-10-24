@@ -9,7 +9,7 @@ import "./admin.css";
 const sections = [
   { href: "/admin/tienda", label: "Tienda", icon: Store },
   { href: "/admin", label: "Comunidad", icon: Users },
-  { href: "/admin/mujer-chakana", label: "Mujer Chakana", icon: Flower2 },
+  { href: "/admin/arquetipos", label: "Arquetipos", icon: Flower2 },
   { href: "/admin/recursos", label: "Recursos", icon: BookOpen },
   { href: "/admin/moonboard", label: "Moonboard", icon: Moon },
 ];

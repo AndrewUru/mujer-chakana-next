@@ -40,7 +40,7 @@ La aplicación ahora utiliza la inteligencia artificial de **OpenAI** para ofrec
 - Espiritualidad
 - Notas personales
 
-Cada vez que una usuaria guarda su huella del día, recibe un mensaje canalizado que inspira y reconecta con su ciclo y arquetipo diario, siguiendo la simbología y el lenguaje de la **Rueda Mujer Chakana** y la visión MaikU·.
+Cada vez que una usuaria guarda su huella del día, recibe un mensaje canalizado que inspira y reconecta con su ciclo y arquetipo diario, siguiendo la simbología y el lenguaje de **Ginergética** y la visión MaikU·.
 
 _Ejemplo:_  
 "Hoy tu intuición te invita a sembrar en calma y florecer en tu fuego interior."
@@ -56,7 +56,7 @@ _Ejemplo:_
 - Panel de configuración con acceso al manual integrativo.
 - Perfil con avatar y datos energéticos.
 - ✨ Panel de Administración:
-  - Crear, editar y eliminar Arquetipos Mujer Chakana.
+  - Crear, editar y eliminar arquetipos.
   - Subir recursos complementarios (audios, PDFs, imágenes).
   - Visualización previa de imágenes, audio y documentos PDF.
 - Integración directa con Supabase Storage para gestión de archivos.

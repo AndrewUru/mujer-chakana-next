@@ -88,8 +88,8 @@ export default function BienvenidaPage() {
 
   const elementKey = normalizeElement(context.element);
   const element = ELEMENTS[elementKey] || {
-    image: "/mujer-chakana.webp",
-    label: "Chakana",
+    image: "/mujer-elementos.webp",
+    label: "Tu ciclo",
     Icon: Moon,
     accent: "#f3a8bd",
   };

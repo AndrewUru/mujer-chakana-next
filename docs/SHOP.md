@@ -173,7 +173,7 @@ admin real: crear → subir → guardar → publicar → comprobar tienda → ca
 
 `node tests/shop-responsive.cjs` renderiza componentes reales con fixtures de
 demostración, en un navegador aislado, y comprueba anchos de 375 y 1280 px. Guarda
-capturas en la carpeta temporal `chakana-shop-review`. Utiliza fuentes de reserva
+capturas en la carpeta temporal `ginergetica-shop-review`. Utiliza fuentes de reserva
 para el arnés; no sustituye la comprobación final de la app con una sesión real.
 
 En la revisión del entorno conectado, la consulta a `shop_products` devolvió

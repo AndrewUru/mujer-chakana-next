@@ -2,7 +2,7 @@
 
 // types/index.ts
 
-export interface MujerChakanaData {
+export interface ArquetipoDia {
   id: number;
   dia_ciclo: number;
   semana: number;

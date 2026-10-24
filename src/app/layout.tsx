@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
   icons: {
     icon: { url: "/favicon.svg", type: "image/svg+xml", sizes: "any" },
-    apple: "/logo_chakana.png",
+    apple: "/logo.png",
   },
 };
 
@@ -51,7 +51,7 @@ export default function RootLayout({
 
         {/* PWA / App */}
         <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/logo_chakana.png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Ginergética" />

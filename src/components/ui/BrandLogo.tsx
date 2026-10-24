@@ -3,8 +3,8 @@ import styles from "./BrandLogo.module.css";
 
 const DOTS = [[32, 8], [49, 15], [56, 32], [49, 49], [32, 56], [15, 49], [8, 32], [15, 15]];
 
-// Versión vectorial de logo_chakana.png (misma que favicon.svg); el trazo hereda el color del texto.
-function ChakanaMark() {
+// Versión vectorial de logo.png (misma que favicon.svg); el trazo hereda el color del texto.
+function LogoMark() {
   return (
     <svg className={styles.mark} viewBox="4 4 56 56" aria-hidden="true">
       <g fill="none" stroke="currentColor" strokeWidth="3">
@@ -33,7 +33,7 @@ interface BrandLogoProps {
 // Logo único para todas las barras superiores: cada página solo decide posición y contenedor.
 export default function BrandLogo({ href, className, "aria-label": ariaLabel }: BrandLogoProps) {
   const classes = className ? `${styles.logo} ${className}` : styles.logo;
-  const content = <><ChakanaMark /><span className={styles.name}>Ginergética</span></>;
+  const content = <><LogoMark /><span className={styles.name}>Ginergética</span></>;
 
   return href
     ? <Link href={href} className={classes} aria-label={ariaLabel}>{content}</Link>

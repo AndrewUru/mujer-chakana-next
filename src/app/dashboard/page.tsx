@@ -155,13 +155,13 @@ export default function DashboardPage() {
     setFechaInicioCiclo(startDate);
     setFechaFinCiclo(endDate);
 
-    const { data: mujerChakanaData } = await supabase
+    const { data: arquetipoDia } = await supabase
       .from("mujer_chakana")
       .select("*")
       .eq("dia_ciclo", cycleDay)
       .single();
 
-    setEstadoCiclo(mujerChakanaData || null);
+    setEstadoCiclo(arquetipoDia || null);
     setLoading(false);
     } catch { setLoadError(true); setLoading(false); }
   }, [router]);
@@ -235,7 +235,7 @@ export default function DashboardPage() {
                 fechaInicioCiclo={fechaInicioCiclo}
                 fechaFinCiclo={fechaFinCiclo}
                 userName={userName ?? undefined}
-                mujerChakanaData={estadoCiclo}
+                arquetipoDia={estadoCiclo}
                 isSubscriber={isSubscriber}
               />
             ) : null}
@@ -325,7 +325,7 @@ export default function DashboardPage() {
         return null;
     }
   };
- const elementScene=ELEMENT_SCENES[normalizeElement(estadoCiclo?.elemento)]||{image:"/mujer-chakana.webp",accent:"#f7b5c8",label:"Chakana"};
+ const elementScene=ELEMENT_SCENES[normalizeElement(estadoCiclo?.elemento)]||{image:"/mujer-elementos.webp",accent:"#f7b5c8",label:"Tu ciclo"};
  const heroImage=estadoCiclo?.imagen_url||elementScene.image;
  const firstName=userName?.trim().split(/\s+/)[0]||"Exploradora";
  const scenes: Record<SceneId,{image:string;accent:string;tint:string}>={

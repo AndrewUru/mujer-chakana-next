@@ -11,7 +11,7 @@ const ref = new URL(url).hostname.split('.')[0];
 const user = {id:'77777777-7777-4777-8777-777777777777',aud:'authenticated',role:'authenticated',email:'moonboard-test@example.invalid',app_metadata:{provider:'email'},user_metadata:{}};
 const start = new Date(); start.setDate(start.getDate()-11);
 const fecha = `${start.getFullYear()}-${String(start.getMonth()+1).padStart(2,'0')}-${String(start.getDate()).padStart(2,'0')}`;
-const output = path.join(os.tmpdir(),'chakana-moonboard-review');fs.mkdirSync(output,{recursive:true});
+const output = path.join(os.tmpdir(),'ginergetica-moonboard-review');fs.mkdirSync(output,{recursive:true});
 const token = [Buffer.from(JSON.stringify({alg:'HS256',typ:'JWT'})).toString('base64url'),Buffer.from(JSON.stringify({sub:user.id,exp:Math.floor(Date.now()/1000)+3600,role:'authenticated'})).toString('base64url'),'fixture'].join('.');
 (async()=>{
   const browser=await chromium.launch({headless:true});
@@ -69,7 +69,7 @@ const token = [Buffer.from(JSON.stringify({alg:'HS256',typ:'JWT'})).toString('ba
         console.log('Download received');
         await download.saveAs(path.join(output,'lunar-card.png'));
         console.log('Download saved');
-        assert.equal(download.suggestedFilename(),'mi-luna-mujer-chakana.png');
+        assert.equal(download.suggestedFilename(),'mi-luna-ginergetica.png');
       }
       await page.getByText('Explorar el mapa completo de 28 días',{exact:true}).click();
       assert.equal(await page.locator('details button').count(),28);

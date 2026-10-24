@@ -116,7 +116,7 @@ export default function EditarArquetipoPage() {
       uploadedImage.current = null;
       setMensajeExito("✅ Cambios guardados correctamente.");
       redirectTimer.current = setTimeout(() => {
-        router.push("/admin/mujer-chakana");
+        router.push("/admin/arquetipos");
       }, 2000);
     } catch (error) {
       setMensajeError(error instanceof Error ? error.message : "No se pudieron guardar los cambios. Inténtalo de nuevo.");
@@ -135,14 +135,14 @@ export default function EditarArquetipoPage() {
     );
   }
 
-  if (!arquetipo) return <div className="admin-page"><p role="alert" className="admin-notice error">{mensajeError}</p><button className="admin-button" onClick={() => router.push("/admin/mujer-chakana")}>Volver a arquetipos</button></div>;
+  if (!arquetipo) return <div className="admin-page"><p role="alert" className="admin-notice error">{mensajeError}</p><button className="admin-button" onClick={() => router.push("/admin/arquetipos")}>Volver a arquetipos</button></div>;
 
   return (
     <main className="max-w-3xl mx-auto bg-white/90 py-10 px-6 rounded-2xl shadow-md pb-20 space-y-6">
       <Breadcrumbs
         items={[
           { label: "Admin", href: "/admin" },
-          { label: "Mujer Chakana", href: "/admin/mujer-chakana" },
+          { label: "Arquetipos", href: "/admin/arquetipos" },
           { label: `Editar: ${arquetipo.arquetipo}` },
         ]}
       />

@@ -12,7 +12,7 @@ import styles from "./manual.module.css";
 
 const JourneyScene = dynamic(() => import("@/components/DashboardJourneyScene"), { ssr: false });
 const chapters = [
-  { id: "comenzar", label: "Comenzar", image: "/mujer-chakana.webp", color: "#f7b5c8", tint: "#260b20" },
+  { id: "comenzar", label: "Comenzar", image: "/mujer-elementos.webp", color: "#f7b5c8", tint: "#260b20" },
   { id: "moonboard", label: "Tu Moonboard", image: "/cielo-ui.webp", color: "#ddd2fa", tint: "#1a1534" },
   { id: "recursos", label: "Tus recursos", image: "/tierra-ui.webp", color: "#e6c07a", tint: "#251a0e" },
   { id: "profundizar", label: "Profundizar", image: "/agua-ui.webp", color: "#88e6ef", tint: "#042733" },

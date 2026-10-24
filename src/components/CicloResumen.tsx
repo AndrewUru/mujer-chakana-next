@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowUpRight, Droplets, Flame, Mountain, Wind, Sparkles, Lock, Music2, ScrollText, Clapperboard, BookOpen } from "lucide-react";
 import styles from "./CicloResumen.module.css";
 
-interface MujerChakanaData {
+interface ArquetipoDia {
   elemento: string;
   semana?: string;
   audio_url?: string;
@@ -20,31 +20,31 @@ const elements = {
   Aire: { Icon: Wind, phrase: "Abre una ventana a lo nuevo.", description: "Respira, ordena tus pensamientos y encuentra palabras para tu propia voz." },
 };
 
-export default function CicloResumen({ mujerChakanaData, isSubscriber, day, immersive = false }: {
+export default function CicloResumen({ arquetipoDia, isSubscriber, day, immersive = false }: {
   immersive?: boolean;
   day: number;
   fechaInicioCiclo: Date;
   fechaFinCiclo: Date;
   userName?: string;
-  mujerChakanaData: MujerChakanaData;
+  arquetipoDia: ArquetipoDia;
   isSubscriber: boolean;
 }) {
   const [showAccess, setShowAccess] = useState(false);
-  const key = mujerChakanaData.elemento === "Cielo" ? "Aire" : mujerChakanaData.elemento;
+  const key = arquetipoDia.elemento === "Cielo" ? "Aire" : arquetipoDia.elemento;
   const element = elements[key as keyof typeof elements] || { Icon: Sparkles, phrase: "Encuentra tu propia forma de estar.", description: "Escucha lo que necesitas hoy y deja espacio para descubrirlo sin prisa." };
   const { Icon } = element;
   const resources = [
-    { id: "audio", label: "Escucha tu audio guía", description: "Un momento para conectar hacia dentro", Icon: Music2, url: mujerChakanaData.audio_url },
-    { id: "ritual", label: "Un ritual para este día", description: "Lleva tu intención a un pequeño gesto", Icon: ScrollText, url: mujerChakanaData.ritual_pdf },
-    { id: "video", label: "Inspírate en movimiento", description: "Una invitación para explorar y sentir", Icon: Clapperboard, url: mujerChakanaData.video_url },
+    { id: "audio", label: "Escucha tu audio guía", description: "Un momento para conectar hacia dentro", Icon: Music2, url: arquetipoDia.audio_url },
+    { id: "ritual", label: "Un ritual para este día", description: "Lleva tu intención a un pequeño gesto", Icon: ScrollText, url: arquetipoDia.ritual_pdf },
+    { id: "video", label: "Inspírate en movimiento", description: "Una invitación para explorar y sentir", Icon: Clapperboard, url: arquetipoDia.video_url },
   ].filter(resource => resource.url);
-  const dailyContentHref = `/ritual?pdf=${encodeURIComponent(mujerChakanaData.ritual_pdf || "")}&audio=${encodeURIComponent(mujerChakanaData.audio_url || "")}&video=${encodeURIComponent(mujerChakanaData.video_url || "")}`;
+  const dailyContentHref = `/ritual?pdf=${encodeURIComponent(arquetipoDia.ritual_pdf || "")}&audio=${encodeURIComponent(arquetipoDia.audio_url || "")}&video=${encodeURIComponent(arquetipoDia.video_url || "")}`;
   return <div className={`${styles.summary} ${immersive ? styles.immersive : ""}`}>
     <section className={styles.elementCard}>
-      <div className={styles.elementTop}><span><Icon size={15} /> {mujerChakanaData.elemento}</span><small>DÍA {day}</small></div>
+      <div className={styles.elementTop}><span><Icon size={15} /> {arquetipoDia.elemento}</span><small>DÍA {day}</small></div>
       <Icon className={styles.elementArt} aria-hidden="true" strokeWidth={.7} />
       <div className={styles.elementCopy}><p>UNA INVITACIÓN PARA HOY</p><h3>{element.phrase}</h3><span>{element.description}</span></div>
-      {mujerChakanaData.semana && <small className={styles.week}>Semana lunar · {mujerChakanaData.semana}</small>}
+      {arquetipoDia.semana && <small className={styles.week}>Semana lunar · {arquetipoDia.semana}</small>}
     </section>
     <section className={styles.practices} aria-labelledby="daily-practices">
       <p className={styles.eyebrow}>A TU MANERA, SIN PRISA</p><h3 id="daily-practices">Pequeños rituales.<br /><em>Tiempo para ti.</em></h3>
@@ -55,6 +55,6 @@ export default function CicloResumen({ mujerChakanaData, isSubscriber, day, imme
       </div>
       {showAccess && <div className={styles.access} id="cycle-subscription"><p>Estos rituales forman parte de la suscripción. Descubre qué incluye y elige cómo continuar.</p><Link href="/suscripcion">Ver suscripciones <ArrowUpRight size={14} /></Link><button type="button" onClick={() => setShowAccess(false)}>Cerrar</button></div>}
     </section>
-    {mujerChakanaData.tip_extra && <aside className={styles.dailyTip}><Sparkles size={19} aria-hidden="true" /><div><p>Una idea para llevarte</p><span>{mujerChakanaData.tip_extra}</span></div></aside>}
+    {arquetipoDia.tip_extra && <aside className={styles.dailyTip}><Sparkles size={19} aria-hidden="true" /><div><p>Una idea para llevarte</p><span>{arquetipoDia.tip_extra}</span></div></aside>}
   </div>;
 }

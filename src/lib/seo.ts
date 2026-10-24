@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const SITE_URL = "https://www.ginergetica.com";
 export const SITE_NAME = "Ginergética";
 export const SITE_DESCRIPTION = "Registra tu ciclo y tus emociones, explora tu calendario lunar y descubre audios, rituales y guías de autoconocimiento femenino con Ginergética.";
-const socialImage = { url: `${SITE_URL}/mujer-chakana.webp`, alt: "Ginergética: ciclo lunar y autoconocimiento femenino" };
+const socialImage = { url: `${SITE_URL}/mujer-elementos.webp`, alt: "Ginergética: ciclo lunar y autoconocimiento femenino" };
 
 export function publicMetadata(title: string, description: string, path: string): Metadata {
   const url = new URL(path, SITE_URL).href;

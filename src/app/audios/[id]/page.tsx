@@ -434,7 +434,7 @@ export default function AudioPage() {
 
         {/* Footer decorativo */}
         <div className="text-center mt-8 text-gray-500">
-          <p className="text-sm">🌙 Guía visual del ciclo lunar • Chakana</p>
+          <p className="text-sm">🌙 Guía visual del ciclo lunar • Ginergética</p>
         </div>
       </div>
     </div>

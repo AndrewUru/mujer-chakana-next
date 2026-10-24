@@ -3,7 +3,15 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
-const prefix = "chakana:resource-favorites:v1:";
+const prefix = "ginergetica:resource-favorites:v1:";
+// Clave anterior al cambio de nombre: se traslada una vez para no perder los favoritos guardados.
+const legacyPrefix = "chakana:resource-favorites:v1:";
+function migrateLegacy(userId: string) {
+  const legacy = localStorage.getItem(legacyPrefix + userId);
+  if (legacy === null || localStorage.getItem(prefix + userId) !== null) return;
+  localStorage.setItem(prefix + userId, legacy);
+  localStorage.removeItem(legacyPrefix + userId);
+}
 function read(key: string): string[] {
   const parsed: unknown = JSON.parse(localStorage.getItem(key) ?? "[]");
   if (!Array.isArray(parsed) || !parsed.every(value => typeof value === "string")) throw new Error("Invalid favorites");
@@ -23,7 +31,7 @@ export function useResourceFavorites() {
       if (!active) return;
       currentUserId = id;
       setUserId(id); setIds([]); setError("");
-      try { if (id) setIds(read(prefix + id)); }
+      try { if (id) { migrateLegacy(id); setIds(read(prefix + id)); } }
       catch { setError("No pudimos leer tus favoritos en este navegador."); }
       setReady(true);
     }
@@ -33,8 +41,8 @@ export function useResourceFavorites() {
     function sync(event: StorageEvent) { if (event.key === null || event.key === prefix + currentUserId) apply(currentUserId); }
     function syncLocal() { apply(currentUserId); }
     window.addEventListener("storage", sync);
-    window.addEventListener("chakana-favorites-changed", syncLocal);
-    return () => { active = false; subscription.unsubscribe(); window.removeEventListener("storage", sync); window.removeEventListener("chakana-favorites-changed", syncLocal); };
+    window.addEventListener("ginergetica-favorites-changed", syncLocal);
+    return () => { active = false; subscription.unsubscribe(); window.removeEventListener("storage", sync); window.removeEventListener("ginergetica-favorites-changed", syncLocal); };
   }, []);
   function toggle(id: string) {
     if (!userId) return;
@@ -43,7 +51,7 @@ export function useResourceFavorites() {
       const next = current.includes(id) ? current.filter(value => value !== id) : [...current, id];
       localStorage.setItem(prefix + userId, JSON.stringify(next));
       setIds(next); setError("");
-      window.dispatchEvent(new Event("chakana-favorites-changed"));
+      window.dispatchEvent(new Event("ginergetica-favorites-changed"));
     } catch { setError("No pudimos guardar el cambio. Comprueba que el navegador permita el almacenamiento local."); }
   }
   return { ids, ready, userId, error, toggle };

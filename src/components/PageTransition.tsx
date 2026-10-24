@@ -25,7 +25,7 @@ export function preparePageTransition() {
 
 const SCENES: Record<string, { image: string; accent: string; word: string }> = {
   "/moonboard": { image: "/cielo-ui.webp", accent: "#c6c2e8", word: "Abre tu luna" },
-  "/dashboard": { image: "/mujer-chakana.webp", accent: "#f7b5c8", word: "Volver a ti" },
+  "/dashboard": { image: "/mujer-elementos.webp", accent: "#f7b5c8", word: "Volver a ti" },
   "/ciclo": { image: "/fuego-ui.webp", accent: "#ffc37a", word: "Reconocer" },
   "/registros": { image: "/agua-ui.webp", accent: "#88e6ef", word: "Escuchar" },
   "/setup": { image: "/tierra-ui.webp", accent: "#e6c07a", word: "Enraizar" },
@@ -156,7 +156,7 @@ export default function PageTransition({ children }: { children: ReactNode }) {
             <div className={styles.shade} aria-hidden="true" />
             {!reduceMotion && <PortalScene accent={scene.accent} />}
             <div className={styles.center} role="status" aria-live="polite">
-              <p className={styles.eyebrow}>Mujer Chakana · {journey.label}</p>
+              <p className={styles.eyebrow}>Ginergética · {journey.label}</p>
               <p className={styles.word}>{scene.word}</p>
               <span className={styles.caption}>Un espacio para tu propio ritmo</span>
               <span className="sr-only">Abriendo {journey.label}</span>

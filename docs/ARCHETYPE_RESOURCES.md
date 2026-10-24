@@ -8,7 +8,7 @@ Los recursos tienen URLs públicas, igual que los enlaces que consumen actualmen
 
 ## Uso de Sami
 
-1. Entrar en Admin → Mujer Chakana → Editar un arquetipo.
+1. Entrar en Admin → Arquetipos → Editar un arquetipo.
 2. Pulsar **Elegir audio** o **Elegir PDF**, y seleccionar el archivo del dispositivo.
 3. Revisar el audio o PDF y pulsar **Guardar cambios**.
 

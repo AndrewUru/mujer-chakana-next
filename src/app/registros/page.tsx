@@ -138,7 +138,7 @@ export default function RegistroPage() {
       <Image src="/agua-ui.webp" alt="" fill priority sizes="100vw" className={styles.backdrop} />
       <div className={styles.veil} aria-hidden="true" />
       <div className={styles.content}>
-        <nav className={styles.topline}><Link href="/dashboard">Mujer Chakana / Observatorio</Link><span>Archivo personal</span></nav>
+        <nav className={styles.topline}><Link href="/dashboard">Ginergética / Observatorio</Link><span>Archivo personal</span></nav>
         <header className={styles.hero}>
           <div><p className={styles.eyebrow}>Lo que sientes deja huella</p><h1>La memoria<br /><em>de tu ciclo.</em></h1></div>
           <div className={styles.intro}><p>Cada registro guarda una parte de ti. Vuelve a tus palabras, reconoce tus ritmos y descubre lo que cambia con cada vuelta.</p><Link href="/dashboard">Volver a mi día <ArrowUpRight size={17} /></Link></div>
