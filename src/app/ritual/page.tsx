@@ -1,13 +1,12 @@
 "use client";
 
 import { Suspense } from "react";
+import { RitualLoading } from "@/components/RitualViewer";
 import RitualViewerWrapper from "@/components/RitualViewerWrapper";
 
 export default function RitualPage() {
   return (
-    <Suspense
-      fallback={<div className="p-6 text-center">Cargando ritual...</div>}
-    >
+    <Suspense fallback={<RitualLoading />}>
       <RitualViewerWrapper />
     </Suspense>
   );
