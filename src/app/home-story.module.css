@@ -136,27 +136,7 @@
 
 .brand {
   left: var(--page-gutter);
-  gap: 0.6rem;
-  padding: 0.55rem 0.95rem 0.55rem 0.65rem;
-  font-family: var(--font-display), Georgia, serif;
-  font-size: 1rem;
-  letter-spacing: 0.02em;
-}
-
-.brand em {
-  color: var(--scene-accent);
-  font-style: italic;
-}
-
-.brandMark {
-  display: grid;
-  width: 1.55rem;
-  aspect-ratio: 1;
-  place-items: center;
-  border-radius: 50%;
-  color: #2a0b1d;
-  background: var(--scene-accent);
-  transition: background-color 0.7s ease;
+  padding: 0.35rem 0.95rem 0.35rem 0.45rem;
 }
 
 .loginLink {
@@ -1035,14 +1015,6 @@ button.primaryAction {
   .loginLink {
     top: 0.8rem;
     min-height: 2.35rem;
-  }
-
-  .brand {
-    font-size: 0.87rem;
-  }
-
-  .brandMark {
-    width: 1.35rem;
   }
 
   .loginLink {

@@ -1,0 +1,6 @@
+.logo { display: inline-flex; align-items: center; gap: .6rem; font-family: var(--font-display), Georgia, serif; font-size: 1.25rem; font-weight: 600; letter-spacing: .01em; line-height: 1; white-space: nowrap; }
+.mark { flex-shrink: 0; width: 1.75rem; height: 1.75rem; }
+@media(max-width:600px) {
+  .logo { gap: .5rem; font-size: 1.1rem; }
+  .mark { width: 1.5rem; height: 1.5rem; }
+}

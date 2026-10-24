@@ -33,6 +33,7 @@ import {
   Wind,
 } from "lucide-react";
 import styles from "./home-story.module.css";
+import BrandLogo from "@/components/ui/BrandLogo";
 import { DURATION, enter } from "@/lib/motion";
 
 interface StoryScene {
@@ -432,12 +433,7 @@ export default function Home() {
         <motion.div className={styles.progress} style={{ scaleX: progress }} />
 
         <div className={styles.storyChrome}>
-          <Link href="/" className={styles.brand} aria-label="Mujer Chakana, inicio">
-            <span className={styles.brandMark}>✦</span>
-            <span>
-              Ginergética
-            </span>
-          </Link>
+          <BrandLogo href="/" className={styles.brand} aria-label="Ginergética, inicio" />
           <Link href="/auth/login" className={styles.loginLink}>
             <LogIn size={15} aria-hidden="true" />
             Entrar

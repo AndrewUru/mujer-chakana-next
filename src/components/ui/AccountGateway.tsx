@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import BrandLogo from "./BrandLogo";
 import styles from "./AccountGateway.module.css";
 
 interface AccountGatewayProps {
@@ -19,8 +20,8 @@ export default function AccountGateway({ eyebrow, title, accent, description, fo
       <Image src="/cielo-ui.webp" alt="" fill priority sizes="100vw" className={styles.backdrop} />
       <div className={styles.veil} aria-hidden="true" />
       <header className={styles.header}>
-        <Link href="/" className={styles.brand}><Image src="/logo_chakana.png" alt="" width={36} height={36} />Ginergética</Link>
-        <Link href="/auth/login"><ArrowLeft size={15} /> Iniciar sesión</Link>
+        <BrandLogo href="/" />
+        <Link href="/auth/login" className={styles.back}><ArrowLeft size={15} /> Iniciar sesión</Link>
       </header>
       <div className={styles.layout}>
         <section className={styles.story}>

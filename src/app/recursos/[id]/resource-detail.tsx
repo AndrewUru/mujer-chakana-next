@@ -7,6 +7,7 @@ import Image from "next/image";
 import { ArrowLeft, ArrowUpRight, BookOpen, Flower2, Headphones, Leaf, LockKeyhole, Moon, Play, RefreshCcw, Sparkles } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import type { PublicResource } from "@/lib/public-resources";
+import BrandLogo from "@/components/ui/BrandLogo";
 import ResourceContent from "./resource-content";
 import styles from "./resource.module.css";
 
@@ -90,7 +91,7 @@ export default function ResourceDetail({ id, initialResource }: { id: string; in
     <div className={styles.shell}>
       <header className={styles.topbar}>
         <Link href="/recursos" className={styles.back}><ArrowLeft size={16} aria-hidden="true" /><span>Biblioteca</span></Link>
-        <Link href="/dashboard" className={styles.brand} aria-label="Ginergética · Mi espacio"><Flower2 size={23} strokeWidth={1.2} aria-hidden="true" /> Ginergética</Link>
+        <BrandLogo href="/dashboard" aria-label="Ginergética · Mi espacio" />
         <span className={styles.topNote}>TU ESPACIO DE PRÁCTICA</span>
       </header>
 

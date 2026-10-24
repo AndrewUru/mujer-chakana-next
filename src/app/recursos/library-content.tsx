@@ -6,9 +6,10 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { motion, useReducedMotion, useScroll } from "framer-motion";
 import { DURATION, enter } from "@/lib/motion";
-import { ArrowDown, ArrowLeft, ArrowUpRight, BookOpen, Flower2, Pause, Play, RefreshCcw } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowUpRight, BookOpen, Pause, Play, RefreshCcw } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import RecursosList from "@/components/RecursosList";
+import BrandLogo from "@/components/ui/BrandLogo";
 import styles from "./recursos.module.css";
 
 const JourneyScene = dynamic(() => import("@/components/DashboardJourneyScene"), { ssr: false });
@@ -68,7 +69,7 @@ export default function RecursosPage({ initialResources }: { initialResources: R
     <motion.div className={styles.progress} style={{ scaleX: scrollYProgress }} />
     <header className={styles.topbar}>
       <Link href="/dashboard" className={styles.back}><ArrowLeft size={15} aria-hidden="true" /> Mi espacio</Link>
-      <span className={styles.brand}><Flower2 size={21} aria-hidden="true" /> Ginergética</span>
+      <BrandLogo />
       <button type="button" className={styles.motionButton} aria-label={paused ? "Activar movimiento ambiental" : "Pausar movimiento ambiental"} aria-pressed={paused} onClick={() => setPaused(value => !value)}>{paused ? <Play size={15} /> : <Pause size={15} />}</button>
     </header>
     <div className={styles.content}>

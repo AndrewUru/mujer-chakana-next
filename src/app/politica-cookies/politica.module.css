@@ -42,16 +42,6 @@
 
 .back:hover { background: #ffffff10; }
 
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: .55rem;
-  color: #fff8f3a6;
-  font-size: .78rem;
-}
-
-.brand svg { color: var(--accent); }
-
 .hero {
   padding: clamp(3rem, 9vh, 6rem) 0 clamp(2.5rem, 6vh, 4rem);
 }
@@ -238,5 +228,5 @@
 }
 
 @media (max-width: 520px) {
-  .brand { display: none; }
+  .topbar .brand { display: none; }
 }

@@ -2,8 +2,7 @@
 .backdrop { z-index: -3; object-fit: cover; opacity: .6; }
 .veil { position: absolute; inset: 0; z-index: -2; background: linear-gradient(100deg,#1b0812f5,#230918ca 52%,#150710e6),linear-gradient(0deg,#1b0812,transparent 45%); }
 .header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; max-width: 82rem; margin: auto; }
-.header a { display: inline-flex; align-items: center; gap: .6rem; color: #edccda; text-decoration: none; font-size: .72rem; }
-.header .brand { font: 600 1.15rem var(--font-display),Georgia,serif; color: #fff5ee; }.brand img { border-radius: 50%; }
+.back { display: inline-flex; align-items: center; gap: .6rem; color: #edccda; text-decoration: none; font-size: .72rem; }
 .layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,.9fr); align-items: center; gap: clamp(3rem,8vw,8rem); max-width: 74rem; min-height: calc(100svh - 10rem); margin: auto; padding-top: 3rem; }
 .eyebrow { color: #e2afc3; font-size: .6rem; letter-spacing: .2em; font-weight: 800; text-transform: uppercase; }
 .story h1 { margin: 1.5rem 0; font: 600 clamp(3.8rem,6.5vw,6.5rem)/.95 var(--font-display),Georgia,serif; letter-spacing: -.04em; }.story em { color: #eab0c7; }
@@ -24,4 +23,4 @@
 .panel :global([data-account-note]) { padding: 1rem; border: 1px solid #e4c9a23b; background: #e4c9a20c; color: #e8d5bd; border-radius: .7rem; font-size: .7rem; line-height: 1.7; }
 .panel a { color: #efbfd2; text-underline-offset: 4px; }.page a:focus-visible,.panel button:focus-visible { outline: 2px solid #efb8cf; outline-offset: 4px; }
 .panel>p:not(.eyebrow) { margin-top: 1rem; }
-@media(max-width:760px) { .layout { grid-template-columns: 1fr; gap: 2rem; max-width: 30rem; padding-top: 3rem; }.story h1 { font-size: clamp(3.3rem,13vw,5rem); }.moon { display: none; }.header .brand { font-size: 1rem; }.header a { font-size: .65rem; }.panel h2 { font-size: 2.8rem; } }
+@media(max-width:760px) { .layout { grid-template-columns: 1fr; gap: 2rem; max-width: 30rem; padding-top: 3rem; }.story h1 { font-size: clamp(3.3rem,13vw,5rem); }.moon { display: none; }.back { font-size: .65rem; }.panel h2 { font-size: 2.8rem; } }

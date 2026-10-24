@@ -10,8 +10,6 @@
 .shell { max-width: 1280px; margin: auto; padding: 0 48px; }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 104px; border-bottom: 1px solid #dec49826; }
 .back { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; color: #e6d8cf; font-size: 13px; }
-.brand { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-display), Georgia, serif; font-size: 28px; }
-.brand svg { color: var(--gold); }
 .topNote { color: #c4b2b6; font-size: 9px; letter-spacing: .17em; }
 .breadcrumb { display: flex; gap: 14px; align-items: center; padding: 28px 0; color: #c3b3ba; font-size: 12px; }
 .breadcrumb a { display: inline-flex; align-items: center; min-height: 32px; }
@@ -128,7 +126,6 @@
 @media (max-width: 760px) {
   .shell { padding: 0 22px; }
   .topbar { min-height: 82px; gap: 16px; }
-  .brand { font-size: 25px; }
   .breadcrumb { padding: 16px 0; }
   .layout { display: flex; flex-direction: column; gap: 28px; }
   .companion { display: contents; }
@@ -154,5 +151,5 @@
   .skeletonLayout { grid-template-columns: 1fr; gap: 28px; }
   .skeletonLayout > div:first-child { height: 240px; border-radius: 120px 120px 12px 12px; }
 }
-@media (max-width: 380px) { .shell { padding: 0 16px; } .experience { padding-inline: 18px; } .brand { font-size: 23px; } .audioOptions { gap: 8px; } .speed { gap: 2px; } .accessLabel { gap: 8px; } }
+@media (max-width: 380px) { .shell { padding: 0 16px; } .experience { padding-inline: 18px; } .audioOptions { gap: 8px; } .speed { gap: 2px; } .accessLabel { gap: 8px; } }
 @media (prefers-reduced-motion: reduce) { .page *, .page *::before, .page *::after { animation: none !important; transition: none !important; } }

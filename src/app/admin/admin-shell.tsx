@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight, BookOpen, Flower2, Moon, Users, Store } from "lucide-react";
+import BrandLogo from "@/components/ui/BrandLogo";
 import "./admin.css";
 
 const sections = [
@@ -18,7 +19,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="admin-workspace">
       <aside className="admin-sidebar">
-        <Link href="/admin" className="admin-brand"><Flower2 size={30} strokeWidth={1.3} /><span>Ginergética<small>ESPACIO DE ADMINISTRACIÓN</small></span></Link>
+        <div className="admin-brand"><BrandLogo href="/admin" /><small>ESPACIO DE ADMINISTRACIÓN</small></div>
         <p className="admin-eyebrow sidebar-label">Tu espacio de gestión</p>
         <nav aria-label="Administración">
           {sections.map(({ href, label, icon: Icon }) => {

@@ -7,8 +7,6 @@
 .topbar { max-width: 1280px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 26px 40px; }
 .back, .motionButton { display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid #ffffff2b; border-radius: 99px; padding: 12px 18px; color: #e0d3d4; background: #21162055; font-size: 11px; }
 .motionButton { width: 42px; height: 42px; padding: 0; cursor: pointer; }
-.brand { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-display), Georgia, serif; font-size: 26px; }
-.brand svg { color: #d9bd87; }
 .content { max-width: 1280px; margin: auto; padding: 0 40px; }
 .hero { display: grid; grid-template-columns: 1.4fr 1fr; align-items: center; min-height: 580px; padding: 65px 0 85px; gap: 40px; }
 .eyebrow { color: #d9bd87; font-size: 10px; letter-spacing: .18em; line-height: 1.8; margin: 0 0 24px; }
@@ -40,7 +38,7 @@
 .error button { display: inline-flex; gap: 10px; align-items: center; padding: 12px 20px; border: 1px solid #dec49866; border-radius: 99px; cursor: pointer; }
 .page :is(a, button):focus-visible { outline: 2px solid #dec498; outline-offset: 5px; }
 @keyframes breathe { to { opacity: .45; } }
-@media (max-width: 700px) { .topbar { padding: 20px; } .brand { font-size: 22px; } .content { padding: 0 20px; } .hero { grid-template-columns: 1fr; padding: 55px 0; min-height: auto; gap: 0; } .hero h1 { font-size: clamp(58px, 12vw, 84px); } .seal { display: none; } .collection { padding: 22px 16px; border-radius: 20px; } .collectionHeading { align-items: flex-start; flex-direction: column; } .footer { align-items: flex-start; flex-direction: column; } .skeletons { grid-template-columns: 1fr; } .skeletons > div:not(:first-child) { display: none; } }
+@media (max-width: 700px) { .topbar { padding: 20px; } .content { padding: 0 20px; } .hero { grid-template-columns: 1fr; padding: 55px 0; min-height: auto; gap: 0; } .hero h1 { font-size: clamp(58px, 12vw, 84px); } .seal { display: none; } .collection { padding: 22px 16px; border-radius: 20px; } .collectionHeading { align-items: flex-start; flex-direction: column; } .footer { align-items: flex-start; flex-direction: column; } .skeletons { grid-template-columns: 1fr; } .skeletons > div:not(:first-child) { display: none; } }
 @media (prefers-reduced-motion: reduce) { .motionButton { visibility: hidden; } .page * { animation: none !important; transition: none !important; } }
 @media (max-width: 700px) {
   .collection { padding: 18px 16px; }

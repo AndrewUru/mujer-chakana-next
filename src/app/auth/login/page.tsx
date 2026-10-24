@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import LoginForm from "@/components/LoginForm";
+import BrandLogo from "@/components/ui/BrandLogo";
 import styles from "./login.module.css";
 
 export default function LoginPage() {
@@ -10,10 +11,7 @@ export default function LoginPage() {
       <Image src="/cielo-ui.webp" alt="" fill priority sizes="100vw" className={styles.landscape} />
       <div className={styles.veil} aria-hidden="true" />
       <header className={styles.header}>
-        <Link href="/" className={styles.brand}>
-          <Image src="/logo_chakana.png" alt="" width={38} height={38} />
-          Ginergética
-        </Link>
+        <BrandLogo href="/" />
         <Link href="/" className={styles.back}><ArrowLeft size={14} /> Volver al inicio</Link>
       </header>
 

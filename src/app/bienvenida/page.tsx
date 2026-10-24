@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import BrandLogo from "@/components/ui/BrandLogo";
 import styles from "./bienvenida.module.css";
 
 const TOTAL_CYCLE_DAYS = 28;
@@ -206,10 +207,7 @@ export default function BienvenidaPage() {
       <div className={styles.grain} aria-hidden="true" />
 
       <header className={styles.header}>
-        <Link href="/" className={styles.brand} aria-label="Ginergética, inicio">
-          <Image src="/logo_chakana.png" alt="" width={38} height={38} priority />
-          <span>Ginergética</span>
-        </Link>
+        <BrandLogo href="/" className={styles.brand} aria-label="Ginergética, inicio" />
         <span className={styles.arrivalCode}>Umbral · 01</span>
       </header>
 

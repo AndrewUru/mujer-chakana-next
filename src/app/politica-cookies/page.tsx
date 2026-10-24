@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import BrandLogo from "@/components/ui/BrandLogo";
 import ConsentButton from "./ConsentButton";
 import styles from "./politica.module.css";
 
@@ -29,10 +30,7 @@ export default function PoliticaCookies() {
           <ArrowLeft size={15} aria-hidden="true" />
           Volver al inicio
         </Link>
-        <span className={styles.brand}>
-          <ShieldCheck size={16} aria-hidden="true" />
-          Ginergética · Privacidad
-        </span>
+        <BrandLogo className={styles.brand} />
       </header>
 
       <div className={styles.hero}>
