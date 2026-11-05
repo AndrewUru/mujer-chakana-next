@@ -229,7 +229,7 @@ function OracleMoment() {
   };
 
   return (
-    <div className={styles.oracle} aria-label="Una microlectura con Samari">
+    <div className={styles.oracle} role="group" aria-label="Una microlectura con Samari">
       <div className={styles.oracleHeading}>
         <span className={styles.oraclePresence} aria-hidden="true" />
         <p className={styles.oracleQuestion}>Samari · presente</p>
@@ -318,7 +318,7 @@ function OracleMoment() {
 
 function MoonboardOrbit() {
   return (
-    <div className={styles.moonboardOrbit} aria-label="Un ciclo lunar de 28 días">
+    <div className={styles.moonboardOrbit} role="img" aria-label="Un ciclo lunar de 28 días">
       {MOONBOARD_DAYS.map((day, index) => (
         <span
           key={day}
@@ -523,7 +523,7 @@ export default function Home() {
                 <em>la energía cambia.</em>
               </h2>
               <p>
-                Una guía con inteligencia artificial, encuentra patrones en tus
+                Una guía con inteligencia artificial encuentra patrones en tus
                 registros y te devuelve preguntas, no recetas. Una voz para acompañar la tuya.
               </p>
             </div>
@@ -575,7 +575,7 @@ export default function Home() {
                 no te empuja hacia delante: camina contigo en espiral.
               </p>
             </div>
-            <div className={styles.constellation} aria-label="Los cuatro elementos de tu camino">
+            <div className={styles.constellation} role="group" aria-label="Los cuatro elementos de tu camino">
               <span><Waves aria-hidden="true" /> Agua</span>
               <span><Flame aria-hidden="true" /> Fuego</span>
               <span><Leaf aria-hidden="true" /> Tierra</span>
