@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { loadShopProduct, removeUnusedShopImages, saveShopProduct, shopError, uploadShopImage } from "@/lib/shop/admin";
+import { SHOP_ENABLED } from "@/lib/shop/config";
 import { slugify, type ImageType, type ShopProduct } from "@/lib/shop/types";
 import VariantEditor from "./VariantEditor";
 import ImageEditor from "./ImageEditor";
@@ -66,7 +67,7 @@ export default function ProductEditor({ id }: { id: string }) {
   }
   if (!product) return <main className="admin-page"><Link href="/admin/tienda">Volver a Tienda</Link>{error ? <div className="admin-notice error" role="alert">{error}<button className="admin-button" onClick={() => setRetry(value => value + 1)}>Reintentar</button></div> : <p role="status">Abriendo la ilustración…</p>}</main>;
   return <main className="admin-page shop-admin">
-    <header className="admin-heading"><div><Link href="/admin/tienda">Tienda / Ilustraciones</Link><h1>{product.name || "Nueva ilustración"}</h1><p className="admin-subtitle">Completa la información, añade las imágenes y elige cuándo publicar.</p></div>{product.status === "published" && <Link className="admin-button" target="_blank" href={`/tienda/${product.slug}`}>Ver en la tienda</Link>}</header>
+    <header className="admin-heading"><div><Link href="/admin/tienda">Tienda / Ilustraciones</Link><h1>{product.name || "Nueva ilustración"}</h1><p className="admin-subtitle">Completa la información, añade las imágenes y elige cuándo publicar.</p></div>{SHOP_ENABLED && product.status === "published" && <Link className="admin-button" target="_blank" href={`/tienda/${product.slug}`}>Ver en la tienda</Link>}</header>
     <form onSubmit={save}>
       <div className="shop-savebar"><span role="status">{busy ? "Procesando…" : dirty ? "Tienes cambios sin guardar" : "Todos los cambios están guardados"}</span><button className="admin-button primary" type="submit" disabled={busy}>{busy ? "Espera un momento…" : "Guardar cambios"}</button></div>
       {error && <p className="admin-notice error" role="alert">{error}</p>}{notice && <p className="admin-notice" role="status">{notice}</p>}

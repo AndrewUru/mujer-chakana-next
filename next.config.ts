@@ -1,6 +1,7 @@
 // next.config.js (o .ts/.mjs según tu setup)
 import type { NextConfig } from "next";
 import withPWA from "next-pwa";
+import { SHOP_ENABLED } from "./src/lib/shop/config";
 
 const supabaseImageHost = process.env.NEXT_PUBLIC_SUPABASE_URL
   ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
@@ -15,6 +16,10 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/register", destination: "/auth/register", permanent: true },
+      // Temporal a propósito: un 301 quedaría cacheado y seguiría activo al abrir la tienda.
+      ...(SHOP_ENABLED
+        ? []
+        : ["/tienda/:path*", "/carrito"].map((source) => ({ source, destination: "/", permanent: false }))),
       {
         source: "/:path*",
         has: [{ type: "host", value: "ginergetica.com" }],

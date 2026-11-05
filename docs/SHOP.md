@@ -7,6 +7,14 @@ autenticación ni una plataforma de comercio externa. Los pagos de productos no
 están activados; la integración PayPal existente corresponde a suscripciones y
 no se reutiliza como checkout de obras.
 
+**Visibilidad:** la tienda pública está oculta hasta contar con suficientes
+ilustraciones. Mientras `NEXT_PUBLIC_SHOP_ENABLED` no valga `true`, `/tienda`,
+`/tienda/[slug]` y `/carrito` redirigen temporalmente a `/` y la tienda no aparece
+en el dock ni en el sitemap. `/admin/tienda` sigue operativo para preparar las
+obras, aunque sin los enlaces a la tienda pública. Para abrirla, definir
+`NEXT_PUBLIC_SHOP_ENABLED=true` en el entorno de producción y volver a desplegar:
+el valor se resuelve en build. El flag está en `src/lib/shop/config.ts`.
+
 **Instalación técnica inicial:** aplicar `supabase/migrations/202610120001_shop.sql`
 en el proyecto Supabase correcto y desplegar esta versión de la aplicación. Es
 una operación inicial del responsable técnico, no una tarea de Samari. La sesión

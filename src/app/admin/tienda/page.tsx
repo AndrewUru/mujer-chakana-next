@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { SHOP_SELECT, fromPrice, imageUrl, money, type ShopProduct } from "@/lib/shop/types";
 import { shopError } from "@/lib/shop/admin";
+import { SHOP_ENABLED } from "@/lib/shop/config";
 
 export default function ShopAdminPage() {
   const router = useRouter();
@@ -48,7 +49,7 @@ export default function ShopAdminPage() {
   }
   const filtered = products.filter(product => product.name.toLocaleLowerCase("es").includes(query.toLocaleLowerCase("es")) && (status === "all" || product.status === status));
   return <main className="admin-page shop-admin">
-    <header className="admin-heading"><div><p className="admin-eyebrow">Arte de Samari</p><h1>Tienda</h1><p className="admin-subtitle">Tus ilustraciones, listas para encontrar su lugar.</p></div><div className="shop-actions"><Link className="admin-button" href="/tienda">Ver tienda</Link><button className="admin-button primary" disabled={pending || loading || Boolean(error)} onClick={() => void create()}>{pending ? "Preparando…" : "Nueva ilustración"}</button></div></header>
+    <header className="admin-heading"><div><p className="admin-eyebrow">Arte de Samari</p><h1>Tienda</h1><p className="admin-subtitle">Tus ilustraciones, listas para encontrar su lugar.</p></div><div className="shop-actions">{SHOP_ENABLED && <Link className="admin-button" href="/tienda">Ver tienda</Link>}<button className="admin-button primary" disabled={pending || loading || Boolean(error)} onClick={() => void create()}>{pending ? "Preparando…" : "Nueva ilustración"}</button></div></header>
     {error && <div className="admin-notice error" role="alert">{error} <button className="admin-button" onClick={() => void load()}>Reintentar</button></div>}
     {notice && <p className="admin-notice" role="status">{notice}</p>}
     <div className="admin-toolbar"><label className="admin-search"><input aria-label="Buscar ilustración" placeholder="Buscar por nombre…" value={query} onChange={event => setQuery(event.target.value)} /></label><select aria-label="Filtrar por estado" value={status} onChange={event => setStatus(event.target.value)}><option value="all">Todos los estados</option><option value="published">Publicadas</option><option value="draft">Borradores</option><option value="archived">Desactivadas</option></select></div>

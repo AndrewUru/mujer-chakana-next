@@ -17,6 +17,7 @@ import Image from "next/image";
 import type { Session } from "@supabase/supabase-js";
 import { usePageTransition } from "./PageTransition";
 
+import { SHOP_ENABLED } from "@/lib/shop/config";
 import { useCart } from "./shop/CartProvider";
 import styles from "./Navbar.module.css";
 
@@ -122,13 +123,15 @@ export default function Navbar() {
             />
           </>
         )}
-        <NavItem
-          href="/tienda"
-          icon={<Store />}
-          label="Tienda"
-          badge={cart.count}
-          active={onShop}
-        />
+        {SHOP_ENABLED && (
+          <NavItem
+            href="/tienda"
+            icon={<Store />}
+            label="Tienda"
+            badge={cart.count}
+            active={onShop}
+          />
+        )}
         {loggedIn ? (
           <NavItem
             href="/setup"
