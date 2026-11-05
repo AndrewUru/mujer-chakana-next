@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
 import { ArrowDown, ArrowRight, BookOpen, CalendarDays, CheckCircle2, Flower2, Leaf, Moon, PenLine, Pause, Play, Settings, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { isAuthRetryableFetchError } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabaseClient";
 import JourneyLink from "@/components/JourneyLink";
 import Moonboard from "@/components/Moonboard";
@@ -24,6 +25,8 @@ import styles from "./dashboard.module.css";
 import { DURATION, enter } from "@/lib/motion";
 
 const TOTAL_CYCLE_DAYS = 28;
+// PostgREST: .single() sin filas. Es un estado válido, no un error de carga.
+const NO_ROWS = "PGRST116";
 const DashboardJourneyScene = dynamic(() => import("@/components/DashboardJourneyScene"), { ssr: false });
 interface Perfil { display_name: string; avatar_url: string | null; fecha_inicio: string | null; suscripcion_activa?: boolean; }
 type DashboardPanel = "ciclo" | "moonboard" | "registro" | "arquetipos" | "recursos";
@@ -98,7 +101,11 @@ export default function DashboardPage() {
 
     const {
       data: { user },
+      error: authError,
     } = await supabase.auth.getUser();
+
+    // Un fallo de red no es una sesión cerrada.
+    if (authError && isAuthRetryableFetchError(authError)) throw authError;
 
     if (!user) {
       router.push("/");
@@ -126,11 +133,14 @@ export default function DashboardPage() {
       .eq("fecha", new Date().toISOString().split("T")[0])
       .limit(1);
 
-    const [{ data: perfilData }, { data: recursos }, { data: registroHoy }] = await Promise.all([
+    const [{ data: perfilData, error: perfilError }, { data: recursos }, { data: registroHoy }] = await Promise.all([
       perfilPromise,
       recursosPromise,
       registroHoyPromise,
     ]);
+
+    // Sin esto, un fallo de carga se mostraría como "configura tu ciclo".
+    if (perfilError && perfilError.code !== NO_ROWS) throw perfilError;
 
     setRegisteredToday(Boolean(registroHoy?.length));
     setUserName(perfilData?.display_name || "");
@@ -155,11 +165,13 @@ export default function DashboardPage() {
     setFechaInicioCiclo(startDate);
     setFechaFinCiclo(endDate);
 
-    const { data: arquetipoDia } = await supabase
+    const { data: arquetipoDia, error: arquetipoError } = await supabase
       .from("mujer_chakana")
       .select("*")
       .eq("dia_ciclo", cycleDay)
       .single();
+
+    if (arquetipoError && arquetipoError.code !== NO_ROWS) throw arquetipoError;
 
     setEstadoCiclo(arquetipoDia || null);
     setLoading(false);
@@ -308,12 +320,12 @@ export default function DashboardPage() {
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/75">
                   Rituales, audios y guías para acompañar el momento del ciclo
-                  que estas transitando.
+                  que estás transitando.
                 </p>
               </div>
               <Link
                 href="/recursos"
-                className="app-focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-ink transition hover:bg-white/10"
+                className="app-focus-ring inline-flex min-h-11 shrink-0 items-center whitespace-nowrap justify-center gap-2 rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-ink transition hover:bg-white/10"
               >
                 Ver todos
               </Link>
@@ -348,7 +360,7 @@ export default function DashboardPage() {
      <div className={styles.skeletonPortal}><Moon/></div>
    </div>
  </div>;
- if(loadError)return <div className={styles.loadingState}><p>No pudimos abrir tu espacio.</p><button onClick={()=>void loadData()} className={styles.primaryAction}>Volver a intentar</button></div>;
+ if(loadError)return <div className={styles.loadingState} role="alert"><p>No pudimos abrir tu espacio.</p><button type="button" onClick={()=>void loadData()} className={styles.primaryAction}>Volver a intentar</button></div>;
  return <div ref={rootRef} className={styles.journey} data-motion={still?"paused":"active"} data-active-scene={activeScene} style={{"--scene-accent":scene.accent} as CSSProperties}>
    <div className={styles.stage} aria-hidden="true"><AnimatePresence initial={false}><motion.div key={scene.image+scene.tint} className={styles.stageScene} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={enter(still?0:DURATION.slow)}><Image src={scene.image} alt="" fill sizes="100vw" priority={activeScene==="inicio"} style={{objectPosition:activeScene==="inicio"?"center 28%":"center"}}/><div className={styles.stageTint} style={{background:scene.tint}}/></motion.div></AnimatePresence><div className={styles.vignette}/><div className={styles.grain}/><div className={styles.sigil}/><DashboardJourneyScene scene={sceneIndex} color={scene.accent} paused={still || activeScene === "moonboard"} progress={scrollYProgress}/><div className={styles.motes}>{Array.from({length:8},(_,i)=><i key={i} style={{"--i":i} as CSSProperties}/>)}</div></div>
    <motion.div className={styles.progress} style={{scaleX:still?scrollYProgress:smoothProgress}}/>

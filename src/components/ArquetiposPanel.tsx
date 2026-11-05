@@ -34,10 +34,10 @@ export default function ArquetiposPanel({
       <div className="mx-auto flex max-w-2xl flex-col items-center gap-4">
         <h2 className="flex items-center justify-center gap-2 text-2xl font-semibold text-rose-900 sm:text-3xl">
           <GalleryThumbnails className="h-6 w-6 text-rose-500" />
-          Galeria de arquetipos
+          Galería de arquetipos
         </h2>
         <p className="text-base text-rose-700">
-          Accede a los arquetipos visuales y sus ensenanzas para profundizar cada
+          Accede a los arquetipos visuales y sus enseñanzas para profundizar cada
           fase. Las suscriptoras activas disfrutan de contenidos anticipados y
           ceremonias guiadas.
         </p>
@@ -66,15 +66,15 @@ export default function ArquetiposPanel({
             className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-8 py-3 font-semibold text-rose-800 shadow-sm transition hover:bg-rose-100"
           >
             <Sparkles className="h-5 w-5 text-rose-500" />
-            Suscribete para acceder
+            Suscríbete para acceder
           </motion.button>
         )}
         {!isSubscriber && !isLoadingProfile && (
           <Link
             href="/suscripcion"
-            className="text-xs font-semibold text-rose-500 underline-offset-2 hover:underline"
+            className="inline-flex min-h-11 items-center text-xs font-semibold text-rose-500 underline-offset-2 hover:underline"
           >
-            Conoce los beneficios de la suscripcion
+            Conoce los beneficios de la suscripción
           </Link>
         )}
       </div>
