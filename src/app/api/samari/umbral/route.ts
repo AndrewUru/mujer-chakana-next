@@ -6,6 +6,8 @@ import {
   sanitizePlainText,
 } from "@/lib/ai/samari";
 
+import { allowRequest, clientKey, tooManyRequests } from "@/lib/rateLimit";
+
 export const maxDuration = 20;
 
 const INTENTIONS = {
@@ -33,6 +35,14 @@ export async function POST(request: Request) {
     const intention: unknown = body?.intention;
     if (!isIntention(intention)) {
       return Response.json({ error: "Elige una intención válida." }, { status: 400 });
+    }
+
+    // Ruta pública: límite por visitante y tope diario global para acotar el gasto.
+    const allowed =
+      (await allowRequest(`umbral:ip:${clientKey(request)}`, { limit: 5, windowSeconds: 600 })) &&
+      (await allowRequest("umbral:global", { limit: 400, windowSeconds: 86_400 }));
+    if (!allowed) {
+      return tooManyRequests("Samari necesita una pausa. Vuelve a intentarlo en unos minutos.");
     }
 
     const seed = sanitizePlainText(body?.seed, 80);

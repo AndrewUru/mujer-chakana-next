@@ -11,7 +11,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { supabase } from "@/lib/supabaseClient";
 import {
   AnimatePresence,
   motion,
@@ -338,7 +338,6 @@ function MoonboardOrbit() {
 
 export default function Home() {
   const router = useRouter();
-  const [supabase] = useState(() => createClientComponentClient());
   const [activeScene, setActiveScene] = useState(0);
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll();
@@ -379,7 +378,7 @@ export default function Home() {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [router, supabase]);
+  }, [router]);
 
   useEffect(() => {
     const nextScene = STORY_SCENES[activeScene + 1];

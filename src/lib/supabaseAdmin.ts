@@ -8,26 +8,32 @@ export class AdminAuthError extends Error {
   }
 }
 
-function serviceClient(): SupabaseClient {
+export function serviceClient(): SupabaseClient {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) {
     throw new AdminAuthError(
-      "La gestión de usuarias no está configurada: falta SUPABASE_SERVICE_ROLE_KEY en el servidor.",
+      "Esta función no está configurada: falta SUPABASE_SERVICE_ROLE_KEY en el servidor.",
       503,
     );
   }
   return createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
 }
 
-/** Valida el token de quien llama y exige rol admin. Devuelve el cliente con privilegios. */
-export async function requireAdmin(request: Request) {
+/** Valida el token de quien llama. Devuelve su usuaria y el cliente con privilegios. */
+export async function requireUser(request: Request) {
   const token = request.headers.get("authorization")?.match(/^Bearer (.+)$/i)?.[1];
   if (!token) throw new AdminAuthError("Inicia sesión para continuar.", 401);
 
   const admin = serviceClient();
   const { data: { user }, error } = await admin.auth.getUser(token);
   if (error || !user) throw new AdminAuthError("Tu sesión ha caducado. Vuelve a iniciar sesión.", 401);
+  return { admin, user };
+}
+
+/** Valida el token de quien llama y exige rol admin. Devuelve el cliente con privilegios. */
+export async function requireAdmin(request: Request) {
+  const { admin, user } = await requireUser(request);
 
   const { data: profile } = await admin.from("perfiles").select("rol").eq("user_id", user.id).maybeSingle();
   if (profile?.rol !== "admin") throw new AdminAuthError("Tu cuenta no tiene permisos de administración.", 403);

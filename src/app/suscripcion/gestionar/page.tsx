@@ -25,8 +25,6 @@ export default function GestionarSuscripcionPage() {
         return;
       }
 
-      console.log("✅ User ID:", user.id); // <- ESTE está bien aquí adentro
-
       const { data, error } = await supabase
         .from("perfiles")
         .select("*")
@@ -36,7 +34,6 @@ export default function GestionarSuscripcionPage() {
       if (error) {
         console.error("Error al obtener perfil:", error);
       } else {
-        console.log("Perfil recuperado:", data); // NUEVO
         setPerfil(data);
       }
 
@@ -48,20 +45,27 @@ export default function GestionarSuscripcionPage() {
 
   const handleCancelarInternamente = async () => {
     const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) return;
+    if (!window.confirm("¿Cancelar tu suscripción? Perderás el acceso al contenido de la membresía.")) return;
 
-    const { error } = await supabase
-      .from("perfiles")
-      .update({ suscripcion_activa: false })
-      .eq("user_id", user.id);
+    // El servidor cancela también en PayPal cuando la suscripción se creó desde la app.
+    const response = await fetch("/api/suscripcion/cancelar", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    });
+    const body = await response.json().catch(() => null);
 
-    if (!error) {
-      alert("Tu suscripción ha sido marcada como inactiva en el sistema.");
-      router.refresh();
+    if (response.ok) {
+      setPerfil(prev => (prev ? { ...prev, suscripcion_activa: false, tipo_plan: "gratuito" } : prev));
+      alert(
+        body?.cancelledInPayPal
+          ? "Tu suscripción se ha cancelado. PayPal no realizará más cobros."
+          : "Tu suscripción está inactiva aquí. Si la contrataste en PayPal, comprueba allí que también esté cancelada."
+      );
     } else {
-      console.error("Error al cancelar localmente:", error);
+      alert(body?.error || "No se pudo cancelar la suscripción. Inténtalo de nuevo.");
     }
   };
 
@@ -108,15 +112,14 @@ export default function GestionarSuscripcionPage() {
               </a>
 
               <p className="text-sm text-gray-500 italic">
-                Si ya cancelaste en PayPal y deseas marcar tu suscripción como
-                inactiva aquí, puedes hacerlo abajo.
+                También puedes cancelar tu suscripción desde aquí.
               </p>
 
               <button
                 onClick={handleCancelarInternamente}
                 className="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-6 py-3 rounded-full shadow-md hover:shadow-lg hover:from-rose-600 hover:to-pink-700 transition"
               >
-                Marcar como Cancelada 🌑
+                Cancelar suscripción 🌑
               </button>
             </div>
           )}

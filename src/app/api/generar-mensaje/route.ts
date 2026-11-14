@@ -8,6 +8,8 @@ import {
 } from "@/lib/ai/samari";
 import { loadSamariContext, readBearerToken } from "@/lib/ai/samari-context";
 
+import { allowRequest, tooManyRequests } from "@/lib/rateLimit";
+
 export const maxDuration = 30;
 
 export async function POST(request: Request) {
@@ -31,6 +33,10 @@ export async function POST(request: Request) {
 
     if (!verifiedContext) {
       return Response.json({ error: "Sesión no válida." }, { status: 401 });
+    }
+
+    if (!(await allowRequest(`reflexion:${verifiedContext.userId}`, { limit: 12, windowSeconds: 3600 }))) {
+      return tooManyRequests("Ya creaste varias reflexiones en la última hora. Vuelve en un rato.");
     }
 
     const emociones = sanitizePlainText(body?.emociones, 500);
