@@ -2,6 +2,7 @@
 
 import { useState, type KeyboardEvent } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, ArrowUpRight, Flower2, Headphones, Leaf, Play, ScrollText, Sparkles } from "lucide-react";
 import ResourceContent from "@/app/recursos/[id]/resource-content";
 import BrandLogo from "@/components/ui/BrandLogo";
@@ -45,7 +46,8 @@ export default function RitualViewer({ pdfUrl, audioUrl, videoUrl }: { pdfUrl?: 
     event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>("[role=tab]")[nextIndex]?.focus();
   }
 
-  if (!active) return <main className={styles.page}>
+  if (!active) return <main className={`${styles.page} ${styles.emptyPage}`}>
+    <Image src="/estados/ritual-vacio.webp" alt="" fill priority sizes="100vw" className={styles.emptyBackdrop} />
     <div className={styles.shell}>
       <Topbar />
       <section className={styles.empty} aria-labelledby="ritual-title">

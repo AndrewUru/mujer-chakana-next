@@ -150,7 +150,7 @@ export default function RegistroPage() {
         {!loading && !errorMessage && <RitmoPorFase registros={registrosFiltrados} periodo={mesSeleccionado} fechaInicio={fechaInicio} />}
         {errorMessage && <p className={styles.error} role="alert">{errorMessage}</p>}
         {loading ? <div className={styles.empty} role="status">Abriendo tu diario...</div> : registrosFiltrados.length === 0 ? (
-          <div className={styles.empty}><BookOpen size={32} /><h2>{registros.length ? "Este mes espera tus palabras." : "Tu historia empieza con un día."}</h2><p>{registros.length ? "Prueba otro mes para volver a tus registros." : "Registra cómo te sientes desde tu espacio personal."}</p><Link href="/dashboard">Ir a mi espacio <ArrowUpRight size={16} /></Link></div>
+          <div className={styles.empty}>{registros.length ? <BookOpen size={32} /> : <Image src="/estados/diario-vacio.webp" alt="" width={1200} height={800} sizes="(max-width: 520px) 90vw, 420px" className={styles.emptyArt} />}<h2>{registros.length ? "Este mes espera tus palabras." : "Tu historia empieza con un día."}</h2><p>{registros.length ? "Prueba otro mes para volver a tus registros." : "Registra cómo te sientes desde tu espacio personal."}</p><Link href="/dashboard">Ir a mi espacio <ArrowUpRight size={16} /></Link></div>
         ) : <RegistrosDiario registros={registrosFiltrados} fechaInicio={fechaInicio} arquetipos={arquetipos} onDelete={pedirConfirmacion} />}
         <aside className={styles.support}><span>Acompañar tu recorrido</span><p>Las suscriptoras pueden solicitar una videoconsulta personalizada con Samari Luz para profundizar en su camino.</p></aside>
       </div>

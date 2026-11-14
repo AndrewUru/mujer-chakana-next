@@ -6,6 +6,13 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import styles from "./SetupPerfil.module.css";
 import AvatarUploader from "./AvatarUploader";
+import { ELEMENT_AVATARS } from "@/lib/avatars";
+
+/** Fecha local de hoy como AAAA-MM-DD, el formato de input[type=date]. */
+function today() {
+  const now = new Date();
+  return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+}
 
 export default function SetupPerfil() {
   const [username, setUsername] = useState("");
@@ -14,6 +21,8 @@ export default function SetupPerfil() {
   const [fechaInicio, setFechaInicio] = useState("");
   const [loading, setLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [notice, setNotice] = useState<{ text: string; ok?: boolean; field?: "fecha" } | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -48,31 +57,28 @@ export default function SetupPerfil() {
     fetchUser();
   }, [router]);
 
+  // Los avisos se muestran en el propio formulario, nunca con alert()/confirm().
+  const fail = (text: string, field?: "fecha") => {
+    setNotice({ text, field });
+    setSaving(false);
+  };
+
   const handleSave = async () => {
+    if (saving) return;
+    setNotice(null);
+
     if (!fechaInicio) {
-      alert("🌙 Por favor selecciona la fecha de inicio de tu ciclo.");
+      fail("Elige la fecha en que comenzó tu último ciclo.", "fecha");
       return;
     }
 
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0); // Elimina la hora
-
-    const fechaSeleccionada = new Date(fechaInicio);
-    fechaSeleccionada.setHours(0, 0, 0, 0); // También sin hora
-
-    if (fechaSeleccionada > hoy) {
-      alert(
-        "🚫 No puedes seleccionar una fecha futura. Por favor elige un día anterior o el actual."
-      );
+    // Se comparan fechas locales AAAA-MM-DD: new Date("AAAA-MM-DD") es UTC.
+    if (fechaInicio > today()) {
+      fail("Esa fecha todavía no ha llegado. Elige hoy o un día anterior.", "fecha");
       return;
     }
 
-    if (!avatarUrl) {
-      const confirmar = confirm(
-        "⚠️ No subiste una imagen de perfil. ¿Deseas continuar sin ella?"
-      );
-      if (!confirmar) return;
-    }
+    setSaving(true);
 
     const { data: cicloExistente } = await supabase
       .from("ciclos")
@@ -91,7 +97,8 @@ export default function SetupPerfil() {
         .eq("id", cicloExistente.id);
 
       if (errorUpdateCiclo) {
-        alert("❌ Error al actualizar el ciclo: " + errorUpdateCiclo.message);
+        console.error("Error al actualizar el ciclo:", errorUpdateCiclo.message);
+        fail("No pudimos actualizar tu ciclo. Comprueba tu conexión e inténtalo de nuevo.");
         return;
       }
 
@@ -110,7 +117,8 @@ export default function SetupPerfil() {
         .single();
 
       if (errorCicloNuevo) {
-        alert("❌ Error al crear ciclo: " + errorCicloNuevo.message);
+        console.error("Error al crear el ciclo:", errorCicloNuevo.message);
+        fail("No pudimos crear tu ciclo. Comprueba tu conexión e inténtalo de nuevo.");
         return;
       }
 
@@ -129,11 +137,14 @@ export default function SetupPerfil() {
       .eq("user_id", userId);
 
     if (errorPerfil) {
-      alert("❌ Error al guardar perfil: " + errorPerfil.message);
-    } else {
-      alert("🌺 Perfil y ciclo guardados. Bienvenida al viaje lunar.");
-      router.push("/dashboard");
+      console.error("Error al guardar el perfil:", errorPerfil.message);
+      fail("No pudimos guardar tu perfil. Comprueba tu conexión e inténtalo de nuevo.");
+      return;
     }
+
+    // El botón sigue en "Guardando…" hasta que carga el dashboard.
+    setNotice({ text: "Perfil y ciclo guardados. Entrando en tu espacio…", ok: true });
+    router.push("/dashboard");
   };
 
   if (loading)
@@ -164,6 +175,24 @@ export default function SetupPerfil() {
           setIsUploading={setIsUploading}
         />
 
+        <div role="group" aria-labelledby="element-avatars-label" className={styles.elements}>
+          <p id="element-avatars-label">O elige un elemento</p>
+          <div>
+            {ELEMENT_AVATARS.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                aria-pressed={avatarUrl === option.src}
+                aria-label={`Usar el avatar de ${option.label}`}
+                onClick={() => setAvatarUrl(option.src)}
+              >
+                <Image src={option.src} alt="" width={56} height={56} />
+                <span>{option.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {avatarUrl && (
           <Image
             src={avatarUrl}
@@ -180,22 +209,36 @@ export default function SetupPerfil() {
         <input
           id="cycle-start"
           aria-describedby="cycle-date-help"
+          aria-invalid={notice?.field === "fecha"}
           type="date"
+          max={today()}
           value={fechaInicio}
-          onChange={(e) => setFechaInicio(e.target.value)}
+          onChange={(e) => {
+            setFechaInicio(e.target.value);
+            if (notice?.field === "fecha") setNotice(null);
+          }}
           className={styles.input}
         />
         <p id="cycle-date-help" className={styles.help}>
           Puedes corregir esta fecha más adelante si lo necesitas.
         </p>
 
+        {notice && (
+          <p
+            role={notice.ok ? "status" : "alert"}
+            className={`${styles.notice} ${notice.ok ? styles.ok : ""}`}
+          >
+            {notice.text}
+          </p>
+        )}
+
         <button
           onClick={handleSave}
-          disabled={isUploading}
+          disabled={isUploading || saving}
           className={styles.save}
           type="button"
         >
-          {isUploading ? "Subiendo imagen..." : "Guardar y continuar"}
+          {isUploading ? "Subiendo imagen..." : saving ? "Guardando…" : "Guardar y continuar"}
         </button>
       </div>
     </div>

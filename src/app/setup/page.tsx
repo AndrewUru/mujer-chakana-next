@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import SetupPerfil from "@/components/SetupPerfil";
+import { defaultAvatar } from "@/lib/avatars";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -79,7 +80,7 @@ export default function SetupPage() {
           {loading ? <p className={styles.loading} role="status">Preparando tu espacio...</p> : perfil ? (
             <div className={styles.summary}>
               <div className={styles.identity}>
-                <Image src={perfil.avatar_url || "/Luna-nueva.webp"} alt="" width={64} height={64} />
+                <Image src={perfil.avatar_url || defaultAvatar(perfil.email)} alt="" width={64} height={64} />
                 <div><span>Tu identidad</span><h2>{perfil.display_name || "Tu nuevo comienzo"}</h2><p>{perfil.email}</p></div>
               </div>
               <div className={styles.detail}><CalendarDays size={19} /><div><span>Inicio de ciclo</span><strong>{perfil.fecha_inicio ? new Date(`${perfil.fecha_inicio.slice(0, 10)}T12:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }) : "Por definir"}</strong></div></div>

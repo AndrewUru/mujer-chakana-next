@@ -51,6 +51,16 @@
 .footer a { display: flex; align-items: center; gap: 14px; min-height: 44px; color: var(--gold); font-size: 12px; }
 .empty { min-height: 70vh; max-width: 580px; margin: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 0; }
 .empty > svg { color: var(--gold); margin-bottom: 24px; }
+/* Sin ritual: el altar vacío ocupa la derecha y el texto la mitad oscura de la imagen. */
+.emptyPage { position: relative; isolation: isolate; overflow: hidden; background: #190b17; }
+.emptyBackdrop { z-index: -2; object-fit: cover; object-position: right bottom; }
+.emptyPage::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, #190b17f2 0%, #190b17b3 42%, #190b1733 100%), linear-gradient(0deg, #190b17 0%, transparent 28%); }
+.emptyPage .empty { margin-left: 0; align-items: flex-start; text-align: left; }
+@media (max-width: 900px) {
+  .emptyBackdrop { object-position: 82% bottom; }
+  .emptyPage::before { background: linear-gradient(0deg, #190b17 0%, #190b1766 30%, #190b17b3 55%, #190b1780 100%); }
+  .emptyPage .empty { margin-left: auto; align-items: center; text-align: center; }
+}
 .empty h1 { font-size: clamp(36px, 5vw, 54px); line-height: 1.1; margin: 20px 0; }
 .empty > p:not(.eyebrow) { font-size: 14px; line-height: 1.8; color: #d2c4ca; }
 .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 28px; }
