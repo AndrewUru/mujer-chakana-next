@@ -17,6 +17,64 @@ function fail(error: unknown) {
   return json({ error: "No se pudo completar la operación. Inténtalo de nuevo." }, 500);
 }
 
+// Lista la comunidad con las fechas que solo conoce el servidor: alta y último
+// inicio de sesión (auth.users) y el último registro diario de cada usuaria.
+export async function GET(request: Request) {
+  try {
+    const { admin } = await requireAdmin(request);
+
+    const { data: profiles, error: profilesError } = await admin
+      .from("perfiles").select(PROFILE_COLUMNS).order("display_name");
+    if (profilesError) throw profilesError;
+
+    const accounts = new Map<string, { created_at: string; last_sign_in_at: string | null; email_confirmed: boolean }>();
+    for (let page = 1; ; page++) {
+      const { data, error } = await admin.auth.admin.listUsers({ page, perPage: 1000 });
+      if (error) throw error;
+      for (const account of data.users) {
+        accounts.set(account.id, {
+          created_at: account.created_at,
+          last_sign_in_at: account.last_sign_in_at ?? null,
+          email_confirmed: Boolean(account.email_confirmed_at),
+        });
+      }
+      if (data.users.length < 1000) break;
+    }
+
+    // Los registros llegan del más nuevo al más antiguo: el primero de cada usuaria es el último.
+    const records = new Map<string, { count: number; last: string | null }>();
+    for (let from = 0; ; from += 1000) {
+      const { data, error } = await admin
+        .from("registros").select("user_id, fecha")
+        .order("fecha", { ascending: false }).range(from, from + 999);
+      if (error) throw error;
+      for (const record of data ?? []) {
+        const entry = records.get(record.user_id as string);
+        if (entry) entry.count++;
+        else records.set(record.user_id as string, { count: 1, last: (record.fecha as string | null) ?? null });
+      }
+      if (!data || data.length < 1000) break;
+    }
+
+    const users = (profiles ?? []).map(profile => {
+      const account = accounts.get(profile.user_id as string);
+      const activity = records.get(profile.user_id as string);
+      return {
+        ...profile,
+        created_at: account?.created_at ?? null,
+        last_sign_in_at: account?.last_sign_in_at ?? null,
+        email_confirmed: account?.email_confirmed ?? null,
+        last_record_at: activity?.last ?? null,
+        records_count: activity?.count ?? 0,
+      };
+    });
+
+    return json({ users });
+  } catch (error) {
+    return fail(error);
+  }
+}
+
 // Crea una usuaria ya confirmada: no depende del correo de confirmación.
 export async function POST(request: Request) {
   try {
@@ -59,7 +117,16 @@ export async function POST(request: Request) {
       .single();
     if (profileError) throw profileError;
 
-    return json({ user: profile }, 201);
+    return json({
+      user: {
+        ...profile,
+        created_at: data.user.created_at,
+        last_sign_in_at: null,
+        email_confirmed: true,
+        last_record_at: null,
+        records_count: 0,
+      },
+    }, 201);
   } catch (error) {
     return fail(error);
   }
