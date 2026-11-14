@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import ArchetypeImagePicker from "@/components/ArchetypeImagePicker";
+import { uploadResourceCover } from "@/lib/resourceCovers";
+
+const PLANES = ["gratuito", "mensual", "anual"];
 
 export default function EditarRecursoPage() {
   const { id } = useParams();
@@ -14,8 +18,11 @@ export default function EditarRecursoPage() {
     descripcion: string;
     url: string;
     tipo: string;
-    tipo_suscripcion?: string[];
+    tipo_suscripcion?: string | null;
+    imagen_url?: string | null;
   }
+
+  const [portada, setPortada] = useState<File | null>(null);
 
   const [recurso, setRecurso] = useState<Recurso | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,10 +54,27 @@ export default function EditarRecursoPage() {
 
   const handleSave = async () => {
     if (!recurso) return;
+    // Nunca se asigna un plan por defecto: abriría un recurso de pago a todas.
+    if (!PLANES.includes(recurso.tipo_suscripcion ?? "")) {
+      setMensajeExito(null);
+      setMensajeError("Elige quién puede ver este recurso antes de guardar.");
+      return;
+    }
 
     setGuardando(true);
     setMensajeExito(null);
     setMensajeError(null);
+
+    let imagenUrl = recurso.imagen_url ?? null;
+    if (portada) {
+      try {
+        imagenUrl = await uploadResourceCover(portada);
+      } catch (uploadError) {
+        setGuardando(false);
+        setMensajeError(uploadError instanceof Error ? uploadError.message : "No se pudo subir la portada.");
+        return;
+      }
+    }
 
     const { error } = await supabase
       .from("recursos")
@@ -59,12 +83,17 @@ export default function EditarRecursoPage() {
         descripcion: recurso.descripcion,
         url: recurso.url,
         tipo: recurso.tipo,
+        tipo_suscripcion: recurso.tipo_suscripcion,
+        imagen_url: imagenUrl,
       })
       .eq("id", id);
 
     setGuardando(false);
 
     if (!error) {
+      // Si el guardado se repite, no vuelve a subir la misma imagen.
+      setRecurso({ ...recurso, imagen_url: imagenUrl });
+      setPortada(null);
       setMensajeExito("✅ Recurso actualizado correctamente.");
       setTimeout(() => {
         router.push("/admin/recursos");
@@ -168,35 +197,44 @@ export default function EditarRecursoPage() {
           />
         </div>
 
+        <ArchetypeImagePicker
+          title="Imagen de portada"
+          description="Elige la imagen que se verá en la tarjeta del recurso y en su página."
+          currentUrl={recurso.imagen_url}
+          name={recurso.titulo || "el recurso"}
+          file={portada}
+          disabled={guardando}
+          onChange={setPortada}
+        />
+        {recurso.imagen_url && !portada && (
+          <button
+            type="button"
+            disabled={guardando}
+            onClick={() => setRecurso({ ...recurso, imagen_url: null })}
+            className="text-sm"
+          >
+            Quitar portada
+          </button>
+        )}
+
         {/* Nuevo campo: Plan de acceso */}
         <div className="flex flex-col gap-2">
-          <label className="font-semibold text-pink-700">
-            Planes de acceso
+          <label htmlFor="tipo-suscripcion" className="font-semibold text-pink-700">
+            ¿Quién puede verlo?
           </label>
-
-          {Array.isArray(recurso.tipo_suscripcion) &&
-          recurso.tipo_suscripcion.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {recurso.tipo_suscripcion.map((plan) => (
-                <span
-                  key={plan}
-                  className="px-3 py-1 text-xs rounded-full bg-rose-100 text-rose-800 border border-rose-200"
-                >
-                  {plan === "gratuito"
-                    ? "Gratuito"
-                    : plan === "mensual"
-                    ? "Mensual"
-                    : "Anual"}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm italic text-gray-500">Sin planes asignados</p>
-          )}
-
-          <p className="text-xs text-gray-500 italic mt-1">
-            Los planes de acceso no se pueden modificar desde aquí.
-          </p>
+          <select
+            id="tipo-suscripcion"
+            value={PLANES.includes(recurso.tipo_suscripcion ?? "") ? recurso.tipo_suscripcion ?? "" : ""}
+            onChange={(e) => setRecurso({ ...recurso, tipo_suscripcion: e.target.value })}
+            className="w-full border border-pink-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-400"
+          >
+            {!PLANES.includes(recurso.tipo_suscripcion ?? "") && (
+              <option value="" disabled>Plan no válido: elige uno</option>
+            )}
+            <option value="gratuito">Gratuito: todas las usuarias</option>
+            <option value="mensual">Mensual: planes mensual y anual</option>
+            <option value="anual">Anual: solo plan anual</option>
+          </select>
         </div>
 
         <div className="pt-4">

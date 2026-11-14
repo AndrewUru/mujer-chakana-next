@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
+import { uploadResourceCover } from "@/lib/resourceCovers";
+import ArchetypeImagePicker from "@/components/ArchetypeImagePicker";
 
 const NuevoRecursoPage = () => {
   const [guardando, setGuardando] = useState(false);
@@ -11,13 +13,10 @@ const NuevoRecursoPage = () => {
   const [descripcion, setDescripcion] = useState("");
   const [tipo, setTipo] = useState("pdf");
   const [url, setUrl] = useState("");
-  const [tipoSuscripcion, setTipoSuscripcion] = useState<string[]>([]);
-
-  const handleCheckboxChange = (valor: string) => {
-    setTipoSuscripcion((prev) =>
-      prev.includes(valor) ? prev.filter((v) => v !== valor) : [...prev, valor]
-    );
-  };
+  // Un solo valor: la columna es de texto y la regla de acceso de la base de
+  // datos ya incluye los planes superiores (mensual lo ven mensual y anual).
+  const [tipoSuscripcion, setTipoSuscripcion] = useState("gratuito");
+  const [portada, setPortada] = useState<File | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,12 +33,23 @@ const NuevoRecursoPage = () => {
       return;
     }
 
+    let imagenUrl: string | null = null;
+    if (portada) {
+      try {
+        imagenUrl = await uploadResourceCover(portada);
+      } catch (uploadError) {
+        setMensaje({ text: uploadError instanceof Error ? uploadError.message : "No se pudo subir la portada.", error: true });
+        return;
+      }
+    }
+
     const { error } = await supabase.from("recursos").insert([
       {
         titulo,
         descripcion,
         tipo,
         url,
+        imagen_url: imagenUrl,
         tipo_suscripcion: tipoSuscripcion,
         creado_por: userId,
         activo: true,
@@ -55,7 +65,8 @@ const NuevoRecursoPage = () => {
       setDescripcion("");
       setTipo("pdf");
       setUrl("");
-      setTipoSuscripcion([]);
+      setTipoSuscripcion("gratuito");
+      setPortada(null);
     }
     } catch { setMensaje({ text: "No se pudo guardar el recurso. Inténtalo de nuevo.", error: true }); }
     finally { setGuardando(false); }
@@ -139,23 +150,33 @@ const NuevoRecursoPage = () => {
           />
         </div>
 
+        <ArchetypeImagePicker
+          title="Imagen de portada (opcional)"
+          description="Elige la imagen que se verá en la tarjeta del recurso y en su página."
+          name={titulo || "el recurso"}
+          file={portada}
+          disabled={guardando}
+          onChange={setPortada}
+        />
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Tipos de Suscripción
+          <label
+            htmlFor="tipo-suscripcion"
+            className="block text-sm font-medium text-gray-700"
+          >
+            ¿Quién puede verlo?
           </label>
-          <div className="space-y-2">
-            {["gratuito", "mensual", "anual"].map((opcion) => (
-              <label key={opcion} className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  value={opcion}
-                  checked={tipoSuscripcion.includes(opcion)}
-                  onChange={() => handleCheckboxChange(opcion)}
-                />
-                {opcion.charAt(0).toUpperCase() + opcion.slice(1)}
-              </label>
-            ))}
-          </div>
+          <select
+            id="tipo-suscripcion"
+            value={tipoSuscripcion}
+            onChange={(e) => setTipoSuscripcion(e.target.value)}
+            required
+            className="mt-1 block w-full rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-rose-500 focus:border-rose-500"
+          >
+            <option value="gratuito">Gratuito: todas las usuarias</option>
+            <option value="mensual">Mensual: planes mensual y anual</option>
+            <option value="anual">Anual: solo plan anual</option>
+          </select>
         </div>
 
         <div className="text-center">

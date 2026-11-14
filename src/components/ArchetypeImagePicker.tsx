@@ -12,9 +12,12 @@ type Props = {
   file: File | null;
   onChange: (file: File | null) => void;
   disabled?: boolean;
+  /** Textos opcionales para reutilizar el selector fuera de los arquetipos. */
+  title?: string;
+  description?: string;
 };
 
-export default function ArchetypeImagePicker({ currentUrl, name, file, onChange, disabled }: Props) {
+export default function ArchetypeImagePicker({ currentUrl, name, file, onChange, disabled, title = "Imagen del arquetipo", description = "Elige la imagen que acompañará a este arquetipo en el atlas y en tu ciclo." }: Props) {
   const id = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -30,14 +33,14 @@ export default function ArchetypeImagePicker({ currentUrl, name, file, onChange,
   const image = preview || currentUrl;
   return (
     <section className={styles.picker} aria-labelledby={`${id}-title`}>
-      <h2 id={`${id}-title`}>Imagen del arquetipo</h2>
+      <h2 id={`${id}-title`}>{title}</h2>
       <div className={styles.layout}>
         <div className={styles.preview}>
           {image ? <Image src={image} alt={`Imagen ${file ? "seleccionada" : "actual"} de ${name}`} fill sizes="(max-width: 540px) 80vw, 180px" unoptimized className={styles.image} /> : <span className={styles.placeholder}><ImagePlus size={32} aria-hidden="true" />Sin imagen</span>}
           {file && <span className={styles.badge}>Sin guardar</span>}
         </div>
         <div className={styles.controls}>
-          <p>Elige la imagen que acompañará a este arquetipo en el atlas y en tu ciclo.</p>
+          <p>{description}</p>
           <input
             ref={inputRef}
             id={id}
