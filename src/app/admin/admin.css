@@ -84,6 +84,7 @@
   .admin-table td:nth-child(2)::before { content: 'Rol'; }
   .admin-table td:nth-child(3)::before { content: 'Plan'; }
   .admin-table td:nth-child(4)::before { content: 'Suscripción'; }
-  .admin-table td:nth-child(5)::before { content: 'Acción'; }
+  .admin-table td:nth-child(5) { grid-column: 1 / -1; }
+  .admin-table td:nth-child(5)::before { content: 'Acciones'; }
   .admin-table td:nth-child(5) .admin-button { min-height: 40px; }
 }
