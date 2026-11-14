@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, MailCheck } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { DURATION, enter } from "@/lib/motion";
 
@@ -32,6 +32,7 @@ export default function RegisterForm() {
   });
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [success, setSuccess] = useState(false);
   const tipoPlan = "gratuito";
 
   const isEmailInvalid = useMemo(
@@ -74,14 +75,18 @@ export default function RegisterForm() {
     }
 
     setFeedback("");
+    setSuccess(false);
     setLoading(true);
 
+    // El perfil lo crea un trigger en la base de datos a partir de estos
+    // metadatos (ver supabase/migrations/202611140001_profile_on_signup.sql).
     const {
-      data: { user },
+      data: { user, session },
       error,
     } = await supabase.auth.signUp({
       email: form.email.trim(),
       password: form.password,
+      options: { data: { display_name: form.username.trim() } },
     });
 
     if (error) {
@@ -90,21 +95,39 @@ export default function RegisterForm() {
       return;
     }
 
-    if (user) {
-      const { error: insertError } = await supabase.from("perfiles").insert([
-        {
-          id: user.id,
-          user_id: user.id,
-          display_name: form.username.trim(),
-          perfil_completo: false,
-          tipo_plan: tipoPlan,
-        },
-      ]);
+    // Con confirmación de correo no hay sesión todavía: cualquier escritura
+    // desde aquí se haría como anónima y RLS la rechazaría.
+    if (user && !session) {
+      setSuccess(true);
+      setFeedback(
+        "Te enviamos un correo para confirmar tu cuenta. Ábrelo y luego inicia sesión."
+      );
+      setLoading(false);
+      return;
+    }
 
-      if (insertError) {
-        setFeedback(`Error al crear el perfil: ${insertError.message}`);
-        setLoading(false);
-        return;
+    if (user) {
+      const { data: existing, error: lookupError } = await supabase
+        .from("perfiles")
+        .select("user_id")
+        .eq("user_id", user.id);
+
+      if (!lookupError && existing.length === 0) {
+        const { error: insertError } = await supabase.from("perfiles").insert([
+          {
+            id: user.id,
+            user_id: user.id,
+            display_name: form.username.trim(),
+            perfil_completo: false,
+            tipo_plan: tipoPlan,
+          },
+        ]);
+
+        if (insertError) {
+          setFeedback(`Error al crear el perfil: ${insertError.message}`);
+          setLoading(false);
+          return;
+        }
       }
 
       const today = new Date().toISOString().split("T")[0];
@@ -282,11 +305,19 @@ export default function RegisterForm() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 12 }}
             transition={enter()}
-            className="flex items-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 shadow"
-            role="alert"
-            aria-live="assertive"
+            className={`flex items-center gap-2 rounded-2xl border px-4 py-3 text-sm shadow ${
+              success
+                ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                : "border-rose-200 bg-rose-50 text-rose-700"
+            }`}
+            role={success ? "status" : "alert"}
+            aria-live={success ? "polite" : "assertive"}
           >
-            <AlertCircle className="h-5 w-5" />
+            {success ? (
+              <MailCheck className="h-5 w-5 shrink-0" />
+            ) : (
+              <AlertCircle className="h-5 w-5 shrink-0" />
+            )}
             <span>{feedback}</span>
           </motion.div>
         )}
