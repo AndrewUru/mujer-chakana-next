@@ -105,6 +105,12 @@ export default function Navbar() {
               label="Registros"
               active={pathname.startsWith("/registros")}
             />
+            <NavItem
+              href="/recursos"
+              icon={<Library />}
+              label="Recursos"
+              active={pathname.startsWith("/recursos")}
+            />
           </>
         ) : (
           <>
