@@ -98,6 +98,13 @@ export default function RegisterForm() {
     // Con confirmación de correo no hay sesión todavía: cualquier escritura
     // desde aquí se haría como anónima y RLS la rechazaría.
     if (user && !session) {
+      // Supabase devuelve una usuaria sin identidades cuando el correo ya está
+      // registrado y confirmado; en ese caso no envía ningún correo.
+      if (user.identities?.length === 0) {
+        setFeedback("Ya existe una cuenta con este correo. Inicia sesión.");
+        setLoading(false);
+        return;
+      }
       setSuccess(true);
       setFeedback(
         "Te enviamos un correo para confirmar tu cuenta. Ábrelo y luego inicia sesión."
