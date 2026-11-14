@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import { authErrorMessage, isEmailNotConfirmed } from "@/lib/authErrors";
 import { Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { DURATION, enter } from "@/lib/motion";
@@ -29,8 +30,22 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [canResend, setCanResend] = useState(false);
+  const [resending, setResending] = useState(false);
 
   useEffect(() => {
+    // Al volver del correo de confirmación con un enlace caducado o ya usado,
+    // Supabase lo indica en el fragmento de la URL.
+    const hash = new URLSearchParams(window.location.hash.slice(1));
+    if (hash.get("error")) {
+      setFeedback(
+        hash.get("error_code") === "otp_expired"
+          ? "Ese enlace ha caducado o ya se usó. Si ya confirmaste tu correo, inicia sesión; si no, escribe tus datos y te enviaremos uno nuevo."
+          : "No pudimos validar el enlace. Inicia sesión o pide un correo nuevo."
+      );
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+
     async function checkSession() {
       const {
         data: { user },
@@ -85,6 +100,7 @@ export default function LoginForm() {
     }
 
     setFeedback("");
+    setCanResend(false);
     setLoading(true);
 
     const { error } = await supabase.auth.signInWithPassword({
@@ -93,11 +109,8 @@ export default function LoginForm() {
     });
 
     if (error) {
-      const message =
-        error.message === "Invalid login credentials"
-          ? "Correo o contraseña incorrectos. Inténtalo de nuevo."
-          : `Error: ${error.message}`;
-      setFeedback(message);
+      setFeedback(authErrorMessage(error));
+      setCanResend(isEmailNotConfirmed(error));
       setLoading(false);
       passwordRef.current?.focus();
       return;
@@ -124,6 +137,23 @@ export default function LoginForm() {
     }
 
     setLoading(false);
+  };
+
+  const resendConfirmation = async () => {
+    if (resending) return;
+    setResending(true);
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email: form.email.trim(),
+      options: { emailRedirectTo: `${window.location.origin}/auth/login` },
+    });
+    setFeedback(
+      error
+        ? authErrorMessage(error)
+        : "Te enviamos un nuevo correo de confirmación. Revisa también la carpeta de spam."
+    );
+    if (!error) setCanResend(false);
+    setResending(false);
   };
 
   return (
@@ -257,8 +287,20 @@ export default function LoginForm() {
             role="alert"
             aria-live="assertive"
           >
-            <AlertCircle className="h-5 w-5" />
-            <span>{feedback}</span>
+            <AlertCircle className="h-5 w-5 shrink-0" />
+            <span>
+              {feedback}
+              {canResend && (
+                <button
+                  type="button"
+                  onClick={resendConfirmation}
+                  disabled={resending}
+                  className="mt-2 block min-h-11 font-semibold underline underline-offset-2 disabled:opacity-60"
+                >
+                  {resending ? "Enviando…" : "Reenviar correo de confirmación"}
+                </button>
+              )}
+            </span>
           </motion.div>
         )}
       </AnimatePresence>

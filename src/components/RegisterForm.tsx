@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import { authErrorMessage } from "@/lib/authErrors";
 import { Loader2, AlertCircle, MailCheck } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { DURATION, enter } from "@/lib/motion";
@@ -86,11 +87,15 @@ export default function RegisterForm() {
     } = await supabase.auth.signUp({
       email: form.email.trim(),
       password: form.password,
-      options: { data: { display_name: form.username.trim() } },
+      options: {
+        data: { display_name: form.username.trim() },
+        // Sin esto el enlace del correo lleva a la "Site URL" del proyecto.
+        emailRedirectTo: `${window.location.origin}/auth/login`,
+      },
     });
 
     if (error) {
-      setFeedback(`Error: ${error.message}`);
+      setFeedback(authErrorMessage(error));
       setLoading(false);
       return;
     }

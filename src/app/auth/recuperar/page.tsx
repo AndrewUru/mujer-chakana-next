@@ -4,6 +4,7 @@ import AccountGateway from "@/components/ui/AccountGateway";
 
 import React, { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { authErrorMessage } from "@/lib/authErrors";
 
 export default function RecuperarPage() {
   const [email, setEmail] = useState("");
@@ -25,7 +26,7 @@ export default function RecuperarPage() {
     });
 
     if (error) {
-      setError("Ocurrió un error al enviar el correo. Intenta nuevamente.");
+      setError(authErrorMessage(error));
       return;
     }
 
