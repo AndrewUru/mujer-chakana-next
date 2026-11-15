@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowUpRight, BookOpen, Flower2, Moon, Users, Store } from "lucide-react";
+import { ArrowUpRight, BookOpen, Flower2, Moon, StickyNote, Users, Store } from "lucide-react";
 import BrandLogo from "@/components/ui/BrandLogo";
 import { supabase } from "@/lib/supabaseClient";
 import "./admin.css";
@@ -13,6 +13,7 @@ const sections = [
   { href: "/admin/arquetipos", label: "Arquetipos", icon: Flower2 },
   { href: "/admin/recursos", label: "Recursos", icon: BookOpen },
   { href: "/admin/moonboard", label: "Moonboard", icon: Moon },
+  { href: "/admin/pizarra", label: "Pizarra", icon: StickyNote },
   { href: "/admin/tienda", label: "Tienda", icon: Store },
 ];
 
