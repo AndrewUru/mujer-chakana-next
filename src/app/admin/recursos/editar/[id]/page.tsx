@@ -8,6 +8,7 @@ import ArchetypeImagePicker from "@/components/ArchetypeImagePicker";
 import { uploadResourceCover } from "@/lib/resourceCovers";
 
 const PLANES = ["gratuito", "mensual", "anual"];
+const FORMATOS = [["pdf", "PDF"], ["audio", "Audio"], ["video", "Vídeo"]];
 
 export default function EditarRecursoPage() {
   const { id } = useParams();
@@ -94,13 +95,13 @@ export default function EditarRecursoPage() {
       // Si el guardado se repite, no vuelve a subir la misma imagen.
       setRecurso({ ...recurso, imagen_url: imagenUrl });
       setPortada(null);
-      setMensajeExito("✅ Recurso actualizado correctamente.");
+      setMensajeExito("Recurso actualizado correctamente.");
       setTimeout(() => {
         router.push("/admin/recursos");
       }, 2000);
     } else {
       console.error(error);
-      setMensajeError("❌ Error actualizando el recurso.");
+      setMensajeError("No se pudo guardar el recurso. Inténtalo de nuevo.");
     }
   };
 
@@ -113,7 +114,7 @@ export default function EditarRecursoPage() {
   if (!recurso) {
     return (
       <div className="text-center py-10 text-red-500">
-        ❌ No se encontró el recurso solicitado.
+        No se encontró el recurso solicitado.
       </div>
     );
   }
@@ -130,7 +131,7 @@ export default function EditarRecursoPage() {
         ]}
       />
       <h1 className="text-3xl font-bold text-pink-800 mb-2">
-        ✏️ Editar Recurso
+        Editar recurso
       </h1>
       <p className="text-gray-600 text-sm mb-4">
         Completa o ajusta la información del recurso. Los campos marcados con *
@@ -188,13 +189,17 @@ export default function EditarRecursoPage() {
 
         <div className="flex flex-col gap-2">
           <label className="font-semibold text-pink-700">Tipo de recurso</label>
-          <input
-            type="text"
-            value={recurso.tipo}
+          <select
+            aria-label="Tipo de recurso"
+            value={(recurso.tipo ?? "").trim().toLowerCase()}
             onChange={(e) => setRecurso({ ...recurso, tipo: e.target.value })}
-            className="w-full border border-pink-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-400 placeholder-gray-400"
-            placeholder="Ej. audio, PDF, video"
-          />
+            className="w-full border border-pink-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-400"
+          >
+            {!FORMATOS.some(([value]) => value === (recurso.tipo ?? "").trim().toLowerCase()) && (
+              <option value={(recurso.tipo ?? "").trim().toLowerCase()}>{recurso.tipo || "Elige un formato"}</option>
+            )}
+            {FORMATOS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          </select>
         </div>
 
         <ArchetypeImagePicker
@@ -211,7 +216,7 @@ export default function EditarRecursoPage() {
             type="button"
             disabled={guardando}
             onClick={() => setRecurso({ ...recurso, imagen_url: null })}
-            className="text-sm"
+            className="admin-quiet-button"
           >
             Quitar portada
           </button>

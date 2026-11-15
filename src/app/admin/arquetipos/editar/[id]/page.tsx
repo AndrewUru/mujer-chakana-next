@@ -114,7 +114,7 @@ export default function EditarArquetipoPage() {
       uploadedResources.current = {};
       setImageFile(null);
       uploadedImage.current = null;
-      setMensajeExito("✅ Cambios guardados correctamente.");
+      setMensajeExito("Cambios guardados correctamente.");
       redirectTimer.current = setTimeout(() => {
         router.push("/admin/arquetipos");
       }, 2000);
@@ -148,7 +148,7 @@ export default function EditarArquetipoPage() {
       />
 
       <h1 className="text-3xl font-bold text-pink-800 mb-2">
-        ✨ Editar Arquetipo
+        Editar arquetipo
       </h1>
       <p className="text-sm text-gray-600 mb-4">
         Modifica los atributos del arquetipo. Los campos marcados con * son
@@ -189,11 +189,6 @@ export default function EditarArquetipoPage() {
             placeholder: "Ej. La Sabia",
           },
           { label: "Elemento *", key: "elemento", isSelect: true },
-          {
-            label: "Tip Extra (opcional)",
-            key: "tip_extra",
-            placeholder: "Consejo breve",
-          },
         ].map(({ label, key, isSelect, placeholder }) => (
           <div key={key} className="flex flex-col gap-2">
             <label htmlFor={key} className="font-semibold text-pink-700">{label}</label>
@@ -243,6 +238,18 @@ export default function EditarArquetipoPage() {
             }
             className="border border-pink-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-400 placeholder-gray-400"
             placeholder="Breve descripción simbólica del arquetipo"
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label htmlFor="tip_extra" className="font-semibold text-pink-700">Tip extra (opcional)</label>
+          <textarea
+            id="tip_extra"
+            rows={4}
+            value={arquetipo.tip_extra || ""}
+            onChange={(e) => setArquetipo({ ...arquetipo, tip_extra: e.target.value })}
+            className="border border-pink-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-400 placeholder-gray-400"
+            placeholder="Consejo breve"
           />
         </div>
 

@@ -42,6 +42,7 @@
 .admin-table th { background: #f5efed; padding: 14px 24px; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--admin-muted); white-space: nowrap; }
 .admin-table td { padding: 18px 24px; border-top: 1px solid var(--admin-line); }
 .admin-table tr:hover td { background: #faf6f3; }
+.admin-table td[data-label="Alta"] { white-space: nowrap; }
 .admin-person { display: flex; align-items: center; gap: 12px; min-width: 190px; }
 .admin-avatar { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: #eee2e7; color: var(--admin-accent); font-weight: 800; flex-shrink: 0; }
 .admin-person small { display: block; color: var(--admin-muted); margin-top: 3px; overflow-wrap: anywhere; }
@@ -82,11 +83,10 @@
   .admin-table tbody tr { display: grid; grid-template-columns: 1fr 1fr; padding: 16px; border-top: 1px solid var(--admin-line); gap: 14px 12px; }
   .admin-table td { display: block; border: none; padding: 0; }
   .admin-table td:first-child { grid-column: 1 / -1; }
-  .admin-table td:not(:first-child)::before { display: block; color: var(--admin-muted); font-size: 10px; margin-bottom: 6px; }
-  .admin-table td:nth-child(2)::before { content: 'Rol'; }
-  .admin-table td:nth-child(3)::before { content: 'Plan'; }
-  .admin-table td:nth-child(4)::before { content: 'Suscripción'; }
-  .admin-table td:nth-child(5) { grid-column: 1 / -1; }
-  .admin-table td:nth-child(5)::before { content: 'Acciones'; }
-  .admin-table td:nth-child(5) .admin-button { min-height: 40px; }
+  .admin-table td[data-label]::before { content: attr(data-label); display: block; color: var(--admin-muted); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px; }
+  .admin-table td:last-child { grid-column: 1 / -1; }
+  .admin-table td:last-child .admin-button { min-height: 40px; }
 }
+.admin-workspace main:not(.admin-page) button.admin-quiet-button { background: transparent; color: #a33847; padding: 4px 0; font-size: 13px; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+.admin-workspace nav[aria-label="Breadcrumb"] :is(a, span) { color: var(--admin-muted); }
+.admin-workspace nav[aria-label="Breadcrumb"] li > span:only-child { color: var(--admin-ink); }

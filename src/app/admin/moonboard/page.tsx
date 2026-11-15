@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { Save, Trash2 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+// Claves de PHASE_COLORS en LunarModal: cualquier otro valor se pinta en gris.
+const COLORES = [["gray", "Gris"], ["emerald", "Esmeralda"], ["yellow", "Amarillo"], ["purple", "Púrpura"]];
 type FaseLunar = { id: string; color: string; rango_inicio: number; rango_fin: number; mensaje: string; nombre_fase: string; simbolo: string; };
 export default function EditarMoonboardPage() {
   const [fases, setFases] = useState<FaseLunar[]>([]);
@@ -64,7 +66,7 @@ export default function EditarMoonboardPage() {
     <p className="admin-subtitle" role="status" style={{ marginBottom: 24 }}>{dirty.length ? `${dirty.length} fases con cambios sin guardar` : "No hay cambios pendientes"}</p>
     {loading ? <div className="admin-empty" role="status">Cargando fases lunares…</div> : !fases.length ? <div className="admin-empty">No hay fases lunares disponibles.</div> : <div className="admin-grid">{fases.map((fase, index) => <fieldset key={fase.id} disabled={busy} className="admin-card"><legend className="admin-eyebrow" style={{ padding: "0 8px" }}>Fase {String(index + 1).padStart(2, "0")}{dirty.includes(fase.id) ? " · Sin guardar" : ""}</legend><div className="admin-fields">
       <label className="wide">Nombre de la fase<input required value={fase.nombre_fase || ""} onChange={e => update(fase.id, "nombre_fase", e.target.value)} /></label>
-      <label>Color<input required placeholder="#783c59" value={fase.color || ""} onChange={e => update(fase.id, "color", e.target.value)} /></label>
+      <label>Color<select required value={fase.color || ""} onChange={e => update(fase.id, "color", e.target.value)}>{!COLORES.some(([value]) => value === fase.color) && <option value={fase.color || ""}>{fase.color ? `${fase.color} (no reconocido)` : "Elige un color"}</option>}{COLORES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
       <label>Símbolo<input value={fase.simbolo || ""} onChange={e => update(fase.id, "simbolo", e.target.value)} /></label>
       <label>Inicio del rango<input type="number" step="any" required value={Number.isFinite(fase.rango_inicio) ? fase.rango_inicio : ""} onChange={e => update(fase.id, "rango_inicio", e.target.valueAsNumber)} /></label>
       <label>Final del rango<input type="number" step="any" required min={Number.isFinite(fase.rango_inicio) ? fase.rango_inicio : undefined} value={Number.isFinite(fase.rango_fin) ? fase.rango_fin : ""} onChange={e => update(fase.id, "rango_fin", e.target.valueAsNumber)} /></label>
