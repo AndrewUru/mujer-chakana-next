@@ -5,6 +5,7 @@ import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowUpRight, AudioLines, BookOpen, Pause, Play, Sparkles, X } from "lucide-react";
 import { DURATION, enter } from "@/lib/motion";
+import ElementAtmosphere, { type Mood } from "./ElementAtmosphere";
 import styles from "./immersion.module.css";
 
 export interface ArquetipoDia {
@@ -27,7 +28,6 @@ export const WEEK_META: Record<number, { name: string; action: string; copy: str
   4: { name: "Integración", action: "Enraizar", copy: "Cerrar la vuelta con presencia y memoria." },
 };
 
-type Mood = "agua" | "tierra" | "fuego" | "aire";
 const MOODS: Record<Mood, { accent: string; landscape: string; rgb: string }> = {
   agua: { accent: "#88e6ef", landscape: "/agua-ui.webp", rgb: "136, 230, 239" },
   tierra: { accent: "#e6c07a", landscape: "/tierra-ui.webp", rgb: "230, 192, 122" },
@@ -37,58 +37,6 @@ const MOODS: Record<Mood, { accent: string; landscape: string; rgb: string }> = 
 function moodOf(element: string): Mood {
   const value = element.trim().toLowerCase();
   return value === "agua" || value === "tierra" || value === "fuego" ? value : "aire";
-}
-
-/** Partículas ambientales: burbujas, polen, brasas o brisa según el elemento. */
-function Atmosphere({ mood, still }: { mood: Mood; still: boolean }) {
-  const ref = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
-    const canvas = ref.current;
-    const ctx = canvas?.getContext("2d");
-    if (!canvas || !ctx) return;
-    const { rgb } = MOODS[mood];
-    let width = 0;
-    let height = 0;
-    let frame = 0;
-    const particles = Array.from({ length: 64 }, () => ({ x: Math.random(), y: Math.random(), size: 0.6 + Math.random() * 2.6, speed: 0.25 + Math.random() * 0.75, phase: Math.random() * Math.PI * 2 }));
-    const resize = () => {
-      const ratio = Math.min(window.devicePixelRatio || 1, 2);
-      width = canvas.clientWidth;
-      height = canvas.clientHeight;
-      canvas.width = width * ratio;
-      canvas.height = height * ratio;
-      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-    };
-    const draw = (time: number) => {
-      ctx.clearRect(0, 0, width, height);
-      const t = time / 1000;
-      for (const p of particles) {
-        if (!still) {
-          if (mood === "agua") { p.y -= p.speed * 0.0009; p.x += Math.sin(t * 0.8 + p.phase) * 0.0004; }
-          else if (mood === "fuego") { p.y -= p.speed * 0.0026; p.x += Math.sin(t * 2.2 + p.phase) * 0.0007; }
-          else if (mood === "tierra") { p.y += p.speed * 0.0007; p.x += Math.sin(t * 0.5 + p.phase) * 0.0005; }
-          else { p.x += p.speed * 0.0012; p.y += Math.sin(t * 0.6 + p.phase) * 0.0003; }
-          if (p.y < -0.03) { p.y = 1.03; p.x = Math.random(); }
-          if (p.y > 1.03) { p.y = -0.03; p.x = Math.random(); }
-          if (p.x > 1.03) { p.x = -0.03; p.y = Math.random(); }
-          if (p.x < -0.03) p.x = 1.03;
-        }
-        const flicker = mood === "fuego" ? 0.55 + 0.45 * Math.sin(t * 6 + p.phase) : 0.6 + 0.4 * Math.sin(t * 1.3 + p.phase);
-        const size = mood === "agua" ? p.size * 1.7 : mood === "fuego" ? p.size * 0.8 : p.size;
-        ctx.beginPath();
-        ctx.arc(p.x * width, p.y * height, size, 0, Math.PI * 2);
-        if (mood === "agua") { ctx.strokeStyle = `rgba(${rgb}, ${0.28 * flicker})`; ctx.lineWidth = 1; ctx.stroke(); }
-        else { ctx.fillStyle = `rgba(${rgb}, ${(mood === "fuego" ? 0.75 : 0.42) * flicker})`; ctx.fill(); }
-      }
-      if (!still) frame = requestAnimationFrame(draw);
-    };
-    resize();
-    frame = requestAnimationFrame(draw);
-    const observer = new ResizeObserver(() => { resize(); if (still) draw(0); });
-    observer.observe(canvas);
-    return () => { cancelAnimationFrame(frame); observer.disconnect(); };
-  }, [mood, still]);
-  return <canvas ref={ref} className={styles.atmosphere} aria-hidden="true" />;
 }
 
 const clock = (seconds: number) => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
@@ -189,7 +137,7 @@ export default function ArchetypeImmersion({ days, day, today, onChange, onClose
         </motion.div>
       </AnimatePresence>
       <div className={styles.shade} aria-hidden="true" />
-      <Atmosphere mood={moodOf(current.elemento)} still={still} />
+      <ElementAtmosphere mood={moodOf(current.elemento)} still={still} className={styles.atmosphere} />
 
       <header className={styles.topbar}>
         <p>Atlas cíclico <span>·</span> Umbral 0{current.semana} {week?.name}</p>
