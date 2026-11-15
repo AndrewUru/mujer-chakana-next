@@ -2,6 +2,7 @@ import "./globals.css";
 import { CartProvider } from "@/components/shop/CartProvider";
 import Navbar from "@/components/Navbar";
 import CookieConsent from "@/components/CookieConsent";
+import PresenceTracker from "@/components/PresenceTracker";
 import type { Metadata, Viewport } from "next";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo";
 import { Cormorant_Garamond, Nunito_Sans } from "next/font/google";
@@ -73,6 +74,7 @@ export default function RootLayout({
 
         {/* Componentes de terceros */}
         <CookieConsent />
+        <PresenceTracker />
 
       </body>
     </html>
