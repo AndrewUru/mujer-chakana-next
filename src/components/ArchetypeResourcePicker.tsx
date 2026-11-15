@@ -6,13 +6,14 @@ import styles from "./ArchetypeImagePicker.module.css";
 
 type Props = {
   kind: ResourceKind;
+  title?: string;
   currentUrl?: string | null;
   file: File | null;
   disabled?: boolean;
   onChange: (file: File | null) => void;
 };
 
-export default function ArchetypeResourcePicker({ kind, currentUrl, file, disabled, onChange }: Props) {
+export default function ArchetypeResourcePicker({ kind, title, currentUrl, file, disabled, onChange }: Props) {
   const id = useId();
   const input = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -27,7 +28,7 @@ export default function ArchetypeResourcePicker({ kind, currentUrl, file, disabl
   const url = preview || currentUrl;
 
   return <section className={styles.picker} aria-labelledby={`${id}-title`}>
-    <h2 id={`${id}-title`}>{options.label}</h2>
+    <h2 id={`${id}-title`}>{title ?? options.label}</h2>
     <div className={styles.controls}>
       {url && (kind === "audio"
         ? <audio controls preload="none" src={url} aria-label={file ? "Audio seleccionado" : "Audio actual"} style={{ width: "100%", marginBottom: 16 }} />

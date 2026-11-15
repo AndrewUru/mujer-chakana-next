@@ -5,6 +5,8 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
 import { uploadResourceCover } from "@/lib/resourceCovers";
 import ArchetypeImagePicker from "@/components/ArchetypeImagePicker";
+import ArchetypeResourcePicker from "@/components/ArchetypeResourcePicker";
+import { uploadResourcePdf } from "@/lib/resourceFiles";
 
 const NuevoRecursoPage = () => {
   const [guardando, setGuardando] = useState(false);
@@ -17,6 +19,9 @@ const NuevoRecursoPage = () => {
   // datos ya incluye los planes superiores (mensual lo ven mensual y anual).
   const [tipoSuscripcion, setTipoSuscripcion] = useState("gratuito");
   const [portada, setPortada] = useState<File | null>(null);
+  // Solo para recursos PDF: si se elige un archivo, su URL sustituye a la escrita.
+  const [archivo, setArchivo] = useState<File | null>(null);
+  const subirArchivo = tipo === "pdf" ? archivo : null;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,6 +36,16 @@ const NuevoRecursoPage = () => {
     if (!userId || userError) {
       setMensaje({ text: "Debes iniciar sesión para crear un recurso.", error: true });
       return;
+    }
+
+    let recursoUrl = url;
+    if (subirArchivo) {
+      try {
+        recursoUrl = await uploadResourcePdf(subirArchivo);
+      } catch (uploadError) {
+        setMensaje({ text: uploadError instanceof Error ? uploadError.message : "No se pudo subir el PDF.", error: true });
+        return;
+      }
     }
 
     let imagenUrl: string | null = null;
@@ -48,7 +63,7 @@ const NuevoRecursoPage = () => {
         titulo,
         descripcion,
         tipo,
-        url,
+        url: recursoUrl,
         imagen_url: imagenUrl,
         tipo_suscripcion: tipoSuscripcion,
         creado_por: userId,
@@ -67,6 +82,7 @@ const NuevoRecursoPage = () => {
       setUrl("");
       setTipoSuscripcion("gratuito");
       setPortada(null);
+      setArchivo(null);
     }
     } catch { setMensaje({ text: "No se pudo guardar el recurso. Inténtalo de nuevo.", error: true }); }
     finally { setGuardando(false); }
@@ -138,17 +154,29 @@ const NuevoRecursoPage = () => {
             htmlFor="url"
             className="block text-sm font-medium text-gray-700"
           >
-            URL del recurso
+            {tipo === "pdf" ? "URL del recurso (si no subes un archivo)" : "URL del recurso"}
           </label>
           <input
             type="url"
             id="url"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            required
+            required={!subirArchivo}
+            disabled={Boolean(subirArchivo)}
+            placeholder={subirArchivo ? "Se rellenará con el PDF que has elegido" : "https://…"}
             className="mt-1 block w-full rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-rose-500 focus:border-rose-500"
           />
         </div>
+
+        {tipo === "pdf" && (
+          <ArchetypeResourcePicker
+            kind="pdf"
+            title="Archivo PDF"
+            file={archivo}
+            disabled={guardando}
+            onChange={setArchivo}
+          />
+        )}
 
         <ArchetypeImagePicker
           title="Imagen de portada (opcional)"

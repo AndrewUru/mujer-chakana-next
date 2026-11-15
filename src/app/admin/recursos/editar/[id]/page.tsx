@@ -6,6 +6,8 @@ import { supabase } from "@/lib/supabaseClient";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ArchetypeImagePicker from "@/components/ArchetypeImagePicker";
 import { uploadResourceCover } from "@/lib/resourceCovers";
+import ArchetypeResourcePicker from "@/components/ArchetypeResourcePicker";
+import { uploadResourcePdf } from "@/lib/resourceFiles";
 
 const PLANES = ["gratuito", "mensual", "anual"];
 const FORMATOS = [["pdf", "PDF"], ["audio", "Audio"], ["video", "Vídeo"]];
@@ -24,6 +26,8 @@ export default function EditarRecursoPage() {
   }
 
   const [portada, setPortada] = useState<File | null>(null);
+  // Solo para recursos PDF: si se elige un archivo, su URL sustituye a la actual.
+  const [archivo, setArchivo] = useState<File | null>(null);
 
   const [recurso, setRecurso] = useState<Recurso | null>(null);
   const [loading, setLoading] = useState(true);
@@ -62,9 +66,27 @@ export default function EditarRecursoPage() {
       return;
     }
 
+    const subirArchivo = (recurso.tipo ?? "").trim().toLowerCase() === "pdf" ? archivo : null;
+    if (!subirArchivo && !(recurso.url ?? "").trim()) {
+      setMensajeExito(null);
+      setMensajeError("Escribe la URL del recurso o elige un archivo PDF.");
+      return;
+    }
+
     setGuardando(true);
     setMensajeExito(null);
     setMensajeError(null);
+
+    let recursoUrl = recurso.url;
+    if (subirArchivo) {
+      try {
+        recursoUrl = await uploadResourcePdf(subirArchivo);
+      } catch (uploadError) {
+        setGuardando(false);
+        setMensajeError(uploadError instanceof Error ? uploadError.message : "No se pudo subir el PDF.");
+        return;
+      }
+    }
 
     let imagenUrl = recurso.imagen_url ?? null;
     if (portada) {
@@ -82,7 +104,7 @@ export default function EditarRecursoPage() {
       .update({
         titulo: recurso.titulo,
         descripcion: recurso.descripcion,
-        url: recurso.url,
+        url: recursoUrl,
         tipo: recurso.tipo,
         tipo_suscripcion: recurso.tipo_suscripcion,
         imagen_url: imagenUrl,
@@ -93,8 +115,9 @@ export default function EditarRecursoPage() {
 
     if (!error) {
       // Si el guardado se repite, no vuelve a subir la misma imagen.
-      setRecurso({ ...recurso, imagen_url: imagenUrl });
+      setRecurso({ ...recurso, url: recursoUrl, imagen_url: imagenUrl });
       setPortada(null);
+      setArchivo(null);
       setMensajeExito("Recurso actualizado correctamente.");
       setTimeout(() => {
         router.push("/admin/recursos");
@@ -201,6 +224,17 @@ export default function EditarRecursoPage() {
             {FORMATOS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select>
         </div>
+
+        {(recurso.tipo ?? "").trim().toLowerCase() === "pdf" && (
+          <ArchetypeResourcePicker
+            kind="pdf"
+            title="Archivo PDF"
+            currentUrl={recurso.url}
+            file={archivo}
+            disabled={guardando}
+            onChange={setArchivo}
+          />
+        )}
 
         <ArchetypeImagePicker
           title="Imagen de portada"
