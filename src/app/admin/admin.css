@@ -1,5 +1,5 @@
 .admin-workspace { --admin-ink: #422b3a; --admin-muted: #776b70; --admin-accent: #783c59; --admin-line: #e8dfe2; display: flex; min-height: 100dvh; background: #f8f5f1; color: var(--admin-ink); }
-.admin-sidebar { width: 246px; flex-shrink: 0; background: #352432; color: #f9f1ed; padding: 36px 22px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100dvh; }
+.admin-sidebar { width: 246px; flex-shrink: 0; background: #352432; color: #f9f1ed; padding: 36px 22px; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; z-index: 2; height: 100dvh; overflow-y: auto; }
 .admin-brand { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 .admin-brand small { font-family: var(--font-body), sans-serif; font-size: 8px; letter-spacing: .16em; color: #d1b9c6; }
 .admin-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--admin-accent); }
@@ -11,6 +11,8 @@
 .admin-sidebar-footer { margin-top: auto; padding: 30px 12px 0; color: #c6aebb; font-size: 13px; }
 .admin-sidebar-footer p { font-family: var(--font-display), serif; font-size: 24px; line-height: 1.25; margin-bottom: 22px; }
 .admin-sidebar-footer a, .admin-topbar a { display: inline-flex; align-items: center; gap: 8px; }
+/* Fija, no sticky: el overflow-x de html/body en globals.css anula position: sticky. */
+.admin-sidebar + .admin-content { margin-left: 246px; }
 .admin-content { flex: 1; min-width: 0; }
 .admin-topbar { min-height: 68px; padding: 20px 40px; border-bottom: 1px solid var(--admin-line); display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--admin-muted); }
 .admin-page { max-width: 1400px; margin: auto; padding: 40px; }
@@ -65,8 +67,8 @@
 .admin-fields :is(input, textarea) { min-width: 0; width: 100%; }
 .admin-fields .wide { grid-column: 1/-1; }
 .admin-workspace main:not(.admin-page) { padding-bottom: 48px; margin-top: 28px; margin-inline: auto; width: calc(100% - 48px); background: #fffdfa; }
-@media (max-width: 1000px) { .admin-sidebar { width: 205px; padding-inline: 14px; } .admin-page { padding: 28px 24px; } .admin-topbar { padding-inline: 24px; } }
-@media (max-width: 760px) { .admin-workspace { flex-direction: column; } .admin-sidebar { position: static; width: 100%; height: auto; padding: 20px 16px 12px; } .sidebar-label, .admin-sidebar-footer { display: none; } .admin-sidebar nav { flex-direction: row; overflow-x: auto; margin-top: 20px; } .admin-nav-item { white-space: nowrap; font-size: 12px; gap: 8px; padding: 11px; } .admin-topbar { padding: 14px 18px; min-height: auto; } .admin-page { padding: 28px 16px; } .admin-heading { align-items: flex-start; flex-direction: column; gap: 16px; } .admin-stats { gap: 8px; } .admin-stat { padding: 15px 12px; } .admin-stat strong { font-size: 30px; } .admin-stat small { display: none; } .admin-grid { grid-template-columns: 1fr; } .admin-panel-heading, .admin-table td, .admin-table th { padding-inline: 16px; } .admin-toolbar { padding-inline: 16px; } .admin-pagination { flex-wrap: wrap; } }
+@media (max-width: 1000px) { .admin-sidebar { width: 205px; padding-inline: 14px; } .admin-sidebar + .admin-content { margin-left: 205px; } .admin-page { padding: 28px 24px; } .admin-topbar { padding-inline: 24px; } }
+@media (max-width: 760px) { .admin-workspace { flex-direction: column; } .admin-sidebar { position: static; width: 100%; height: auto; overflow: visible; padding: 20px 16px 12px; } .admin-sidebar + .admin-content { margin-left: 0; } .sidebar-label, .admin-sidebar-footer { display: none; } .admin-sidebar nav { flex-direction: row; overflow-x: auto; margin-top: 20px; } .admin-nav-item { white-space: nowrap; font-size: 12px; gap: 8px; padding: 11px; } .admin-topbar { padding: 14px 18px; min-height: auto; } .admin-page { padding: 28px 16px; } .admin-heading { align-items: flex-start; flex-direction: column; gap: 16px; } .admin-stats { gap: 8px; } .admin-stat { padding: 15px 12px; } .admin-stat strong { font-size: 30px; } .admin-stat small { display: none; } .admin-grid { grid-template-columns: 1fr; } .admin-panel-heading, .admin-table td, .admin-table th { padding-inline: 16px; } .admin-toolbar { padding-inline: 16px; } .admin-pagination { flex-wrap: wrap; } }
 @media (prefers-reduced-motion: reduce) { .admin-workspace * { transition: none !important; animation: none !important; } }
 .admin-archetype-heading { display: flex; align-items: center; gap: 18px; }
 .admin-archetype-image { border-radius: 12px; object-fit: cover; width: 80px; height: 80px; }
