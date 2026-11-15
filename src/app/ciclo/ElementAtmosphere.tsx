@@ -19,7 +19,11 @@ const VERTEX = `attribute vec2 position; void main() { gl_Position = vec4(positi
 // Ruido fractal deformado sobre sí mismo (domain warping): da volutas de humo
 // y, afinando las crestas, vetas de líquido.
 const FRAGMENT = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
 precision mediump float;
+#endif
 uniform vec2 uRes; uniform float uTime; uniform vec3 uColor; uniform vec2 uFlow;
 uniform float uScale; uniform float uWarp; uniform float uAlpha; uniform float uLiquid; uniform float uGround;
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -42,7 +46,7 @@ void main() {
   smoke *= smoke;
   float veins = pow(1.0 - abs(sin((n + q.x) * 9.42)), 9.0) * smoothstep(0.25, 0.7, n);
   float height = gl_FragCoord.y / uRes.y;
-  float mask = mix(1.0, smoothstep(1.05, 0.0, height), uGround);
+  float mask = mix(1.0, 1.0 - smoothstep(0.0, 1.05, height), uGround);
   float alpha = clamp((smoke * uAlpha + veins * 0.3 * uLiquid) * mask, 0.0, 1.0);
   vec3 color = mix(uColor, vec3(1.0), smoke * 0.25 + veins * 0.35 * uLiquid);
   gl_FragColor = vec4(color * alpha, alpha);
@@ -57,19 +61,47 @@ export default function ElementAtmosphere({ mood, still, className }: { mood: Mo
     if (!canvas || !gl) return;
 
     const compile = (type: number, source: string) => {
-      const shader = gl.createShader(type)!;
+      const shader = gl.createShader(type);
+      if (!shader) return null;
       gl.shaderSource(shader, source);
       gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        gl.deleteShader(shader);
+        return null;
+      }
       return shader;
     };
-    const program = gl.createProgram()!;
-    gl.attachShader(program, compile(gl.VERTEX_SHADER, VERTEX));
-    gl.attachShader(program, compile(gl.FRAGMENT_SHADER, FRAGMENT));
+
+    const initialize = () => {
+    if (gl.isContextLost()) return;
+    const vertex = compile(gl.VERTEX_SHADER, VERTEX);
+    const fragment = compile(gl.FRAGMENT_SHADER, FRAGMENT);
+    const program = gl.createProgram();
+    if (!vertex || !fragment || !program) {
+      gl.deleteShader(vertex);
+      gl.deleteShader(fragment);
+      gl.deleteProgram(program);
+      return;
+    }
+    gl.attachShader(program, vertex);
+    gl.attachShader(program, fragment);
     gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
+    // El programa enlazado conserva el código; los shaders ya no hacen falta.
+    gl.detachShader(program, vertex);
+    gl.detachShader(program, fragment);
+    gl.deleteShader(vertex);
+    gl.deleteShader(fragment);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      gl.deleteProgram(program);
+      return;
+    }
     gl.useProgram(program);
 
     const buffer = gl.createBuffer();
+    if (!buffer) {
+      gl.deleteProgram(program);
+      return;
+    }
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
     const position = gl.getAttribLocation(program, "position");
@@ -89,30 +121,66 @@ export default function ElementAtmosphere({ mood, still, className }: { mood: Mo
     const uTime = uniform("uTime");
 
     let frame = 0;
-    // El humo es difuso: a media resolución se ve igual y cuesta la cuarta parte.
+    let elapsed = 0;
+    let previous: number | null = null;
+    // Media resolución, con un límite para no saturar la GPU en pantallas grandes.
     const resize = () => {
-      canvas.width = Math.max(1, Math.round(canvas.clientWidth / 2));
-      canvas.height = Math.max(1, Math.round(canvas.clientHeight / 2));
+      const scale = Math.min(0.5, 960 / Math.max(1, canvas.clientWidth, canvas.clientHeight));
+      const width = Math.max(1, Math.round(canvas.clientWidth * scale));
+      const height = Math.max(1, Math.round(canvas.clientHeight * scale));
+      if (canvas.width !== width) canvas.width = width;
+      if (canvas.height !== height) canvas.height = height;
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform2f(uRes, canvas.width, canvas.height);
     };
-    const start = performance.now();
     const draw = (now: number) => {
+      frame = 0;
+      if (document.hidden || gl.isContextLost()) return;
+      if (!still && previous !== null) elapsed += (now - previous) / 1000;
+      previous = now;
       // Un desfase fijo evita que el primer fotograma (o el único, sin movimiento) salga vacío.
-      gl.uniform1f(uTime, 40 + (still ? 0 : (now - start) / 1000));
+      gl.uniform1f(uTime, 40 + elapsed);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       if (!still) frame = requestAnimationFrame(draw);
     };
+    const schedule = () => {
+      if (!frame && !document.hidden) frame = requestAnimationFrame(draw);
+    };
+    const onVisibility = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      previous = null;
+      schedule();
+    };
     resize();
-    frame = requestAnimationFrame(draw);
-    const observer = new ResizeObserver(() => { resize(); if (still) draw(start); });
+    schedule();
+    const observer = new ResizeObserver(() => { resize(); schedule(); });
     observer.observe(canvas);
+    document.addEventListener("visibilitychange", onVisibility);
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
-      gl.getExtension("WEBGL_lose_context")?.loseContext();
+      document.removeEventListener("visibilitychange", onVisibility);
+      gl.deleteBuffer(buffer);
+      gl.deleteProgram(program);
+    };
+    };
+
+    let dispose = initialize();
+    const onLost = (event: Event) => {
+      event.preventDefault(); // Permite al navegador restaurar el contexto.
+      dispose?.();
+      dispose = undefined;
+    };
+    const onRestored = () => { dispose = initialize(); };
+    canvas.addEventListener("webglcontextlost", onLost);
+    canvas.addEventListener("webglcontextrestored", onRestored);
+    return () => {
+      canvas.removeEventListener("webglcontextlost", onLost);
+      canvas.removeEventListener("webglcontextrestored", onRestored);
+      dispose?.();
     };
   }, [mood, still]);
-  // La clave fuerza un lienzo nuevo por elemento: un contexto WebGL liberado no se reutiliza.
-  return <canvas key={mood} ref={ref} className={className} aria-hidden="true" />;
+  // Reutilizar el contexto permite cambiar de elemento y reiniciar efectos en StrictMode.
+  return <canvas ref={ref} className={className} aria-hidden="true" />;
 }
