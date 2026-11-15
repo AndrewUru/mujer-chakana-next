@@ -2,3 +2,20 @@
 @media(max-width:900px){.heroGrid{grid-template-columns:1fr;gap:1rem;padding:5rem 0 7rem}.orbit{width:min(70vw,20rem)}.heroCopy h1{font-size:clamp(4rem,13vw,7rem)}.chapterHeading{grid-template-columns:auto 1fr}.chapterIntent{grid-column:2}.cardGrid{grid-template-columns:repeat(2,1fr)}.cardFeatured{grid-column:auto}.cardVisual,.cardFeatured .cardVisual{height:22rem}}
 @media(max-width:620px){.heroTopline span{display:none}.heroGrid{align-content:center}.heroCopy h1 em{margin-left:0}.heroIntro{margin-left:0}.orbit{width:min(68vw,17rem)}.orbitRing i{transform:rotate(var(--angle)) translateX(calc(min(68vw,17rem)/2)) rotate(calc(-1 * var(--angle)))}.chapterNav a{min-height:3.4rem;font-size:0}.chapterNav a span{font-size:.62rem}.chapters{padding-top:4rem}.chapterHeading{grid-template-columns:1fr}.chapterNumber{font-size:5rem}.chapterIntent{grid-column:auto}.cardGrid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:.75rem}.card{min-width:86vw;scroll-snap-align:center}.cardVisual,.cardFeatured .cardVisual{height:25rem}}
 @media(prefers-reduced-motion:reduce){.orbitRing,.loadingOrbit,.loadingOrbit svg{animation:none}.card,.cardImage{transition:none}}
+
+/* Entrada a la vista inmersiva y día de hoy */
+.todayCue{display:inline-flex;align-items:center;gap:.9rem;margin-top:2rem;padding:.85rem 1.2rem;border:1px solid rgba(233,163,125,.55);border-radius:999px;color:#fff7ef;background:rgba(233,163,125,.1);cursor:pointer;transition:background .25s ease,transform .25s ease}
+.todayCue:hover{background:rgba(233,163,125,.22);transform:translateY(-2px)}
+.todayCue span{color:#e9a37d;font-size:.58rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase}
+.todayCue strong{font-family:var(--font-display),Georgia,serif;font-size:1.35rem;font-weight:500}
+.todayCue svg{width:1rem;height:1rem;color:#e9a37d}
+.cardEnter{position:absolute;inset:0;z-index:2;padding:0;border:0;background:transparent;cursor:pointer}
+.card[data-today="true"]{border-color:rgba(233,163,125,.7);box-shadow:0 0 0 1px rgba(233,163,125,.35),0 1.5rem 3rem rgba(233,163,125,.12)}
+.todayBadge{position:absolute;top:1rem;right:1rem;z-index:1;padding:.4rem .7rem;border-radius:999px;color:#1b0a10;background:#e9a37d;font-size:.52rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+.resources{align-items:center}
+.enter{display:inline-flex;align-items:center;gap:.4rem;min-height:2.4rem;padding:0 1rem;border:1px solid rgba(233,163,125,.6);color:#fff7ef;background:rgba(233,163,125,.12);font-size:.62rem;font-weight:850;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .25s ease}
+.enter:hover{background:rgba(233,163,125,.28)}
+.enter svg,.inside svg{width:.85rem;height:.85rem}
+.inside{display:inline-flex;align-items:center;gap:.35rem;color:rgba(255,247,239,.55);font-size:.58rem;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.atlas :is(.enter,.todayCue):focus-visible{outline:2px solid #e9a37d;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.todayCue,.enter{transition:none}}
