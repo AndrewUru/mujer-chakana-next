@@ -73,97 +73,99 @@ export default function ElementAtmosphere({ mood, still, className }: { mood: Mo
     };
 
     const initialize = () => {
-    if (gl.isContextLost()) return;
-    const vertex = compile(gl.VERTEX_SHADER, VERTEX);
-    const fragment = compile(gl.FRAGMENT_SHADER, FRAGMENT);
-    const program = gl.createProgram();
-    if (!vertex || !fragment || !program) {
+      if (gl.isContextLost()) return;
+      const vertex = compile(gl.VERTEX_SHADER, VERTEX);
+      const fragment = compile(gl.FRAGMENT_SHADER, FRAGMENT);
+      const program = gl.createProgram();
+      if (!vertex || !fragment || !program) {
+        gl.deleteShader(vertex);
+        gl.deleteShader(fragment);
+        gl.deleteProgram(program);
+        return;
+      }
+      gl.attachShader(program, vertex);
+      gl.attachShader(program, fragment);
+      gl.linkProgram(program);
+      // El programa enlazado conserva el código; los shaders ya no hacen falta.
+      gl.detachShader(program, vertex);
+      gl.detachShader(program, fragment);
       gl.deleteShader(vertex);
       gl.deleteShader(fragment);
-      gl.deleteProgram(program);
-      return;
-    }
-    gl.attachShader(program, vertex);
-    gl.attachShader(program, fragment);
-    gl.linkProgram(program);
-    // El programa enlazado conserva el código; los shaders ya no hacen falta.
-    gl.detachShader(program, vertex);
-    gl.detachShader(program, fragment);
-    gl.deleteShader(vertex);
-    gl.deleteShader(fragment);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      gl.deleteProgram(program);
-      return;
-    }
-    gl.useProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        gl.deleteProgram(program);
+        return;
+      }
+      gl.useProgram(program);
 
-    const buffer = gl.createBuffer();
-    if (!buffer) {
-      gl.deleteProgram(program);
-      return;
-    }
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-    const position = gl.getAttribLocation(program, "position");
-    gl.enableVertexAttribArray(position);
-    gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+      const buffer = gl.createBuffer();
+      if (!buffer) {
+        gl.deleteProgram(program);
+        return;
+      }
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+      const position = gl.getAttribLocation(program, "position");
+      gl.enableVertexAttribArray(position);
+      gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
 
-    const uniform = (name: string) => gl.getUniformLocation(program, name);
-    const style = STYLES[mood];
-    gl.uniform3fv(uniform("uColor"), style.color);
-    gl.uniform2fv(uniform("uFlow"), style.flow);
-    gl.uniform1f(uniform("uScale"), style.scale);
-    gl.uniform1f(uniform("uWarp"), style.warp);
-    gl.uniform1f(uniform("uAlpha"), style.alpha);
-    gl.uniform1f(uniform("uLiquid"), style.liquid);
-    gl.uniform1f(uniform("uGround"), style.ground);
-    const uRes = uniform("uRes");
-    const uTime = uniform("uTime");
+      const uniform = (name: string) => gl.getUniformLocation(program, name);
+      const style = STYLES[mood];
+      gl.uniform3fv(uniform("uColor"), style.color);
+      gl.uniform2fv(uniform("uFlow"), style.flow);
+      gl.uniform1f(uniform("uScale"), style.scale);
+      gl.uniform1f(uniform("uWarp"), style.warp);
+      gl.uniform1f(uniform("uAlpha"), style.alpha);
+      gl.uniform1f(uniform("uLiquid"), style.liquid);
+      gl.uniform1f(uniform("uGround"), style.ground);
+      const uRes = uniform("uRes");
+      const uTime = uniform("uTime");
 
-    let frame = 0;
-    let elapsed = 0;
-    let previous: number | null = null;
-    // Media resolución, con un límite para no saturar la GPU en pantallas grandes.
-    const resize = () => {
-      const scale = Math.min(0.5, 960 / Math.max(1, canvas.clientWidth, canvas.clientHeight));
-      const width = Math.max(1, Math.round(canvas.clientWidth * scale));
-      const height = Math.max(1, Math.round(canvas.clientHeight * scale));
-      if (canvas.width !== width) canvas.width = width;
-      if (canvas.height !== height) canvas.height = height;
-      gl.viewport(0, 0, canvas.width, canvas.height);
-      gl.uniform2f(uRes, canvas.width, canvas.height);
-    };
-    const draw = (now: number) => {
-      frame = 0;
-      if (document.hidden || gl.isContextLost()) return;
-      if (!still && previous !== null) elapsed += (now - previous) / 1000;
-      previous = now;
-      // Un desfase fijo evita que el primer fotograma (o el único, sin movimiento) salga vacío.
-      gl.uniform1f(uTime, 40 + elapsed);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      if (!still) frame = requestAnimationFrame(draw);
-    };
-    const schedule = () => {
-      if (!frame && !document.hidden) frame = requestAnimationFrame(draw);
-    };
-    const onVisibility = () => {
-      cancelAnimationFrame(frame);
-      frame = 0;
-      previous = null;
+      let frame = 0;
+      let elapsed = 0;
+      let previous: number | null = null;
+      // Media resolución, con un límite para no saturar la GPU en pantallas grandes.
+      const resize = () => {
+        const scale = Math.min(0.5, 960 / Math.max(1, canvas.clientWidth, canvas.clientHeight));
+        const width = Math.max(1, Math.round(canvas.clientWidth * scale));
+        const height = Math.max(1, Math.round(canvas.clientHeight * scale));
+        if (canvas.width !== width) canvas.width = width;
+        if (canvas.height !== height) canvas.height = height;
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.uniform2f(uRes, canvas.width, canvas.height);
+      };
+      const draw = (now: number) => {
+        frame = 0;
+        if (document.hidden || gl.isContextLost()) return;
+        if (!still && previous !== null) elapsed += (now - previous) / 1000;
+        previous = now;
+        // Un desfase fijo evita que el primer fotograma (o el único, sin movimiento) salga vacío.
+        gl.uniform1f(uTime, 40 + elapsed);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        if (!still) frame = requestAnimationFrame(draw);
+      };
+      const schedule = () => {
+        if (!frame && !document.hidden) frame = requestAnimationFrame(draw);
+      };
+      const onVisibility = () => {
+        cancelAnimationFrame(frame);
+        frame = 0;
+        previous = null;
+        schedule();
+      };
+      resize();
       schedule();
-    };
-    resize();
-    schedule();
-    const observer = new ResizeObserver(() => { resize(); schedule(); });
-    observer.observe(canvas);
-    document.addEventListener("visibilitychange", onVisibility);
-    return () => {
-      cancelAnimationFrame(frame);
-      observer.disconnect();
-      document.removeEventListener("visibilitychange", onVisibility);
-      gl.deleteBuffer(buffer);
-      gl.deleteProgram(program);
-    };
+      const observer = new ResizeObserver(() => { resize(); schedule(); });
+      observer.observe(canvas);
+      document.addEventListener("visibilitychange", onVisibility);
+      return () => {
+        cancelAnimationFrame(frame);
+        observer.disconnect();
+        document.removeEventListener("visibilitychange", onVisibility);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+        gl.useProgram(null);
+        gl.deleteBuffer(buffer);
+        gl.deleteProgram(program);
+      };
     };
 
     let dispose = initialize();
